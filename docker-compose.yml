@@ -1,0 +1,156 @@
+version: '3.9'
+
+services:
+  activemq:
+    image: symptoma/activemq:latest
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+  redpanda:
+    image: docker.redpanda.com/vectorized/redpanda:v22.3.8
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+      - "9092:9092"
+      - "9644:9644"
+      - "29092:29092"
+  console:
+    image: docker.redpanda.com/vectorized/console:v2.1.1
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:29092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redpanda
+  postgres:
+    image: postgres:14.6-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: "modia-soknadstatus"
+  infotrygd-mq-to-kafka:
+    build:
+      context: apps/mq-to-kafka
+    ports:
+      - "9000:8080"
+    depends_on:
+      - activemq
+      - redpanda
+    environment:
+      APP_NAME: "infotrygd-mq-to-kafka"
+      APP_VERSION: "dev"
+      KAFKA_TOPIC: "infotrygd-soknadstatus"
+      KAFKA_BROKER_URL: "redpanda:29092"
+      JMS_QUEUE: "infotrygd-soknadstatus"
+      JMS_HOST: "activemq"
+      JMS_PORT: "61616"
+      JMS_QUEUEMANAGER: ""
+      JMS_USERNAME: ""
+      JMS_PASSWORD: ""
+  arena-mq-to-kafka:
+    build:
+      context: apps/mq-to-kafka
+    ports:
+      - "9001:8080"
+    depends_on:
+      - activemq
+      - redpanda
+    environment:
+      APP_NAME: "arena-mq-to-kafka"
+      APP_VERSION: "dev"
+      KAFKA_TOPIC: "arena-soknadstatus"
+      KAFKA_BROKER_URL: "redpanda:29092"
+      JMS_QUEUE: "arena-soknadstatus"
+      JMS_HOST: "activemq"
+      JMS_PORT: "61616"
+      JMS_QUEUEMANAGER: ""
+      JMS_USERNAME: ""
+      JMS_PASSWORD: ""
+  infotrygd-transform:
+    build:
+      context: apps/infotrygd-soknadstatus-transform
+    ports:
+      - "9010:8080"
+    depends_on:
+      - redpanda
+    environment:
+      APP_NAME: "infotrygd-soknadstatus-transform"
+      APP_VERSION: "dev"
+      KAFKA_SOURCE_TOPIC: "infotrygd-soknadstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_BROKER_URL: "redpanda:29092"
+  arena-transform:
+    build:
+      context: apps/arena-soknadstatus-transform
+    ports:
+      - "9011:8080"
+    depends_on:
+      - redpanda
+    environment:
+      APP_NAME: "arena-soknadstatus-transform"
+      APP_VERSION: "dev"
+      KAFKA_SOURCE_TOPIC: "arena-soknadstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_BROKER_URL: "redpanda:29092"
+  foreldrepenger-transform:
+    build:
+      context: apps/foreldrepenger-soknadstatus-transform
+    ports:
+      - "9012:8080"
+    depends_on:
+      - redpanda
+    environment:
+      APP_NAME: "foreldrepenger-soknadstatus-transform"
+      APP_VERSION: "dev"
+      KAFKA_SOURCE_TOPIC: "foreldrepenger-soknadstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_BROKER_URL: "redpanda:29092"
+  pleiepenger-transform:
+    build:
+      context: apps/pleiepenger-soknadstatus-transform
+    ports:
+      - "9013:8080"
+    depends_on:
+      - redpanda
+    environment:
+      APP_NAME: "pleiepenger-soknadstatus-transform"
+      APP_VERSION: "dev"
+      KAFKA_SOURCE_TOPIC: "pleiepenger-soknadstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_BROKER_URL: "redpanda:29092"
+  modia-soknadstatus-api:
+    build:
+      context: apps/modia-soknadstatus-api
+    ports:
+      - "9015:8080"
+    depends_on:
+      - redpanda
+    environment:
+      APP_NAME: "modia-soknadstatus-api"
+      APP_VERSION: "dev"
+      KAFKA_SOURCE_TOPIC: "modia-soknadstatus"
+      KAFKA_TARGET_TOPIC: "N/A"
+      KAFKA_BROKER_URL: "redpanda:29092"
