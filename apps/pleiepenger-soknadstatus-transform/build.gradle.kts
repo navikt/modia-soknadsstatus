@@ -19,6 +19,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
+    implementation(project(":common:ktor"))
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
 

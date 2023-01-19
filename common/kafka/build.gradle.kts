@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kafka_version: String by project
+val logback_version: String by project
+
 plugins {
     application
     id("setup.repository")
@@ -10,7 +13,9 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.apache.kafka:kafka-clients:3.3.1")
+    implementation("org.apache.kafka:kafka-clients:$kafka_version")
+    implementation("org.apache.kafka:kafka-streams:$kafka_version")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
 }
 
 group = "no.nav.modia.soknadstatus"

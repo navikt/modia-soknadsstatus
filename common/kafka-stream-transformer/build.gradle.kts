@@ -20,9 +20,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:$kafka_version")
-    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
     implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
+    implementation(project(":common:ktor"))
     implementation(project(":common:dataformat"))
+    implementation(project(":common:kafka"))
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<div class="templates">
+    <div data-name="kilde">
+        <section class="kilde">
+            <h1>{{name}} - {{type}}</h1>
+            <form>
+                <input type="hidden" name="resourceId" value="{{resourceId}}">
+                <textarea name="content">{{content}}</textarea>
+                <button>Send</button>
+            </form>
+        </section>
+    </div>
+    <div data-name="kafkalog">
+        <section class="kafkalog">
+            <h1>Kafkalog</h1>
+            <textarea></textarea>
+        </section>
+    </div>
+</div>
+<header>
+    <h1>Data generator app</h1>
+    <p>Enkelt applikasjon for å simulere data fra kilde systemene til modia-soknadstatus</p> 
+</header>
+<main>
+
+</main>
+</body>
+<script src="index.js" type="application/javascript"></script>
+</html>

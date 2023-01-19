@@ -19,6 +19,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
+    implementation(project(":common:ktor"))
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
 

@@ -26,7 +26,7 @@ object Jms {
                 connectionFactory = UserCredentialsConnectionFactoryAdapter(
                     username = config.username,
                     password = config.password,
-                    connectionFactory = createActiveMQConnectionFactory(config)
+                    connectionFactory = createActiveMQConnectionFactory(config) // TODO ibm mq?
                 )
             }
         }

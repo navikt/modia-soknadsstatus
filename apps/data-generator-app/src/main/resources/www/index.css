@@ -1,0 +1,69 @@
+/**
+  * Style reset
+ **/
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+html, body {
+    font-family: sans-serif;
+}
+.templates {
+    display: none;
+}
+
+/**
+  * Layout
+ **/
+header {
+    background-color: darkturquoise;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+main {
+    padding: 1rem 1.5rem;
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(12, 1fr);
+    grid-column: 1/13;
+}
+
+main > * {
+    grid-column: span 12;
+}
+@media (min-width: 75rem) {
+    main > * {
+        grid-column: span 6;
+    }
+}
+@media (min-width: 140rem) {
+    main > * {
+        grid-column: span 3;
+    }
+}
+
+
+/**
+  * Styling
+ **/
+
+textarea {
+    resize: none;
+    width: 100%;
+    height: 20rem;
+}
+
+.kafkalog {
+    grid-column: span 12;
+}
+
+.fade-out {
+    animation: fade-out 2s forwards;
+}
+
+@keyframes fade-out {
+    0% { opacity: 100% }
+    50% { opacity: 100% }
+    100% { opacity: 0% }
+}
