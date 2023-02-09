@@ -56,6 +56,7 @@ fun transform(key: String?, value: IntermediateFormat): SoknadstatusDomain.Sokna
         tema = "DAG",
         status = SoknadstatusDomain.Status.UNDER_BEHANDLING,
         behandlingsRef = "",
+        systemRef = "arena",
         tidspunkt = Clock.System.now()
     )
 }

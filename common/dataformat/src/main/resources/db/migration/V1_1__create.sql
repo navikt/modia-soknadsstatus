@@ -4,6 +4,7 @@ CREATE TABLE soknadstatus
 (
     ident          varchar(11) not null,
     behandlingsRef varchar(40) not null,
+    systemRef      varchar(40) not null,
     tema           varchar(8)  not null,
     status         statusEnum  not null,
     tidspunkt      timestamp   not null,

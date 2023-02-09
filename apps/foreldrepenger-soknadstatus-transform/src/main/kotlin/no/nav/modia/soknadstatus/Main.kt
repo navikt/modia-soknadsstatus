@@ -50,6 +50,7 @@ fun transform(key: String?, value: String): SoknadstatusDomain.SoknadstatusOppda
         ident = "123",
         tema = "DAG",
         behandlingsRef = "",
+        systemRef = "foreldrepenger",
         status = SoknadstatusDomain.Status.UNDER_BEHANDLING,
         tidspunkt = Clock.System.now()
     )

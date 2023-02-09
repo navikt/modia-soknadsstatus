@@ -81,6 +81,7 @@ class SoknadstatusRepositoryTest {
     val dummyOppdatering = SoknadstatusDomain.SoknadstatusOppdatering(
         ident = ident,
         behandlingsRef = "ABBA1231",
+        systemRef = "infotrygd",
         tema = "DAG",
         status = SoknadstatusDomain.Status.UNDER_BEHANDLING,
         tidspunkt = Clock.System.now()

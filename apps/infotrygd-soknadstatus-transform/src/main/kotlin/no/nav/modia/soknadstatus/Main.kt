@@ -64,6 +64,7 @@ fun transform(key: String?, value: Document): SoknadstatusDomain.SoknadstatusOpp
             else -> SoknadstatusDomain.Status.UNDER_BEHANDLING
         },
         behandlingsRef = ETL.behandlingsId(value),
+        systemRef = "infotrygd",
         tidspunkt = LocalDateTime.parse(ETL.tidspunkt(value)).toInstant(TimeZone.currentSystemDefault())
     )
 }

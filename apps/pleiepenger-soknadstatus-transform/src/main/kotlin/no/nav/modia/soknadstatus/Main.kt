@@ -51,6 +51,7 @@ fun transform(key: String?, value: String): SoknadstatusDomain.SoknadstatusOppda
         tema = "DAG",
         status = SoknadstatusDomain.Status.UNDER_BEHANDLING,
         behandlingsRef = "",
+        systemRef = "pleiepenger",
         tidspunkt = Clock.System.now()
     )
 }
