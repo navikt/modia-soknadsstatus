@@ -14,8 +14,7 @@ class DatasourceConfiguration {
         config.minimumIdle = 2
         config.maximumPoolSize = 10
         config.connectionTimeout = 1000
-        config.maxLifetime = 20_000
-
+        config.maxLifetime = 30_000
         config.username = getRequiredConfig("JDBC_USERNAME")
         config.password = getRequiredConfig("JDBC_PASSWORD")
 

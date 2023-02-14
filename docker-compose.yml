@@ -51,6 +51,11 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: "modia-soknadstatus"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d modia-soknadstatus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   infotrygd-mq-to-kafka:
     build:
       context: apps/mq-to-kafka
@@ -147,10 +152,16 @@ services:
     ports:
       - "9015:8080"
     depends_on:
-      - redpanda
+      redpanda:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     environment:
       APP_NAME: "modia-soknadstatus-api"
       APP_VERSION: "dev"
       KAFKA_SOURCE_TOPIC: "modia-soknadstatus"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKER_URL: "redpanda:29092"
+      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadstatus"
+      JDBC_USERNAME: "admin"
+      JDBC_PASSWORD: "admin"

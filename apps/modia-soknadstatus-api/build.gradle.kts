@@ -6,6 +6,7 @@ val kotlinx_serialization_version: String by project
 val modia_common_version: String by project
 val logback_version: String by project
 val junit_version: String by project
+val postgres_version: String by project
 
 plugins {
     application
@@ -25,7 +26,7 @@ dependencies {
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:ktor"))
-
+    implementation("org.postgresql:postgresql:$postgres_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
