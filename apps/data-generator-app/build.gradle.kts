@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":common:kafka"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:jms"))
+    implementation(project(":common:kafka-stream-transformer"))
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
