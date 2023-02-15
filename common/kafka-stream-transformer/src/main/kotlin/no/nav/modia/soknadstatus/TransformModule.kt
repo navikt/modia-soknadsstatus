@@ -23,17 +23,19 @@ val KafkaStreamTransformPlugin = createApplicationPlugin("kafka-stream-transform
     val kafkaBrokerUrl = requireNotNull(pluginConfig.brokerUrl)
     val sourceTopic = requireNotNull(pluginConfig.sourceTopic)
     val configure = requireNotNull(pluginConfig.configure)
-    val targetTopic = requireNotNull(pluginConfig.targetTopic)
+    val targetTopic = pluginConfig.targetTopic
 
     with(application) {
         install(KafkaStreamPlugin) {
             appname = applicationName
             brokerUrl = kafkaBrokerUrl
             topology {
-                stream<String, String>(sourceTopic)
+                val stream = stream<String, String>(sourceTopic)
                     .let(configure)
                     .mapValues(::serialize)
-                    .to(targetTopic)
+                if (targetTopic != null) {
+                    stream.to(targetTopic)
+                }
             }
         }
     }

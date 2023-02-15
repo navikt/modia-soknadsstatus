@@ -10,7 +10,7 @@ object SoknadstatusDomain {
         AVBRUTT,
     }
 
-    // @Serializable
+    @Serializable
     data class SoknadstatusOppdatering(
         val ident: String,
         val behandlingsRef: String,
