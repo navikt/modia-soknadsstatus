@@ -130,7 +130,7 @@ services:
     environment:
       APP_NAME: "foreldrepenger-soknadstatus-transform"
       APP_VERSION: "dev"
-      KAFKA_SOURCE_TOPIC: "foreldrepenger-soknadstatus"
+      KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
       KAFKA_TARGET_TOPIC: "modia-soknadstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
   pleiepenger-transform:

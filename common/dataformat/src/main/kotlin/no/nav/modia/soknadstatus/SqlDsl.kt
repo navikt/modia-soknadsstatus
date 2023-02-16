@@ -58,7 +58,7 @@ object SqlDsl {
     class Row(val resultSet: ResultSet) : Sequence<Row> {
         override fun iterator(): Iterator<Row> {
             return object : Iterator<Row> {
-                override fun hasNext(): Boolean = !resultSet.isClosed && resultSet.next()
+                override fun hasNext() = !resultSet.isClosed && resultSet.next()
                 override fun next() = Row(resultSet)
             }
         }

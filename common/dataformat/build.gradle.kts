@@ -17,7 +17,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.testcontainers:postgresql:$test_containers_version")
     testImplementation("org.postgresql:postgresql:$postgres_version")

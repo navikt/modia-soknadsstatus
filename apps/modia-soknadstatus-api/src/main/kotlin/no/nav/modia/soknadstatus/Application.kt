@@ -27,7 +27,7 @@ fun Application.soknadstatusModule() {
     routing {
         route("api") {
             route("soknadstatus") {
-                get("oppdateringer") {
+                get("oppdateringer/{ident}") {
                     val ident = call.parameters["ident"] ?: throw HttpStatusException(
                         HttpStatusCode.BadRequest,
                         "ident missing in request"
@@ -35,7 +35,7 @@ fun Application.soknadstatusModule() {
                     call.respondWithResult(repository.get(ident))
                 }
 
-                get {
+                get("{ident}") {
                     val ident = call.parameters["ident"] ?: throw HttpStatusException(
                         HttpStatusCode.BadRequest,
                         "ident missing in request"
@@ -73,5 +73,6 @@ fun filter(key: String?, value: SoknadstatusOppdatering): Boolean {
 }
 
 fun persist(bytes: String?, soknadstatusOppdatering: SoknadstatusOppdatering) {
+    println(soknadstatusOppdatering)
     repository.upsert(soknadstatusOppdatering)
 }
