@@ -16,7 +16,7 @@ object SoknadstatusDomain {
         val behandlingsRef: String,
         val systemRef: String,
         val tema: String,
-        val status: Status,
+        val status: Status?,
         val tidspunkt: Instant,
     ) {
         private val systemUrl = mapOf<String, String>()

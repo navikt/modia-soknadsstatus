@@ -1,14 +1,55 @@
 {
-  "hendelseType": "behandlingOpprettetOgAvsluttet",
-  "hendelsesId": "uuid-random",
-  "hendelsesprodusentREF": {
-    "kodeRef": "AO01",
-    "value": "Arena"
+  "aktoerREF": [{"aktoerId": "aktoerId"}],
+  "ansvarligEnhetREF": "enhet",
+  "applikasjonBehandlingREF": "applikasjon",
+  "applikasjonSakREF": "applikasjonsak",
+  "behandlingsID": "behandlingsID",
+  "behandlingstema": {
+    "kodeRef": "kodeRef",
+    "kodeverksRef": "kodeverksRef",
+    "value": "value"
   },
-  "hendelsesTidspunkt": "2020-12-08T00:00:00.000",
-  "opprettelsesTidspunkt": "2020-12-08T00:00:00.000",
-  "avslutningsstatus": {
-    "kodeRef": "opphoer-pga-aktivitetskrav",
-    "value": "Opphør pga aktivitetskrav"
-  }
+  "behandlingstype": {
+    "kodeRef": "kodeRef",
+    "kodeverksRef": "kodeverksRef",
+    "value": "value"
+  },
+  "hendelseType": "hendelseType",
+  "hendelsesId": "hendelseId",
+  "hendelsesTidspunkt": "2023-02-17T09:39:08.418087",
+  "hendelsesprodusentREF": {
+    "kodeRef": "kodeRef",
+    "kodeverksRef": "kodeverksRef",
+    "value": "value"
+  },
+  "primaerBehandlingREF": {
+    "behandlingsREF": "behandlingsREF",
+    "type": {
+      "kodeRef": "kodeRef",
+      "kodeverksRef": "kodeverksRef",
+      "value": "value"
+    }
+  },
+  "sakstema": {
+    "kodeRef": "kodeRef",
+    "kodeverksRef": "kodeverksRef",
+    "value": "value"
+  },
+  "sekundaerBehandlingREF": [
+    {
+      "behandlingsREF": "behandlingsREF",
+      "type": {
+        "kodeRef": "kodeRef",
+        "kodeverksRef": "kodeverksRef",
+        "value": "value"
+      }
+    }
+  ],
+  "styringsinformasjonListe": [
+    {
+      "key": "key",
+      "type": "type",
+      "value": "value"
+    }
+  ]
 }

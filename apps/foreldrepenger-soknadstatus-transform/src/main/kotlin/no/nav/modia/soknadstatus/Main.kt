@@ -3,8 +3,14 @@ package no.nav.modia.soknadstatus
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.serialization.json.Json
+import no.nav.modia.soknadstatus.kafka.BehandlingAvsluttet
+import no.nav.modia.soknadstatus.kafka.BehandlingOpprettet
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.utils.EnvUtils
+import java.time.LocalDateTime
 
 fun main() {
     runApp()
@@ -45,13 +51,14 @@ fun filter(key: String?, value: String): Boolean {
 }
 
 fun transform(key: String?, value: String): SoknadstatusDomain.SoknadstatusOppdatering {
+    val decodedMessage = Json.decodeFromString(BehandlingAvsluttet.serializer(), value)
     // TODO fix mapping
     return SoknadstatusDomain.SoknadstatusOppdatering(
-        ident = "123",
-        tema = "DAG",
-        behandlingsRef = "",
+        ident = decodedMessage.aktoerREF.first().aktoerId,
+        tema = decodedMessage.behandlingstema.value,
+        behandlingsRef = decodedMessage.primaerBehandlingREF?.behandlingsREF ?: "",
         systemRef = "foreldrepenger",
-        status = SoknadstatusDomain.Status.UNDER_BEHANDLING,
-        tidspunkt = Clock.System.now()
+        status = enumValueOf<SoknadstatusDomain.Status>(decodedMessage.avslutningsstatus.value) ?: SoknadstatusDomain.Status.UNDER_BEHANDLING,
+        tidspunkt = decodedMessage.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault())
     )
 }

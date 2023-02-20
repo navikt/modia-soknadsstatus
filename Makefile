@@ -26,7 +26,7 @@ cluster-info:
 
 create-topic:
 	docker exec -it ${REDPANDA} rpk topic create infotrygd-soknadstatus --brokers=localhost:9092
-	docker exec -it ${REDPANDA} rpk topic create foreldrepenger-soknadstatus --brokers=localhost:9092
+	docker exec -it ${REDPANDA} rpk topic create aapen-sob-oppgaveHendelse-v1 --brokers=localhost:9092
 	docker exec -it ${REDPANDA} rpk topic create pleiepenger-soknadstatus --brokers=localhost:9092
 	docker exec -it ${REDPANDA} rpk topic create arena-soknadstatus --brokers=localhost:9092
 	docker exec -it ${REDPANDA} rpk topic create modia-soknadstatus --brokers=localhost:9092
