@@ -1,4 +1,4 @@
-package no.nav.modia.soknadstatus.kafka
+package no.nav.modia.soknadstatus.behandling
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ sealed class Behandling {
     abstract val hendelsesId: String
     abstract val hendelsesTidspunkt: LocalDateTime
     abstract val hendelsesprodusentREF: HendelsesprodusentREF
-    abstract val primaerBehandlingREF: PrimaerBehandlingREF
+    abstract val primaerBehandlingREF: PrimaerBehandlingREF?
     abstract val sakstema: Sakstema
     abstract val sekundaerBehandlingREF: List<SekundaerBehandlingREF>
     abstract val styringsinformasjonListe: List<StyringsinformasjonListe>

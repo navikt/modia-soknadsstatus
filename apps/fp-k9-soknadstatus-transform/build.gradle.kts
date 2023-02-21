@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":common:ktor"))
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
+    implementation(project(":common:filter"))
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 

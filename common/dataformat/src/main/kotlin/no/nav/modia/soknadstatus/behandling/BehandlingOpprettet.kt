@@ -1,11 +1,10 @@
-package no.nav.modia.soknadstatus.kafka
+package no.nav.modia.soknadstatus.behandling
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BehandlingAvsluttet(
-    val avslutningsstatus: Avslutningsstatus,
+data class BehandlingOpprettet(
     override val aktoerREF: List<AktoerREF>,
     override val ansvarligEnhetREF: String,
     override val applikasjonBehandlingREF: String,
@@ -22,4 +21,3 @@ data class BehandlingAvsluttet(
     override val sekundaerBehandlingREF: List<SekundaerBehandlingREF>,
     override val styringsinformasjonListe: List<StyringsinformasjonListe>
 ) : Behandling()
-

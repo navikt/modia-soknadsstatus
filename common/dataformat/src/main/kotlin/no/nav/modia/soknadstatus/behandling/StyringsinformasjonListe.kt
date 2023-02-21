@@ -1,4 +1,4 @@
-package no.nav.modia.soknadstatus.kafka
+package no.nav.modia.soknadstatus.behandling
 
 import kotlinx.serialization.Serializable
 

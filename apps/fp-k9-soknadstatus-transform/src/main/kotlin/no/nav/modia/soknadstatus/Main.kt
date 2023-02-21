@@ -5,12 +5,12 @@ import io.ktor.server.cio.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.json.Json
-import no.nav.modia.soknadstatus.kafka.BehandlingAvsluttet
-import no.nav.modia.soknadstatus.kafka.BehandlingOpprettet
+import no.nav.modia.soknadstatus.behandling.Behandling
+import no.nav.modia.soknadstatus.behandling.BehandlingAvsluttet
+import no.nav.modia.soknadstatus.behandling.BehandlingOpprettet
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging.secureLog
 import no.nav.personoversikt.common.utils.EnvUtils
-import java.lang.IllegalArgumentException
 
 fun main() {
     runApp()
@@ -38,51 +38,56 @@ fun runApp(port: Int = 8080) {
                 targetTopic = config.targetTopic
                 configure { stream ->
                     stream
-                        .mapValues(::transform)
+                        .mapValues(::decodeDtoContract)
                         .filter(::filter)
+                        .mapValues(::transform)
                 }
             }
         }
     ).start(wait = true)
 }
 
-fun filter(key: String?, value: SoknadstatusDomain.SoknadstatusOppdatering?): Boolean {
-    if (value == null) return false
-    return true
+fun filter(key: String?, behandling: Behandling?): Boolean {
+    if (behandling == null) return false
+    behandlingsStatus(behandling) ?: return false
+
+    return Filter.filtrerBehandling(behandling)
 }
 
-fun transform(key: String?, value: String): SoknadstatusDomain.SoknadstatusOppdatering? {
+fun decodeDtoContract(key: String?, value: String): Behandling? {
     return try {
-        val decodedMessage = Json.decodeFromString(BehandlingSerializer, value)
-
-        var status: SoknadstatusDomain.Status? = null
-
-        if (decodedMessage is BehandlingOpprettet) {
-            status = SoknadstatusDomain.Status.UNDER_BEHANDLING
-        } else if (decodedMessage is BehandlingAvsluttet) {
-            status = behandlingsStatus(decodedMessage.avslutningsstatus.value)
-        }
-
-        SoknadstatusDomain.SoknadstatusOppdatering(
-            ident = decodedMessage.aktoerREF.first().aktoerId,
-            tema = decodedMessage.sakstema.value,
-            behandlingsRef = decodedMessage.primaerBehandlingREF.behandlingsREF,
-            systemRef = decodedMessage.applikasjonSakREF,
-            status = status,
-            tidspunkt = decodedMessage.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault())
-        )
+        Json.decodeFromString(BehandlingSerializer, value)
     } catch (e: Exception) {
-        secureLog.error("Failed to parse message", e)
+        secureLog.error("Failed to parse to external domain", e)
         null
     }
 }
 
-private fun behandlingsStatus(status: String): SoknadstatusDomain.Status? {
-    return when (status) {
-        "avsluttet" -> SoknadstatusDomain.Status.FERDIG_BEHANDLET
-        "avbrutt" -> SoknadstatusDomain.Status.AVBRUTT
-        else -> {
-            throw IllegalArgumentException("Ukjent behandlingsstatus mottatt: $status")
+fun transform(key: String?, value: Behandling?): SoknadstatusDomain.SoknadstatusOppdatering {
+    val behandling = value!!
+
+    return SoknadstatusDomain.SoknadstatusOppdatering(
+        ident = behandling.aktoerREF.first().aktoerId,
+        tema = behandling.sakstema.value,
+        behandlingsRef = behandling.primaerBehandlingREF!!.behandlingsREF,
+        systemRef = behandling.applikasjonSakREF,
+        status = behandlingsStatus(behandling)!!,
+        tidspunkt = behandling.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault())
+    )
+}
+
+private fun behandlingsStatus(behandling: Behandling): SoknadstatusDomain.Status? {
+    if (behandling is BehandlingOpprettet) {
+        return SoknadstatusDomain.Status.UNDER_BEHANDLING
+    } else if (behandling is BehandlingAvsluttet) {
+        return when (behandling.avslutningsstatus.value) {
+            "avsluttet" -> SoknadstatusDomain.Status.FERDIG_BEHANDLET
+            "avbrutt" -> SoknadstatusDomain.Status.AVBRUTT
+            else -> {
+                secureLog.error("Ukjent behandlingsstatus mottatt: ${behandling.avslutningsstatus.value}")
+                null
+            }
         }
     }
+    return null
 }

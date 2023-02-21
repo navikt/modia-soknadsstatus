@@ -2,15 +2,12 @@ package no.nav.modia.soknadstatus
 
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.json.Json
-import no.nav.modia.soknadstatus.kafka.BehandlingAvsluttet
-import no.nav.modia.soknadstatus.kafka.BehandlingOpprettet
+import no.nav.modia.soknadstatus.behandling.BehandlingAvsluttet
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.utils.EnvUtils
-import java.time.LocalDateTime
 
 fun main() {
     runApp()
