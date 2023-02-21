@@ -19,7 +19,6 @@ fun Application.soknadstatusModule() {
         topology {
             stream<String, String>(config.sourceTopic)
                 .mapValues(::deserialize)
-                .filter(::filter)
                 .foreach(::persist)
         }
     }
@@ -65,11 +64,8 @@ private fun SoknadstatusRepository.hentAggregert(ident: String): Result<Soknadst
 }
 
 fun deserialize(key: String?, value: String): SoknadstatusOppdatering {
+    println(value)
     return Json.decodeFromString(value)
-}
-
-fun filter(key: String?, value: SoknadstatusOppdatering): Boolean {
-    return true
 }
 
 fun persist(bytes: String?, soknadstatusOppdatering: SoknadstatusOppdatering) {
