@@ -39,7 +39,6 @@ object Filter {
         val checks = listOf<(behandling: Behandling) -> Boolean>(::harLovligArkivTema, ::harPrimaerBehandling, ::harLovligPrefix, ::harLovligBehandlingstype, ::harLovlingStatusPaBehandling)
 
         for (check in checks) {
-            println("Checking $check")
             if (!check(behandling)) {
                 return false
             }

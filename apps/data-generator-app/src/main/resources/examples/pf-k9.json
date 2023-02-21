@@ -12,11 +12,11 @@
   "behandlingstype": {
     "kodeRef": "kodeRef",
     "kodeverksRef": "kodeverksRef",
-    "value": "value"
+    "value": "ae0047"
   },
   "hendelseType": "hendelseType",
   "hendelsesId": "hendelseId",
-  "hendelsesTidspunkt": "2023-02-17T09:39:08.418087",
+  "hendelsesTidspunkt": "2023-02-17T13:01:55.862405",
   "hendelsesprodusentREF": {
     "kodeRef": "kodeRef",
     "kodeverksRef": "kodeverksRef",

@@ -9,7 +9,7 @@ class Configuration(
     val soknadstatusTopic: String = "modia-soknadstatus",
     val sources: List<Source> = listOf(
         Source(name = "Infotrygd/Arena", type = Source.Type.JMS, resourceId = "infotrygd-soknadstatus", exampleFile = "$examples/infotrygd.xml"),
-        Source(name = "Foreldrepenger/Pleiepenger", type = Source.Type.KAFKA, resourceId = "aapen-sob-oppgaveHendelse-v1", exampleFile = "$examples/foreldrepenger.json"),
+        Source(name = "Foreldrepenger/Pleiepenger", type = Source.Type.KAFKA, resourceId = "aapen-sob-oppgaveHendelse-v1", exampleFile = "$examples/pf-k9.json"),
     ),
     val handlers: Map<Source.Type, PostHandler> = mapOf(
         Source.Type.JMS to JmsHandler(
