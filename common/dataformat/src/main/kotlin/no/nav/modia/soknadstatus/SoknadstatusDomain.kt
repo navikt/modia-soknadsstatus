@@ -24,6 +24,16 @@ object SoknadstatusDomain {
     }
 
     @Serializable
+    data class SoknadstatusInnkommendeOppdatering(
+        val identer: List<String>,
+        val behandlingsRef: String,
+        val systemRef: String,
+        val tema: String,
+        val status: Status,
+        val tidspunkt: Instant,
+    )
+
+    @Serializable
     data class Soknadstatuser(
         val ident: String,
         val tema: Map<String, Soknadstatus>

@@ -63,11 +63,11 @@ fun decodeDtoContract(key: String?, value: String): Behandling? {
     }
 }
 
-fun transform(key: String?, value: Behandling?): SoknadstatusDomain.SoknadstatusOppdatering {
+fun transform(key: String?, value: Behandling?): SoknadstatusDomain.SoknadstatusInnkommendeOppdatering {
     val behandling = value!!
 
-    return SoknadstatusDomain.SoknadstatusOppdatering(
-        ident = behandling.aktoerREF.first().aktoerId,
+    return SoknadstatusDomain.SoknadstatusInnkommendeOppdatering(
+        identer = behandling.aktoerREF.map { it.aktoerId },
         tema = behandling.sakstema.value,
         behandlingsRef = behandling.primaerBehandlingREF!!.behandlingsREF,
         systemRef = behandling.applikasjonSakREF,

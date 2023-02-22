@@ -64,7 +64,7 @@ private fun SoknadstatusRepository.hentAggregert(ident: String): Result<Soknadst
         }
 }
 
-fun deserialize(key: String?, value: String): SoknadstatusOppdatering? {
+fun deserialize(key: String?, value: String): SoknadstatusDomain.SoknadstatusInnkommendeOppdatering? {
     return try {
         Json.decodeFromString(value)
     } catch (e: Exception) {
@@ -73,8 +73,18 @@ fun deserialize(key: String?, value: String): SoknadstatusOppdatering? {
     }
 }
 
-fun persist(key: String?, soknadstatusOppdatering: SoknadstatusOppdatering?) {
+fun persist(key: String?, soknadstatusOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering?) {
     if (soknadstatusOppdatering != null) {
-        repository.upsert(soknadstatusOppdatering)
+        for (ident in soknadstatusOppdatering.identer) {
+            val soknadsStatusOppdateringToPersist = SoknadstatusOppdatering(
+                ident = ident,
+                behandlingsRef = soknadstatusOppdatering.behandlingsRef,
+                systemRef = soknadstatusOppdatering.systemRef,
+                tema = soknadstatusOppdatering.tema,
+                status = soknadstatusOppdatering.status,
+                tidspunkt = soknadstatusOppdatering.tidspunkt
+            )
+            repository.upsert(soknadsStatusOppdateringToPersist)
+        }
     }
 }

@@ -29,7 +29,7 @@ dependencies {
     implementation(project(":common:ktor"))
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-
+    api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
