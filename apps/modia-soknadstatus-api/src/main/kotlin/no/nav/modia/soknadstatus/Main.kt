@@ -12,7 +12,6 @@ val databaseConfiguration = DatasourceConfiguration()
 val repository = SoknadstatusRepository(databaseConfiguration.datasource)
 fun runApp(port: Int = 8080) {
     databaseConfiguration.runFlyway()
-
     KtorServer.create(
         factory = CIO,
         port = port,

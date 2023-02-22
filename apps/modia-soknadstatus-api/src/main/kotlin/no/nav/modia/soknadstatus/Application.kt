@@ -2,12 +2,17 @@ package no.nav.modia.soknadstatus
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import no.nav.modia.soknadstatus.SoknadstatusDomain.Soknadstatus
 import no.nav.modia.soknadstatus.SoknadstatusDomain.SoknadstatusOppdatering
 import no.nav.modia.soknadstatus.SoknadstatusDomain.Soknadstatuser
+import no.nav.modia.soknadstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.logging.Logging.secureLog
 
 fun Application.soknadstatusModule() {
@@ -20,7 +25,9 @@ fun Application.soknadstatusModule() {
         topology {
             stream<String, String>(config.sourceTopic)
                 .mapValues(::deserialize)
-                .foreach(::persist)
+                .foreach { key, value ->
+                    persist(key, value, config.pdlOppslagService)
+                }
         }
     }
 
@@ -73,18 +80,29 @@ fun deserialize(key: String?, value: String): SoknadstatusDomain.SoknadstatusInn
     }
 }
 
-fun persist(key: String?, soknadstatusOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering?) {
-    if (soknadstatusOppdatering != null) {
-        for (ident in soknadstatusOppdatering.identer) {
-            val soknadsStatusOppdateringToPersist = SoknadstatusOppdatering(
-                ident = ident,
-                behandlingsRef = soknadstatusOppdatering.behandlingsRef,
-                systemRef = soknadstatusOppdatering.systemRef,
-                tema = soknadstatusOppdatering.tema,
-                status = soknadstatusOppdatering.status,
-                tidspunkt = soknadstatusOppdatering.tidspunkt
-            )
-            repository.upsert(soknadsStatusOppdateringToPersist)
+fun persist(key: String?, innkommendeOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering?, pdlOppslagService: PdlOppslagService) {
+    if (innkommendeOppdatering != null) {
+        runBlocking(Dispatchers.IO) {
+            for (aktoerId in innkommendeOppdatering.aktorIder) {
+                launch { fetchIdentAndPersist(aktoerId, innkommendeOppdatering, pdlOppslagService) }
+            }
         }
+    }
+}
+
+fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering, pdlOppslagService: PdlOppslagService) {
+    try {
+        val ident = pdlOppslagService.hentFnr(aktoerId) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
+        val soknadstatus = SoknadstatusOppdatering(
+            ident = ident,
+            behandlingsRef = innkommendeOppdatering.behandlingsRef,
+            systemRef = innkommendeOppdatering.systemRef,
+            tema = innkommendeOppdatering.tema,
+            status = innkommendeOppdatering.status,
+            tidspunkt = innkommendeOppdatering.tidspunkt
+        )
+        repository.upsert(soknadstatus)
+    } catch (e: Exception) {
+        secureLog.error("Failed to store søknadstatus", e)
     }
 }

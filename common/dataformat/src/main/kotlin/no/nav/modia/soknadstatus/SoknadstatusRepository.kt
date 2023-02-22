@@ -4,7 +4,6 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import no.nav.modia.soknadstatus.SqlDsl.execute
 import no.nav.modia.soknadstatus.SqlDsl.executeQuery
-import java.lang.IllegalArgumentException
 import java.sql.Timestamp
 import javax.sql.DataSource
 
@@ -35,10 +34,6 @@ class SoknadstatusRepository(private val dataSource: DataSource) {
     }
 
     fun upsert(status: SoknadstatusDomain.SoknadstatusOppdatering): Result<Boolean> {
-        if (status.status == null) {
-            return Result.failure(IllegalArgumentException("Missing status"))
-        }
-
         val tidspunkt = Timestamp.from(status.tidspunkt.toJavaInstant())
         return dataSource.execute(
             """

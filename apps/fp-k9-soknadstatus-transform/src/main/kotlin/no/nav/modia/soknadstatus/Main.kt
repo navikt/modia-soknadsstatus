@@ -67,7 +67,7 @@ fun transform(key: String?, value: Behandling?): SoknadstatusDomain.Soknadstatus
     val behandling = value!!
 
     return SoknadstatusDomain.SoknadstatusInnkommendeOppdatering(
-        identer = behandling.aktoerREF.map { it.aktoerId },
+        aktorIder = behandling.aktoerREF.map { it.aktoerId },
         tema = behandling.sakstema.value,
         behandlingsRef = behandling.primaerBehandlingREF!!.behandlingsREF,
         systemRef = behandling.applikasjonSakREF,
