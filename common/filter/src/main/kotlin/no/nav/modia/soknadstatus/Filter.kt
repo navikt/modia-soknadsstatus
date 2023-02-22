@@ -6,10 +6,10 @@ import no.nav.modia.soknadstatus.behandling.BehandlingOpprettet
 
 object Filter {
     private const val ULOVLIG_PREFIX = "17" // ukjent årsak til dette ulovlige prefixet
-    private val ulovligeArkivtema = arrayOf("FEI", "SAK", "SAP", "OPP", "YRA", "GEN", "AAR", "KLA", "HEL")
+    private val ulovligeSakstema = arrayOf("FEI", "SAK", "SAP", "OPP", "YRA", "GEN", "AAR", "KLA", "HEL")
     private val lovligeBehandlingstyper = arrayOf("ae0047", "ae0034", "ae0014", "ae0020", "ae0019", "ae0011", "ae0045")
 
-    private fun harLovligArkivTema(behandling: Behandling) = behandling.sakstema.value !in ulovligeArkivtema
+    private fun harLovligSaksTema(behandling: Behandling) = behandling.sakstema.value !in ulovligeSakstema
 
     // TODO: Se på forskjellen på disse to
     private fun harLovlingStatusPaBehandling(behandling: Behandling): Boolean {
@@ -36,7 +36,7 @@ object Filter {
 
     @JvmStatic
     fun filtrerBehandling(behandling: Behandling): Boolean {
-        val checks = listOf<(behandling: Behandling) -> Boolean>(::harLovligArkivTema, ::harPrimaerBehandling, ::harLovligPrefix, ::harLovligBehandlingstype, ::harLovlingStatusPaBehandling)
+        val checks = listOf<(behandling: Behandling) -> Boolean>(::harLovligSaksTema, ::harPrimaerBehandling, ::harLovligPrefix, ::harLovligBehandlingstype, ::harLovlingStatusPaBehandling)
 
         for (check in checks) {
             if (!check(behandling)) {

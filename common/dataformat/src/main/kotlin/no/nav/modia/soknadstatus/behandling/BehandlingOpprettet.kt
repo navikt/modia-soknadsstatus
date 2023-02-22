@@ -16,7 +16,7 @@ data class BehandlingOpprettet(
     override val hendelsesId: String,
     override val hendelsesTidspunkt: LocalDateTime,
     override val hendelsesprodusentREF: HendelsesprodusentREF,
-    override val primaerBehandlingREF: PrimaerBehandlingREF,
+    override val primaerBehandlingREF: PrimaerBehandlingREF?,
     override val sakstema: Sakstema,
     override val sekundaerBehandlingREF: List<SekundaerBehandlingREF>,
     override val styringsinformasjonListe: List<StyringsinformasjonListe>

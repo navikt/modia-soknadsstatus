@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import no.nav.modia.soknadstatus.SoknadstatusDomain.Soknadstatus
 import no.nav.modia.soknadstatus.SoknadstatusDomain.SoknadstatusOppdatering
 import no.nav.modia.soknadstatus.SoknadstatusDomain.Soknadstatuser
+import no.nav.personoversikt.common.logging.Logging.secureLog
 
 fun Application.soknadstatusModule() {
     val config = Configuration()
@@ -63,12 +64,17 @@ private fun SoknadstatusRepository.hentAggregert(ident: String): Result<Soknadst
         }
 }
 
-fun deserialize(key: String?, value: String): SoknadstatusOppdatering {
-    println(value)
-    return Json.decodeFromString(value)
+fun deserialize(key: String?, value: String): SoknadstatusOppdatering? {
+    return try {
+        Json.decodeFromString(value)
+    } catch (e: Exception) {
+        secureLog.error("Failed to decode message", e)
+        null
+    }
 }
 
-fun persist(bytes: String?, soknadstatusOppdatering: SoknadstatusOppdatering) {
-    println(soknadstatusOppdatering)
-    repository.upsert(soknadstatusOppdatering)
+fun persist(key: String?, soknadstatusOppdatering: SoknadstatusOppdatering?) {
+    if (soknadstatusOppdatering != null) {
+        repository.upsert(soknadstatusOppdatering)
+    }
 }
