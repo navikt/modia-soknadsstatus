@@ -25,7 +25,7 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core:9.8.3")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {

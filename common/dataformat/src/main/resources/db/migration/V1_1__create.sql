@@ -1,6 +1,6 @@
 CREATE TYPE statusEnum AS ENUM ('UNDER_BEHANDLING', 'FERDIG_BEHANDLET', 'AVBRUTT');
 
-CREATE TABLE soknadstatus
+CREATE TABLE soknadsstatus
 (
     ident          varchar(11) not null,
     behandlingsRef varchar(40) not null,
@@ -11,4 +11,4 @@ CREATE TABLE soknadstatus
     PRIMARY KEY (ident, behandlingsRef)
 );
 
-CREATE INDEX soknadstatus_tidspunkt_idx ON soknadstatus (tidspunkt);
+CREATE INDEX soknadsstatus_tidspunkt_idx ON soknadsstatus (tidspunkt);

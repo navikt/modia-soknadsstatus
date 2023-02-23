@@ -30,7 +30,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {

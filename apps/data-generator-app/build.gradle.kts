@@ -31,7 +31,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {
@@ -56,7 +56,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     manifest {
         attributes["Implementation-Title"] = "Data Generator App"
         attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "no.nav.modia.soknadstatus.MainKt"
+        attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)

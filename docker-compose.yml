@@ -50,9 +50,9 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: "modia-soknadstatus"
+      POSTGRES_DB: "modia-soknadsstatus"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d modia-soknadstatus"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d modia-soknadsstatus"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -67,9 +67,9 @@ services:
     environment:
       APP_NAME: "infotrygd-mq-to-kafka"
       APP_VERSION: "dev"
-      KAFKA_TOPIC: "infotrygd-soknadstatus"
+      KAFKA_TOPIC: "infotrygd-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
-      JMS_QUEUE: "infotrygd-soknadstatus"
+      JMS_QUEUE: "infotrygd-soknadsstatus"
       JMS_HOST: "activemq"
       JMS_PORT: "61616"
       JMS_QUEUEMANAGER: ""
@@ -86,9 +86,9 @@ services:
     environment:
       APP_NAME: "arena-mq-to-kafka"
       APP_VERSION: "dev"
-      KAFKA_TOPIC: "arena-soknadstatus"
+      KAFKA_TOPIC: "arena-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
-      JMS_QUEUE: "arena-soknadstatus"
+      JMS_QUEUE: "arena-soknadsstatus"
       JMS_HOST: "activemq"
       JMS_PORT: "61616"
       JMS_QUEUEMANAGER: ""
@@ -96,59 +96,59 @@ services:
       JMS_PASSWORD: ""
   infotrygd-transform:
     build:
-      context: apps/infotrygd-soknadstatus-transform
+      context: apps/infotrygd-soknadsstatus-transform
     ports:
       - "9010:8080"
     depends_on:
       - redpanda
     environment:
-      APP_NAME: "infotrygd-soknadstatus-transform"
+      APP_NAME: "infotrygd-soknadsstatus-transform"
       APP_VERSION: "dev"
-      KAFKA_SOURCE_TOPIC: "infotrygd-soknadstatus"
-      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_SOURCE_TOPIC: "infotrygd-soknadsstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
   arena-transform:
     build:
-      context: apps/arena-soknadstatus-transform
+      context: apps/arena-soknadsstatus-transform
     ports:
       - "9011:8080"
     depends_on:
       - redpanda
     environment:
-      APP_NAME: "arena-soknadstatus-transform"
+      APP_NAME: "arena-soknadsstatus-transform"
       APP_VERSION: "dev"
-      KAFKA_SOURCE_TOPIC: "arena-soknadstatus"
-      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_SOURCE_TOPIC: "arena-soknadsstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
 #  foreldrepenger-transform:
 #    build:
-#      context: apps/foreldrepenger-soknadstatus-transform
+#      context: apps/foreldrepenger-soknadsstatus-transform
 #    ports:
 #      - "9012:8080"
 #    depends_on:
 #      - redpanda
 #    environment:
-#      APP_NAME: "foreldrepenger-soknadstatus-transform"
+#      APP_NAME: "foreldrepenger-soknadsstatus-transform"
 #      APP_VERSION: "dev"
 #      KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
-#      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+#      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
 #      KAFKA_BROKER_URL: "redpanda:29092"
 #  pleiepenger-transform:
 #    build:
-#      context: apps/pleiepenger-soknadstatus-transform
+#      context: apps/pleiepenger-soknadsstatus-transform
 #    ports:
 #      - "9013:8080"
 #    depends_on:
 #      - redpanda
 #    environment:
-#      APP_NAME: "pleiepenger-soknadstatus-transform"
+#      APP_NAME: "pleiepenger-soknadsstatus-transform"
 #      APP_VERSION: "dev"
-#      KAFKA_SOURCE_TOPIC: "pleiepenger-soknadstatus"
-#      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+#      KAFKA_SOURCE_TOPIC: "pleiepenger-soknadsstatus"
+#      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
 #      KAFKA_BROKER_URL: "redpanda:29092"
   fp-k9-transform:
     build:
-      context: apps/fp-k9-soknadstatus-transform
+      context: apps/fp-k9-soknadsstatus-transform
     ports:
       - "9014:8080"
     depends_on:
@@ -157,11 +157,11 @@ services:
       APP_NAME: "fp-k9-transform"
       APP_VERSION: "dev"
       KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
-      KAFKA_TARGET_TOPIC: "modia-soknadstatus"
+      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
-  modia-soknadstatus-api:
+  modia-soknadsstatus-api:
     build:
-      context: apps/modia-soknadstatus-api
+      context: apps/modia-soknadsstatus-api
     ports:
       - "9015:8080"
     depends_on:
@@ -170,11 +170,11 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      APP_NAME: "modia-soknadstatus-api"
+      APP_NAME: "modia-soknadsstatus-api"
       APP_VERSION: "dev"
-      KAFKA_SOURCE_TOPIC: "modia-soknadstatus"
+      KAFKA_SOURCE_TOPIC: "modia-soknadsstatus"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKER_URL: "redpanda:29092"
-      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadstatus"
+      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
       JDBC_USERNAME: "admin"
       JDBC_PASSWORD: "admin"
