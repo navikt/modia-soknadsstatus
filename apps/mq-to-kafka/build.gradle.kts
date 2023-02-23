@@ -29,7 +29,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {
@@ -54,7 +54,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     manifest {
         attributes["Implementation-Title"] = "MQ to Kafka"
         attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "no.nav.modia.soknadstatus.MainKt"
+        attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
     }
     exclude(
         "META-INF/*.SF",

@@ -18,7 +18,7 @@ dependencies {
     implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {

@@ -18,7 +18,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {

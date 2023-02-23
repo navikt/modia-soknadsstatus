@@ -16,7 +16,7 @@ dependencies {
     implementation("org.apache.activemq:activemq-broker:5.17.3")
 }
 
-group = "no.nav.modia.soknadstatus"
+group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {
