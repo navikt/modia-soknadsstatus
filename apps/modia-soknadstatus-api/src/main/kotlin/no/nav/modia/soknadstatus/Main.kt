@@ -8,13 +8,15 @@ fun main() {
     runApp()
 }
 
-val databaseConfiguration = DatasourceConfiguration()
-val repository = SoknadstatusRepository(databaseConfiguration.datasource)
-fun runApp(port: Int = 8080) {
-    databaseConfiguration.runFlyway()
+fun runApp(port: Int = 8080, useMock: Boolean = false) {
+    val configuration = Configuration()
+    val repository = SoknadstatusRepository(configuration.datasourceConfiguration.datasource)
+    configuration.datasourceConfiguration.runFlyway()
+
     KtorServer.create(
         factory = CIO,
         port = port,
-        application = Application::soknadstatusModule
-    ).start(wait = true)
+    ) {
+        soknadstatusModule(configuration, repository, useMock)
+    }.start(wait = true)
 }

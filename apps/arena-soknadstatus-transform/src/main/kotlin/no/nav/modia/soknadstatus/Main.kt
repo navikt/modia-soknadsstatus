@@ -49,7 +49,7 @@ fun filter(key: String?, value: IntermediateFormat): Boolean {
     return true
 }
 
-fun transform(key: String?, value: IntermediateFormat): SoknadstatusDomain.SoknadstatusOppdatering {
+fun transform(key: String?, value: IntermediateFormat): SoknadstatusDomain.SoknadstatusInnkommendeOppdatering {
     // TODO fix mapping
     return SoknadstatusDomain.SoknadstatusOppdatering(
         ident = "123",

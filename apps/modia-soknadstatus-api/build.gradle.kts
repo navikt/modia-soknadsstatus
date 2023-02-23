@@ -18,6 +18,8 @@ plugins {
 dependencies {
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")

@@ -2,7 +2,11 @@ package no.nav.modia.soknadstatus
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,20 +17,51 @@ import no.nav.modia.soknadstatus.SoknadstatusDomain.Soknadstatus
 import no.nav.modia.soknadstatus.SoknadstatusDomain.SoknadstatusOppdatering
 import no.nav.modia.soknadstatus.SoknadstatusDomain.Soknadstatuser
 import no.nav.modia.soknadstatus.pdl.PdlOppslagService
+import no.nav.personoversikt.common.ktor.utils.Security
 import no.nav.personoversikt.common.logging.Logging.secureLog
+import org.slf4j.event.Level
 
-fun Application.soknadstatusModule() {
-    val config = Configuration()
+fun Application.soknadstatusModule(
+    configuration: Configuration,
+    repository: SoknadstatusRepository,
+    useMock: Boolean
+) {
+    val security = Security(
+        listOfNotNull(
+            configuration.azuread
+        )
+    )
+
+    install(CORS) {
+        anyHost() // TODO kanskje kun whiteliste personoversikt domenene i første omgang?
+        allowMethod(HttpMethod.Get)
+    }
 
     install(BaseNaisApp)
+
+    install(Authentication) {
+        if (useMock) {
+            security.setupMock(this, "Z999999")
+        } else {
+            security.setupJWT(this)
+        }
+    }
+
+    install(CallLogging) {
+        level = Level.INFO
+        disableDefaultColors()
+        filter { call -> call.request.path().startsWith("/modia-soknadstatus/api") }
+        mdc("userId") { security.getSubject(it).joinToString(";") }
+    }
+
     install(KafkaStreamPlugin) {
-        appname = config.appname
-        brokerUrl = config.brokerUrl
+        appname = configuration.appname
+        brokerUrl = configuration.brokerUrl
         topology {
-            stream<String, String>(config.sourceTopic)
+            stream<String, String>(configuration.sourceTopic)
                 .mapValues(::deserialize)
                 .foreach { key, value ->
-                    persist(key, value, config.pdlOppslagService)
+                    persist(key, value, configuration.pdlOppslagService, repository)
                 }
         }
     }
@@ -80,17 +115,17 @@ fun deserialize(key: String?, value: String): SoknadstatusDomain.SoknadstatusInn
     }
 }
 
-fun persist(key: String?, innkommendeOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering?, pdlOppslagService: PdlOppslagService) {
+fun persist(key: String?, innkommendeOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering?, pdlOppslagService: PdlOppslagService, repository: SoknadstatusRepository) {
     if (innkommendeOppdatering != null) {
         runBlocking(Dispatchers.IO) {
             for (aktoerId in innkommendeOppdatering.aktorIder) {
-                launch { fetchIdentAndPersist(aktoerId, innkommendeOppdatering, pdlOppslagService) }
+                launch { fetchIdentAndPersist(aktoerId, innkommendeOppdatering, pdlOppslagService, repository) }
             }
         }
     }
 }
 
-fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering, pdlOppslagService: PdlOppslagService) {
+fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadstatusDomain.SoknadstatusInnkommendeOppdatering, pdlOppslagService: PdlOppslagService, repository: SoknadstatusRepository) {
     try {
         val ident = pdlOppslagService.hentFnr(aktoerId) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
         val soknadstatus = SoknadstatusOppdatering(

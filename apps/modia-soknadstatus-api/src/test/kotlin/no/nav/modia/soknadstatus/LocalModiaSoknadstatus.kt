@@ -9,5 +9,5 @@ fun main() {
     System.setProperty("JDBC_USERNAME", "admin")
     System.setProperty("JDBC_PASSWORD", "admin")
 
-    runApp(port = 9012)
+    runApp(port = 9012, useMock = true)
 }
