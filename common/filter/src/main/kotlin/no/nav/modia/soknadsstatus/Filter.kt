@@ -32,7 +32,7 @@ object Filter {
 
     private fun harPrimaerBehandling(behandling: Behandling) = behandling.primaerBehandlingREF != null
 
-    private fun harLovligBehandlingstype(behandling: Behandling) = behandling.behandlingstype.value in lovligeBehandlingstyper
+    private fun harLovligBehandlingstype(behandling: Behandling) = behandling.behandlingstype?.value in lovligeBehandlingstyper
 
     @JvmStatic
     fun filtrerBehandling(behandling: Behandling): Boolean {

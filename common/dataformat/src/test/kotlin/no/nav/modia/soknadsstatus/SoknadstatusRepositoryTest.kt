@@ -80,7 +80,7 @@ class soknadsstatusRepositoryTest {
     val ident = "12345678910"
     val dummyOppdatering = soknadsstatusDomain.soknadsstatusOppdatering(
         ident = ident,
-        behandlingsRef = "ABBA1231",
+        behandlingsId = "ABBA1231",
         systemRef = "infotrygd",
         tema = "DAG",
         status = soknadsstatusDomain.Status.UNDER_BEHANDLING,

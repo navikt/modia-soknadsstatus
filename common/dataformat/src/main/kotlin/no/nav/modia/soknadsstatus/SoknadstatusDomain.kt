@@ -13,20 +13,20 @@ object soknadsstatusDomain {
     @Serializable
     data class soknadsstatusOppdatering(
         val ident: String,
-        val behandlingsRef: String,
+        val behandlingsId: String,
         val systemRef: String,
         val tema: String,
         val status: Status,
         val tidspunkt: Instant,
     ) {
         private val systemUrl = mapOf<String, String>()
-        fun url() = "https://${systemUrl[systemRef]}/$behandlingsRef"
+        fun url() = "https://${systemUrl[systemRef]}/$behandlingsId"
     }
 
     @Serializable
     data class soknadsstatusInnkommendeOppdatering(
         val aktorIder: List<String>,
-        val behandlingsRef: String,
+        val behandlingsId: String,
         val systemRef: String,
         val tema: String,
         val status: Status,

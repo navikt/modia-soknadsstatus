@@ -10,8 +10,8 @@ sealed class Behandling {
     abstract val applikasjonBehandlingREF: String
     abstract val applikasjonSakREF: String
     abstract val behandlingsID: String
-    abstract val behandlingstema: Behandlingstema
-    abstract val behandlingstype: Behandlingstype
+    abstract val behandlingstema: Behandlingstema?
+    abstract val behandlingstype: Behandlingstype?
     abstract val hendelseType: String
     abstract val hendelsesId: String
     abstract val hendelsesTidspunkt: LocalDateTime

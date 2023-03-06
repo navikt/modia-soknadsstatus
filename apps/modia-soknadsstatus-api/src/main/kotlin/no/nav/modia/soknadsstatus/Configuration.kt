@@ -1,11 +1,13 @@
 package no.nav.modia.soknadsstatus
 
 import io.ktor.http.*
+import no.nav.modia.soknadsstatus.pdl.PdlClient
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagServiceImpl
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagServiceTestImpl
 import no.nav.personoversikt.common.ktor.utils.Security
 import no.nav.personoversikt.common.utils.EnvUtils
+import java.net.URL
 
 private val defaultValues = mapOf(
     "NAIS_CLUSTER_NAME" to "local",
@@ -38,7 +40,8 @@ data class Configuration(
 private fun createPdlOppslagService(): PdlOppslagService {
     val pdlApiUrl = EnvUtils.getConfig("PDL_API_URL")
     return if (pdlApiUrl != null) {
-        PdlOppslagServiceImpl()
+        val pdlClient = PdlClient(URL(pdlApiUrl))
+        PdlOppslagServiceImpl(pdlClient)
     } else {
         PdlOppslagServiceTestImpl()
     }

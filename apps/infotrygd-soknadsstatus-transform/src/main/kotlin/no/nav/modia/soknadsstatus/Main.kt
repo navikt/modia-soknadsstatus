@@ -53,17 +53,17 @@ fun filter(key: String?, value: Document): Boolean {
     return ETL.rootNode(value) in godkjenteDokomentTyper // TODO ?? && !ETL.behandlingsId(value).startsWith("17")
 }
 
-fun transform(key: String?, value: Document): soknadsstatusDomain.soknadsstatusOppdatering {
+fun transform(key: String?, value: Document): soknadsstatusDomain.soknadsstatusInnkommendeOppdatering {
     // TODO fix mapping
-    return soknadsstatusDomain.soknadsstatusOppdatering(
-        ident = ETL.aktoerId(value),
+    return soknadsstatusDomain.soknadsstatusInnkommendeOppdatering(
+        aktorIder = listOf(ETL.aktoerId(value)),
         tema = ETL.sakstema(value),
         status = when (ETL.status(value)) {
             "innvilget" -> soknadsstatusDomain.Status.FERDIG_BEHANDLET
             "avbrutt" -> soknadsstatusDomain.Status.AVBRUTT
             else -> soknadsstatusDomain.Status.UNDER_BEHANDLING
         },
-        behandlingsRef = ETL.behandlingsId(value),
+        behandlingsId = ETL.behandlingsId(value),
         systemRef = "infotrygd",
         tidspunkt = LocalDateTime.parse(ETL.tidspunkt(value)).toInstant(TimeZone.currentSystemDefault())
     )

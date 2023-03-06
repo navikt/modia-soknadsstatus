@@ -51,11 +51,11 @@ fun filter(key: String?, value: IntermediateFormat): Boolean {
 
 fun transform(key: String?, value: IntermediateFormat): soknadsstatusDomain.soknadsstatusInnkommendeOppdatering {
     // TODO fix mapping
-    return soknadsstatusDomain.soknadsstatusOppdatering(
-        ident = "123",
+    return soknadsstatusDomain.soknadsstatusInnkommendeOppdatering(
+        aktorIder = listOf("123"),
         tema = "DAG",
         status = soknadsstatusDomain.Status.UNDER_BEHANDLING,
-        behandlingsRef = "",
+        behandlingsId = "",
         systemRef = "arena",
         tidspunkt = Clock.System.now()
     )

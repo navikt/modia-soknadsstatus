@@ -11,7 +11,7 @@ class soknadsstatusRepository(private val dataSource: DataSource) {
     private object Tabell {
         override fun toString(): String = "soknadsstatus"
         val ident = "ident"
-        val behandlingsRef = "behandlingsRef"
+        val behandlingsId = "behandlingsId"
         val systemRef = "systemRef"
         val tema = "tema"
         val status = "status"
@@ -23,7 +23,7 @@ class soknadsstatusRepository(private val dataSource: DataSource) {
             rows.map {
                 soknadsstatusDomain.soknadsstatusOppdatering(
                     ident = it.rs.getString(Tabell.ident),
-                    behandlingsRef = it.rs.getString(Tabell.behandlingsRef),
+                    behandlingsId = it.rs.getString(Tabell.behandlingsId),
                     systemRef = it.rs.getString(Tabell.systemRef),
                     tema = it.rs.getString(Tabell.tema),
                     status = soknadsstatusDomain.Status.valueOf(it.rs.getString(Tabell.status)),
@@ -39,11 +39,11 @@ class soknadsstatusRepository(private val dataSource: DataSource) {
             """
             INSERT INTO $Tabell
             VALUES (?, ?, ?, ?, ?::statusenum, ?)
-            ON CONFLICT (${Tabell.ident}, ${Tabell.behandlingsRef}) DO
+            ON CONFLICT (${Tabell.ident}, ${Tabell.behandlingsId}) DO
             UPDATE SET ${Tabell.status} = ?::statusenum, ${Tabell.tidspunkt} = ? WHERE $Tabell.${Tabell.tidspunkt} < ?
             """.trimIndent(),
             status.ident,
-            status.behandlingsRef,
+            status.behandlingsId,
             status.systemRef,
             status.tema,
             status.status.name,

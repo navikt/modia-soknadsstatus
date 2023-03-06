@@ -130,7 +130,7 @@ fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: soknadsstatus
         val ident = pdlOppslagService.hentFnr(aktoerId) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
         val soknadsstatus = soknadsstatusOppdatering(
             ident = ident,
-            behandlingsRef = innkommendeOppdatering.behandlingsRef,
+            behandlingsId = innkommendeOppdatering.behandlingsId,
             systemRef = innkommendeOppdatering.systemRef,
             tema = innkommendeOppdatering.tema,
             status = innkommendeOppdatering.status,

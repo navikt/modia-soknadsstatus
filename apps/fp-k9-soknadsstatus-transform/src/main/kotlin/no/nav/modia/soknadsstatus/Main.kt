@@ -69,7 +69,7 @@ fun transform(key: String?, value: Behandling?): soknadsstatusDomain.soknadsstat
     return soknadsstatusDomain.soknadsstatusInnkommendeOppdatering(
         aktorIder = behandling.aktoerREF.map { it.aktoerId },
         tema = behandling.sakstema.value,
-        behandlingsRef = behandling.primaerBehandlingREF!!.behandlingsREF,
+        behandlingsId = behandling.behandlingsID,
         systemRef = behandling.applikasjonSakREF,
         status = behandlingsStatus(behandling)!!,
         tidspunkt = behandling.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault())
