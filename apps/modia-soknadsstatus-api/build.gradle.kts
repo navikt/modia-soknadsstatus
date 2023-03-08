@@ -12,6 +12,7 @@ val logback_version: String by project
 val junit_version: String by project
 val postgres_version: String by project
 val graphql_version: String by project
+val nav_token_client_version: String by project
 
 plugins {
     application
@@ -25,6 +26,8 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
@@ -39,7 +42,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("com.expediagroup:graphql-kotlin-client:$graphql_version")
+    implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_version")
     implementation("no.nav.common:sts:2.2023.01.10_13.49-81ddc732df3a")
+    implementation("no.nav.common:token-client:$nav_token_client_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
