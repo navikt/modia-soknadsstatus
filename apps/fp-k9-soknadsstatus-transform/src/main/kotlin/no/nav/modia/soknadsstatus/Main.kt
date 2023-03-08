@@ -81,7 +81,7 @@ private fun behandlingsStatus(behandling: Behandling): soknadsstatusDomain.Statu
         return soknadsstatusDomain.Status.UNDER_BEHANDLING
     } else if (behandling is BehandlingAvsluttet) {
         return when (behandling.avslutningsstatus.value) {
-            "avsluttet" -> soknadsstatusDomain.Status.FERDIG_BEHANDLET
+            "avsluttet", "ok" -> soknadsstatusDomain.Status.FERDIG_BEHANDLET
             "avbrutt" -> soknadsstatusDomain.Status.AVBRUTT
             else -> {
                 secureLog.error("Ukjent behandlingsstatus mottatt: ${behandling.avslutningsstatus.value}")
