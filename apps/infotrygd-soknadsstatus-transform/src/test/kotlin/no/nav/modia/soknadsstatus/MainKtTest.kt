@@ -1,37 +1,77 @@
 package no.nav.modia.soknadsstatus
 
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class MainTest {
     @Language("xml")
-    val xml = """
-        <ns2:behandlingOpprettetOgAvsluttet xmlns:ns2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
-            <hendelsesId>5460</hendelsesId>
-            <hendelsesprodusentRef>IT01</hendelsesprodusentRef>
-            <hendelsesTidspunkt>2015-12-08T00:00:00.000</hendelsesTidspunkt>
-            <behandlingsID>17100047L</behandlingsID>
-            <behandlingstype>ae0019</behandlingstype>
-            <sakstema>SYK</sakstema>
-            <aktoerREF>
-                <aktoerId>10000098546164</aktoerId>
-            </aktoerREF>
-            <ansvarligEnhetRF>1202</ansvarligEnhetRF>
-            <applikasjonsSakREF>A1231311231-102-20</applikasjonsSakREF>
-            <avslutningsstatus>innvilget</avslutningsstatus>
-            <opprettelsesTidspunkt>2015-07-03T00:00:00.000</opprettelsesTidspunkt>
-        </ns2:behandlingOpprettetOgAvsluttet>
+    val behandlingOpprettet = """
+        <v2:behandlingOpprettet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
+            <hendelsesId>HEN-1</hendelsesId>
+            <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">HEN-1</hendelsesprodusentREF>
+            <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
+            <behandlingsID>BEH-1</behandlingsID>
+            <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">BEHT-1</behandlingstype>
+            <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">TEMA-1</sakstema>
+            <aktoerREF><aktoerId>AKTOR-1</aktoerId></aktoerREF>
+            <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
+            <applikasjonBehandlingREF>test</applikasjonBehandlingREF>
+            </v2:behandlingOpprettet>
     """.trimIndent()
 
+    val behandlingAvsluttet = """
+        <v2:behandlingAvsluttet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
+            <hendelsesId>HEN-1</hendelsesId>
+            <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">HEN-1</hendelsesprodusentREF>
+            <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
+            <behandlingsID>BEH-1</behandlingsID>
+            <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">BEHT-1</behandlingstype>
+            <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">TEMA-1</sakstema>
+            <aktoerREF><aktoerId>AKTOR-1</aktoerId></aktoerREF>
+            <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
+            <applikasjonBehandlingREF>test</applikasjonBehandlingREF>
+            <avslutningsstatus kodeverksRef="http://nav.no/kodeverk/Kodeverk/Avslutningsstatuser">AVSLUTTET</avslutningsstatus>
+            </v2:behandlingAvsluttet>
+    """.trimIndent()
+
+    val behandlingOpprettetOgAvsluttetXml = """
+        <v2:behandlingOpprettetOgAvsluttet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
+            <hendelsesId>HEN-1</hendelsesId>
+            <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">HEN-1</hendelsesprodusentREF>
+            <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
+            <behandlingsID>BEH-1</behandlingsID>
+            <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">BEHT-1</behandlingstype>
+            <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">TEMA-1</sakstema>
+            <aktoerREF><aktoerId>AKTOR-1</aktoerId></aktoerREF>
+            <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
+            <applikasjonBehandlingREF>test</applikasjonBehandlingREF>
+            <avslutningsstatus kodeverksRef="http://nav.no/kodeverk/Kodeverk/Avslutningsstatuser">AVSLUTTET</avslutningsstatus>
+            <opprettelsesTidspunkt>2004-02-24T12:14:05</opprettelsesTidspunkt>
+            </v2:behandlingOpprettetOgAvsluttet>
+    """.trimIndent()
     @Test
-    fun `should be able to get type`() {
-        val document = deserialize(null, xml)
-        val root = ETL.rootNode(document)
+    fun `should be able to get behandlingOpprettet sokand`() {
+        val behandling = mapXmlMessageToHendelse(null, behandlingOpprettet)
 
-        println(root)
+        val oppdatering = transform(null, behandling)
 
-        val oppdatering = transform(null, document)
+        println(oppdatering)
+    }
+
+    @Test
+    fun `should be able to get behandlingAvsluttet sokand`() {
+        val behandling = mapXmlMessageToHendelse(null, behandlingAvsluttet)
+
+        val oppdatering = transform(null, behandling)
+
+        println(oppdatering)
+    }
+
+    @Test
+    fun `should be able to get behandlingOpprettetOgAvsluttetXml sokand `() {
+        val behandling = mapXmlMessageToHendelse(null, behandlingOpprettetOgAvsluttetXml)
+
+        val oppdatering = transform(null, behandling)
 
         println(oppdatering)
     }

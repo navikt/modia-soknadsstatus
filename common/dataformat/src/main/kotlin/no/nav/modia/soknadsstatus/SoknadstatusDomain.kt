@@ -2,7 +2,7 @@ package no.nav.modia.soknadsstatus
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-object soknadsstatusDomain {
+object SoknadsstatusDomain {
     @Serializable
     enum class Status {
         UNDER_BEHANDLING,
@@ -11,7 +11,7 @@ object soknadsstatusDomain {
     }
 
     @Serializable
-    data class soknadsstatusOppdatering(
+    data class SoknadsstatusOppdatering(
         val ident: String,
         val behandlingsId: String,
         val systemRef: String,
@@ -24,7 +24,7 @@ object soknadsstatusDomain {
     }
 
     @Serializable
-    data class soknadsstatusInnkommendeOppdatering(
+    data class SoknadsstatusInnkommendeOppdatering(
         val aktorIder: List<String>,
         val behandlingsId: String,
         val systemRef: String,
@@ -34,13 +34,13 @@ object soknadsstatusDomain {
     )
 
     @Serializable
-    data class soknadsstatuser(
+    data class Soknadsstatuser(
         val ident: String,
-        val tema: Map<String, soknadsstatus>
+        val tema: Map<String, Soknadsstatus>
     )
 
     @Serializable
-    data class soknadsstatus(
+    data class Soknadsstatus(
         var underBehandling: Int = 0,
         var ferdigBehandlet: Int = 0,
         var avbrutt: Int = 0,

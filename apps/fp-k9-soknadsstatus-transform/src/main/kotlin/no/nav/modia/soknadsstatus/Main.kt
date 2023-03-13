@@ -63,10 +63,10 @@ fun decodeDtoContract(key: String?, value: String): Behandling? {
     }
 }
 
-fun transform(key: String?, value: Behandling?): soknadsstatusDomain.soknadsstatusInnkommendeOppdatering {
+fun transform(key: String?, value: Behandling?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
     val behandling = value!!
 
-    return soknadsstatusDomain.soknadsstatusInnkommendeOppdatering(
+    return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
         aktorIder = behandling.aktoerREF.map { it.aktoerId },
         tema = behandling.sakstema.value,
         behandlingsId = behandling.behandlingsID,
@@ -76,13 +76,13 @@ fun transform(key: String?, value: Behandling?): soknadsstatusDomain.soknadsstat
     )
 }
 
-private fun behandlingsStatus(behandling: Behandling): soknadsstatusDomain.Status? {
+private fun behandlingsStatus(behandling: Behandling): SoknadsstatusDomain.Status? {
     if (behandling is BehandlingOpprettet) {
-        return soknadsstatusDomain.Status.UNDER_BEHANDLING
+        return SoknadsstatusDomain.Status.UNDER_BEHANDLING
     } else if (behandling is BehandlingAvsluttet) {
-        return when (behandling.avslutningsstatus.value) {
-            "avsluttet", "ok" -> soknadsstatusDomain.Status.FERDIG_BEHANDLET
-            "avbrutt" -> soknadsstatusDomain.Status.AVBRUTT
+        return when (behandling.avslutningsstatus.value.lowercase()) {
+            "avsluttet", "ok" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
+            "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
             else -> {
                 secureLog.error("Ukjent behandlingsstatus mottatt: ${behandling.avslutningsstatus.value}")
                 null

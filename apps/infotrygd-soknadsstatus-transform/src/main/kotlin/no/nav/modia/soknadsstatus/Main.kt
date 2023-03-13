@@ -1,12 +1,14 @@
 package no.nav.modia.soknadsstatus
 
+import Filter
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
-import kotlinx.datetime.*
+import kotlinx.datetime.toKotlinInstant
+import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
+import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.personoversikt.common.ktor.utils.KtorServer
+import no.nav.personoversikt.common.logging.Logging.secureLog
 import no.nav.personoversikt.common.utils.EnvUtils
-import org.w3c.dom.Document
-import javax.xml.parsers.DocumentBuilderFactory
 
 fun main() {
     runApp()
@@ -34,7 +36,7 @@ fun runApp(port: Int = 8080) {
                 targetTopic = config.targetTopic
                 configure { stream ->
                     stream
-                        .mapValues(::deserialize)
+                        .mapValues(::mapXmlMessageToHendelse)
                         .filter(::filter)
                         .mapValues(::transform)
                 }
@@ -43,28 +45,48 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-private val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-fun deserialize(key: String?, value: String): Document {
-    return documentBuilder.parse(value.byteInputStream())
+fun mapXmlMessageToHendelse(key: String?, value: String): Hendelse {
+    return XMLConverter.fromXml(value)
 }
 
-val godkjenteDokomentTyper = arrayOf("behandlingOpprettetOgAvsluttet")
-fun filter(key: String?, value: Document): Boolean {
-    return ETL.rootNode(value) in godkjenteDokomentTyper // TODO ?? && !ETL.behandlingsId(value).startsWith("17")
+fun filter(key: String?, value: Hendelse): Boolean {
+    behandlingsStatus(value) ?: return false
+
+    return Filter.filtrerBehandling(value as Behandling)
 }
 
-fun transform(key: String?, value: Document): soknadsstatusDomain.soknadsstatusInnkommendeOppdatering {
-    // TODO fix mapping
-    return soknadsstatusDomain.soknadsstatusInnkommendeOppdatering(
-        aktorIder = listOf(ETL.aktoerId(value)),
-        tema = ETL.sakstema(value),
-        status = when (ETL.status(value)) {
-            "innvilget" -> soknadsstatusDomain.Status.FERDIG_BEHANDLET
-            "avbrutt" -> soknadsstatusDomain.Status.AVBRUTT
-            else -> soknadsstatusDomain.Status.UNDER_BEHANDLING
-        },
-        behandlingsId = ETL.behandlingsId(value),
-        systemRef = "infotrygd",
-        tidspunkt = LocalDateTime.parse(ETL.tidspunkt(value)).toInstant(TimeZone.currentSystemDefault())
+fun transform(key: String?, value: Hendelse?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
+    checkNotNull(value)
+    val behandlingStatus = value as BehandlingStatus
+    return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
+        aktorIder = behandlingStatus.aktoerREF.map { it.aktoerId },
+        tema = behandlingStatus.sakstema.value,
+        behandlingsId = behandlingStatus.behandlingsID,
+        systemRef = behandlingStatus.hendelsesprodusentREF.value,
+        status = behandlingsStatus(behandlingStatus)!!,
+        tidspunkt = behandlingStatus.hendelsesTidspunkt.toGregorianCalendar().toInstant().toKotlinInstant()
     )
+}
+
+private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {
+    return when (hendelse) {
+        is BehandlingOpprettet -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
+        is BehandlingOpprettetOgAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
+        is BehandlingAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
+        else -> {
+            secureLog.error("Ukjent Hendelse mottatt: $hendelse")
+            null
+        }
+    }
+}
+
+private fun behandlingAvsluttetStatus(avslutningsstatus: Avslutningsstatuser): SoknadsstatusDomain.Status? {
+    return when (avslutningsstatus.value.lowercase()) {
+        "avsluttet", "ok" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
+        "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
+        else -> {
+            secureLog.error("Ukjent behandlingsstatus mottatt: ${avslutningsstatus.value}")
+            null
+        }
+    }
 }
