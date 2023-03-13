@@ -50,14 +50,14 @@ class soknadsstatusRepositoryTest {
         repository.upsert(dummyOppdatering)
         repository.upsert(
             dummyOppdatering.copy(
-                status = soknadsstatusDomain.Status.FERDIG_BEHANDLET,
+                status = SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
                 tidspunkt = Clock.System.now()
             )
         )
 
         assertSuccess(repository.get(ident)) { oppdateringer ->
             assertEquals(1, oppdateringer.size)
-            assertEquals(soknadsstatusDomain.Status.FERDIG_BEHANDLET, oppdateringer.first().status)
+            assertEquals(SoknadsstatusDomain.Status.FERDIG_BEHANDLET, oppdateringer.first().status)
         }
     }
 
@@ -66,24 +66,24 @@ class soknadsstatusRepositoryTest {
         repository.upsert(dummyOppdatering)
         repository.upsert(
             dummyOppdatering.copy(
-                status = soknadsstatusDomain.Status.FERDIG_BEHANDLET,
+                status = SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
                 tidspunkt = Clock.System.now().minus(1.minutes)
             )
         )
 
         assertSuccess(repository.get(ident)) { oppdateringer ->
             assertEquals(1, oppdateringer.size)
-            assertEquals(soknadsstatusDomain.Status.UNDER_BEHANDLING, oppdateringer.first().status)
+            assertEquals(SoknadsstatusDomain.Status.UNDER_BEHANDLING, oppdateringer.first().status)
         }
     }
 
     val ident = "12345678910"
-    val dummyOppdatering = soknadsstatusDomain.soknadsstatusOppdatering(
+    val dummyOppdatering = SoknadsstatusDomain.SoknadsstatusOppdatering(
         ident = ident,
         behandlingsId = "ABBA1231",
         systemRef = "infotrygd",
         tema = "DAG",
-        status = soknadsstatusDomain.Status.UNDER_BEHANDLING,
+        status = SoknadsstatusDomain.Status.UNDER_BEHANDLING,
         tidspunkt = Clock.System.now()
     )
 

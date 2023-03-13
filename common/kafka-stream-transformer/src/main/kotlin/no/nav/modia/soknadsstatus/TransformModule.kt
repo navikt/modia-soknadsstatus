@@ -8,9 +8,9 @@ import org.apache.kafka.streams.kstream.KStream
 class KafkaStreamTransformConfig {
     var appname: String? = null
     var brokerUrl: String? = null
-    var configure: ((KStream<String, String>) -> KStream<String, soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?>)? = null
+    var configure: ((KStream<String, String>) -> KStream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?>)? = null
 
-    fun configure(fn: (KStream<String, String>) -> KStream<String, soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?>) {
+    fun configure(fn: (KStream<String, String>) -> KStream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?>) {
         this.configure = fn
     }
 
@@ -41,6 +41,6 @@ val KafkaStreamTransformPlugin = createApplicationPlugin("kafka-stream-transform
     }
 }
 
-private fun serialize(key: String?, value: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?): String {
+private fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?): String {
     return Json.encodeToString(value)
 }

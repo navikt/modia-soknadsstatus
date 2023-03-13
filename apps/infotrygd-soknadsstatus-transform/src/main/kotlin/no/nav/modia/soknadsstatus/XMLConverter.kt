@@ -1,0 +1,104 @@
+package no.nav.modia.soknadsstatus
+
+import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
+import org.xml.sax.SAXException
+import java.io.IOException
+import java.io.StringReader
+import java.net.URL
+import javax.xml.XMLConstants
+import javax.xml.bind.DataBindingException
+import javax.xml.bind.JAXB
+import javax.xml.transform.Source
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
+import javax.xml.validation.Validator
+
+object XMLConverter {
+    private const val SCHEMA_FIL_STATUS = "xsd/hendelseshandtererBehandlingsstatus.xsd"
+
+    fun fromXml(message: String): Hendelse {
+        return validateAndConvertFromXML(message)
+    }
+
+    fun validateAndConvertFromXML(message: String): Hendelse {
+        validateXML(message)
+        return convertFromXML(message)
+    }
+
+    private fun convertFromXML(message: String): Hendelse {
+        try {
+            StringReader(message).use { reader ->
+                val rootElementName = extractRootElementName(message)
+                return when (rootElementName) {
+                    "behandlingsstegstatus" -> JAXB.unmarshal(
+                        reader,
+                        Behandlingsstegstatus::class.java
+                    )
+
+                    "behandlingOpprettet" -> JAXB.unmarshal(
+                        reader,
+                        BehandlingOpprettet::class.java
+                    )
+
+                    "behandlingAvsluttet" -> JAXB.unmarshal(
+                        reader,
+                        BehandlingAvsluttet::class.java
+                    )
+
+                    "behandlingOpprettetOgAvsluttet" -> JAXB.unmarshal(
+                        reader,
+                        BehandlingOpprettetOgAvsluttet::class.java
+                    )
+
+                    else -> {
+                        throw RuntimeException("Meldingen inneholder en ukjent meldingstype: $rootElementName")
+                    }
+                }
+            }
+        } catch (dbEx: DataBindingException) {
+            throw RuntimeException("Meldingen inneholder ikke XML som er gyldig i henhold til XSD-en", dbEx)
+        }
+    }
+
+    private fun validateXML(inputXml: String) {
+        try {
+            StringReader(inputXml).use { inputXmlReader ->
+                val validator =
+                    createValidator(SCHEMA_FIL_STATUS)
+                validator.validate(toSource(inputXmlReader))
+            }
+        } catch (saxe: SAXException) {
+            throw RuntimeException("Melding validerte ikke mot " + SCHEMA_FIL_STATUS, saxe)
+        } catch (ioe: IOException) {
+            throw RuntimeException("IO-feil ved validering av xml.", ioe)
+        }
+    }
+
+    private fun createValidator(schemaFile: String): Validator {
+        val sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        val schema = sf.newSchema(toUrl(schemaFile))
+        return schema.newValidator()
+    }
+
+    private fun toUrl(schemaFile: String): URL? {
+        val classLoader = Thread.currentThread().contextClassLoader
+        return classLoader.getResource(schemaFile)
+    }
+
+    private fun toSource(inputXml: StringReader): Source {
+        return StreamSource(inputXml)
+    }
+
+    private fun extractRootElementName(receivedMessageText: String): String {
+        val closingTagStart = receivedMessageText.lastIndexOf("</")
+        if (closingTagStart < 0) {
+            throw RuntimeException("Meldingen inneholder ikke velformet XML.")
+        }
+        val closingTagEnd = receivedMessageText.indexOf('>', closingTagStart)
+        if (closingTagEnd < 0) {
+            throw RuntimeException("Meldingen inneholder ikke velformet XML.")
+        }
+        return receivedMessageText.substring(closingTagStart + 2, closingTagEnd).trim { it <= ' ' }
+            .replace(".+:{1}".toRegex(), "")
+    }
+}

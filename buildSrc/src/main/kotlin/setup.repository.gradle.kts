@@ -6,6 +6,10 @@ repositories {
             name = "external-mirror-github-navikt"
             url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
         }
+        maven {
+            name = "external-mirror-github-navikt"
+            url = uri("https://repo.adeo.no/repository/maven-public/")
+        }
     } else {
         maven {
             name = "github-package-registry-navikt"
