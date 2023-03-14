@@ -8,7 +8,7 @@ class Configuration(
     val brokerUrl: String = "localhost:9092",
     val soknadsstatusTopic: String = "modia-soknadsstatus",
     val sources: List<Source> = listOf(
-        Source(name = "Infotrygd/Arena", type = Source.Type.JMS, resourceId = "infotrygd-soknadsstatus", exampleFile = "$examples/infotrygd.xml"),
+        Source(name = "Infotrygd/Arena", type = Source.Type.JMS, resourceId = "arena-infotrygd-soknadsstatus", exampleFile = "$examples/infotrygd.xml"),
         Source(name = "Foreldrepenger/Pleiepenger", type = Source.Type.KAFKA, resourceId = "aapen-sob-oppgaveHendelse-v1", exampleFile = "$examples/pf-k9.json"),
     ),
     val handlers: Map<Source.Type, PostHandler> = mapOf(
