@@ -7,7 +7,7 @@ repositories {
             url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
         }
         maven {
-            name = "external-mirror-github-navikt"
+            name = "adeo-maven-public"
             url = uri("https://repo.adeo.no/repository/maven-public/")
         }
     } else {

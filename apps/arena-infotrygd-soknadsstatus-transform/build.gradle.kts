@@ -19,9 +19,15 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
+    implementation("no.nav.personoversikt:logging:$modia_common_version")
     implementation(project(":common:ktor"))
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
+    implementation(project(":common:filter"))
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
+
+    implementation("no.nav.meldinger.virksomhet:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:1.1.0:jaxb@jar")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
@@ -51,7 +57,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     archiveBaseName.set("app")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     manifest {
-        attributes["Implementation-Title"] = "Arena Søknadstatus Transformer"
+        attributes["Implementation-Title"] = "Arena og Infotrygd Søknadstatus Transformer"
         attributes["Implementation-Version"] = archiveVersion
         attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
     }

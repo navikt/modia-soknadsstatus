@@ -96,7 +96,7 @@ services:
       JMS_PASSWORD: ""
   infotrygd-transform:
     build:
-      context: apps/infotrygd-soknadsstatus-transform
+      context: apps/arena-infotrygd-soknadsstatus-transform
     ports:
       - "9010:8080"
     depends_on:
@@ -109,7 +109,7 @@ services:
       KAFKA_BROKER_URL: "redpanda:29092"
   arena-transform:
     build:
-      context: apps/arena-soknadsstatus-transform
+      context: apps/arena-infotrygd-soknadsstatus-transform
     ports:
       - "9011:8080"
     depends_on:
