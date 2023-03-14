@@ -90,7 +90,7 @@ fun Application.soknadsstatusModule(
     }
 }
 
-fun deserialize(key: String?, value: String): soknadsstatusDomain.soknadsstatusInnkommendeOppdatering? {
+fun deserialize(key: String?, value: String): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering? {
     return try {
         Json.decodeFromString(value)
     } catch (e: Exception) {

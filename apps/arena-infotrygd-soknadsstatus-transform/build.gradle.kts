@@ -27,7 +27,7 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
 
-    implementation("no.nav.meldinger.virksomhet:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:1.1.0:jaxb@jar")
+    implementation("no.nav.meldinger.virksomhet:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:1.1.0:jaxb")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
