@@ -10,6 +10,9 @@ repositories {
             name = "adeo-maven-public"
             url = uri("https://repo.adeo.no/repository/maven-public/")
         }
+        maven {
+            url = uri("https://repo.adeo.no/repository/maven-snapshots/")
+        }
     } else {
         maven {
             name = "github-package-registry-navikt"
@@ -19,5 +22,8 @@ repositories {
                 password = githubToken
             }
         }
+    }
+    maven {
+        url = uri("https://repo.adeo.no/repository/maven-snapshots/")
     }
 }
