@@ -6,13 +6,7 @@ repositories {
             name = "external-mirror-github-navikt"
             url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
         }
-        maven {
-            name = "adeo-maven-public"
-            url = uri("https://repo.adeo.no/repository/maven-public/")
-        }
-        maven {
-            url = uri("https://repo.adeo.no/repository/maven-snapshots/")
-        }
+        maven { url= uri("https://jitpack.io") }
     } else {
         maven {
             name = "github-package-registry-navikt"
@@ -22,8 +16,6 @@ repositories {
                 password = githubToken
             }
         }
-    }
-    maven {
-        url = uri("https://repo.adeo.no/repository/maven-snapshots/")
+        maven { url= uri("https://jitpack.io") }
     }
 }

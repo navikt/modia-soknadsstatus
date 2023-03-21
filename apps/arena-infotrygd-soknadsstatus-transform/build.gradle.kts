@@ -6,6 +6,9 @@ val kotlinx_datetime_version: String by project
 val modia_common_version: String by project
 val logback_version: String by project
 val junit_version: String by project
+val meldingsdefinisjon_version: String by project
+val glassfish_jaxb_runtime_version: String by project
+val javax_jaxb_api_version: String by project
 
 plugins {
     application
@@ -24,10 +27,10 @@ dependencies {
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:filter"))
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
+    implementation("javax.xml.bind:jaxb-api:$javax_jaxb_api_version")
+    implementation("org.glassfish.jaxb:jaxb-runtime:$glassfish_jaxb_runtime_version")
 
-    implementation("no.nav.meldinger.virksomhet:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:1.1.0:jaxb")
+    implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
