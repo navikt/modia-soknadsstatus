@@ -8,7 +8,7 @@ val logback_version: String by project
 val junit_version: String by project
 val meldingsdefinisjon_version: String by project
 val glassfish_jaxb_runtime_version: String by project
-val javax_jaxb_api_version: String by project
+val jakarta_xml_bind_version: String by project
 
 plugins {
     application
@@ -27,7 +27,7 @@ dependencies {
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:filter"))
-    implementation("javax.xml.bind:jaxb-api:$javax_jaxb_api_version")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakarta_xml_bind_version")
     implementation("org.glassfish.jaxb:jaxb-runtime:$glassfish_jaxb_runtime_version")
 
     implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")

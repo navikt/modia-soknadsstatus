@@ -49,6 +49,7 @@ class MainTest {
             <opprettelsesTidspunkt>2004-02-24T12:14:05</opprettelsesTidspunkt>
             </v2:behandlingOpprettetOgAvsluttet>
     """.trimIndent()
+
     @Test
     fun `should be able to get behandlingOpprettet sokand`() {
         val behandling = mapXmlMessageToHendelse(null, behandlingOpprettet)

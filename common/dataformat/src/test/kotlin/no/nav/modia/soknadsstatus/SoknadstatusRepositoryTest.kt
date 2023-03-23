@@ -1,20 +1,9 @@
 package no.nav.modia.soknadsstatus
 
-import kotlinx.datetime.Clock
-import org.flywaydb.core.Flyway
-import org.junit.Ignore
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.postgresql.ds.PGSimpleDataSource
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import javax.sql.DataSource
-import kotlin.time.Duration.Companion.minutes
 
 @Testcontainers
-class soknadsstatusRepositoryTest {
+class SoknadstatusRepositoryTest {
  /*   @Container
     val container = PostgreSQLContainer("postgres:14-alpine")
 

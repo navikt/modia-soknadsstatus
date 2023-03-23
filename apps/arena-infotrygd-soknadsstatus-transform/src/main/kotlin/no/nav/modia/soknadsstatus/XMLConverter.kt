@@ -2,9 +2,9 @@ package no.nav.modia.soknadsstatus
 
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
 import org.xml.sax.SAXException
+import java.io.File
 import java.io.IOException
 import java.io.StringReader
-import java.net.URL
 import javax.xml.XMLConstants
 import javax.xml.bind.DataBindingException
 import javax.xml.bind.JAXB
@@ -14,7 +14,7 @@ import javax.xml.validation.SchemaFactory
 import javax.xml.validation.Validator
 
 object XMLConverter {
-    private const val SCHEMA_FIL_STATUS = "xsd/hendelseshandtererBehandlingsstatus.xsd"
+    private const val SCHEMA_FIL_STATUS = "hendelseshandtererBehandlingsstatus.xsd"
 
     fun fromXml(message: String): Hendelse {
         return validateAndConvertFromXML(message)
@@ -74,15 +74,14 @@ object XMLConverter {
         }
     }
 
-    private fun createValidator(schemaFile: String): Validator {
-        val sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-        val schema = sf.newSchema(toUrl(schemaFile))
+    private fun createValidator(xsdPath: String): Validator {
+        val schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        val schemaFile = StreamSource(getFile(xsdPath))
+        val schema = schemaFactory.newSchema(schemaFile)
         return schema.newValidator()
     }
-
-    private fun toUrl(schemaFile: String): URL? {
-        val classLoader = Thread.currentThread().contextClassLoader
-        return classLoader.getResource(schemaFile)
+    private fun getFile(location: String): File {
+        return File(javaClass.classLoader.getResource(location)?.file ?: "")
     }
 
     private fun toSource(inputXml: StringReader): Source {

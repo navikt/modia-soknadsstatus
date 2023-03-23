@@ -5,6 +5,8 @@ class PdlOppslagServiceTestImpl : PdlOppslagService {
         val chance = Math.random()
         return if (chance > 0.2) {
             return aktorId
-        } else null
+        } else {
+            null
+        }
     }
 }
