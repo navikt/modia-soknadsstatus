@@ -13,6 +13,7 @@ val jakarta_xml_bind_version: String by project
 plugins {
     application
     id("setup.repository")
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.serialization") version "1.7.21"
 }
