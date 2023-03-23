@@ -8,13 +8,13 @@ import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.logging.Logging
 
 interface SoknadsstatusService {
-    fun fetchIdentsAndPersist(innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?, token: String)
-    fun fetchAggregatedDataForIdent(ident: String): Result<soknadsstatusDomain.soknadsstatuser>
-    fun fetchDataForIdent(ident: String): Result<List<soknadsstatusDomain.soknadsstatusOppdatering>>
+    fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?, token: String)
+    fun fetchAggregatedDataForIdent(ident: String): Result<SoknadsstatusDomain.Soknadsstatuser>
+    fun fetchDataForIdent(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>>
 }
 
 class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService, private val repository: soknadsstatusRepository) : SoknadsstatusService {
-    override fun fetchIdentsAndPersist(innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?, token: String) {
+    override fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?, token: String) {
         if (innkommendeOppdatering != null) {
             runBlocking(Dispatchers.IO) {
                 for (aktoerId in innkommendeOppdatering.aktorIder) {
@@ -24,31 +24,31 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
         }
     }
 
-    override fun fetchAggregatedDataForIdent(ident: String): Result<soknadsstatusDomain.soknadsstatuser> {
+    override fun fetchAggregatedDataForIdent(ident: String): Result<SoknadsstatusDomain.Soknadsstatuser> {
         return repository.get(ident)
             .map { oppdateringer ->
-                val temamap = mutableMapOf<String, soknadsstatusDomain.soknadsstatus>()
+                val temamap = mutableMapOf<String, SoknadsstatusDomain.Soknadsstatus>()
                 for (oppdatering in oppdateringer) {
-                    val temastatus = temamap[oppdatering.tema] ?: soknadsstatusDomain.soknadsstatus()
+                    val temastatus = temamap[oppdatering.tema] ?: SoknadsstatusDomain.Soknadsstatus()
                     when (oppdatering.status) {
-                        soknadsstatusDomain.Status.UNDER_BEHANDLING -> temastatus.underBehandling++
-                        soknadsstatusDomain.Status.FERDIG_BEHANDLET -> temastatus.ferdigBehandlet++
-                        soknadsstatusDomain.Status.AVBRUTT -> temastatus.avbrutt++
+                        SoknadsstatusDomain.Status.UNDER_BEHANDLING -> temastatus.underBehandling++
+                        SoknadsstatusDomain.Status.FERDIG_BEHANDLET -> temastatus.ferdigBehandlet++
+                        SoknadsstatusDomain.Status.AVBRUTT -> temastatus.avbrutt++
                     }
                     temamap[oppdatering.tema] = temastatus
                 }
-                soknadsstatusDomain.soknadsstatuser(ident = ident, tema = temamap)
+                SoknadsstatusDomain.Soknadsstatuser(ident = ident, tema = temamap)
             }
     }
 
-    override fun fetchDataForIdent(ident: String): Result<List<soknadsstatusDomain.soknadsstatusOppdatering>> {
+    override fun fetchDataForIdent(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
         return repository.get(ident)
     }
 
-    private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering, token: String) {
+    private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering, token: String) {
         try {
             val ident = pdlOppslagService.hentFnr(aktoerId, token) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
-            val soknadsstatus = soknadsstatusDomain.soknadsstatusOppdatering(
+            val soknadsstatus = SoknadsstatusDomain.SoknadsstatusOppdatering(
                 ident = ident,
                 behandlingsId = innkommendeOppdatering.behandlingsId,
                 systemRef = innkommendeOppdatering.systemRef,

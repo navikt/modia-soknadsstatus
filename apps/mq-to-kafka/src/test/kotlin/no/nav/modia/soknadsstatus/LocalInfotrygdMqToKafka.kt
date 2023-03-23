@@ -8,10 +8,10 @@ fun main() {
     System.setProperty("APP_NAME", "infotrygd-mq-to-kafka")
     System.setProperty("APP_VERSION", "dev")
 
-    System.setProperty("KAFKA_TOPIC", "infotrygd-soknadsstatus")
+    System.setProperty("KAFKA_TOPIC", "arena-infotrygd-soknadsstatus")
     System.setProperty("KAFKA_BROKER_URL", "localhost:9092")
 
-    System.setProperty("JMS_QUEUE", "infotrygd-soknadsstatus")
+    System.setProperty("JMS_QUEUE", "arena-infotrygd-soknadsstatus")
     System.setProperty("JMS_HOST", "localhost")
     System.setProperty("JMS_PORT", "61616")
     System.setProperty("JMS_QUEUEMANAGER", "")

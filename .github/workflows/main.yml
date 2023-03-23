@@ -1,0 +1,54 @@
+name: Build, push, and deploy
+
+on: [push]
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}/modia-soknadstatus:${{ github.sha }}
+  CI: true
+  TZ: Europe/Oslo
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'gradle'
+      - name: Install ktlint
+        uses: nbadal/action-ktlint-setup@v1
+        with:
+          ktlint_version: '0.47.1'
+      - name: Ktlint
+        run: ktlint src/**/*.kt
+        shell: bash
+      - name: Build
+        run:  ./gradlew build
+
+  build-and-push:
+    name: Build and push Docker container
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 11
+          cache: 'gradle'
+        continue-on-error: true
+      - name: Build
+        run: ./gradlew build
+      - name: Publish Docker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker build --tag ${IMAGE} .
+          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker push ${IMAGE}
+
+
