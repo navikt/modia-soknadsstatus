@@ -25,7 +25,7 @@ on:
 jobs:
   test:
     if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/.test.yaml
+    uses: ./.github/workflows/.build.yaml
     secrets: inherit
 
   build:
