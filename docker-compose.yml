@@ -88,32 +88,6 @@ services:
       KAFKA_SOURCE_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
-#  foreldrepenger-transform:
-#    build:
-#      context: apps/foreldrepenger-soknadsstatus-transform
-#    ports:
-#      - "9012:8080"
-#    depends_on:
-#      - redpanda
-#    environment:
-#      APP_NAME: "foreldrepenger-soknadsstatus-transform"
-#      APP_VERSION: "dev"
-#      KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
-#      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
-#      KAFKA_BROKER_URL: "redpanda:29092"
-#  pleiepenger-transform:
-#    build:
-#      context: apps/pleiepenger-soknadsstatus-transform
-#    ports:
-#      - "9013:8080"
-#    depends_on:
-#      - redpanda
-#    environment:
-#      APP_NAME: "pleiepenger-soknadsstatus-transform"
-#      APP_VERSION: "dev"
-#      KAFKA_SOURCE_TOPIC: "pleiepenger-soknadsstatus"
-#      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
-#      KAFKA_BROKER_URL: "redpanda:29092"
   fp-k9-transform:
     build:
       context: apps/fp-k9-soknadsstatus-transform
