@@ -1,4 +1,4 @@
-name: arena-infotrygd-soknadsstatus-transform
+name: fp-k9-soknadsstatus-transform
 
 on:
   workflow_dispatch:

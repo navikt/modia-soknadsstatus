@@ -1,4 +1,4 @@
-name: arena-infotrygd-soknadsstatus-transform
+name: modia-soknadsstatus-api
 
 on:
   workflow_dispatch:

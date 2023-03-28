@@ -1,4 +1,4 @@
-name: arena-infotrygd-soknadsstatus-transform
+name: mq-to-kafka
 
 on:
   workflow_dispatch:
