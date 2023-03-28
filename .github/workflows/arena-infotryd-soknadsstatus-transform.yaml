@@ -13,12 +13,12 @@ on:
           - false
   push:
     branches:
-      - dev
+      - master
     paths:
       - common/**
   pull_request:
     branches:
-      - dev
+      - master
     paths:
       - common/**
 
