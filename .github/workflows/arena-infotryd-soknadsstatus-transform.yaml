@@ -1,7 +1,7 @@
 name: arena-infotrygd-soknadsstatus-transform
 
 on:
-  workflow_dispatch: # Allow manually triggered workflow run
+  workflow_dispatch:
     inputs:
       deploy-prod:
         description: 'Deploy til produksjon'
@@ -13,12 +13,12 @@ on:
           - false
   push:
     branches:
-      - master
+      - dev
     paths:
       - common/**
   pull_request:
     branches:
-      - master
+      - dev
     paths:
       - common/**
 
