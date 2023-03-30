@@ -56,7 +56,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  infotrygd-mq-to-kafka:
+  mq-to-kafka:
     build:
       context: apps/mq-to-kafka
     ports:
@@ -65,87 +65,29 @@ services:
       - activemq
       - redpanda
     environment:
-      APP_NAME: "infotrygd-mq-to-kafka"
+      APP_NAME: "mq-to-kafka"
       APP_VERSION: "dev"
-      KAFKA_TOPIC: "infotrygd-soknadsstatus"
+      KAFKA_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
-      JMS_QUEUE: "infotrygd-soknadsstatus"
+      JMS_QUEUE: "arena-infotrygd-soknadsstatus"
       JMS_HOST: "activemq"
       JMS_PORT: "61616"
       JMS_QUEUEMANAGER: ""
       JMS_USERNAME: ""
       JMS_PASSWORD: ""
-  arena-mq-to-kafka:
+  arena-infotrygd-transform:
     build:
-      context: apps/mq-to-kafka
-    ports:
-      - "9001:8080"
-    depends_on:
-      - activemq
-      - redpanda
-    environment:
-      APP_NAME: "arena-mq-to-kafka"
-      APP_VERSION: "dev"
-      KAFKA_TOPIC: "arena-soknadsstatus"
-      KAFKA_BROKER_URL: "redpanda:29092"
-      JMS_QUEUE: "arena-soknadsstatus"
-      JMS_HOST: "activemq"
-      JMS_PORT: "61616"
-      JMS_QUEUEMANAGER: ""
-      JMS_USERNAME: ""
-      JMS_PASSWORD: ""
-  infotrygd-transform:
-    build:
-      context: apps/infotrygd-soknadsstatus-transform
+      context: apps/arena-infotrygd-soknadsstatus-transform
     ports:
       - "9010:8080"
     depends_on:
       - redpanda
     environment:
-      APP_NAME: "infotrygd-soknadsstatus-transform"
+      APP_NAME: "arena-infotrygd-soknadsstatus-transform"
       APP_VERSION: "dev"
-      KAFKA_SOURCE_TOPIC: "infotrygd-soknadsstatus"
+      KAFKA_SOURCE_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
-  arena-transform:
-    build:
-      context: apps/arena-soknadsstatus-transform
-    ports:
-      - "9011:8080"
-    depends_on:
-      - redpanda
-    environment:
-      APP_NAME: "arena-soknadsstatus-transform"
-      APP_VERSION: "dev"
-      KAFKA_SOURCE_TOPIC: "arena-soknadsstatus"
-      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
-      KAFKA_BROKER_URL: "redpanda:29092"
-#  foreldrepenger-transform:
-#    build:
-#      context: apps/foreldrepenger-soknadsstatus-transform
-#    ports:
-#      - "9012:8080"
-#    depends_on:
-#      - redpanda
-#    environment:
-#      APP_NAME: "foreldrepenger-soknadsstatus-transform"
-#      APP_VERSION: "dev"
-#      KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
-#      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
-#      KAFKA_BROKER_URL: "redpanda:29092"
-#  pleiepenger-transform:
-#    build:
-#      context: apps/pleiepenger-soknadsstatus-transform
-#    ports:
-#      - "9013:8080"
-#    depends_on:
-#      - redpanda
-#    environment:
-#      APP_NAME: "pleiepenger-soknadsstatus-transform"
-#      APP_VERSION: "dev"
-#      KAFKA_SOURCE_TOPIC: "pleiepenger-soknadsstatus"
-#      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
-#      KAFKA_BROKER_URL: "redpanda:29092"
   fp-k9-transform:
     build:
       context: apps/fp-k9-soknadsstatus-transform

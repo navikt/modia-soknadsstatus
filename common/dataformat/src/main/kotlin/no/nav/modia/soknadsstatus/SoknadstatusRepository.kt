@@ -7,7 +7,7 @@ import no.nav.modia.soknadsstatus.SqlDsl.executeQuery
 import java.sql.Timestamp
 import javax.sql.DataSource
 
-class soknadsstatusRepository(private val dataSource: DataSource) {
+class SoknadsstatusRepository(private val dataSource: DataSource) {
     private object Tabell {
         override fun toString(): String = "soknadsstatus"
         val ident = "ident"
@@ -18,22 +18,22 @@ class soknadsstatusRepository(private val dataSource: DataSource) {
         val tidspunkt = "tidspunkt"
     }
 
-    fun get(ident: String): Result<List<soknadsstatusDomain.soknadsstatusOppdatering>> {
+    fun get(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
         return dataSource.executeQuery("SELECT * from $Tabell where ${Tabell.ident} = ?", ident).map { rows ->
             rows.map {
-                soknadsstatusDomain.soknadsstatusOppdatering(
+                SoknadsstatusDomain.SoknadsstatusOppdatering(
                     ident = it.rs.getString(Tabell.ident),
                     behandlingsId = it.rs.getString(Tabell.behandlingsId),
                     systemRef = it.rs.getString(Tabell.systemRef),
                     tema = it.rs.getString(Tabell.tema),
-                    status = soknadsstatusDomain.Status.valueOf(it.rs.getString(Tabell.status)),
+                    status = SoknadsstatusDomain.Status.valueOf(it.rs.getString(Tabell.status)),
                     tidspunkt = it.rs.getTimestamp(Tabell.tidspunkt).toInstant().toKotlinInstant()
                 )
             }.toList()
         }
     }
 
-    fun upsert(status: soknadsstatusDomain.soknadsstatusOppdatering): Result<Boolean> {
+    fun upsert(status: SoknadsstatusDomain.SoknadsstatusOppdatering): Result<Boolean> {
         val tidspunkt = Timestamp.from(status.tidspunkt.toJavaInstant())
         return dataSource.execute(
             """

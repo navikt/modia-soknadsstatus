@@ -22,4 +22,3 @@ data class BehandlingAvsluttet(
     override val sekundaerBehandlingREF: List<SekundaerBehandlingREF>,
     override val styringsinformasjonListe: List<StyringsinformasjonListe>
 ) : Behandling()
-

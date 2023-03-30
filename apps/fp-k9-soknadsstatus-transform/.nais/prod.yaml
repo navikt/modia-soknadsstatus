@@ -1,0 +1,21 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: fp-k9-soknadsstatus-transform
+  namespace: personoversikt
+  labels:
+    team: personoversikt
+spec:
+  image: {{image}}
+  port: 9014
+  team: personoversikt
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 20
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
+  readiness:
+    path: /internal/isReady
+    initialDelay: 20
+    timeout: 1

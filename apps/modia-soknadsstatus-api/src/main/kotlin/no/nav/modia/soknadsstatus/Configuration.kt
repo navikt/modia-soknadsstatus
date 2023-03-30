@@ -15,14 +15,14 @@ interface Configuration {
     val azureAd: AuthProviderConfig
     val oboTokenClient: OnBehalfOfTokenClient
     val machineToMachineTokenClient: MachineToMachineTokenClient
-    val repository: soknadsstatusRepository
+    val repository: SoknadsstatusRepository
 
     companion object {
         fun factory(env: Env): Configuration {
             val oboTokenClient = AzureAdTokenClientBuilder.builder().oboClientFactory(env)
             val machineToMachineTokenClient = AzureAdTokenClientBuilder.builder().machineToMachineClientFactory(env)
             val azureAd = authProviderConfigFactory(env)
-            val repository = soknadsstatusRepository(env.datasourceConfiguration.datasource)
+            val repository = SoknadsstatusRepository(env.datasourceConfiguration.datasource)
 
             return object : Configuration {
                 override val oboTokenClient = oboTokenClient
