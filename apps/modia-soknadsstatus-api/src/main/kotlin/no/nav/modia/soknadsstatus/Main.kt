@@ -9,14 +9,14 @@ fun main() {
 
 fun runApp(port: Int = 8080, useMock: Boolean = false) {
     val env = Env()
-    val configuration = ConfigurationImpl(env)
-    val services = ServicesImpl(configuration)
+    val configuration = Configuration.factory(env)
+    val services = Services.factory(env, configuration)
     env.datasourceConfiguration.runFlyway()
 
     KtorServer.create(
         factory = CIO,
         port = port,
     ) {
-        soknadsstatusModule(env, configuration, services, useMock = false)
+        soknadsstatusModule(env, configuration, services)
     }.start(wait = true)
 }

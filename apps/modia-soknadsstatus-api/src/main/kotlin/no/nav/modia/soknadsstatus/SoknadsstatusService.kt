@@ -8,17 +8,17 @@ import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.logging.Logging
 
 interface SoknadsstatusService {
-    fun fetchIdentsAndPersist(innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?, token: String)
+    fun fetchIdentsAndPersist(innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?)
     fun fetchAggregatedDataForIdent(ident: String): Result<soknadsstatusDomain.soknadsstatuser>
     fun fetchDataForIdent(ident: String): Result<List<soknadsstatusDomain.soknadsstatusOppdatering>>
 }
 
 class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService, private val repository: soknadsstatusRepository) : SoknadsstatusService {
-    override fun fetchIdentsAndPersist(innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?, token: String) {
+    override fun fetchIdentsAndPersist(innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering?) {
         if (innkommendeOppdatering != null) {
             runBlocking(Dispatchers.IO) {
                 for (aktoerId in innkommendeOppdatering.aktorIder) {
-                    launch { fetchIdentAndPersist(aktoerId, innkommendeOppdatering, token) }
+                    launch { fetchIdentAndPersist(aktoerId, innkommendeOppdatering) }
                 }
             }
         }
@@ -45,9 +45,9 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
         return repository.get(ident)
     }
 
-    private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering, token: String) {
+    private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: soknadsstatusDomain.soknadsstatusInnkommendeOppdatering) {
         try {
-            val ident = pdlOppslagService.hentFnr(aktoerId, token) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
+            val ident = pdlOppslagService.hentFnrMedSystemToken(aktoerId) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
             val soknadsstatus = soknadsstatusDomain.soknadsstatusOppdatering(
                 ident = ident,
                 behandlingsId = innkommendeOppdatering.behandlingsId,

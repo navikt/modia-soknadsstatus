@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.utils
 
+import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
 
 class DownstreamApi(
@@ -21,10 +22,22 @@ fun DownstreamApi.Companion.parse(value: String): DownstreamApi {
     return DownstreamApi(cluster = cluster, namespace = namespace, application = application)
 }
 
+fun MachineToMachineTokenClient.createMachineToMachineToken(api: DownstreamApi): String {
+    return this.createMachineToMachineToken(api.tokenscope())
+}
+
 interface BoundedOnBehalfOfTokenClient {
     fun exchangeOnBehalfOfToken(accesstoken: String): String
 }
 
+interface BoundedMachineToMachineTokenClient {
+    fun createMachineToMachineToken(): String
+}
+
 fun OnBehalfOfTokenClient.bindTo(api: DownstreamApi) = object : BoundedOnBehalfOfTokenClient {
     override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api.tokenscope(), accesstoken)
+}
+
+fun MachineToMachineTokenClient.bindTo(api: DownstreamApi) = object : BoundedMachineToMachineTokenClient {
+    override fun createMachineToMachineToken() = createMachineToMachineToken(api.tokenscope())
 }

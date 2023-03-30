@@ -1,0 +1,8 @@
+query($brukerId: BrukerIdInput!) {
+    saker(brukerId: $brukerId) {
+        fagsakId
+        fagsaksystem
+        sakstype
+        tema
+    }
+}
