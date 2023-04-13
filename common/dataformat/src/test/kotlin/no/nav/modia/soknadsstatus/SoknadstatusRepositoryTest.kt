@@ -1,10 +1,20 @@
 package no.nav.modia.soknadsstatus
 
+import kotlinx.datetime.Clock
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.postgresql.ds.PGSimpleDataSource
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import javax.sql.DataSource
+import kotlin.time.Duration.Companion.minutes
 
 @Testcontainers
-class SoknadstatusRepositoryTest {
- /*   @Container
+class SoknadsstatusRepositoryTest {
+    @Container
     val container = PostgreSQLContainer("postgres:14-alpine")
 
     val dataSource: DataSource by lazy {
@@ -15,7 +25,7 @@ class SoknadstatusRepositoryTest {
             setProperty("password", "test")
         }
     }
-    val repository: soknadsstatusRepository by lazy { soknadsstatusRepository(dataSource) }
+    val repository: SoknadsstatusRepository by lazy { SoknadsstatusRepository(dataSource) }
 
     @BeforeEach
     fun setUp() {
@@ -27,7 +37,6 @@ class SoknadstatusRepositoryTest {
     }
 
     @Test
-    @Ignore
     fun `should insert new change record`() {
         repository.upsert(dummyOppdatering)
 
@@ -37,7 +46,6 @@ class SoknadstatusRepositoryTest {
     }
 
     @Test
-    @Ignore
     fun `should update existing record if newer`() {
         repository.upsert(dummyOppdatering)
         repository.upsert(
@@ -54,7 +62,6 @@ class SoknadstatusRepositoryTest {
     }
 
     @Test
-    @Ignore
     fun `should ignore updates older then current saved state`() {
         repository.upsert(dummyOppdatering)
         repository.upsert(
@@ -84,5 +91,4 @@ class SoknadstatusRepositoryTest {
         assertEquals(true, result.isSuccess)
         block(result.getOrThrow())
     }
-  */
 }

@@ -17,7 +17,7 @@ open class LoggingGraphQLKtorClient(
     url: URL,
     httpClient: HttpClient,
 ) : GraphQLKtorClient(url, httpClient) {
-    val selftestReporter = SelftestGenerator.Reporter(name, critical)
+    private val selftestReporter = SelftestGenerator.Reporter(name, critical)
         .also { it.reportOk() }
 
     override suspend fun <T : Any> execute(
