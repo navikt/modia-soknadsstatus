@@ -31,7 +31,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew :apps:${{ github.workflow }}:build
-      - name: Build and publish docker image
+      - name: Publish Dev Image
+        if: github.ref == 'refs/heads/dev'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker build --tag ${{ env.image }} --tag ${{ env.branch-image }}:${{ env.GITHUB_REF_SLUG }} -f docker/Dockerfile apps/${{ github.workflow }}
+          docker push ${{ env.image }}
+          docker push ${{ env.branch-image }}:${{ env.GITHUB_REF_SLUG }}
+      - name: Publish Prod image
+        if: github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

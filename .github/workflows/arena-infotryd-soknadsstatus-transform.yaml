@@ -16,11 +16,13 @@ on:
       - master
     paths:
       - common/**
+      - apps/arena-infotrygd-soknadsstatus-transform/**
   pull_request:
     branches:
       - master
     paths:
       - common/**
+      - apps/arena-infotrygd-soknadsstatus-transform/**
 
 jobs:
   test:

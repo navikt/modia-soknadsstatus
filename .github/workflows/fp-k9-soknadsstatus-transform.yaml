@@ -16,11 +16,13 @@ on:
       - master
     paths:
       - common/**
+      - apps/fp-k9-soknadsstatus-transform/**
   pull_request:
     branches:
       - master
     paths:
       - common/**
+      - apps/fp-k9-soknadsstatus-transform/**
 
 jobs:
   test:

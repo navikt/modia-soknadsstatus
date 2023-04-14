@@ -16,11 +16,13 @@ on:
       - master
     paths:
       - common/**
+      - apps/modia-soknadsstatus-api/**
   pull_request:
     branches:
       - master
     paths:
       - common/**
+      - apps/modia-soknadsstatus-api/**
 
 jobs:
   test:
