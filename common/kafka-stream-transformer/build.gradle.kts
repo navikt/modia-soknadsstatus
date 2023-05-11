@@ -8,6 +8,7 @@ val ibm_mq_version: String by project
 val active_mq_version: String by project
 val kafka_version: String by project
 val junit_version: String by project
+val kotlinx_datetime_version: String by project
 
 plugins {
     application
@@ -18,13 +19,14 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:$kafka_version")
     implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
     implementation(project(":common:ktor"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:kafka"))
-
+    implementation(project(":common:utils"))
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")

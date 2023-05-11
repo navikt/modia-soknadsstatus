@@ -11,8 +11,13 @@ fun main() {
     System.setProperty("APP_MODE", "LOCALLY_WITHIN_IDEA")
     System.setProperty("APP_NAME", "modia-soknadsstatus-api")
     System.setProperty("APP_VERSION", "dev")
+
     System.setProperty("KAFKA_SOURCE_TOPIC", "modia-soknadsstatus")
     System.setProperty("KAFKA_BROKER_URL", "localhost:9092")
+    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_TOPIC", "modia-soknadsstatus-dlq")
+    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "10000")
+    System.setProperty("KAFKA_DEAD_LETTER_SKIP_TABLE_NAME", "modia_soknadsstatus_dlq_event_skip")
+
     System.setProperty("JDBC_URL", "jdbc:postgresql://localhost:5432/modia-soknadsstatus")
     System.setProperty("JDBC_USERNAME", "admin")
     System.setProperty("JDBC_PASSWORD", "admin")

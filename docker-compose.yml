@@ -58,6 +58,7 @@ services:
       retries: 5
   mq-to-kafka:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/mq-to-kafka
     ports:
       - "9000:8080"
@@ -77,6 +78,7 @@ services:
       JMS_PASSWORD: ""
   arena-infotrygd-transform:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/arena-infotrygd-soknadsstatus-transform
     ports:
       - "9010:8080"
@@ -88,8 +90,15 @@ services:
       KAFKA_SOURCE_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
+      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "arena-infotrygd-soknadsstatus-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
+      KAFKA_DEAD_LETTER_SKIP_TABLE_NAME: "fp_k9_dlq_event_skip"
+      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
+      JDBC_USERNAME: "admin"
+      JDBC_PASSWORD: "admin"
   fp-k9-transform:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/fp-k9-soknadsstatus-transform
     ports:
       - "9014:8080"
@@ -101,8 +110,15 @@ services:
       KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
       KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
+      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "aapen-sob-oppgaveHendelse-v1-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
+      KAFKA_DEAD_LETTER_SKIP_TABLE_NAME: "fp_k9_dlq_event_skip"
+      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
+      JDBC_USERNAME: "admin"
+      JDBC_PASSWORD: "admin"
   modia-soknadsstatus-api:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/modia-soknadsstatus-api
     ports:
       - "9015:8080"
@@ -117,6 +133,10 @@ services:
       KAFKA_SOURCE_TOPIC: "modia-soknadsstatus"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKER_URL: "redpanda:29092"
+      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "modia-soknadsstatus-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
+      KAFKA_DEAD_LETTER_SKIP_TABLE_NAME: "modia_soknadsstatus_dlq_event_skip"
+
       JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
       JDBC_USERNAME: "admin"
       JDBC_PASSWORD: "admin"

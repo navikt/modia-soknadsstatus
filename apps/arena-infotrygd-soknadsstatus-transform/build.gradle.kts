@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:filter"))
+    implementation(project(":common:kafka"))
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakarta_xml_bind_version")
     implementation("org.glassfish.jaxb:jaxb-runtime:$glassfish_jaxb_runtime_version")
 

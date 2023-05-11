@@ -1,7 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kafka_version: String by project
+val modia_common_version: String by project
 val logback_version: String by project
+val junit_version: String by project
+val mockk_version: String by project
 
 plugins {
     application
@@ -12,10 +15,17 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(project(":common:utils"))
+    implementation(project(":common:ktor"))
+    implementation(project(":common:dataformat"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("no.nav.personoversikt:logging:$modia_common_version")
+    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
     implementation("org.apache.kafka:kafka-clients:$kafka_version")
     implementation("org.apache.kafka:kafka-streams:$kafka_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+    testImplementation("io.mockk:mockk:$mockk_version")
 }
 
 group = "no.nav.modia.soknadsstatus"

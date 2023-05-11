@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus.pdl
 
-import io.ktor.http.*
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.modia.soknadsstatus.AppMode

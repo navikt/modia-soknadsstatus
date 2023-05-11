@@ -1,6 +1,7 @@
 package no.nav.modia.soknadsstatus
 
 import no.nav.modia.soknadsstatus.axsys.AxsysEnv
+import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.ldap.LDAPEnv
 import no.nav.modia.soknadsstatus.nom.NomEnv
 import no.nav.modia.soknadsstatus.norg.NorgEnv
@@ -12,12 +13,8 @@ interface Env {
     companion object {
         operator fun invoke() = EnvImpl()
     }
-    val appMode: AppMode
-    val appName: String
     val appVersion: String
-    val clusterName: String
-    val brokerUrl: String
-    val sourceTopic: String
+    val kafkaApp: AppEnv
     val azureAdConfiguration: AzureAdConfiguration
     val datasourceConfiguration: DatasourceConfiguration
     val axsysEnv: AxsysEnv
@@ -29,12 +26,8 @@ interface Env {
 }
 
 data class EnvImpl(
-    override val appMode: AppMode = AppMode(EnvUtils.getRequiredConfig("APP_MODE", mapOf("APP_MODE" to "NAIS"))),
-    override val appName: String = EnvUtils.getRequiredConfig("APP_NAME"),
+    override val kafkaApp: AppEnv = AppEnv(),
     override val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
-    override val brokerUrl: String = EnvUtils.getRequiredConfig("KAFKA_BROKER_URL"),
-    override val sourceTopic: String = EnvUtils.getRequiredConfig("KAFKA_SOURCE_TOPIC"),
-    override val clusterName: String = EnvUtils.getRequiredConfig("NAIS_CLUSTER_NAME"),
     override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(),
     override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(),
     override val pdlEnv: PdlEnv = PdlEnv(url = EnvUtils.getRequiredConfig("PDL_API_URL"), scope = EnvUtils.getRequiredConfig("PDL_SCOPE")),

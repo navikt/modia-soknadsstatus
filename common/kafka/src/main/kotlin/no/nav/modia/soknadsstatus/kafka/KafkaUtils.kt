@@ -1,45 +1,55 @@
 package no.nav.modia.soknadsstatus.kafka
 
+import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.StreamsConfig
-import org.apache.kafka.streams.errors.DefaultProductionExceptionHandler
-import org.apache.kafka.streams.errors.LogAndFailExceptionHandler
+import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import org.slf4j.LoggerFactory
 import java.util.*
 
 object KafkaUtils {
     private val log = LoggerFactory.getLogger("KafkaUtils")
-    fun createProducer(
-        applicationId: String,
-        brokerUrl: String,
-    ): KafkaProducer<String, String> {
-        val config = Properties()
-        config[ProducerConfig.ACKS_CONFIG] = "all"
-        config[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = brokerUrl
-        config[ProducerConfig.CLIENT_ID_CONFIG] = applicationId
+    fun <T>createProducer(
+        appConfig: AppEnv,
+        valueSerde: Serde<T>
+    ): KafkaProducer<String, T> {
+        val props = Properties()
+        commonProducerConfig(props, appConfig)
 
-        // TODO add security
-
-        return KafkaProducer(config, StringSerializer(), StringSerializer())
+        return KafkaProducer(props, StringSerializer(), valueSerde.serializer())
     }
 
-    fun createStream(
-        applicationId: String,
-        brokerUrl: String,
-        configure: StreamsBuilder.() -> Unit
+    fun <T> createConsumer(
+        appConfig: AppEnv,
+        valueSerde: Serde<T>,
+    ): KafkaConsumer<String, T> {
+        val props = Properties()
+        commonConsumerConfig(props, appConfig)
+
+        return KafkaConsumer(props, StringDeserializer(), valueSerde.deserializer())
+    }
+
+    fun <SOURCE_TYPE, TARGET_TYPE> createStream(
+        appConfig: AppEnv,
+        valueSerde: Serde<TARGET_TYPE>,
+        dlqSerde: Serde<SOURCE_TYPE>,
+        deserializationExceptionHandler: DeserializationExceptionHandler,
+        deadLetterQueueProducer: DeadLetterQueueProducer<SOURCE_TYPE>?,
+        configure: StreamsBuilder.() -> Unit,
     ): KafkaStreams {
         val props = Properties()
-        props[StreamsConfig.APPLICATION_ID_CONFIG] = applicationId
-        props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = brokerUrl
-        props[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.StringSerde().javaClass
-        props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.StringSerde().javaClass
-        props[StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG] = LogAndFailExceptionHandler::class.java
-        props[StreamsConfig.DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG] = DefaultProductionExceptionHandler::class.java
+        commonStreamsConfig(
+            props,
+            appConfig,
+            valueSerde,
+            dlqSerde,
+            deserializationExceptionHandler,
+            deadLetterQueueProducer
+        )
 
         val builder = StreamsBuilder()
         builder.apply(configure)

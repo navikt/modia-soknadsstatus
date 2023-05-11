@@ -1,6 +1,10 @@
 package no.nav.modia.soknadsstatus
 
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
+import no.nav.personoversikt.common.logging.Logging
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.common.serialization.Serializer
 import org.xml.sax.SAXException
 import java.io.File
 import java.io.IOException
@@ -80,6 +84,7 @@ object XMLConverter {
         val schema = schemaFactory.newSchema(schemaFile)
         return schema.newValidator()
     }
+
     private fun getFile(location: String): File {
         return File(javaClass.classLoader.getResource(location)?.file ?: "")
     }
@@ -99,5 +104,31 @@ object XMLConverter {
         }
         return receivedMessageText.substring(closingTagStart + 2, closingTagEnd).trim { it <= ' ' }
             .replace(".+:{1}".toRegex(), "")
+    }
+}
+
+object BehandlingXmlSerdes {
+    class BehandlingXmlSerializer : Serializer<Hendelse> {
+        override fun serialize(topic: String?, data: Hendelse?): ByteArray {
+            // We don't serialize to xml
+            Logging.secureLog.error("Prøvde å serialisere til xml. Dette er ikke støttet.")
+            return ByteArray(0)
+        }
+    }
+
+    class BehandlingXmlDeserializer : Deserializer<Hendelse> {
+        override fun deserialize(topic: String?, data: ByteArray?): Hendelse? {
+            if (data == null) {
+                return null
+            }
+
+            val encodedString = data.toString()
+            return XMLConverter.fromXml(encodedString)
+        }
+    }
+
+    class XMLSerde : Serde<Hendelse> {
+        override fun serializer() = BehandlingXmlSerializer()
+        override fun deserializer() = BehandlingXmlDeserializer()
     }
 }
