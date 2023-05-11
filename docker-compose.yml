@@ -58,6 +58,7 @@ services:
       retries: 5
   mq-to-kafka:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/mq-to-kafka
     ports:
       - "9000:8080"
@@ -77,6 +78,7 @@ services:
       JMS_PASSWORD: ""
   arena-infotrygd-transform:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/arena-infotrygd-soknadsstatus-transform
     ports:
       - "9010:8080"
@@ -90,6 +92,7 @@ services:
       KAFKA_BROKER_URL: "redpanda:29092"
   fp-k9-transform:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/fp-k9-soknadsstatus-transform
     ports:
       - "9014:8080"
@@ -103,6 +106,7 @@ services:
       KAFKA_BROKER_URL: "redpanda:29092"
   modia-soknadsstatus-api:
     build:
+      dockerfile: ../../docker/Dockerfile
       context: apps/modia-soknadsstatus-api
     ports:
       - "9015:8080"

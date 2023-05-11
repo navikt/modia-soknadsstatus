@@ -1,11 +1,9 @@
 package no.nav.modia.soknadsstatus
 
-import Filter
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.toKotlinInstant
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
-import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging.secureLog
 import no.nav.personoversikt.common.utils.EnvUtils
@@ -45,20 +43,29 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun mapXmlMessageToHendelse(key: String?, value: String): Hendelse {
-    return XMLConverter.fromXml(value)
+fun mapXmlMessageToHendelse(key: String?, value: String): Hendelse? {
+    secureLog.info("Got KafkaMessage: $value")
+    try {
+        return XMLConverter.fromXml(value)
+    } catch (_: Exception) {
+        return null
+    }
 }
 
-fun filter(key: String?, value: Hendelse): Boolean {
+fun filter(key: String?, value: Hendelse?): Boolean {
+    if (value == null) {
+        return false
+    }
+
     behandlingsStatus(value) ?: return false
 
-    return Filter.filtrerBehandling(value as Behandling)
+    return Filter.filtrerBehandling(value as BehandlingStatus)
 }
 
 fun transform(key: String?, value: Hendelse?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
     checkNotNull(value)
     val behandlingStatus = value as BehandlingStatus
-    return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
+    val soknadsstatus = SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
         aktorIder = behandlingStatus.aktoerREF.map { it.aktoerId },
         tema = behandlingStatus.sakstema.value,
         behandlingsId = behandlingStatus.behandlingsID,
@@ -66,6 +73,10 @@ fun transform(key: String?, value: Hendelse?): SoknadsstatusDomain.Soknadsstatus
         status = behandlingsStatus(behandlingStatus)!!,
         tidspunkt = behandlingStatus.hendelsesTidspunkt.toGregorianCalendar().toInstant().toKotlinInstant()
     )
+
+    secureLog.info("Sending Soknadsstatus KafkaMessage: $soknadsstatus")
+
+    return soknadsstatus
 }
 
 private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {

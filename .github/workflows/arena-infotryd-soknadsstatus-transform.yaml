@@ -14,12 +14,16 @@ on:
   push:
     branches:
       - master
+      - dev
+      - feature/**
+      - bugfix/**
     paths:
       - common/**
       - apps/arena-infotrygd-soknadsstatus-transform/**
   pull_request:
     branches:
       - master
+      - dev
     paths:
       - common/**
       - apps/arena-infotrygd-soknadsstatus-transform/**

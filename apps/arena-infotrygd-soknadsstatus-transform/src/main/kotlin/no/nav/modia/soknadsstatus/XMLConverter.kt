@@ -2,9 +2,9 @@ package no.nav.modia.soknadsstatus
 
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
 import org.xml.sax.SAXException
-import java.io.File
 import java.io.IOException
 import java.io.StringReader
+import java.net.URL
 import javax.xml.XMLConstants
 import javax.xml.bind.DataBindingException
 import javax.xml.bind.JAXB
@@ -76,12 +76,12 @@ object XMLConverter {
 
     private fun createValidator(xsdPath: String): Validator {
         val schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-        val schemaFile = StreamSource(getFile(xsdPath))
-        val schema = schemaFactory.newSchema(schemaFile)
+        val schema = schemaFactory.newSchema(toUrl(xsdPath))
         return schema.newValidator()
     }
-    private fun getFile(location: String): File {
-        return File(javaClass.classLoader.getResource(location)?.file ?: "")
+
+    private fun toUrl(schemaFile: String): URL? {
+        return javaClass.classLoader.getResource(schemaFile)
     }
 
     private fun toSource(inputXml: StringReader): Source {
