@@ -68,7 +68,7 @@ object XMLConverter {
                 validator.validate(toSource(inputXmlReader))
             }
         } catch (saxe: SAXException) {
-            throw RuntimeException("Melding validerte ikke mot " + SCHEMA_FIL_STATUS, saxe)
+            throw RuntimeException("Melding validerte ikke mot $SCHEMA_FIL_STATUS", saxe)
         } catch (ioe: IOException) {
             throw RuntimeException("IO-feil ved validering av xml.", ioe)
         }
