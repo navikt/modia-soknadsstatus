@@ -1,13 +1,12 @@
-<v2:behandlingOpprettetOgAvsluttet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
+<v2:behandlingOpprettet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
     <hendelsesId>5460</hendelsesId>
     <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">IT01</hendelsesprodusentREF>
-    <hendelsesTidspunkt>2015-12-08T00:00:00.000</hendelsesTidspunkt>
+    <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
     <behandlingsID>17100047L</behandlingsID>
     <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">ae0019</behandlingstype>
     <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">SYK</sakstema>
     <aktoerREF><aktoerId>10000098546164</aktoerId></aktoerREF>
     <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
     <applikasjonBehandlingREF>A1231311231-102-20</applikasjonBehandlingREF>
-    <avslutningsstatus kodeverksRef="http://nav.no/kodeverk/Kodeverk/Avslutningsstatuser">AVSLUTTET</avslutningsstatus>
-    <opprettelsesTidspunkt>2015-07-03T00:00:00.000</opprettelsesTidspunkt>
-</v2:behandlingOpprettetOgAvsluttet>
+</v2:behandlingOpprettet>
+

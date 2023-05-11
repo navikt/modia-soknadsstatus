@@ -1,4 +1,5 @@
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.BehandlingAvsluttet
+import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.BehandlingOpprettet
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.BehandlingStatus
 import no.nav.modia.soknadsstatus.FilterUtils
 
@@ -10,17 +11,13 @@ object Filter {
     private fun harLovligSaksTema(behandling: BehandlingStatus) = behandling.sakstema.value !in ulovligeSakstema
 
     private fun harLovlingStatusPaBehandling(behandling: BehandlingStatus): Boolean {
-        if (behandling is BehandlingAvsluttet) {
+        if (behandling is BehandlingOpprettet) {
+            return true
+        } else if (behandling is BehandlingAvsluttet) {
             return behandling.avslutningsstatus.value == FilterUtils.AVSLUTTET
         }
-        return false
-    }
 
-    private fun harLovligBehandlingsstatus(behandling: BehandlingStatus): Boolean {
-        if (behandling is BehandlingAvsluttet) {
-            return behandling.avslutningsstatus.value !== FilterUtils.AVSLUTTET
-        }
-        return true
+        return false
     }
 
     private fun harLovligPrefix(behandling: BehandlingStatus) =
