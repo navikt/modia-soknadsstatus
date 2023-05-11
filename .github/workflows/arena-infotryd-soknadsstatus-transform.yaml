@@ -2,33 +2,18 @@ name: arena-infotrygd-soknadsstatus-transform
 
 on:
   workflow_dispatch:
-    inputs:
-      deploy-prod:
-        description: 'Build, test and deploy'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - true
-          - false
+
   push:
     branches:
       - master
+      - dev
+      - feature/**
+      - bugfix/**
     paths:
       - common/**
-  pull_request:
-    branches:
-      - master
-    paths:
-      - common/**
+      - apps/arena-infotrygd-soknadsstatus-transform/**
 
 jobs:
-  test:
-    if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/.build.yaml
-    secrets: inherit
-
   build:
-    if: github.event_name != 'pull_request'
     uses: ./.github/workflows/.build.yaml
     secrets: inherit

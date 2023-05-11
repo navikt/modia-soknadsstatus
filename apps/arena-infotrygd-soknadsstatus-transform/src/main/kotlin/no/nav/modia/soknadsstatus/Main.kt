@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.toKotlinInstant
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
-import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
 import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
@@ -52,9 +51,9 @@ fun runApp(port: Int = 8080) {
 }
 
 fun filter(key: String?, value: Hendelse): Boolean {
-    getBehandlingsStatus(value) ?: return false
+    behandlingsStatus(value) ?: return false
 
-    return Filter.filtrerBehandling(value as Behandling)
+    return Filter.filtrerBehandling(value as BehandlingStatus)
 }
 
 fun transform(key: String?, hendelse: Hendelse?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
@@ -64,12 +63,12 @@ fun transform(key: String?, hendelse: Hendelse?): SoknadsstatusDomain.Soknadssta
         tema = behandlingStatus.sakstema.value,
         behandlingsId = behandlingStatus.behandlingsID,
         systemRef = behandlingStatus.hendelsesprodusentREF.value,
-        status = getBehandlingsStatus(behandlingStatus)!!,
+        status = behandlingsStatus(behandlingStatus)!!,
         tidspunkt = behandlingStatus.hendelsesTidspunkt.toGregorianCalendar().toInstant().toKotlinInstant()
     )
 }
 
-private fun getBehandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {
+private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {
     return when (hendelse) {
         is BehandlingOpprettet -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
         is BehandlingOpprettetOgAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
