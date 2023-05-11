@@ -2,35 +2,18 @@ name: modia-soknadsstatus-api
 
 on:
   workflow_dispatch:
-    inputs:
-      deploy-prod:
-        description: 'Build, test and deploy'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - true
-          - false
+
   push:
     branches:
       - master
-    paths:
-      - common/**
-      - apps/modia-soknadsstatus-api/**
-  pull_request:
-    branches:
-      - master
+      - dev
+      - feature/**
+      - bugfix/**
     paths:
       - common/**
       - apps/modia-soknadsstatus-api/**
 
 jobs:
-  test:
-    if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/.build.yaml
-    secrets: inherit
-
   build:
-    if: github.event_name != 'pull_request'
     uses: ./.github/workflows/.build.yaml
     secrets: inherit
