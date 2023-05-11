@@ -16,11 +16,13 @@ on:
       - master
     paths:
       - common/**
+      - apps/mq-to-kafka/**
   pull_request:
     branches:
       - master
     paths:
       - common/**
+      - apps/mq-to-kafka/**
 
 jobs:
   test:
