@@ -52,5 +52,5 @@ private data class Tabell(
 data class SkipTableEntry(
     val key: String,
     val createdAt: Instant,
-    val skippedAt: Instant
+    val skippedAt: Instant? = null
 )
