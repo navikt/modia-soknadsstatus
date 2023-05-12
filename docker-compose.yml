@@ -68,7 +68,7 @@ services:
     environment:
       APP_NAME: "mq-to-kafka"
       APP_VERSION: "dev"
-      KAFKA_TOPIC: "arena-infotrygd-soknadsstatus"
+      KAFKA_TARGET_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_BROKER_URL: "redpanda:29092"
       JMS_QUEUE: "arena-infotrygd-soknadsstatus"
       JMS_HOST: "activemq"

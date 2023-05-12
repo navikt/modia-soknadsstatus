@@ -8,7 +8,7 @@ fun main() {
     System.setProperty("APP_NAME", "arena-mq-to-kafka")
     System.setProperty("APP_VERSION", "dev")
 
-    System.setProperty("KAFKA_TOPIC", "arena-infotrygd-soknadsstatus")
+    System.setProperty("KAFKA_TARGET_TOPIC", "arena-infotrygd-soknadsstatus")
     System.setProperty("KAFKA_BROKER_URL", "localhost:9092")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_TOPIC", "arena-infotrygd-soknadsstatus-dlq")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "10000")
