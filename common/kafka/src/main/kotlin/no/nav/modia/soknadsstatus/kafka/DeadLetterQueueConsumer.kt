@@ -3,7 +3,7 @@ package no.nav.modia.soknadsstatus.kafka
 import kotlinx.coroutines.*
 import no.nav.modia.soknadsstatus.BackgroundTask
 import no.nav.modia.soknadsstatus.registerShutdownhook
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.Logging.secureLog
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.common.errors.WakeupException
 import org.slf4j.LoggerFactory
@@ -55,9 +55,11 @@ class DeadLetterQueueConsumerImpl<VALUE_TYPE>(
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
                     for (record in records) {
                         if (record.key() == null) {
+                            secureLog.info("Skipping a dead letter with no key: ${record.value()}")
                             continue
                         }
                         if (deadLetterMessageSkipService.shouldSkip(record.key())) {
+                            secureLog.info("Skipping a dead letter due to key found in skip table: ${record.key()}")
                             continue
                         }
                         val result = block(record.key(), record.value())
@@ -74,7 +76,7 @@ class DeadLetterQueueConsumerImpl<VALUE_TYPE>(
                 } else {
                     hasWakedUpConsumer.set(!(e is WakeupException && hasWakedUpConsumer.get()))
                 }
-                Logging.secureLog.error("Restarting DLQ consumer on topic $topic", e)
+                secureLog.error("Restarting DLQ consumer on topic $topic", e)
                 restart()
                 return
             }
