@@ -44,7 +44,7 @@ class KafkaStreamPlugin<SOURCE_TYPE, TARGET_TYPE> :
             configure = requireNotNull(configuration.topology),
             valueSerde = requireNotNull(configuration.valueSerde),
             deserializationExceptionHandler = requireNotNull(configuration.deserializationExceptionHandler),
-            dlqSerde = requireNotNull(configuration.dlqSerde),
+            dlqSerde = configuration.dlqSerde,
             deadLetterQueueProducer = configuration.deadLetterQueueProducer,
         )
 

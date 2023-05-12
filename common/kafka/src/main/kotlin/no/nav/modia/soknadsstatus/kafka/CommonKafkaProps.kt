@@ -36,8 +36,8 @@ fun <SOURCE_TYPE, TARGET_TYPE> commonStreamsConfig(
     props: Properties,
     appConfig: AppEnv,
     valueSerde: Serde<TARGET_TYPE>,
-    dlqSerde: Serde<SOURCE_TYPE>,
     deserializationExceptionHandler: DeserializationExceptionHandler,
+    dlqSerde: Serde<SOURCE_TYPE>?,
     deadLetterQueueProducer: DeadLetterQueueProducer<SOURCE_TYPE>?
 ) {
     props[StreamsConfig.APPLICATION_ID_CONFIG] = appConfig.appName
