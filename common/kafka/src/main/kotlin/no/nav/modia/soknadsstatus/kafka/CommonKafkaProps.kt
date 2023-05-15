@@ -32,13 +32,12 @@ private fun aivenSecurityProps(
     props[SslConfigs.SSL_KEY_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
 }
 
-fun <SOURCE_TYPE, TARGET_TYPE> commonStreamsConfig(
+fun <TARGET_TYPE> commonStreamsConfig(
     props: Properties,
     appConfig: AppEnv,
     valueSerde: Serde<TARGET_TYPE>,
     deserializationExceptionHandler: DeserializationExceptionHandler,
-    dlqSerde: Serde<SOURCE_TYPE>?,
-    deadLetterQueueProducer: DeadLetterQueueProducer<SOURCE_TYPE>?
+    deadLetterQueueProducer: DeadLetterQueueProducer?
 ) {
     props[StreamsConfig.APPLICATION_ID_CONFIG] = appConfig.appName
     props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
@@ -49,7 +48,6 @@ fun <SOURCE_TYPE, TARGET_TYPE> commonStreamsConfig(
     props[StreamsConfig.DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG] =
         DefaultProductionExceptionHandler::class.java
     if (deadLetterQueueProducer != null) props["dlqProducer"] = deadLetterQueueProducer
-    if (deadLetterQueueProducer != null) props["dlqSerde"] = dlqSerde
     if (appConfig.appMode == AppMode.NAIS) {
 //        aivenSecurityProps(
 //            props,
@@ -73,11 +71,13 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
 fun commonConsumerConfig(props: Properties, appConfig: AppEnv) {
     props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group"
     props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
-//    props[ConsumerConfig.CLIENT_ID_CONFIG] = "${appConfig.appName}-consumer"
     props[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = "1"
     props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
     props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = "false"
     props[ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG] = "" + (10 * 1024 * 1024)
+    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer()
+    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC] = StringDeserializer()
+    props["value.deserializer"] = "org.apache.kafka.common.serialization.StringDeserializer"
     if (appConfig.appMode == AppMode.NAIS) {
 //        aivenSecurityProps(
 //            props,

@@ -16,6 +16,7 @@ import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
+import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.slf4j.event.Level
 
 fun Application.soknadsstatusModule(
@@ -55,22 +56,22 @@ fun Application.soknadsstatusModule(
         mdc("userId") { security.getSubject(it).joinToString(";") }
     }
 
-    install(KafkaStreamPlugin<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+    install(KafkaStreamPlugin<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
         appEnv = env.kafkaApp
         valueSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
         deserializationExceptionHandler =
-            SendToDeadLetterQueueExceptionHandler<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()
+            SendToDeadLetterQueueExceptionHandler()
         deadLetterQueueProducer = services.dlqProducer
-        dlqSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
         topology {
             stream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>(env.kafkaApp.sourceTopic)
                 .foreach { key, value ->
                     try {
                         services.soknadsstatusService.fetchIdentsAndPersist(value)
                     } catch (e: Exception) {
+                        val encodedValue = Encoding.encode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
                         services.dlqProducer.sendMessage(
                             key,
-                            value
+                            encodedValue
                         )
                     }
                 }
@@ -79,17 +80,18 @@ fun Application.soknadsstatusModule(
 
     install(DeadLetterQueueConsumerPlugin()) {
         deadLetterQueueConsumer =
-            DeadLetterQueueConsumerImpl<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>(
+            DeadLetterQueueConsumerImpl(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
                 kafkaConsumer = KafkaUtils.createConsumer(
                     env.kafkaApp,
-                    SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+                    StringSerde()
                 ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 deadLetterMessageSkipService = services.dlSkipService
-            ) { _, value ->
+            ) { _, _, value ->
                 kotlin.runCatching {
-                    services.soknadsstatusService.fetchIdentsAndPersist(value)
+                    val inkommendeOppdatering = Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                    services.soknadsstatusService.fetchIdentsAndPersist(inkommendeOppdatering)
                 }
             }
     }

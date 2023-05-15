@@ -35,10 +35,11 @@ fun Application.dataGeneratorModule() {
 
     val handlers = Handlers(env).handlers
 
-    install(KafkaStreamPlugin<String, String>()) {
+    install(KafkaStreamPlugin<String>()) {
         appEnv = env
         deserializationExceptionHandler = LogAndContinueExceptionHandler()
         valueSerde = StringSerde()
+
         topology {
             stream<String, String>(config.soknadsstatusTopic)
                 .foreach { _, value ->

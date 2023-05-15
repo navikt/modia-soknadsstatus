@@ -19,7 +19,7 @@ interface Services {
     val pdl: PdlOppslagService
     val soknadsstatusService: SoknadsstatusService
     val accessControl: AccessControlConfig
-    val dlqProducer: DeadLetterQueueProducer<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>
+    val dlqProducer: DeadLetterQueueProducer
     val dlSkipService: DeadLetterMessageSkipService
 
     companion object {
@@ -49,7 +49,7 @@ interface Services {
                 ansattService = ansattService
             )
             val dlqProducer =
-                DeadLetterQueueProducer(env.kafkaApp, SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde())
+                DeadLetterQueueProducer(env.kafkaApp)
             val dlSkipService = DeadLetterMessageSkipServiceImpl(
                 DeadLetterMessageRepository(
                     requireNotNull(env.kafkaApp.deadLetterQueueSkipTableName),

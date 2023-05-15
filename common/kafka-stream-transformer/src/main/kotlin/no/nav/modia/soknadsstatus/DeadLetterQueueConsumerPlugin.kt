@@ -12,7 +12,7 @@ class DeadLetterConfig {
 class DeadLetterQueueConsumerPlugin : Plugin<Pipeline<*, ApplicationCall>, DeadLetterConfig, DeadLetterQueueConsumerPlugin> {
     private var consumer: DeadLetterQueueConsumer? = null
 
-    override val key: AttributeKey<DeadLetterQueueConsumerPlugin> = AttributeKey("dead-letter")
+    override val key: AttributeKey<DeadLetterQueueConsumerPlugin> = AttributeKey("dead-letter-consumer")
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
@@ -22,7 +22,6 @@ class DeadLetterQueueConsumerPlugin : Plugin<Pipeline<*, ApplicationCall>, DeadL
         configuration.configure()
 
         consumer = configuration.deadLetterQueueConsumer
-        println("Starting consumer")
         consumer?.start()
 
         return this

@@ -18,18 +18,17 @@ fun main() {
 
 fun runApp(port: Int = 8080) {
     val config = AppEnv()
-    val deadLetterProducer = DeadLetterQueueProducer(config, StringSerde())
+    val deadLetterProducer = DeadLetterQueueProducer(config)
 
     KtorServer.create(
         factory = CIO,
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<String, Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(KafkaStreamTransformPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
                 deadLetterQueueProducer = deadLetterProducer
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
-                dlqSerde = StringSerde()
                 domainTypeserde = BehandlingXmlSerdes.XMLSerde()
                 targetTypeSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 configure { stream ->
@@ -40,7 +39,7 @@ fun runApp(port: Int = 8080) {
             }
             install(DeadLetterQueueTransformerPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
-                sourceSerde = BehandlingXmlSerdes.XMLSerde()
+                domainSerde = BehandlingXmlSerdes.XMLSerde()
                 targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 transformer = ::transform
                 filter = ::filter

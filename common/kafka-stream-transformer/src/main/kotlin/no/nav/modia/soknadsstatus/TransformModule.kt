@@ -12,39 +12,38 @@ import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.Produced
 
-class KafkaStreamTransformConfig<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE> {
+class KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE> {
     var appEnv: AppEnv? = null
     var domainTypeserde: Serde<DOMAIN_TYPE>? = null
     var targetTypeSerde: Serde<TARGET_TYPE>? = null
+    var deserializationExceptionHandler: SendToDeadLetterQueueExceptionHandler? = null
+    var deadLetterQueueProducer: DeadLetterQueueProducer? = null
     var configure: ((KStream<String, DOMAIN_TYPE>) -> KStream<String, TARGET_TYPE?>)? =
         null
-    var deserializationExceptionHandler: SendToDeadLetterQueueExceptionHandler<SOURCE_TYPE>? = null
-    var deadLetterQueueProducer: DeadLetterQueueProducer<SOURCE_TYPE>? = null
-    var dlqSerde: Serde<SOURCE_TYPE>? = null
+
 
     fun configure(fn: (KStream<String, DOMAIN_TYPE>) -> KStream<String, TARGET_TYPE?>) {
         this.configure = fn
     }
 }
 
-class KafkaStreamTransformPlugin<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE> :
-    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamTransformConfig<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE>, KafkaStreamTransformPlugin<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE>> {
-    override val key: AttributeKey<KafkaStreamTransformPlugin<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE>> = AttributeKey("kafka-stream-transform-v2")
+class KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> :
+    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>, KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> {
+    override val key: AttributeKey<KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> = AttributeKey("kafka-stream-transform-v2")
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: KafkaStreamTransformConfig<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE>.() -> Unit
-    ): KafkaStreamTransformPlugin<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE> {
-        val configuration = KafkaStreamTransformConfig<SOURCE_TYPE, DOMAIN_TYPE, TARGET_TYPE>()
+        configure: KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>.() -> Unit
+    ): KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> {
+        val configuration = KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>()
         configuration.configure()
 
-        KafkaStreamPlugin<SOURCE_TYPE, DOMAIN_TYPE>().install(
+        KafkaStreamPlugin<DOMAIN_TYPE>().install(
             pipeline
         ) {
             appEnv = requireNotNull(configuration.appEnv)
             valueSerde = requireNotNull(configuration.domainTypeserde)
             deserializationExceptionHandler = requireNotNull(configuration.deserializationExceptionHandler)
             deadLetterQueueProducer = configuration.deadLetterQueueProducer
-            dlqSerde = requireNotNull(configuration.dlqSerde)
             topology {
                 val targetTopic = configuration.appEnv?.targetTopic
                 val stream = stream<String, DOMAIN_TYPE>(requireNotNull(configuration.appEnv?.sourceTopic))

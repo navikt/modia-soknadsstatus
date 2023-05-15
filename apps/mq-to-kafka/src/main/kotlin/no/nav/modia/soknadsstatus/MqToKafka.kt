@@ -10,6 +10,7 @@ import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serdes.StringSerde
+import java.util.*
 import javax.jms.TextMessage
 
 fun Application.mqToKafkaModule() {
@@ -32,7 +33,7 @@ fun Application.mqToKafkaModule() {
                         kafkaProducer.send(
                             ProducerRecord(
                                 requireNotNull(config.targetTopic),
-                                message.jmsMessageID,
+                                UUID.randomUUID().toString(),
                                 message.text
                             )
                         )

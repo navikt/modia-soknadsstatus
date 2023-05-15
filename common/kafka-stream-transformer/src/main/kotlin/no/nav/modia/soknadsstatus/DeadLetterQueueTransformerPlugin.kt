@@ -5,34 +5,40 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import no.nav.modia.soknadsstatus.kafka.*
 import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.common.serialization.Serdes.StringSerde
 import javax.sql.DataSource
 
-class DeadLetterTransformerConfig<SOURCE_VALUE, TARGET_VALUE> {
+class DeadLetterTransformerConfig<DOMAIN_TYPE, TARGET_TYPE> {
     var appEnv: AppEnv? = null
-    var sourceSerde: Serde<SOURCE_VALUE>? = null
-    var filter: ((key: String, message: SOURCE_VALUE) -> Boolean)? = null
-    var transformer: ((key: String, message: SOURCE_VALUE) -> TARGET_VALUE)? = null
-    var targetSerde: Serde<TARGET_VALUE>? = null
+    var filter: ((key: String, message: DOMAIN_TYPE) -> Boolean)? = null
+    var transformer: ((key: String, message: DOMAIN_TYPE) -> TARGET_TYPE)? = null
+    var targetSerde: Serde<TARGET_TYPE>? = null
+    var domainSerde: Serde<DOMAIN_TYPE>? = null
     var skipTableDataSource: DataSource? = null
 }
 
-class DeadLetterQueueTransformerPlugin<SOURCE_VALUE, TARGET_VALUE> :
-    Plugin<Pipeline<*, ApplicationCall>, DeadLetterTransformerConfig<SOURCE_VALUE, TARGET_VALUE>, DeadLetterQueueTransformerPlugin<SOURCE_VALUE, TARGET_VALUE>> {
-    private var producer: KafkaSoknadsstatusProducer<TARGET_VALUE>? = null
-    private var transformer: ((key: String, message: SOURCE_VALUE) -> TARGET_VALUE)? = null
-    private var filter: ((key: String, message: SOURCE_VALUE) -> Boolean)? = null
+class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
+    Plugin<Pipeline<*, ApplicationCall>, DeadLetterTransformerConfig<DOMAIN_TYPE, TARGET_TYPE>, DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE>> {
+    private var producer: KafkaSoknadsstatusProducer<TARGET_TYPE>? = null
+    private var filter: ((key: String, message: DOMAIN_TYPE) -> Boolean)? = null
+    private var transformer: ((key: String, message: DOMAIN_TYPE) -> TARGET_TYPE)? = null
+    private var domainSerde: Serde<DOMAIN_TYPE>? = null
 
-    private val block: (suspend (key: String, value: SOURCE_VALUE) -> Result<Unit>) = { key, value ->
+
+    private val block: (suspend (topic: String, key: String, value: String) -> Result<Unit>) = { topic, key, value ->
+        print("KEY $key")
+        val domain = requireNotNull(domainSerde).deserializer().deserialize(topic, value.toByteArray(Charsets.UTF_8))
+
         if (filter == null) {
-            transformAndSendMessage(key, value)
-        } else if (filter!!(key, value)) {
-            transformAndSendMessage(key, value)
+            transformAndSendMessage(key, domain)
+        } else if (filter!!(key, domain)) {
+            transformAndSendMessage(key, domain)
         } else {
             Result.success(Unit)
         }
     }
 
-    private fun transformAndSendMessage(key: String, value: SOURCE_VALUE): Result<Unit> {
+    private fun transformAndSendMessage(key: String, value: DOMAIN_TYPE): Result<Unit> {
         return try {
             val transformedValue = requireNotNull(transformer).invoke(key, value)
             requireNotNull(producer).sendMessage(key, transformedValue)
@@ -41,28 +47,29 @@ class DeadLetterQueueTransformerPlugin<SOURCE_VALUE, TARGET_VALUE> :
         }
     }
 
-    override val key: AttributeKey<DeadLetterQueueTransformerPlugin<SOURCE_VALUE, TARGET_VALUE>> =
-        AttributeKey("dead-letter")
+    override val key: AttributeKey<DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE>> =
+        AttributeKey("dead-letter-consumer")
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: DeadLetterTransformerConfig<SOURCE_VALUE, TARGET_VALUE>.() -> Unit
-    ): DeadLetterQueueTransformerPlugin<SOURCE_VALUE, TARGET_VALUE> {
-        val configuration = DeadLetterTransformerConfig<SOURCE_VALUE, TARGET_VALUE>()
+        configure: DeadLetterTransformerConfig<DOMAIN_TYPE, TARGET_TYPE>.() -> Unit
+    ): DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> {
+        val configuration = DeadLetterTransformerConfig<DOMAIN_TYPE, TARGET_TYPE>()
         configuration.configure()
 
         val appEnv = requireNotNull(configuration.appEnv)
 
         transformer = configuration.transformer
+        domainSerde = configuration.domainSerde
         producer = KafkaSoknadsstatusProducer(appEnv, requireNotNull(configuration.targetSerde))
 
         DeadLetterQueueConsumerPlugin().install(pipeline) {
             deadLetterQueueConsumer =
-                DeadLetterQueueConsumerImpl<SOURCE_VALUE>(
+                DeadLetterQueueConsumerImpl(
                     topic = requireNotNull(appEnv.deadLetterQueueTopic),
                     kafkaConsumer = KafkaUtils.createConsumer(
                         appEnv,
-                        requireNotNull(configuration.sourceSerde)
+                        StringSerde()
                     ),
                     block = block,
                     pollDurationMs = appEnv.deadLetterQueueConsumerPollIntervalMs,

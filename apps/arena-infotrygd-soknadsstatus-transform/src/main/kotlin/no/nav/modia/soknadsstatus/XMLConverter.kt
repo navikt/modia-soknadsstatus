@@ -121,7 +121,7 @@ object BehandlingXmlSerdes {
                 return null
             }
 
-            val encodedString = data.toString()
+            val encodedString = data.toString(Charsets.UTF_8)
             return XMLConverter.fromXml(encodedString)
         }
     }

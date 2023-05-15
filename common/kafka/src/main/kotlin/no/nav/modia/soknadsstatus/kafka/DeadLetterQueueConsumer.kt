@@ -15,12 +15,12 @@ interface DeadLetterQueueConsumer {
     fun start()
 }
 
-class DeadLetterQueueConsumerImpl<VALUE_TYPE>(
+class DeadLetterQueueConsumerImpl(
     private val topic: String,
     private val deadLetterMessageSkipService: DeadLetterMessageSkipService,
-    private val kafkaConsumer: Consumer<String, VALUE_TYPE>,
+    private val kafkaConsumer: Consumer<String, String>,
     private val pollDurationMs: Double,
-    private val block: suspend (key: String, value: VALUE_TYPE) -> Result<Unit>,
+    private val block: suspend (topic: String, key: String, value: String) -> Result<Unit>,
 ) : DeadLetterQueueConsumer {
     private val logger = LoggerFactory.getLogger("${DeadLetterQueueConsumerImpl::class.java.name}-$topic")
 
@@ -62,7 +62,7 @@ class DeadLetterQueueConsumerImpl<VALUE_TYPE>(
                             secureLog.info("Skipping a dead letter due to key found in skip table: ${record.key()}")
                             continue
                         }
-                        val result = block(record.key(), record.value())
+                        val result = block(record.topic(), record.key(), record.value())
                         if (result.isFailure) {
                             throw Exception("Failed to handle DLQ ${record.key()}: ${record.value()}")
                         }

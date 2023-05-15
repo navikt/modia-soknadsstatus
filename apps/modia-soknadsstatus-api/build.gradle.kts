@@ -14,8 +14,8 @@ val mockk_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.serialization") version "1.8.21"
     id("com.expediagroup.graphql") version "6.4.0"
 }
 
@@ -64,15 +64,16 @@ group = "no.nav.modia.soknadsstatus"
 version = ""
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClass.set("no.nav.modia.soknadsstatus.MainKt")
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-    sourceSets {
-//        main.kotlin.srcDirs += "build/generated/source/graphql"
-    }
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.test {
@@ -86,10 +87,11 @@ val fatJar = task("fatJar", type = Jar::class) {
     archiveBaseName.set("app")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     manifest {
-        attributes["Implementation-Title"] = "Arena Søknadstatus Transformer"
+        attributes["Implementation-Title"] = "Modia Soknadsstatus API"
         attributes["Implementation-Version"] = archiveVersion
         attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
     }
+    exclude("META-INF/*.RSA", "META-INF/*.SF","META-INF/*.DSA")
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)
 }

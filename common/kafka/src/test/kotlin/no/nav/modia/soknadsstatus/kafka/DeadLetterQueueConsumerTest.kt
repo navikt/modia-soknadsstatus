@@ -33,7 +33,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer!!,
             pollDurationMs = 10.0,
-        ) { _, value ->
+        ) { _, _, value ->
             message = value
             Result.success(Unit)
         }
@@ -64,7 +64,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer!!,
             pollDurationMs = 10.0,
-        ) { key, value ->
+        ) { _, key, value ->
             messages.add(Pair(key, value))
             Result.success(Unit)
         }
@@ -102,7 +102,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer!!,
             pollDurationMs = 10.0,
-        ) { key, value ->
+        ) { _, key, value ->
             messages.add(Pair(key, value))
             Result.success(Unit)
         }

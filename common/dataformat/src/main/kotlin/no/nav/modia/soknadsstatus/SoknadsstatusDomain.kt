@@ -77,7 +77,7 @@ class SoknadsstatusInnkommendeOppdateringDeserializer :
         if (data == null) {
             return null
         }
-        val encodedString = data.toString()
+        val encodedString = data.toString(Charsets.UTF_8)
         return Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), encodedString)
     }
 }

@@ -11,7 +11,6 @@ import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging.secureLog
-import org.apache.kafka.common.serialization.Serdes.StringSerde
 
 fun main() {
     runApp()
@@ -19,19 +18,17 @@ fun main() {
 
 fun runApp(port: Int = 8080) {
     val config = AppEnv()
-    val deadLetterProducer = DeadLetterQueueProducer(config, StringSerde())
-
+    val deadLetterProducer = DeadLetterQueueProducer(config)
     KtorServer.create(
         factory = CIO,
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<String, Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(KafkaStreamTransformPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
                 domainTypeserde = BehandlingJsonSerdes.JsonSerde()
                 targetTypeSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
-                dlqSerde = StringSerde()
                 deadLetterQueueProducer = deadLetterProducer
                 configure { stream ->
                     stream.filter(::filter).mapValues(::transform)
@@ -39,7 +36,7 @@ fun runApp(port: Int = 8080) {
             }
             install(DeadLetterQueueTransformerPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
-                sourceSerde = BehandlingJsonSerdes.JsonSerde()
+                domainSerde = BehandlingJsonSerdes.JsonSerde()
                 targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 transformer = ::transform
                 filter = ::filter

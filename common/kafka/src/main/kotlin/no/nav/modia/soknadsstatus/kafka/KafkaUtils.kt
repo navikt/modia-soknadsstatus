@@ -33,12 +33,11 @@ object KafkaUtils {
         return KafkaConsumer(props, StringDeserializer(), valueSerde.deserializer())
     }
 
-    fun <SOURCE_TYPE, TARGET_TYPE> createStream(
+    fun <TARGET_TYPE> createStream(
         appConfig: AppEnv,
         valueSerde: Serde<TARGET_TYPE>,
-        dlqSerde: Serde<SOURCE_TYPE>?,
         deserializationExceptionHandler: DeserializationExceptionHandler,
-        deadLetterQueueProducer: DeadLetterQueueProducer<SOURCE_TYPE>?,
+        deadLetterQueueProducer: DeadLetterQueueProducer?,
         configure: StreamsBuilder.() -> Unit,
     ): KafkaStreams {
         val props = Properties()
@@ -47,7 +46,6 @@ object KafkaUtils {
             appConfig,
             valueSerde,
             deserializationExceptionHandler,
-            dlqSerde,
             deadLetterQueueProducer
         )
 

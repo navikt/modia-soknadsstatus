@@ -3,14 +3,14 @@ package no.nav.modia.soknadsstatus.kafka
 import no.nav.personoversikt.common.logging.Logging
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.common.serialization.Serdes.StringSerde
 
-class DeadLetterQueueProducer<VALUE_TYPE>(
+class DeadLetterQueueProducer(
     private val appEnv: AppEnv,
-    valueSerde: Serde<VALUE_TYPE>
-) : SoknadsstatusProducer<VALUE_TYPE> {
-    private val producer = KafkaUtils.createProducer(appEnv, valueSerde)
+) : SoknadsstatusProducer<String> {
+    private val producer = KafkaUtils.createProducer(appEnv, StringSerde())
 
-    override fun sendMessage(key: String, message: VALUE_TYPE): Result<Unit> {
+    override fun sendMessage(key: String, message: String): Result<Unit> {
         return try {
             val producerRecord = ProducerRecord(appEnv.deadLetterQueueTopic, key, message)
             producer.send(producerRecord)

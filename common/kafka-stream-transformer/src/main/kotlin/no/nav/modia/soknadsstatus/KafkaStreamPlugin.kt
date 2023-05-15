@@ -14,29 +14,28 @@ import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration.Companion.seconds
 
-class KafkaStreamConfig<SOURCE_TYPE, TARGET_TYPE> {
+class KafkaStreamConfig<TARGET_TYPE> {
     var appEnv: AppEnv? = null
     var valueSerde: Serde<TARGET_TYPE>? = null
-    var dlqSerde: Serde<SOURCE_TYPE>? = null
     var topology: (StreamsBuilder.() -> Unit)? = null
     var deserializationExceptionHandler: DeserializationExceptionHandler? = null
-    var deadLetterQueueProducer: DeadLetterQueueProducer<SOURCE_TYPE>? = null
+    var deadLetterQueueProducer: DeadLetterQueueProducer? = null
     fun topology(fn: StreamsBuilder.() -> Unit) {
         this.topology = fn
     }
 }
 
-class KafkaStreamPlugin<SOURCE_TYPE, TARGET_TYPE> :
-    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig<SOURCE_TYPE, TARGET_TYPE>, KafkaStreamPlugin<SOURCE_TYPE, TARGET_TYPE>> {
+class KafkaStreamPlugin<TARGET_TYPE> :
+    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig<TARGET_TYPE>, KafkaStreamPlugin<TARGET_TYPE>> {
     private var stream: KafkaStreams? = null
 
-    override val key: AttributeKey<KafkaStreamPlugin<SOURCE_TYPE, TARGET_TYPE>> = AttributeKey("kafka-stream")
+    override val key: AttributeKey<KafkaStreamPlugin<TARGET_TYPE>> = AttributeKey("kafka-stream")
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: KafkaStreamConfig<SOURCE_TYPE, TARGET_TYPE>.() -> Unit
-    ): KafkaStreamPlugin<SOURCE_TYPE, TARGET_TYPE> {
-        val configuration = KafkaStreamConfig<SOURCE_TYPE, TARGET_TYPE>()
+        configure: KafkaStreamConfig<TARGET_TYPE>.() -> Unit
+    ): KafkaStreamPlugin<TARGET_TYPE> {
+        val configuration = KafkaStreamConfig<TARGET_TYPE>()
         configuration.configure()
 
         stream = KafkaUtils.createStream(
@@ -44,7 +43,6 @@ class KafkaStreamPlugin<SOURCE_TYPE, TARGET_TYPE> :
             configure = requireNotNull(configuration.topology),
             valueSerde = requireNotNull(configuration.valueSerde),
             deserializationExceptionHandler = requireNotNull(configuration.deserializationExceptionHandler),
-            dlqSerde = configuration.dlqSerde,
             deadLetterQueueProducer = configuration.deadLetterQueueProducer,
         )
 
