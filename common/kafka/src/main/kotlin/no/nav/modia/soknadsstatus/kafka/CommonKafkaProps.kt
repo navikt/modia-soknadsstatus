@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
+import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -42,7 +43,7 @@ fun <TARGET_TYPE> commonStreamsConfig(
     props[StreamsConfig.APPLICATION_ID_CONFIG] = appConfig.appName
     props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
     props[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.StringSerde().javaClass
-    props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = valueSerde::class.java
+   props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = valueSerde::class.java
     props[StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG] =
         deserializationExceptionHandler::class.java
     props[StreamsConfig.DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG] =
@@ -68,16 +69,15 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
     }
 }
 
-fun commonConsumerConfig(props: Properties, appConfig: AppEnv) {
-    props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group"
+fun commonConsumerConfig(props: Properties, appConfig: AppEnv, valueDeserializer: Deserializer<*>) {
+    props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group-new"
     props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
     props[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = "1"
     props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
     props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = "false"
     props[ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG] = "" + (10 * 1024 * 1024)
-    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer()
-    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC] = StringDeserializer()
-    props["value.deserializer"] = "org.apache.kafka.common.serialization.StringDeserializer"
+    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = valueDeserializer
+    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC] = valueDeserializer
     if (appConfig.appMode == AppMode.NAIS) {
 //        aivenSecurityProps(
 //            props,

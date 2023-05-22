@@ -10,7 +10,6 @@ import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
 import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging
-import org.apache.kafka.common.serialization.Serdes.StringSerde
 
 fun main() {
     runApp()

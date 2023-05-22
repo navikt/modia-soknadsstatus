@@ -9,7 +9,8 @@ interface DeadLetterMessageSkipService {
     suspend fun shouldSkip(key: String): Boolean
 }
 
-class DeadLetterMessageSkipServiceImpl(private val repository: DeadLetterMessageRepository) : DeadLetterMessageSkipService {
+class DeadLetterMessageSkipServiceImpl(private val repository: DeadLetterMessageRepository) :
+    DeadLetterMessageSkipService {
     override suspend fun shouldSkip(key: String): Boolean = repository.getAndMarkAsSkipped(key).isNotEmpty()
 }
 
@@ -17,23 +18,29 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
     private val tabell = Tabell(tableName)
 
     private fun get(key: String): Result<List<SkipTableEntry>> {
-        return dataSource.executeQuery("SELECT * from $tabell where ${tabell.key} = ?", key).map { rows ->
+        return dataSource.executeQuery("SELECT * FROM $tabell WHERE ${tabell.key} = ?", key).map { rows ->
             rows.map {
                 SkipTableEntry(
                     key = it.rs.getString(tabell.key),
                     createdAt = it.rs.getTimestamp(tabell.createdAt).toInstant(),
-                    skippedAt = it.rs.getTimestamp(tabell.skippedAt).toInstant()
+                    skippedAt = it.rs.getTimestamp(tabell.skippedAt)?.toInstant()
                 )
             }.toList()
         }
     }
 
     private fun markAsSkipped(key: String): Result<Boolean> {
-        return dataSource.execute("INSERT INTO $tabell(${tabell.skippedAt}) VALUES(NOW()) WHERE key = ?", key)
+        return dataSource.execute("""
+            UPDATE $tabell
+            SET ${tabell.skippedAt} = NOW()
+            WHERE ${tabell.key} = ?
+        """.trimIndent(), key)
     }
 
     fun getAndMarkAsSkipped(key: String): List<SkipTableEntry> = get(key).fold(onSuccess = {
-        markAsSkipped(key)
+        if (it.isNotEmpty()) {
+            markAsSkipped(key)
+        }
         it
     }) {
         listOf()
@@ -43,8 +50,8 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
 private data class Tabell(
     val tableName: String,
     val key: String = "key",
-    val createdAt: String = "createdAt",
-    val skippedAt: String = "skippedAt"
+    val createdAt: String = "created_at",
+    val skippedAt: String = "skipped_at"
 ) {
     override fun toString(): String = tableName
 }

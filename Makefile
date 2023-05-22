@@ -4,8 +4,9 @@ REDPANDA := modia-soknadsstatus-redpanda-1
 
 all: start
 
-start: dev
-	sleep 1
+start: build
+	make dev
+	sleep 2
 	make create-topic
 	docker compose build
 	docker compose up

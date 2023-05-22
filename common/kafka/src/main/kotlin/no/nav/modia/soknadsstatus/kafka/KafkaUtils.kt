@@ -28,9 +28,10 @@ object KafkaUtils {
         valueSerde: Serde<T>,
     ): KafkaConsumer<String, T> {
         val props = Properties()
-        commonConsumerConfig(props, appConfig)
+        val deserializer = valueSerde.deserializer()
+        commonConsumerConfig(props, appConfig, deserializer)
 
-        return KafkaConsumer(props, StringDeserializer(), valueSerde.deserializer())
+        return KafkaConsumer(props, StringDeserializer(), deserializer)
     }
 
     fun <TARGET_TYPE> createStream(

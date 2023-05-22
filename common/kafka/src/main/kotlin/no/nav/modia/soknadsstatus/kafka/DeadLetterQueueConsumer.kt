@@ -54,6 +54,7 @@ class DeadLetterQueueConsumerImpl(
                 if (records.count() > 0) {
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
                     for (record in records) {
+                        logger.info("Trying to process DL with key: ${record.key()}")
                         if (record.key() == null) {
                             secureLog.info("Skipping a dead letter with no key: ${record.value()}")
                             continue
