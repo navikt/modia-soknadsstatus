@@ -10,6 +10,7 @@ fun main() {
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_TOPIC", "aapen-sob-oppgaveHendelse-v1-dlq")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "60000")
     System.setProperty("KAFKA_DEAD_LETTER_SKIP_TABLE_NAME", "fp_k9_dlq_event_skip")
+    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME", "modia_soknadsstatus_fp_k9_dlq_gauge")
 
     System.setProperty("JDBC_URL", "jdbc:postgresql://localhost:5432/modia-soknadsstatus")
     System.setProperty("JDBC_USERNAME", "admin")

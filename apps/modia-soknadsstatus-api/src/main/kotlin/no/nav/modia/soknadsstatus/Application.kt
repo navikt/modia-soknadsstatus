@@ -68,7 +68,8 @@ fun Application.soknadsstatusModule(
                     try {
                         services.soknadsstatusService.fetchIdentsAndPersist(value)
                     } catch (e: Exception) {
-                        val encodedValue = Encoding.encode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                        val encodedValue =
+                            Encoding.encode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
                         services.dlqProducer.sendMessage(
                             key,
                             encodedValue
@@ -87,10 +88,12 @@ fun Application.soknadsstatusModule(
                     StringSerde()
                 ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
-                deadLetterMessageSkipService = services.dlSkipService
+                deadLetterMessageSkipService = services.dlSkipService,
+                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
             ) { _, _, value ->
                 kotlin.runCatching {
-                    val inkommendeOppdatering = Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                    val inkommendeOppdatering =
+                        Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
                     services.soknadsstatusService.fetchIdentsAndPersist(inkommendeOppdatering)
                 }
             }

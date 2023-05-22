@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus.kafka
 
 import no.nav.modia.soknadsstatus.SqlDsl.execute
 import no.nav.modia.soknadsstatus.SqlDsl.executeQuery
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import javax.sql.DataSource
 
@@ -15,6 +16,7 @@ class DeadLetterMessageSkipServiceImpl(private val repository: DeadLetterMessage
 }
 
 class DeadLetterMessageRepository(tableName: String, private val dataSource: DataSource) {
+    private val log = LoggerFactory.getLogger("${DeadLetterMessageRepository::class.java}-$tableName")
     private val tabell = Tabell(tableName)
 
     private fun get(key: String): Result<List<SkipTableEntry>> {
@@ -43,6 +45,7 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
         }
         it
     }) {
+        log.error("Failed to retrieve dead letter key from DB", it)
         listOf()
     }
 }

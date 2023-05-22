@@ -31,6 +31,7 @@ fun Application.dataGeneratorModule() {
         override val deadLetterQueueTopic: String? = null
         override val deadLetterQueueConsumerPollIntervalMs: Double = 10000.0
         override val deadLetterQueueSkipTableName: String? = null
+        override val deadLetterQueueMetricsGaugeName: String? = null
     }
 
     val handlers = Handlers(env).handlers

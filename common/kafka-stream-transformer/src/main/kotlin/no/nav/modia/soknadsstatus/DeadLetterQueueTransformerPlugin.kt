@@ -78,7 +78,8 @@ class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
                             requireNotNull(appEnv.deadLetterQueueSkipTableName),
                             requireNotNull(configuration.skipTableDataSource)
                         )
-                    )
+                    ),
+                    deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(appEnv.deadLetterQueueMetricsGaugeName))
                 )
         }
 

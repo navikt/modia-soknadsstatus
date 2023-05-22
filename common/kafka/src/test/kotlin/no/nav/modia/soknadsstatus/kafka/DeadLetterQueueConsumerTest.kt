@@ -33,6 +33,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer!!,
             pollDurationMs = 10.0,
+            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge")
         ) { _, _, value ->
             message = value
             Result.success(Unit)
@@ -64,6 +65,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer!!,
             pollDurationMs = 10.0,
+            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge")
         ) { _, key, value ->
             messages.add(Pair(key, value))
             Result.success(Unit)
@@ -102,6 +104,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer!!,
             pollDurationMs = 10.0,
+            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge")
         ) { _, key, value ->
             messages.add(Pair(key, value))
             Result.success(Unit)

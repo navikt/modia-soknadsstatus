@@ -18,7 +18,8 @@ interface AppEnv {
             override val targetTopic: String? = EnvUtils.getConfig("KAFKA_TARGET_TOPIC"),
             override val deadLetterQueueTopic: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_TOPIC"),
             override val deadLetterQueueConsumerPollIntervalMs: Double = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS")?.toDouble() ?: 60000.0,
-            override val deadLetterQueueSkipTableName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_SKIP_TABLE_NAME")
+            override val deadLetterQueueSkipTableName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_SKIP_TABLE_NAME"),
+            override val deadLetterQueueMetricsGaugeName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME")
         ) : AppEnv
     }
 
@@ -31,6 +32,7 @@ interface AppEnv {
     val deadLetterQueueTopic: String?
     val deadLetterQueueConsumerPollIntervalMs: Double
     val deadLetterQueueSkipTableName: String?
+    val deadLetterQueueMetricsGaugeName: String?
 }
 
 

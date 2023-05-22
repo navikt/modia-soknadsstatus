@@ -18,7 +18,7 @@ class KafkaSoknadsstatusProducer<VALUE_TYPE>(private val appEnv: AppEnv, valueSe
             producer.send(producerRecord)
             Result.success(Unit)
         } catch (e: Exception) {
-            Logging.secureLog.error("Failed to produce kafka message. ", e)
+            Logging.secureLog.error("Failed to produce kafka message,", e)
             Result.failure(e)
         }
     }

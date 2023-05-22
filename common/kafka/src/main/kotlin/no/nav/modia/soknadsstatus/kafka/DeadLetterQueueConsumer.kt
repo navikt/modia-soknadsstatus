@@ -20,6 +20,7 @@ class DeadLetterQueueConsumerImpl(
     private val deadLetterMessageSkipService: DeadLetterMessageSkipService,
     private val kafkaConsumer: Consumer<String, String>,
     private val pollDurationMs: Double,
+    private val deadLetterQueueMetricsGauge: DeadLetterQueueMetricsGauge,
     private val block: suspend (topic: String, key: String, value: String) -> Result<Unit>,
 ) : DeadLetterQueueConsumer {
     private val logger = LoggerFactory.getLogger("${DeadLetterQueueConsumerImpl::class.java.name}-$topic")
@@ -53,19 +54,24 @@ class DeadLetterQueueConsumerImpl(
                 val records = kafkaConsumer.poll(pollDurationMs.milliseconds.toJavaDuration())
                 if (records.count() > 0) {
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
+                    deadLetterQueueMetricsGauge.set(records.count())
                     for (record in records) {
                         logger.info("Trying to process DL with key: ${record.key()}")
                         if (record.key() == null) {
                             secureLog.info("Skipping a dead letter with no key: ${record.value()}")
+                            deadLetterQueueMetricsGauge.decrement()
                             continue
                         }
                         if (deadLetterMessageSkipService.shouldSkip(record.key())) {
                             secureLog.info("Skipping a dead letter due to key found in skip table: ${record.key()}")
+                            deadLetterQueueMetricsGauge.decrement()
                             continue
                         }
                         val result = block(record.topic(), record.key(), record.value())
                         if (result.isFailure) {
                             throw Exception("Failed to handle DLQ ${record.key()}: ${record.value()}")
+                        } else {
+                            deadLetterQueueMetricsGauge.decrement()
                         }
                     }
                     kafkaConsumer.commitSync()

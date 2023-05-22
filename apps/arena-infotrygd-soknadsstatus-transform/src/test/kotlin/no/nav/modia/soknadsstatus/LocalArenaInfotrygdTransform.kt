@@ -9,6 +9,7 @@ fun main() {
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "60000")
     System.setProperty("KAFKA_TARGET_TOPIC", "modia-soknadsstatus")
     System.setProperty("KAFKA_BROKER_URL", "localhost:9092")
+    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME", "modia_soknadsstatus_arena_infotrygd_dlq_gauge")
 
     runApp(port = 9010)
 }
