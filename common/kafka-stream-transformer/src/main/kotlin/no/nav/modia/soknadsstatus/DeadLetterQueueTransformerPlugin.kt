@@ -26,7 +26,6 @@ class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
 
 
     private val block: (suspend (topic: String, key: String, value: String) -> Result<Unit>) = { topic, key, value ->
-        print("KEY $key")
         val domain = requireNotNull(domainSerde).deserializer().deserialize(topic, value.toByteArray(Charsets.UTF_8))
 
         if (filter == null) {
