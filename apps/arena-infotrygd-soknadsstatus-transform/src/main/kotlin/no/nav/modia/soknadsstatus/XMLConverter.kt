@@ -1,10 +1,10 @@
 package no.nav.modia.soknadsstatus
 
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
-import no.nav.personoversikt.common.logging.Logging
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
+import org.slf4j.LoggerFactory
 import org.xml.sax.SAXException
 import java.io.IOException
 import java.io.StringReader
@@ -107,10 +107,11 @@ object XMLConverter {
 }
 
 object BehandlingXmlSerdes {
+    val log = LoggerFactory.getLogger(BehandlingXmlSerializer::class.java)
     class BehandlingXmlSerializer : Serializer<Hendelse> {
         override fun serialize(topic: String?, data: Hendelse?): ByteArray {
             // We don't serialize to xml
-            Logging.secureLog.error("Prøvde å serialisere til xml. Dette er ikke støttet.")
+            log.error("Prøvde å serialisere til xml. Dette er ikke støttet.")
             return ByteArray(0)
         }
     }

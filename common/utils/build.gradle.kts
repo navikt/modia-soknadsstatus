@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinx_serialization_version: String by project
 val kotlinx_coroutines_version: String by project
+val modia_common_version: String by project
 
 plugins {
     application
@@ -15,6 +16,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+    implementation("no.nav.personoversikt:logging:$modia_common_version")
 }
 
 group = "no.nav.modia.soknadsstatus"

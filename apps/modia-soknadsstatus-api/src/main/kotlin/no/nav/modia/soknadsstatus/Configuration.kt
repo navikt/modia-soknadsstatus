@@ -7,7 +7,6 @@ import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.personoversikt.common.ktor.utils.Security.AuthProviderConfig
 import no.nav.personoversikt.common.ktor.utils.Security.JwksConfig
 import no.nav.personoversikt.common.ktor.utils.Security.TokenLocation
-import no.nav.personoversikt.common.logging.Logging.secureLog
 
 interface Configuration {
     val azureAd: AuthProviderConfig
@@ -44,11 +43,11 @@ private fun AzureAdTokenClientBuilder.oboClientFactory(env: Env): OnBehalfOfToke
 
     return object : OnBehalfOfTokenClient {
         init {
-            secureLog.warn("Bruker OnBehalfOfTokenClientMock")
+            println("Bruker OnBehalfOfTokenClientMock")
         }
 
         override fun exchangeOnBehalfOfToken(tokenScope: String?, accessToken: String?): String {
-            secureLog.info("Bytter token for scope: $tokenScope, med token: $accessToken")
+            println("Bytter token for scope: $tokenScope, med token: $accessToken")
             if (accessToken == null) {
                 throw IllegalStateException("Mangler accessToken ved bytte i mock")
             }
@@ -69,11 +68,11 @@ private fun AzureAdTokenClientBuilder.machineToMachineClientFactory(env: Env): M
 
     return object : MachineToMachineTokenClient {
         init {
-            secureLog.warn("Bruker MachineToMachineTokenClientMock")
+            println("Bruker MachineToMachineTokenClientMock")
         }
 
         override fun createMachineToMachineToken(tokenScope: String?): String {
-            secureLog.info("Bytter token for scope: $tokenScope")
+            println("Bytter token for scope: $tokenScope")
             return "api:scope:mock"
         }
     }

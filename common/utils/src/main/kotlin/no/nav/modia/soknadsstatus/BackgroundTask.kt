@@ -1,6 +1,7 @@
 package no.nav.modia.soknadsstatus
 
 import kotlinx.coroutines.*
+import no.nav.personoversikt.common.logging.Logging
 import java.lang.Runnable
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
@@ -10,7 +11,7 @@ object BackgroundTask {
         try {
             block()
         } catch (e: Exception) {
-            // TODO: Logg
+            Logging.secureLog.error("Background task exited with: ", e)
         }
     }
 }
