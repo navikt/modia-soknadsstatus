@@ -28,8 +28,8 @@ fun runApp(port: Int = 8080) {
                 appEnv = config
                 deadLetterQueueProducer = deadLetterProducer
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
-                domainTypeserde = BehandlingXmlSerdes.XMLSerde()
-                targetTypeSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+                domainSerde = BehandlingXmlSerdes.XMLSerde()
+                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 configure { stream ->
                     stream
                         .filter(::filter)

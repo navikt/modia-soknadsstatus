@@ -26,8 +26,8 @@ fun runApp(port: Int = 8080) {
             install(BaseNaisApp)
             install(KafkaStreamTransformPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
-                domainTypeserde = BehandlingJsonSerdes.JsonSerde()
-                targetTypeSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+                domainSerde = BehandlingJsonSerdes.JsonSerde()
+                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
                 deadLetterQueueProducer = deadLetterProducer
                 configure { stream ->

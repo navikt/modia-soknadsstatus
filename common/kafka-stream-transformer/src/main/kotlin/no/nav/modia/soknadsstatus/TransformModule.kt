@@ -8,14 +8,13 @@ import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
 import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes.StringSerde
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.Produced
 
 class KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE> {
     var appEnv: AppEnv? = null
-    var domainTypeserde: Serde<DOMAIN_TYPE>? = null
-    var targetTypeSerde: Serde<TARGET_TYPE>? = null
+    var domainSerde: Serde<DOMAIN_TYPE>? = null
+    var targetSerde: Serde<TARGET_TYPE>? = null
     var deserializationExceptionHandler: SendToDeadLetterQueueExceptionHandler? = null
     var deadLetterQueueProducer: DeadLetterQueueProducer? = null
     var configure: ((KStream<String, DOMAIN_TYPE>) -> KStream<String, TARGET_TYPE?>)? =
@@ -41,7 +40,7 @@ class KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> :
             pipeline
         ) {
             appEnv = requireNotNull(configuration.appEnv)
-            valueSerde = requireNotNull(configuration.domainTypeserde)
+            valueSerde = requireNotNull(configuration.domainSerde)
             deserializationExceptionHandler = requireNotNull(configuration.deserializationExceptionHandler)
             deadLetterQueueProducer = configuration.deadLetterQueueProducer
             topology {
@@ -49,7 +48,7 @@ class KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> :
                 val stream = stream<String, DOMAIN_TYPE>(requireNotNull(configuration.appEnv?.sourceTopic))
                     .let(requireNotNull(configuration.configure))
                 if (targetTopic != null) {
-                    stream.to(targetTopic, Produced.with(StringSerde(), configuration.targetTypeSerde))
+                    stream.to(targetTopic, Produced.with(StringSerde(), configuration.targetSerde))
                 }
             }
         }
