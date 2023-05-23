@@ -50,10 +50,10 @@ fun <TARGET_TYPE> commonStreamsConfig(
         DefaultProductionExceptionHandler::class.java
     if (deadLetterQueueProducer != null) props["dlqProducer"] = deadLetterQueueProducer
     if (appConfig.appMode == AppMode.NAIS) {
-//        aivenSecurityProps(
-//            props,
-//            KafkaSecurityConfig(aivenRegistryUser = TODO(), aivenRegistryPassword = TODO())
-//        )
+        aivenSecurityProps(
+            props,
+            KafkaSecurityConfig()
+        )
     }
 }
 
@@ -62,10 +62,10 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
     props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
     props[ProducerConfig.CLIENT_ID_CONFIG] = "${appConfig.appName}-producer"
     if (appConfig.appMode == AppMode.NAIS) {
-//        aivenSecurityProps(
-//            props,
-//            KafkaSecurityConfig(aivenRegistryUser = TODO(), aivenRegistryPassword = TODO())
-//        )
+        aivenSecurityProps(
+            props,
+            KafkaSecurityConfig()
+        )
     }
 }
 
@@ -79,9 +79,9 @@ fun commonConsumerConfig(props: Properties, appConfig: AppEnv, valueDeserializer
     props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = valueDeserializer
     props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC] = valueDeserializer
     if (appConfig.appMode == AppMode.NAIS) {
-//        aivenSecurityProps(
-//            props,
-//            KafkaSecurityConfig(aivenRegistryUser = TODO(), aivenRegistryPassword = TODO())
-//        )
+        aivenSecurityProps(
+            props,
+            KafkaSecurityConfig()
+        )
     }
 }

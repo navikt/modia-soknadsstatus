@@ -8,7 +8,7 @@ data class KafkaSecurityConfig(
     val aivenKeystoreLocation: String = EnvUtils.getRequiredConfig("KAFKA_AIVEN_KEYSTORE_LOCATION"),
     val aivenSecurityProtocol: String = EnvUtils.getRequiredConfig("KAFKA_AIVEN_SECURITY_PROTOCOL"),
     val aivenTruststoreLocation: String = EnvUtils.getRequiredConfig("KAFKA_AIVEN_TRUSTOSTORE_LOCATION"),
-    val aivenSchemaRegistryUrl: String = EnvUtils.getRequiredConfig("KAFKA_AIVENT_SCHEMA_REGISTRY_URL"),
-    val aivenRegistryUser: String,
-    val aivenRegistryPassword: String,
+    val aivenSchemaRegistryUrl: String = EnvUtils.getRequiredConfig("KAFKA_SCHEMA_REGISTRY"),
+    val aivenRegistryUser: String = EnvUtils.getRequiredConfig("KAFKA_SCHEMA_REGISTRY_USER"),
+    val aivenRegistryPassword: String = EnvUtils.getRequiredConfig("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
 )
