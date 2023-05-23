@@ -3,7 +3,7 @@ package no.nav.modia.soknadsstatus
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
-class MainTest {
+class ArenaInfotrygdSoknadsstatusTransformTest {
     @Language("xml")
     val behandlingOpprettet = """
         <v2:behandlingOpprettet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
