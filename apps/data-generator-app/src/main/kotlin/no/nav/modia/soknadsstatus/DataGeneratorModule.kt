@@ -23,7 +23,7 @@ fun Application.dataGeneratorModule() {
 
     val env = object : AppEnv {
         override val appName = "data-generator"
-        override val appMode = no.nav.modia.soknadsstatus.AppMode.LOCALLY_WITHIN_DOCKER
+        override val appMode = AppMode.LOCALLY_WITHIN_DOCKER
         override val appVersion = "test"
         override val brokerUrl = config.brokerUrl
         override val sourceTopic = config.soknadsstatusTopic

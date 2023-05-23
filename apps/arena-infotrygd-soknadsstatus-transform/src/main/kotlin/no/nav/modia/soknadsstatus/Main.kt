@@ -9,7 +9,7 @@ import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
 import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
 import no.nav.personoversikt.common.ktor.utils.KtorServer
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.Logging.secureLog
 
 fun main() {
     runApp()
@@ -72,7 +72,7 @@ private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {
         is BehandlingOpprettetOgAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
         is BehandlingAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
         else -> {
-            Logging.secureLog.error("Ukjent Hendelse mottatt: $hendelse")
+            secureLog.error("Ukjent Hendelse mottatt: $hendelse")
             null
         }
     }
@@ -83,7 +83,7 @@ private fun behandlingAvsluttetStatus(avslutningsstatus: Avslutningsstatuser): S
         "avsluttet", "ok" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
         "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
         else -> {
-            Logging.secureLog.error("Ukjent behandlingsstatus mottatt: ${avslutningsstatus.value}")
+            secureLog.error("Ukjent behandlingsstatus mottatt: ${avslutningsstatus.value}")
             null
         }
     }

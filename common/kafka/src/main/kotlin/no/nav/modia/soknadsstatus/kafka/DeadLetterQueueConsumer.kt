@@ -42,7 +42,6 @@ class DeadLetterQueueConsumerImpl(
         closed.set(false)
         kafkaConsumer.subscribe(listOf(topic))
         job = BackgroundTask.launch {
-            println("Launching")
             pollAndProcessRecords()
         }
     }
