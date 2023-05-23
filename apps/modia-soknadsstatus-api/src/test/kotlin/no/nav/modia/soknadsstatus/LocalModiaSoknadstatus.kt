@@ -16,7 +16,7 @@ fun main() {
     System.setProperty("KAFKA_BROKER_URL", "localhost:9092")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_TOPIC", "modia-soknadsstatus-dlq")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "60000")
-    System.setProperty("KAFKA_DEAD_LETTER_SKIP_TABLE_NAME", "modia_soknadsstatus_dlq_event_skip")
+    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME", "modia_soknadsstatus_dlq_event_skip")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME", "modia_soknadsstatus_api_dlq_gauge")
 
     System.setProperty("JDBC_URL", "jdbc:postgresql://localhost:5432/modia-soknadsstatus")
