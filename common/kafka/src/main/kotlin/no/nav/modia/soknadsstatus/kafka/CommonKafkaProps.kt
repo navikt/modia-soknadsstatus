@@ -70,7 +70,7 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
 }
 
 fun commonConsumerConfig(props: Properties, appConfig: AppEnv, valueDeserializer: Deserializer<*>) {
-    props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group-new"
+    props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group"
     props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
     props[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = "1"
     props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"

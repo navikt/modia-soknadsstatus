@@ -28,7 +28,7 @@ class KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE> {
 
 class KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> :
     Plugin<Pipeline<*, ApplicationCall>, KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>, KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> {
-    override val key: AttributeKey<KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> = AttributeKey("kafka-stream-transform-v2")
+    override val key: AttributeKey<KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> = AttributeKey("kafka-stream-transform")
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
         configure: KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>.() -> Unit
