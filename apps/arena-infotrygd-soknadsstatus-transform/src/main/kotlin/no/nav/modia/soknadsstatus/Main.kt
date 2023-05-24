@@ -1,71 +1,62 @@
 package no.nav.modia.soknadsstatus
 
+import Filter
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.toKotlinInstant
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
+import no.nav.modia.soknadsstatus.kafka.AppEnv
+import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
+import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging.secureLog
-import no.nav.personoversikt.common.utils.EnvUtils
 
 fun main() {
     runApp()
 }
 
-data class Configuration(
-    val appname: String = EnvUtils.getRequiredConfig("APP_NAME"),
-    val appversion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
-    val brokerUrl: String = EnvUtils.getRequiredConfig("KAFKA_BROKER_URL"),
-    val sourceTopic: String = EnvUtils.getRequiredConfig("KAFKA_SOURCE_TOPIC"),
-    val targetTopic: String = EnvUtils.getRequiredConfig("KAFKA_TARGET_TOPIC"),
-)
-
 fun runApp(port: Int = 8080) {
-    val config = Configuration()
+    val config = AppEnv()
+    val deadLetterProducer = DeadLetterQueueProducer(config)
+
     KtorServer.create(
         factory = CIO,
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin) {
-                appname = config.appname
-                brokerUrl = config.brokerUrl
-                sourceTopic = config.sourceTopic
-                targetTopic = config.targetTopic
+            install(KafkaStreamTransformPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+                appEnv = config
+                deadLetterQueueProducer = deadLetterProducer
+                deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
+                domainSerde = BehandlingXmlSerdes.XMLSerde()
+                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 configure { stream ->
                     stream
-                        .mapValues(::mapXmlMessageToHendelse)
                         .filter(::filter)
                         .mapValues(::transform)
                 }
+            }
+            install(DeadLetterQueueTransformerPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+                appEnv = config
+                domainSerde = BehandlingXmlSerdes.XMLSerde()
+                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+                transformer = ::transform
+                filter = ::filter
+                skipTableDataSource = DatasourceConfiguration().datasource
             }
         }
     ).start(wait = true)
 }
 
-fun mapXmlMessageToHendelse(key: String?, value: String): Hendelse? {
-    secureLog.info("Got KafkaMessage: $value")
-    try {
-        return XMLConverter.fromXml(value)
-    } catch (_: Exception) {
-        return null
-    }
-}
-
-fun filter(key: String?, value: Hendelse?): Boolean {
-    if (value == null) {
-        return false
-    }
-
+fun filter(key: String?, value: Hendelse): Boolean {
     behandlingsStatus(value) ?: return false
 
     return Filter.filtrerBehandling(value as BehandlingStatus)
 }
 
-fun transform(key: String?, value: Hendelse?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
-    checkNotNull(value)
-    val behandlingStatus = value as BehandlingStatus
-    val soknadsstatus = SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
+fun transform(key: String?, hendelse: Hendelse?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
+    val behandlingStatus = hendelse as BehandlingStatus
+    return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
         aktorIder = behandlingStatus.aktoerREF.map { it.aktoerId },
         tema = behandlingStatus.sakstema.value,
         behandlingsId = behandlingStatus.behandlingsID,
@@ -73,10 +64,6 @@ fun transform(key: String?, value: Hendelse?): SoknadsstatusDomain.Soknadsstatus
         status = behandlingsStatus(behandlingStatus)!!,
         tidspunkt = behandlingStatus.hendelsesTidspunkt.toGregorianCalendar().toInstant().toKotlinInstant()
     )
-
-    secureLog.info("Sending Soknadsstatus KafkaMessage: $soknadsstatus")
-
-    return soknadsstatus
 }
 
 private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {

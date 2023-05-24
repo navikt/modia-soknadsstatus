@@ -52,7 +52,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
     @Test
     fun `should be able to get behandlingOpprettet sokand`() {
-        val behandling = mapXmlMessageToHendelse(null, behandlingOpprettet)
+        val behandling = XMLConverter.fromXml(behandlingOpprettet)
 
         val oppdatering = transform(null, behandling)
 
@@ -61,7 +61,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
     @Test
     fun `should be able to get behandlingAvsluttet sokand`() {
-        val behandling = mapXmlMessageToHendelse(null, behandlingAvsluttet)
+        val behandling = XMLConverter.fromXml(behandlingAvsluttet)
 
         val oppdatering = transform(null, behandling)
 
@@ -70,7 +70,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
     @Test
     fun `should be able to get behandlingOpprettetOgAvsluttetXml sokand `() {
-        val behandling = mapXmlMessageToHendelse(null, behandlingOpprettetOgAvsluttetXml)
+        val behandling = XMLConverter.fromXml(behandlingAvsluttet)
 
         val oppdatering = transform(null, behandling)
 

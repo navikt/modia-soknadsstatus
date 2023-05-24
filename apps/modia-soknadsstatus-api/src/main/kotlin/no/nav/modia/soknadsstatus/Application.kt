@@ -9,15 +9,14 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
 import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
 import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
+import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.slf4j.event.Level
 
 fun Application.soknadsstatusModule(
@@ -39,7 +38,7 @@ fun Application.soknadsstatusModule(
     install(BaseNaisApp)
 
     install(Authentication) {
-        if (env.appMode == AppMode.NAIS) {
+        if (env.kafkaApp.appMode == AppMode.NAIS) {
             security.setupJWT(this)
         } else {
             security.setupMock(this, "Z999999")
@@ -57,16 +56,47 @@ fun Application.soknadsstatusModule(
         mdc("userId") { security.getSubject(it).joinToString(";") }
     }
 
-    install(KafkaStreamPlugin) {
-        appname = env.appName
-        brokerUrl = env.brokerUrl
+    install(KafkaStreamPlugin<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+        appEnv = env.kafkaApp
+        valueSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+        deserializationExceptionHandler =
+            SendToDeadLetterQueueExceptionHandler()
+        deadLetterQueueProducer = services.dlqProducer
         topology {
-            stream<String, String>(env.sourceTopic)
-                .mapValues(::deserialize)
+            stream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>(env.kafkaApp.sourceTopic)
                 .foreach { key, value ->
-                    services.soknadsstatusService.fetchIdentsAndPersist(value)
+                    try {
+                        services.soknadsstatusService.fetchIdentsAndPersist(value)
+                    } catch (e: Exception) {
+                        val encodedValue =
+                            Encoding.encode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                        services.dlqProducer.sendMessage(
+                            key,
+                            encodedValue
+                        )
+                    }
                 }
         }
+    }
+
+    install(DeadLetterQueueConsumerPlugin()) {
+        deadLetterQueueConsumer =
+            DeadLetterQueueConsumerImpl(
+                topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
+                kafkaConsumer = KafkaUtils.createConsumer(
+                    env.kafkaApp,
+                    StringSerde()
+                ),
+                pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
+                deadLetterMessageSkipService = services.dlSkipService,
+                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
+            ) { _, _, value ->
+                kotlin.runCatching {
+                    val inkommendeOppdatering =
+                        Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                    services.soknadsstatusService.fetchIdentsAndPersist(inkommendeOppdatering)
+                }
+            }
     }
 
     routing {
@@ -117,14 +147,5 @@ fun Application.soknadsstatusModule(
                 }
             }
         }
-    }
-}
-
-fun deserialize(key: String?, value: String): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering? {
-    return try {
-        Json.decodeFromString(value)
-    } catch (e: Exception) {
-        secureLog.error("Failed to decode message", e)
-        null
     }
 }

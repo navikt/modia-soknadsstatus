@@ -9,8 +9,8 @@ import java.sql.Timestamp
 import javax.sql.DataSource
 
 object SqlDsl {
-    fun <T> DataSource.useConnection(block: (Connection) -> T): Result<T> = runCatching {
-        this.connection.use(block)
+    private fun <T> DataSource.useConnection(block: (Connection) -> T): Result<T> = runCatching {
+        connection.let(block)
     }
 
     fun DataSource.executeQuery(sql: String, vararg variables: Any): Result<Row> {
@@ -58,7 +58,7 @@ object SqlDsl {
     class Row(val resultSet: ResultSet) : Sequence<Row> {
         override fun iterator(): Iterator<Row> {
             return object : Iterator<Row> {
-                override fun hasNext() = !resultSet.isClosed && resultSet.next()
+                override fun hasNext() = resultSet.next()
                 override fun next() = Row(resultSet)
             }
         }

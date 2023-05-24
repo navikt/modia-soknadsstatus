@@ -4,44 +4,43 @@ import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.serialization.json.Json
 import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
+import no.nav.modia.soknadsstatus.behandling.BehandlingJsonSerdes
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
+import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging.secureLog
-import no.nav.personoversikt.common.utils.EnvUtils
 
 fun main() {
     runApp()
 }
 
-data class Configuration(
-    val appname: String = EnvUtils.getRequiredConfig("APP_NAME"),
-    val appversion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
-    val brokerUrl: String = EnvUtils.getRequiredConfig("KAFKA_BROKER_URL"),
-    val sourceTopic: String = EnvUtils.getRequiredConfig("KAFKA_SOURCE_TOPIC"),
-    val targetTopic: String = EnvUtils.getRequiredConfig("KAFKA_TARGET_TOPIC"),
-)
-
 fun runApp(port: Int = 8080) {
-    val config = Configuration()
+    val config = AppEnv()
+    val deadLetterProducer = DeadLetterQueueProducer(config)
     KtorServer.create(
         factory = CIO,
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin) {
-                appname = config.appname
-                brokerUrl = config.brokerUrl
-                sourceTopic = config.sourceTopic
-                targetTopic = config.targetTopic
+            install(KafkaStreamTransformPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+                appEnv = config
+                domainSerde = BehandlingJsonSerdes.JsonSerde()
+                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+                deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
+                deadLetterQueueProducer = deadLetterProducer
                 configure { stream ->
-                    stream
-                        .mapValues(::decodeDtoContract)
-                        .filter(::filter)
-                        .mapValues(::transform)
+                    stream.filter(::filter).mapValues(::transform)
                 }
+            }
+            install(DeadLetterQueueTransformerPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+                appEnv = config
+                domainSerde = BehandlingJsonSerdes.JsonSerde()
+                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
+                transformer = ::transform
+                filter = ::filter
+                skipTableDataSource = DatasourceConfiguration().datasource
             }
         }
     ).start(wait = true)
@@ -52,15 +51,6 @@ fun filter(key: String?, behandling: Behandling?): Boolean {
     behandlingsStatus(behandling) ?: return false
 
     return Filter.filtrerBehandling(behandling)
-}
-
-fun decodeDtoContract(key: String?, value: String): Behandling? {
-    return try {
-        Json.decodeFromString(BehandlingSerializer, value)
-    } catch (e: Exception) {
-        secureLog.error("Failed to parse to external domain", e)
-        null
-    }
 }
 
 fun transform(key: String?, value: Behandling?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {

@@ -1,46 +1,58 @@
 package no.nav.modia.soknadsstatus
 
 import io.ktor.server.application.*
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import io.ktor.util.*
+import io.ktor.util.pipeline.*
+import no.nav.modia.soknadsstatus.kafka.AppEnv
+import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
+import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
+import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.apache.kafka.streams.kstream.KStream
+import org.apache.kafka.streams.kstream.Produced
 
-class KafkaStreamTransformConfig {
-    var appname: String? = null
-    var brokerUrl: String? = null
-    var configure: ((KStream<String, String>) -> KStream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?>)? = null
+class KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE> {
+    var appEnv: AppEnv? = null
+    var domainSerde: Serde<DOMAIN_TYPE>? = null
+    var targetSerde: Serde<TARGET_TYPE>? = null
+    var deserializationExceptionHandler: SendToDeadLetterQueueExceptionHandler? = null
+    var deadLetterQueueProducer: DeadLetterQueueProducer? = null
+    var configure: ((KStream<String, DOMAIN_TYPE>) -> KStream<String, TARGET_TYPE?>)? =
+        null
 
-    fun configure(fn: (KStream<String, String>) -> KStream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?>) {
+
+    fun configure(fn: (KStream<String, DOMAIN_TYPE>) -> KStream<String, TARGET_TYPE?>) {
         this.configure = fn
     }
-
-    var sourceTopic: String? = null
-    var targetTopic: String? = null
 }
 
-val KafkaStreamTransformPlugin = createApplicationPlugin("kafka-stream-transform", ::KafkaStreamTransformConfig) {
-    val applicationName = requireNotNull(pluginConfig.appname)
-    val kafkaBrokerUrl = requireNotNull(pluginConfig.brokerUrl)
-    val sourceTopic = requireNotNull(pluginConfig.sourceTopic)
-    val configure = requireNotNull(pluginConfig.configure)
-    val targetTopic = pluginConfig.targetTopic
+class KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> :
+    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>, KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> {
+    override val key: AttributeKey<KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE>> = AttributeKey("kafka-stream-transform")
+    override fun install(
+        pipeline: Pipeline<*, ApplicationCall>,
+        configure: KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>.() -> Unit
+    ): KafkaStreamTransformPlugin<DOMAIN_TYPE, TARGET_TYPE> {
+        val configuration = KafkaStreamTransformConfig<DOMAIN_TYPE, TARGET_TYPE>()
+        configuration.configure()
 
-    with(application) {
-        install(KafkaStreamPlugin) {
-            appname = applicationName
-            brokerUrl = kafkaBrokerUrl
+        KafkaStreamPlugin<DOMAIN_TYPE>().install(
+            pipeline
+        ) {
+            appEnv = requireNotNull(configuration.appEnv)
+            valueSerde = requireNotNull(configuration.domainSerde)
+            deserializationExceptionHandler = requireNotNull(configuration.deserializationExceptionHandler)
+            deadLetterQueueProducer = configuration.deadLetterQueueProducer
             topology {
-                val stream = stream<String, String>(sourceTopic)
-                    .let(configure)
-                    .mapValues(::serialize)
+                val targetTopic = configuration.appEnv?.targetTopic
+                val stream = stream<String, DOMAIN_TYPE>(requireNotNull(configuration.appEnv?.sourceTopic))
+                    .let(requireNotNull(configuration.configure))
                 if (targetTopic != null) {
-                    stream?.to(targetTopic)
+                    stream.to(targetTopic, Produced.with(StringSerde(), configuration.targetSerde))
                 }
             }
         }
-    }
-}
 
-private fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?): String {
-    return Json.encodeToString(value)
+        return KafkaStreamTransformPlugin()
+    }
 }

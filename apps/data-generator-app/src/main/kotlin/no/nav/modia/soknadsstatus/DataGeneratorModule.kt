@@ -12,15 +12,35 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
+import no.nav.modia.soknadsstatus.kafka.AppEnv
+import org.apache.kafka.common.serialization.Serdes.StringSerde
+import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
 
 fun Application.dataGeneratorModule() {
     val config = Configuration()
     val isLocal = true
     val wsConnections = mutableListOf<DefaultWebSocketSession>()
 
-    install(KafkaStreamPlugin) {
-        appname = "data-generator"
-        brokerUrl = config.brokerUrl
+    val env = object : AppEnv {
+        override val appName = "data-generator"
+        override val appMode = AppMode.LOCALLY_WITHIN_DOCKER
+        override val appVersion = "test"
+        override val brokerUrl = config.brokerUrl
+        override val sourceTopic = config.soknadsstatusTopic
+        override val targetTopic: String? = null
+        override val deadLetterQueueTopic: String? = null
+        override val deadLetterQueueConsumerPollIntervalMs: Double = 10000.0
+        override val deadLetterQueueSkipTableName: String? = null
+        override val deadLetterQueueMetricsGaugeName: String? = null
+    }
+
+    val handlers = Handlers(env).handlers
+
+    install(KafkaStreamPlugin<String>()) {
+        appEnv = env
+        deserializationExceptionHandler = LogAndContinueExceptionHandler()
+        valueSerde = StringSerde()
+
         topology {
             stream<String, String>(config.soknadsstatusTopic)
                 .foreach { _, value ->
@@ -54,7 +74,7 @@ fun Application.dataGeneratorModule() {
                         return@post
                     }
                     val content = call.receive<String>()
-                    requireNotNull(config.handlers[kilde.type])(kilde, content)
+                    requireNotNull(handlers[kilde.type])(kilde, content)
 
                     call.respond(HttpStatusCode.OK)
                 }
