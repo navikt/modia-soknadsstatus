@@ -2,13 +2,7 @@ name: modia-soknadsstatus-api
 
 on:
   workflow_dispatch:
-
   push:
-    branches:
-      - master
-      - dev
-      - feature/**
-      - bugfix/**
     paths:
       - common/**
       - apps/modia-soknadsstatus-api/**
