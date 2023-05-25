@@ -2,13 +2,7 @@ name: arena-infotrygd-soknadsstatus-transform
 
 on:
   workflow_dispatch:
-
   push:
-    branches:
-      - master
-      - dev
-      - feature/**
-      - bugfix/**
     paths:
       - common/**
       - apps/arena-infotrygd-soknadsstatus-transform/**

@@ -2,13 +2,7 @@ name: mq-to-kafka
 
 on:
   workflow_dispatch:
-
   push:
-    branches:
-      - master
-      - dev
-      - feature/**
-      - bugfix/**
     paths:
       - common/**
       - apps/mq-to-kafka/**

@@ -2,13 +2,7 @@ name: fp-k9-soknadsstatus-transform
 
 on:
   workflow_dispatch:
-
   push:
-    branches:
-      - master
-      - dev
-      - feature/**
-      - bugfix/**
     paths:
       - common/**
       - apps/fp-k9-soknadsstatus-transform/**
