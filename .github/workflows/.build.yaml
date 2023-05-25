@@ -2,12 +2,13 @@ name: ..build.yaml
 
 on: [workflow_call]
 
+env:
+  image: ghcr.io/${{ github.repository }}/${{ github.workflow }}:${{ github.sha }}
+
 jobs:
   build-and-publish:
     name: Build & publish
     runs-on: ubuntu-latest
-    env:
-      image: ghcr.io/${{ github.repository }}/${{ github.workflow }}:${{ github.sha }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
