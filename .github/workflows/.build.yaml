@@ -49,7 +49,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-gcp
-          RESOURCE: ${{github.workflow}}/.nais/dev.yml
+          RESOURCE: apps/${{github.workflow}}/.nais/dev.yaml
           VAR: version=${{ github.sha }}
 
   deploy-prod:
@@ -64,5 +64,5 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: prod-gcp
-          RESOURCE: ${{github.workflow}}/.nais/prod.yml
+          RESOURCE: apps/${{github.workflow}}/.nais/prod.yaml
           VAR: version=${{ github.sha }}
