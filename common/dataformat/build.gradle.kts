@@ -19,6 +19,7 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":common:utils"))
+    implementation(project(":common:ktor"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
@@ -28,6 +29,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
+    implementation("no.nav:vault-jdbc:1.3.10")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.testcontainers:postgresql:$test_containers_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
