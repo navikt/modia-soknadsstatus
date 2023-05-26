@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus
 
 import kotlinx.datetime.Clock
 import org.flywaydb.core.Flyway
+import org.flywaydb.core.api.Location
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,7 +10,9 @@ import org.postgresql.ds.PGSimpleDataSource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.nio.file.Paths
 import javax.sql.DataSource
+import kotlin.io.path.absolutePathString
 import kotlin.time.Duration.Companion.minutes
 
 @Testcontainers
@@ -29,11 +32,9 @@ class SoknadsstatusRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        Flyway
-            .configure()
-            .dataSource(dataSource)
-            .load()
-            .migrate()
+        val resourceDirectory = Paths.get("src", "test", "resources", "db", "migration")
+        val location = Location("filesystem:${resourceDirectory.absolutePathString()}")
+        Flyway.configure().dataSource(dataSource).locations(location).load().migrate()
     }
 
     @Test
