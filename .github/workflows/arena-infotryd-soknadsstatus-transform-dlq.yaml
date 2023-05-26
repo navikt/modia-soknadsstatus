@@ -1,0 +1,15 @@
+name: arena-infotrygd-soknadsstatus-transform-dlq
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .nais/topics/**
+      - .github/workflows/.topic.yml
+
+jobs:
+  build:
+    uses: ./.github/workflows/.topic.yaml
+    secrets: inherit
+    with:
+      topic-file-name: modia-soknadsstatus-arena-infotrygd-dlq.yml
