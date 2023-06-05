@@ -21,18 +21,18 @@ fun Application.dataGeneratorModule() {
     val isLocal = true
     val wsConnections = mutableListOf<DefaultWebSocketSession>()
 
-    val env = object : AppEnv {
-        override val appName = "data-generator"
-        override val appMode = AppMode.LOCALLY_WITHIN_DOCKER
-        override val appVersion = "test"
-        override val brokerUrl = config.brokerUrl
-        override val sourceTopic = config.soknadsstatusTopic
-        override val targetTopic: String? = null
-        override val deadLetterQueueTopic: String? = null
-        override val deadLetterQueueConsumerPollIntervalMs: Double = 10000.0
-        override val deadLetterQueueSkipTableName: String? = null
-        override val deadLetterQueueMetricsGaugeName: String? = null
-    }
+    val env = AppEnv(
+        appName = "data-generator",
+        appMode = AppMode.LOCALLY_WITHIN_DOCKER,
+        appVersion = "test",
+        brokerUrl = config.brokerUrl,
+        sourceTopic = config.soknadsstatusTopic,
+        targetTopic = null,
+        deadLetterQueueTopic = null,
+        deadLetterQueueConsumerPollIntervalMs = 10000.0,
+        deadLetterQueueSkipTableName = null,
+        deadLetterQueueMetricsGaugeName = null,
+    )
 
     val handlers = Handlers(env).handlers
 

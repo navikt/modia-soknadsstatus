@@ -28,7 +28,7 @@ interface Env {
 data class EnvImpl(
     override val kafkaApp: AppEnv = AppEnv(),
     override val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
-    override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(),
+    override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(kafkaApp.appMode, kafkaApp.appName, DatasourceEnv()),
     override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(),
     override val pdlEnv: PdlEnv = PdlEnv(url = EnvUtils.getRequiredConfig("PDL_API_URL"), scope = EnvUtils.getRequiredConfig("PDL_SCOPE")),
     override val axsysEnv: AxsysEnv = AxsysEnv(scope = EnvUtils.getRequiredConfig("AXSYS_SCOPE"), url = EnvUtils.getRequiredConfig("AXSYS_URL")),

@@ -7,7 +7,7 @@ metadata:
     team: personoversikt
 spec:
   image: {{image}}
-  port: 9015
+  port: 8080
   team: personoversikt
   liveness:
     path: /internal/isAlive

@@ -10,7 +10,7 @@ import javax.sql.DataSource
 
 object SqlDsl {
     private fun <T> DataSource.useConnection(block: (Connection) -> T): Result<T> = runCatching {
-        connection.let(block)
+        connection.use(block)
     }
 
     fun DataSource.executeQuery(sql: String, vararg variables: Any): Result<Row> {

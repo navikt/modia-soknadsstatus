@@ -23,6 +23,7 @@ dependencies {
     implementation("javax.jms:javax.jms-api:$jms_api_version")
     implementation(project(":common:kafka"))
     implementation(project(":common:jms"))
+    implementation(project(":common:ktor"))
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
