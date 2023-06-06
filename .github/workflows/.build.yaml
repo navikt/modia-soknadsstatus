@@ -9,6 +9,8 @@ jobs:
   build-and-publish:
     name: Build & publish
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ env.image }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
