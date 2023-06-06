@@ -6,7 +6,7 @@ data class AppEnv(
     val appName: String = EnvUtils.getRequiredConfig("APP_NAME"),
     val appMode: AppMode = AppMode(EnvUtils.getRequiredConfig("APP_MODE", mapOf("APP_MODE" to "NAIS"))),
     val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
-    val brokerUrl: String = EnvUtils.getRequiredConfig("KAFKA_BROKER_URL"),
+    val brokerUrls: String = EnvUtils.getRequiredConfig("KAFKA_BROKERS"),
     val sourceTopic: String? = EnvUtils.getConfig("KAFKA_SOURCE_TOPIC"),
     val targetTopic: String? = EnvUtils.getConfig("KAFKA_TARGET_TOPIC"),
     val deadLetterQueueTopic: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_TOPIC"),

@@ -14,6 +14,7 @@ dependencies {
     implementation("org.apache.activemq:activemq-jms-pool:5.17.3")
     implementation("org.apache.activemq:activemq-client:5.17.3")
     implementation("org.apache.activemq:activemq-broker:5.17.3")
+    implementation(project(":common:ktor"))
 }
 
 group = "no.nav.modia.soknadsstatus"

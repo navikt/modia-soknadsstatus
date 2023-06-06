@@ -25,7 +25,7 @@ fun Application.dataGeneratorModule() {
         appName = "data-generator",
         appMode = AppMode.LOCALLY_WITHIN_DOCKER,
         appVersion = "test",
-        brokerUrl = config.brokerUrl,
+        brokerUrls = config.brokerUrl,
         sourceTopic = config.soknadsstatusTopic,
         targetTopic = null,
         deadLetterQueueTopic = null,

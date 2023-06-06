@@ -4,6 +4,7 @@ import com.ibm.mq.constants.CMQC.MQENC_NATIVE
 import com.ibm.mq.jms.MQQueueConnectionFactory
 import com.ibm.msg.client.jms.JmsConstants
 import com.ibm.msg.client.wmq.common.CommonConstants
+import no.nav.modia.soknadsstatus.AppMode
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.activemq.jms.pool.PooledConnectionFactory
 import javax.jms.QueueConnectionFactory
@@ -16,9 +17,10 @@ object Jms {
         val username: String,
         val password: String,
     )
+
     private var connectionFactory: QueueConnectionFactory? = null
 
-    fun createConnectionFactory(config: Config): QueueConnectionFactory {
+    fun createConnectionFactory(config: Config, appMode: AppMode): QueueConnectionFactory {
         if (connectionFactory == null) {
             connectionFactory = PooledConnectionFactory().apply {
                 maxConnections = 10
@@ -26,7 +28,9 @@ object Jms {
                 connectionFactory = UserCredentialsConnectionFactoryAdapter(
                     username = config.username,
                     password = config.password,
-                    connectionFactory = createActiveMQConnectionFactory(config) // TODO ibm mq?
+                    connectionFactory = if (appMode == AppMode.NAIS) createIBMConnectionFactory(config) else createActiveMQConnectionFactory(
+                        config
+                    )
                 )
             }
         }

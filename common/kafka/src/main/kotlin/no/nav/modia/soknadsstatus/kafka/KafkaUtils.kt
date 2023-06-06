@@ -13,7 +13,7 @@ import java.util.*
 
 object KafkaUtils {
     private val log = LoggerFactory.getLogger("KafkaUtils")
-    fun <T>createProducer(
+    fun <T> createProducer(
         appConfig: AppEnv,
         valueSerde: Serde<T>
     ): KafkaProducer<String, T> {
@@ -62,13 +62,5 @@ object KafkaUtils {
         )
 
         return KafkaStreams(topology, props)
-    }
-
-    private fun aivenSecurityProps(properties: Properties) {
-//        properties[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SSL"
-//        properties[SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG] = getRequiredProperty(KAFKA_KEYSTORE_PATH)
-//        properties[SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG] = getRequiredProperty(KAFKA_CREDSTORE_PASSWORD)
-//        properties[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = getRequiredProperty(KAFKA_TRUSTSTORE_PATH)
-//        properties[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = getRequiredProperty(KAFKA_CREDSTORE_PASSWORD)
     }
 }

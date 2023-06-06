@@ -9,7 +9,6 @@ import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.errors.DefaultProductionExceptionHandler
 import org.apache.kafka.streams.errors.DeserializationExceptionHandler
@@ -41,7 +40,7 @@ fun <TARGET_TYPE> commonStreamsConfig(
     deadLetterQueueProducer: DeadLetterQueueProducer?
 ) {
     props[StreamsConfig.APPLICATION_ID_CONFIG] = appConfig.appName
-    props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
+    props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrls
     props[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.StringSerde().javaClass
    props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = valueSerde::class.java
     props[StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG] =
@@ -59,7 +58,7 @@ fun <TARGET_TYPE> commonStreamsConfig(
 
 fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
     props[ProducerConfig.ACKS_CONFIG] = "all"
-    props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
+    props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrls
     props[ProducerConfig.CLIENT_ID_CONFIG] = "${appConfig.appName}-producer"
     if (appConfig.appMode == AppMode.NAIS) {
         aivenSecurityProps(
@@ -71,7 +70,7 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
 
 fun commonConsumerConfig(props: Properties, appConfig: AppEnv, valueDeserializer: Deserializer<*>) {
     props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group"
-    props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrl
+    props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrls
     props[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = "1"
     props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
     props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = "false"

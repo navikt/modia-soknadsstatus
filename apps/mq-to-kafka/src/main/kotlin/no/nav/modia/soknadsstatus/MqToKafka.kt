@@ -2,6 +2,8 @@ package no.nav.modia.soknadsstatus
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import no.nav.modia.soknadsstatus.jms.JmsConsumer
 import no.nav.modia.soknadsstatus.kafka.AppEnv
@@ -16,20 +18,19 @@ import javax.jms.TextMessage
 fun Application.mqToKafkaModule() {
     val config = AppEnv()
     val mqConfig = MqConfig()
-    val jmsConsumer = JmsConsumer(mqConfig.config)
+    val jmsConsumer = JmsConsumer(mqConfig.config, config.appMode)
 
     val kafkaProducer = KafkaUtils.createProducer(
         config,
         StringSerde()
     )
 
-    val transferJob = launch {
+    val transferJob = GlobalScope.launch(Dispatchers.Unbounded) {
         jmsConsumer
             .subscribe(mqConfig.mqQueue)
             .collect { message ->
                 when (message) {
                     is TextMessage -> {
-                        log.info("Got MQMessage: ${message.text}")
                         kafkaProducer.send(
                             ProducerRecord(
                                 requireNotNull(config.targetTopic),
