@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":common:kafka"))
     implementation(project(":common:jms"))
     implementation(project(":common:ktor"))
+    implementation(project(":common:utils"))
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 

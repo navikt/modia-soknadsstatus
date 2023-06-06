@@ -6,14 +6,15 @@ import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.runBlocking
+import no.nav.modia.soknadsstatus.AppMode
 import javax.jms.Message
 import javax.jms.MessageListener
 import javax.jms.QueueConnectionFactory
 import javax.jms.Session
 
-class JmsConsumer(private val config: Jms.Config) {
+class JmsConsumer(private val config: Jms.Config, appMode: AppMode) {
     private val connectionFactory: QueueConnectionFactory by lazy {
-        Jms.createConnectionFactory(config)
+        Jms.createConnectionFactory(config, appMode)
     }
 
     suspend fun subscribe(queueName: String): Flow<Message> {

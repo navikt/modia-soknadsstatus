@@ -19,3 +19,24 @@ spec:
     path: /internal/isReady
     initialDelay: 20
     timeout: 1
+  env:
+    - name: APP_MODE
+      value: "NAIS"
+    - name: APP_VERSION
+      value: "prod"
+    - name: KAFKA_BROKERS
+      value: "TODO"
+    - name: KAFKA_SOURCE_TOPIC
+      value: "TODO"
+    - name: KAFKA_TARGET_TOPIC
+      value: "TODO"
+    - name: JMS_HOST
+      value: "TODO"
+    - name: JMS_PORT
+      value: "TODO"
+    - name: JMS_QUEUE_MANAGER
+      value: "TODO"
+    - name: JMS_USERNAME
+      value: "TODO"
+    - name: JMS_PASSWORD
+      value: "TODO"

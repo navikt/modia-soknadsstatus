@@ -19,3 +19,20 @@ spec:
     path: /internal/isReady
     initialDelay: 20
     timeout: 1
+  env:
+    - name: APP_MODE
+      value: "NAIS"
+    - name: APP_VERSION
+      value: "prod"
+    - name: KAFKA_BROKERS
+      value: "TODO"
+    - name: KAFKA_SOURCE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-oppdatering"
+    - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
+    - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
+      value: "3.6e+6" # One hour
+    - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
+      value: "modia_soknadsstatus_api_dlq_event_skip"
+    - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
+      value: "modia_soknadsstatus_api_dlq_gauge"

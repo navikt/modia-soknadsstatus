@@ -6,7 +6,7 @@ fun main() {
 
     System.setProperty("KAFKA_SOURCE_TOPIC", "aapen-sob-oppgaveHendelse-v1")
     System.setProperty("KAFKA_TARGET_TOPIC", "modia-soknadsstatus")
-    System.setProperty("KAFKA_BROKER_URL", "localhost:9092")
+    System.setProperty("KAFKA_BROKERS", "localhost:9092")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_TOPIC", "aapen-sob-oppgaveHendelse-v1-dlq")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "60000")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME", "fp_k9_dlq_event_skip")
