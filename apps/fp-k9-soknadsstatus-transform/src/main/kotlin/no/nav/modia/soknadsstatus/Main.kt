@@ -40,7 +40,7 @@ fun runApp(port: Int = 8080) {
                 targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 transformer = ::transform
                 filter = ::filter
-                skipTableDataSource = DatasourceConfiguration(appMode = config.appMode, appName = config.appName, datasourceEnv = DatasourceEnv()).datasource
+                skipTableDataSource = DatasourceConfiguration(DatasourceEnv(appName = config.appName)).datasource
             }
         }
     ).start(wait = true)

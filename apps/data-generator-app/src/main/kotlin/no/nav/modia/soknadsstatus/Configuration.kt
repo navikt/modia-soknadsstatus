@@ -34,7 +34,8 @@ class Handlers(appEnv: AppEnv) {
                 queueManager = EnvUtils.getRequiredConfig("JMS_QUEUEMANAGER"),
                 username = EnvUtils.getRequiredConfig("JMS_USERNAME"),
                 password = EnvUtils.getRequiredConfig("JMS_PASSWORD"),
-            )
+            ),
+            appEnv.appMode
         ),
         Source.Type.KAFKA to KafkaHandler(
             appEnv

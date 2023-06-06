@@ -19,12 +19,13 @@ fun main() {
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME", "modia_soknadsstatus_dlq_event_skip")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME", "modia_soknadsstatus_api_dlq_gauge")
 
-    System.setProperty("JDBC_URL", "jdbc:postgresql://localhost:5432/modia-soknadsstatus")
-    System.setProperty("JDBC_USERNAME", "admin")
-    System.setProperty("JDBC_PASSWORD", "admin")
+    System.setProperty("NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_HOST", "localhost")
+    System.setProperty("NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_PORT", "5432")
+    System.setProperty("NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_USERNAME", "admin")
+    System.setProperty("NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_PASSWORD", "admin")
+    System.setProperty("DB_NAME", "modia-soknadsstatus")
     System.setProperty("NAIS_CLUSTER_NAME", "dev-gcp")
     setupAzureAdLocally()
-    setUpMocks()
 
     runApp(port = 9012, useMock = true)
 }

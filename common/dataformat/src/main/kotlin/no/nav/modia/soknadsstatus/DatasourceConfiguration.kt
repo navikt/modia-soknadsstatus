@@ -2,14 +2,11 @@ package no.nav.modia.soknadsstatus
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import no.nav.personoversikt.common.utils.EnvUtils
-import no.nav.personoversikt.common.utils.EnvUtils.getConfig
 import no.nav.personoversikt.common.utils.EnvUtils.getRequiredConfig
-import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.flywaydb.core.Flyway
 import javax.sql.DataSource
 
-class DatasourceConfiguration(appMode: AppMode, appName: String, datasourceEnv: DatasourceEnv) {
+class DatasourceConfiguration(datasourceEnv: DatasourceEnv) {
     val datasource: DataSource by lazy {
         val config = HikariConfig()
 
@@ -18,18 +15,10 @@ class DatasourceConfiguration(appMode: AppMode, appName: String, datasourceEnv: 
         config.maximumPoolSize = 10
         config.connectionTimeout = 1000
         config.maxLifetime = 30_000
+        config.username = datasourceEnv.userName
+        config.password = datasourceEnv.password
 
-        if (appMode == AppMode.LOCALLY_WITHIN_DOCKER || appMode == AppMode.LOCALLY_WITHIN_IDEA) {
-            config.username = getRequiredConfig("JDBC_USERNAME")
-            config.password = getRequiredConfig("JDBC_PASSWORD")
-            HikariDataSource(config)
-        } else {
-            HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
-                config,
-                requireNotNull(datasourceEnv.mountPath),
-                "$appName-user"
-            )
-        }
+        HikariDataSource(config)
 
     }
 
@@ -42,7 +31,16 @@ class DatasourceConfiguration(appMode: AppMode, appName: String, datasourceEnv: 
     }
 }
 
-data class DatasourceEnv(
-    val jdbcUrl: String = getRequiredConfig("DATABASE_JDBC_URL"),
-    val mountPath: String? = getConfig("VAULT_MOUNTPATH")
-)
+class DatasourceEnv(appName: String, appDB: String = getRequiredConfig("DB_NAME")) {
+    private val appDbString = "NAIS_DATABASE_${appName.uppercase()}_${appDB.uppercase()}"
+
+    private val host = getEnvVariable("HOST")
+    private val port = getEnvVariable("PORT").toInt()
+    val jdbcUrl = "jdbc:postgresql://$host:$port/$appDB"
+    val userName = getEnvVariable("USERNAME")
+    val password = getEnvVariable("PASSWORD")
+    private fun getEnvVariable(suffix: String): String {
+        val completeString = "${appDbString}_$suffix"
+        return getRequiredConfig(completeString)
+    }
+}

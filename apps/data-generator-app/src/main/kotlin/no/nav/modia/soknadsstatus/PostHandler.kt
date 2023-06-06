@@ -12,8 +12,8 @@ fun interface PostHandler {
     operator fun invoke(source: Source, data: String)
 }
 
-class JmsHandler(config: Jms.Config) : PostHandler {
-    private val producer = JmsProducer(config)
+class JmsHandler(config: Jms.Config, appMode: AppMode) : PostHandler {
+    private val producer = JmsProducer(config, appMode)
     override fun invoke(source: Source, data: String) {
         check(source.type == Source.Type.JMS)
         producer.send(source.resourceId, data)

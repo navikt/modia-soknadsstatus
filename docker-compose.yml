@@ -87,15 +87,19 @@ services:
     environment:
       APP_NAME: "arena-infotrygd-soknadsstatus-transform"
       APP_VERSION: "dev"
+      APP_MODE: "LOCALLY_WITHIN_IDEA"
+
       KAFKA_SOURCE_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKERS: "redpanda:29092"
       KAFKA_DEAD_LETTER_QUEUE_TOPIC: "arena-infotrygd-soknadsstatus-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
       KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "fp_k9_dlq_event_skip"
-      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
-      JDBC_USERNAME: "admin"
-      JDBC_PASSWORD: "admin"
+      DB_NAME: "modia-soknadsstatus"
+      NAIS_DATABASE_ARENA-INFOTRYGD-SOKNADSSTATUS-TRANSFORM_MODIA-SOKNADSSTATUS_HOST: "localhost"
+      NAIS_DATABASE_ARENA-INFOTRYGD-SOKNADSSTATUS-TRANSFORM_MODIA-SOKNADSSTATUS_PORT: "5432"
+      NAIS_DATABASE_ARENA-INFOTRYGD-SOKNADSSTATUS-TRANSFORM_MODIA-SOKNADSSTATUS_USERNAME: "admin"
+      NAIS_DATABASE_ARENA-INFOTRYGD-SOKNADSSTATUS-TRANSFORM_MODIA-SOKNADSSTATUS_PASSWORD: "admin"
   fp-k9-transform:
     build:
       dockerfile: ../../docker/Dockerfile
@@ -107,15 +111,19 @@ services:
     environment:
       APP_NAME: "fp-k9-transform"
       APP_VERSION: "dev"
+      APP_MODE: "LOCALLY_WITHIN_IDEA"
+
       KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
       KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
       KAFKA_BROKERS: "redpanda:29092"
       KAFKA_DEAD_LETTER_QUEUE_TOPIC: "aapen-sob-oppgaveHendelse-v1-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
       KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "fp_k9_dlq_event_skip"
-      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
-      JDBC_USERNAME: "admin"
-      JDBC_PASSWORD: "admin"
+      DB_NAME: "modia-soknadsstatus"
+      NAIS_DATABASE_FP-K9-TRANSFORM_MODIA-SOKNADSSTATUS_HOST: "localhost"
+      NAIS_DATABASE_FP-K9-TRANSFORM_MODIA-SOKNADSSTATUS_PORT: "5432"
+      NAIS_DATABASE_FP-K9-TRANSFORM_MODIA-SOKNADSSTATUS_USERNAME: "admin"
+      NAIS_DATABASE_FP-K9-TRANSFORM_MODIA-SOKNADSSTATUS_PASSWORD: "admin"
   modia-soknadsstatus-api:
     build:
       dockerfile: ../../docker/Dockerfile
@@ -130,13 +138,16 @@ services:
     environment:
       APP_NAME: "modia-soknadsstatus-api"
       APP_VERSION: "dev"
+      APP_MODE: "LOCALLY_WITHIN_IDEA"
+
       KAFKA_SOURCE_TOPIC: "modia-soknadsstatus"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKERS: "redpanda:29092"
       KAFKA_DEAD_LETTER_QUEUE_TOPIC: "modia-soknadsstatus-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
       KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "modia_soknadsstatus_dlq_event_skip"
-
-      JDBC_URL: "jdbc:postgresql://postgres:5432/modia-soknadsstatus"
-      JDBC_USERNAME: "admin"
-      JDBC_PASSWORD: "admin"
+      DB_NAME: "modia-soknadsstatus"
+      NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_HOST: "localhost"
+      NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_PORT: "5432"
+      NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_USERNAME: "admin"
+      NAIS_DATABASE_MODIA-SOKNADSSTATUS-API_MODIA-SOKNADSSTATUS_PASSWORD: "admin"

@@ -29,7 +29,6 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
-    implementation("no.nav:vault-jdbc:1.3.10")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.testcontainers:postgresql:$test_containers_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
