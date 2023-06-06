@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - .github/workflows/.build.yaml
+      - .github/workflows/arena-infotrygd-soknadsstatus-transform.yaml
       - common/**
       - apps/arena-infotrygd-soknadsstatus-transform/**
 

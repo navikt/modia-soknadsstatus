@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - .github/workflows/.build.yaml
+      - .github/workflows/modia-soknadsstatus-api.yaml
       - common/**
       - apps/modia-soknadsstatus-api/**
 

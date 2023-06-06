@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - .github/workflows/.build.yaml
+      - .github/workflows/mq-to-kafka.yaml
       - common/**
       - apps/mq-to-kafka/**
 
