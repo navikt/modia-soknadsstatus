@@ -47,6 +47,8 @@ spec:
       value: "NAIS"
     - name: APP_VERSION
       value: "dev"
+    - name: DB_NAME
+      value: "modia-soknadsstatus"
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
