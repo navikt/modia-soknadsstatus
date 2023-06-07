@@ -32,7 +32,9 @@ class DatasourceConfiguration(datasourceEnv: DatasourceEnv) {
 }
 
 class DatasourceEnv(appName: String, appDB: String = getRequiredConfig("DB_NAME")) {
-    private val appDbString = "NAIS_DATABASE_${appName}_${appDB}"
+    private val appDbString = "NAIS_DATABASE_${convertVariableToUpperCaseAndUnderscore(appName)}_${
+        convertVariableToUpperCaseAndUnderscore(appDB.uppercase())
+    }"
 
     private val host = getEnvVariable("HOST")
     private val port = getEnvVariable("PORT").toInt()
@@ -42,5 +44,9 @@ class DatasourceEnv(appName: String, appDB: String = getRequiredConfig("DB_NAME"
     private fun getEnvVariable(suffix: String): String {
         val completeString = "${appDbString}_$suffix"
         return getRequiredConfig(completeString)
+    }
+
+    private fun convertVariableToUpperCaseAndUnderscore(variable: String): String {
+        return variable.replace("-", "_").uppercase()
     }
 }
