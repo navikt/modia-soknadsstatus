@@ -46,6 +46,8 @@ spec:
   envFrom:
     - secret: mq-to-kafka
   env:
+    - name: APP_NAME
+      value: "mq-to-kafka"
     - name: APP_MODE
       value: "NAIS"
     - name: APP_VERSION

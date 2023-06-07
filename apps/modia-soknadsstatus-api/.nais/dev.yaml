@@ -41,6 +41,8 @@ spec:
         databases:
           - name: "modia-soknadsstatus"
   env:
+    - name: APP_NAME
+      value: "modia-soknadsstatus-api"
     - name: APP_MODE
       value: "NAIS"
     - name: APP_VERSION
