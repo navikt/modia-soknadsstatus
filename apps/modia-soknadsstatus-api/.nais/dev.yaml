@@ -39,7 +39,7 @@ spec:
     sqlInstances:
       - type: POSTGRES_14
         databases:
-          - name: "modia-soknadsstatus"
+          - name: modia-soknadsstatus-api-db
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
@@ -48,7 +48,7 @@ spec:
     - name: APP_VERSION
       value: "dev"
     - name: DB_NAME
-      value: "modia-soknadsstatus"
+      value: "modia-soknadsstatus-api-db"
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC

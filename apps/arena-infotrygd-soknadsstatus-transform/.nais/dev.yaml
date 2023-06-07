@@ -39,7 +39,7 @@ spec:
     sqlInstances:
       - type: POSTGRES_14
         databases:
-          - name: "modia-soknadsstatus"
+          - name: arena-infotrygd-soknadsstatus-db
   env:
     - name: APP_NAME
       value: "arena-infotrygd-soknadsstatus-transform"
@@ -48,7 +48,7 @@ spec:
     - name: APP_VERSION
       value: "dev"
     - name: DB_NAME
-      value: "modia-soknadsstatus"
+      value: "arena-infotrygd-soknadsstatus-db"
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering"
     - name: KAFKA_TARGET_TOPIC
