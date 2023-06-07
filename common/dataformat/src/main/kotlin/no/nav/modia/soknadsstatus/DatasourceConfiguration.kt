@@ -32,7 +32,7 @@ class DatasourceConfiguration(datasourceEnv: DatasourceEnv) {
 }
 
 class DatasourceEnv(appName: String, appDB: String = getRequiredConfig("DB_NAME")) {
-    private val appDbString = "NAIS_DATABASE_${appName.uppercase()}_${appDB.uppercase()}"
+    private val appDbString = "NAIS_DATABASE_${appName}_${appDB}"
 
     private val host = getEnvVariable("HOST")
     private val port = getEnvVariable("PORT").toInt()
