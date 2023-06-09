@@ -40,6 +40,10 @@ spec:
       - type: POSTGRES_14
         databases:
           - name: modia-soknadsstatus-api-db
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
