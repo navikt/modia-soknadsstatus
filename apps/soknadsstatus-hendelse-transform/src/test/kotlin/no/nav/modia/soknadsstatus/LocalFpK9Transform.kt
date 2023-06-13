@@ -1,7 +1,7 @@
 package no.nav.modia.soknadsstatus
 
 fun main() {
-    System.setProperty("APP_NAME", "fp-k9-soknadsstatus-transform")
+    System.setProperty("APP_NAME", "soknadsstatus-hendelse-transform")
     System.setProperty("APP_VERSION", "dev")
     System.setProperty("APP_MODE", "LOCALLY_WITHIN_IDEA")
 

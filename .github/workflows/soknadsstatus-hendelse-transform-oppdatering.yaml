@@ -1,4 +1,4 @@
-name: fp-k9-soknadsstatus-transform-dlq
+name: soknadsstatus-hendelse-transform-oppdatering
 
 on:
   workflow_dispatch:
@@ -12,4 +12,4 @@ jobs:
     uses: ./.github/workflows/.topic.yaml
     secrets: inherit
     with:
-      topic-file-name: modia-soknadsstatus-fp-k9-dlq.yml
+      topic-file-name: modia-soknadsstatus-hendelse.yml

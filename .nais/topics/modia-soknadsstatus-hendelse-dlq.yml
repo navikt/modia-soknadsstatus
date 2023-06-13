@@ -1,12 +1,12 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
-  name: modia-soknadsstatus-fp-k9-dlq
+  name: modia-soknadsstatus-hendelse-dlq
   namespace: personoversikt
   labels:
     team: personoversikt
   annotations:
-    dcat.data.nav.no/title: "personoversikt.modia-soknadsstatus-fp-k9-dlq"
+    dcat.data.nav.no/title: "personoversikt.modia-soknadsstatus-hendelse-dlq"
     dcat.data.nav.no/description: "Topic for modia søknadsstatus for oppdateringer som kommer inn til fp-k9-transform som ikke klarer å parses"
 spec:
   pool: {{kafkaPool}}
@@ -19,5 +19,5 @@ spec:
     retentionHours: 730  # Messages are stored for 1 month
   acl:
     - team: personoversikt
-      application: fp-k9-soknadsstatus-transform
+      application: soknadsstatus-hendelse-transform
       access: readwrite

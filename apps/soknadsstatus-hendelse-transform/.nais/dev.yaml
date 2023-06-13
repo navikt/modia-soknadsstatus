@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: fp-k9-soknadsstatus-transform
+  name: soknadsstatus-hendelse-transform
   namespace: personoversikt
   labels:
     team: personoversikt
@@ -35,30 +35,31 @@ spec:
     path: /internal/metrics
   kafka:
     pool: nav-dev
+    streams: true
   gcp:
     sqlInstances:
       - type: POSTGRES_14
         cascadingDelete: true
         databases:
-          - name: fp-k9-soknadsstatus-db
+          - name: soknadsstatus-hendelse-transform-db
   env:
     - name: APP_NAME
-      value: "fp-k9-soknadsstatus-transform"
+      value: "soknadsstatus-hendelse-transform"
     - name: APP_MODE
       value: "NAIS"
     - name: APP_VERSION
       value: "dev"
     - name: DB_NAME
-      value: "fp-k9-soknadsstatus-db"
+      value: "soknadsstatus-hendelse-transform-db"
     - name: KAFKA_SOURCE_TOPIC
-      value: "aapen-sob-oppgaveHendelse-v1"
+      value: "personoversikt.modia-soknadsstatus-hendelse"
     - name: KAFKA_TARGET_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
-      value: "personoversikt.modia-soknadsstatus-fp-k9-dlq"
+      value: "personoversikt.modia-soknadsstatus-hendelse-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
       value: "8.64e+7" # One day
     - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
-      value: "fp_k9_dlq_event_skip"
+      value: "hendelse_dlq_event_skip"
     - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
-      value: "modia_soknadsstatus_fp_k9_dlq_gauge"
+      value: "modia_soknadsstatus_hendelse_dlq_gauge"

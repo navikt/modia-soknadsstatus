@@ -103,13 +103,13 @@ services:
   fp-k9-transform:
     build:
       dockerfile: ../../docker/Dockerfile
-      context: apps/fp-k9-soknadsstatus-transform
+      context: apps/soknadsstatus-hendelse-transform
     ports:
       - "9014:8080"
     depends_on:
       - redpanda
     environment:
-      APP_NAME: "fp-k9-soknadsstatus-transform"
+      APP_NAME: "soknadsstatus-hendelse-transform"
       APP_VERSION: "dev"
       APP_MODE: "LOCALLY_WITHIN_IDEA"
 

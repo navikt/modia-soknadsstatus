@@ -1,13 +1,13 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
-  name: modia-soknadsstatus-oppdatering
+  name: modia-soknadsstatus-hendelse
   namespace: personoversikt
   labels:
     team: personoversikt
   annotations:
-    dcat.data.nav.no/title: "personoversikt.modia-soknadsstatus-oppdatering"
-    dcat.data.nav.no/description: "Topic for søknadsstatus som brukes internt mellom de ulike søknadsstatus appene"
+    dcat.data.nav.no/title: "personoversikt.modia-soknadsstatus-hendelse"
+    dcat.data.nav.no/description: "Topic for modia søknadsstatus for oppdateringer som kommer fra fp og k9"
 spec:
   pool: {{kafkaPool}}
   config:
@@ -19,11 +19,8 @@ spec:
     retentionHours: 730  # Messages are stored for 1 month
   acl:
     - team: personoversikt
-      application: arena-infotrygd-soknadsstatus-transform
+      application: mq-to-kafka
       access: write
     - team: personoversikt
       application: soknadsstatus-hendelse-transform
-      access: write
-    - team: personoversikt
-      application: modia-soknadsstatus-api
       access: read

@@ -1,13 +1,13 @@
-name: fp-k9-soknadsstatus-transform
+name: soknadsstatus-hendelse-transform
 
 on:
   workflow_dispatch:
   push:
     paths:
       - .github/workflows/.build.yaml
-      - .github/workflows/fp-k9-soknadsstatus-transform.yaml
+      - .github/workflows/soknadsstatus-hendelse-transform.yaml
       - common/**
-      - apps/fp-k9-soknadsstatus-transform/**
+      - apps/soknadsstatus-hendelse-transform/**
 
 jobs:
   build:
