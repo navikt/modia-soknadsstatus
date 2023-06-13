@@ -50,7 +50,7 @@ spec:
     - name: DB_NAME
       value: "fp-k9-soknadsstatus-db"
     - name: KAFKA_SOURCE_TOPIC
-      value: "personoversikt.modia-soknadsstatus-fp-k9-oppdatering"
+      value: "aapen-sob-oppgaveHendelse-v1"
     - name: KAFKA_TARGET_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
