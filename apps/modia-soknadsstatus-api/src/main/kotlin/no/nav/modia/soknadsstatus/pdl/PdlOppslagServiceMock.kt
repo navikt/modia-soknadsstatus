@@ -11,4 +11,5 @@ class PdlOppslagServiceMock : PdlOppslagService {
     override fun hentGeografiskTilknytning(userToken: String, fnr: String): String = MockData.bruker.geografiskTilknyttning
 
     override fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse> = mutableListOf()
+    override fun hentIdenter(userToken: String, fnr: String): List<String> = listOf(MockData.bruker.fnr)
 }

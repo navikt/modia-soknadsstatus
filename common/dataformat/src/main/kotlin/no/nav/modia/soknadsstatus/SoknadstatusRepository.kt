@@ -18,8 +18,8 @@ class SoknadsstatusRepository(private val dataSource: DataSource) {
         val tidspunkt = "tidspunkt"
     }
 
-    fun get(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
-        return dataSource.executeQuery("SELECT * from $Tabell where ${Tabell.ident} = ?", ident).map { rows ->
+    fun get(identer: List<String>): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
+        return dataSource.executeQuery("SELECT * from $Tabell where ${Tabell.ident} in ?", identer).map { rows ->
             rows.map {
                 SoknadsstatusDomain.SoknadsstatusOppdatering(
                     ident = it.rs.getString(Tabell.ident),

@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.api.generated.pdl.HentAdressebeskyttelse
 import no.nav.api.generated.pdl.HentAktorid
 import no.nav.api.generated.pdl.HentGeografiskTilknyttning
+import no.nav.api.generated.pdl.HentIdenter
 import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.accesscontrol.RestConstants
@@ -39,6 +40,15 @@ class PdlOppslagServiceImpl(
         pdlClient.execute(HentAdressebeskyttelse(HentAdressebeskyttelse.Variables(fnr)), userTokenAuthorizationHeaders(userToken))
             .data?.hentPerson?.adressebeskyttelse
             ?: emptyList()
+    }
+
+    override fun hentIdenter(userToken: String, fnr: String): List<String> = runBlocking {
+        pdlClient.execute(
+            HentIdenter(HentIdenter.Variables(fnr)),
+            userTokenAuthorizationHeaders(userToken)
+        )?.data?.hentIdenter?.identer?.map {
+            it.ident
+        } ?: emptyList()
     }
 
     private fun userTokenAuthorizationHeaders(userToken: String): HeadersBuilder = {

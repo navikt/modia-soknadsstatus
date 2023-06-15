@@ -138,6 +138,7 @@ type Person {
     doedsfall: [Doedsfall!]!
     falskIdentitet: FalskIdentitet
     foedsel: [Foedsel!]!
+    foedested: [Foedested!]!
     folkeregisteridentifikator(historikk: Boolean = false): [Folkeregisteridentifikator!]!
     folkeregisterpersonstatus(historikk: Boolean = false): [Folkeregisterpersonstatus!]!
     forelderBarnRelasjon: [ForelderBarnRelasjon!]!
@@ -372,6 +373,14 @@ enum AdressebeskyttelseGradering {
 type Foedsel {
     foedselsaar: Int
     foedselsdato: Date
+    foedeland: String
+    foedested: String
+    foedekommune: String
+    folkeregistermetadata: Folkeregistermetadata
+    metadata: Metadata!
+}
+
+type Foedested {
     foedeland: String
     foedested: String
     foedekommune: String

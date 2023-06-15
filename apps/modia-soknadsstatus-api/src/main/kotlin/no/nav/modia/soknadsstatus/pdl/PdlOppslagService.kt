@@ -9,4 +9,5 @@ interface PdlOppslagService {
     fun hentAktorId(userToken: String, fnr: String): String?
     fun hentGeografiskTilknytning(userToken: String, fnr: String): String?
     fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse>
+    fun hentIdenter(userToken: String, fnr: String): List<String>
 }

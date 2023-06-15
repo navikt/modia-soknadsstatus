@@ -9,8 +9,8 @@ import no.nav.personoversikt.common.logging.Logging
 
 interface SoknadsstatusService {
     fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?)
-    fun fetchAggregatedDataForIdent(ident: String): Result<SoknadsstatusDomain.Soknadsstatuser>
-    fun fetchDataForIdent(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>>
+    fun fetchAggregatedDataForIdent(userToken: String, ident: String): Result<SoknadsstatusDomain.Soknadsstatuser>
+    fun fetchDataForIdent(userToken: String, ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>>
 }
 
 class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService, private val repository: SoknadsstatusRepository) : SoknadsstatusService {
@@ -24,8 +24,9 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
         }
     }
 
-    override fun fetchAggregatedDataForIdent(ident: String): Result<SoknadsstatusDomain.Soknadsstatuser> {
-        return repository.get(ident)
+    override fun fetchAggregatedDataForIdent(userToken: String, ident: String): Result<SoknadsstatusDomain.Soknadsstatuser> {
+        val identer = pdlOppslagService.hentIdenter(userToken = userToken, fnr = ident)
+        return repository.get(identer)
             .map { oppdateringer ->
                 val temamap = mutableMapOf<String, SoknadsstatusDomain.Soknadsstatus>()
                 for (oppdatering in oppdateringer) {
@@ -41,8 +42,9 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
             }
     }
 
-    override fun fetchDataForIdent(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
-        return repository.get(ident)
+    override fun fetchDataForIdent(userToken: String, ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
+        val identer = pdlOppslagService.hentIdenter(userToken = userToken, fnr = ident)
+        return repository.get(identer)
     }
 
     private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) {

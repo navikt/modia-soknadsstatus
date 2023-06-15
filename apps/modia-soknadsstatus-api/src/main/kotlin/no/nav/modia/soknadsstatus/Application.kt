@@ -14,6 +14,7 @@ import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
 import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
 import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
+import no.nav.modia.soknadsstatus.utils.getTokenFromPrincipal
 import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
 import org.apache.kafka.common.serialization.Serdes.StringSerde
@@ -119,7 +120,10 @@ fun Application.soknadsstatusModule(
                                         AuditIdentifier.FNR to ident
                                     )
                                 ) {
-                                    services.soknadsstatusService.fetchDataForIdent(ident)
+                                    services.soknadsstatusService.fetchDataForIdent(
+                                        getTokenFromPrincipal(call.authentication),
+                                        ident
+                                    )
                                 }
                         )
                     }
@@ -140,7 +144,10 @@ fun Application.soknadsstatusModule(
                                         AuditIdentifier.FNR to ident,
                                     )
                                 ) {
-                                    services.soknadsstatusService.fetchAggregatedDataForIdent(ident)
+                                    services.soknadsstatusService.fetchAggregatedDataForIdent(
+                                        getTokenFromPrincipal(call.authentication),
+                                        ident
+                                    )
                                 }
                         )
                     }

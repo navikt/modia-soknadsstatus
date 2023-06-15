@@ -1,7 +1,9 @@
 package no.nav.modia.soknadsstatus.utils
 
+import io.ktor.server.auth.*
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
+import no.nav.personoversikt.common.ktor.utils.Security
 
 class DownstreamApi(
     val cluster: String,
@@ -41,3 +43,6 @@ fun OnBehalfOfTokenClient.bindTo(api: DownstreamApi) = object : BoundedOnBehalfO
 fun MachineToMachineTokenClient.bindTo(api: DownstreamApi) = object : BoundedMachineToMachineTokenClient {
     override fun createMachineToMachineToken() = createMachineToMachineToken(api.tokenscope())
 }
+
+fun getTokenFromPrincipal(authContext: AuthenticationContext) =
+    requireNotNull(authContext.principal<Security.SubjectPrincipal>()).token
