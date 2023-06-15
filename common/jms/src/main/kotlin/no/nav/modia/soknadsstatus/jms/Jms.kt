@@ -7,7 +7,10 @@ import com.ibm.msg.client.wmq.common.CommonConstants
 import no.nav.modia.soknadsstatus.AppMode
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.activemq.jms.pool.PooledConnectionFactory
+import java.io.File
+import java.io.FileNotFoundException
 import javax.jms.QueueConnectionFactory
+import javax.net.ssl.SSLSocketFactory
 
 object Jms {
     data class Config(
@@ -16,7 +19,31 @@ object Jms {
         val queueManager: String,
         val username: String,
         val password: String,
+        val channel: String,
+        val jmsKeyStorePath: String? = "",
+        val jmsKeystorePassword: String? = "",
     )
+
+    class SSLConfig(private val appMode: AppMode, private val jmsKeyStorePath: String?, private val jmsPassword: String?) {
+        fun injectSSLConfigIfProd() {
+            if (appMode.locally) {
+                return
+            }
+            ensureKeyStoreFileExists()
+            injectKeyValuePair("javax.net.ssl.keyStoreType", "jks")
+            injectKeyValuePair("javax.net.ssl.keyStore", requireNotNull(jmsKeyStorePath))
+            injectKeyValuePair("javax.net.ssl.keyStorePassword", requireNotNull(jmsPassword))
+        }
+
+        private fun ensureKeyStoreFileExists() {
+            val file = File(requireNotNull(jmsKeyStorePath))
+            if (!file.exists() || file.isDirectory) {
+                throw FileNotFoundException("The keystore file is required when running in production")
+            }
+        }
+
+        private fun injectKeyValuePair(key: String, value: String) = System.setProperty(key, value)
+    }
 
     private var connectionFactory: QueueConnectionFactory? = null
 
@@ -44,10 +71,13 @@ object Jms {
             port = config.port
             queueManager = config.queueManager
             transportType = CommonConstants.WMQ_CM_CLIENT
+            channel = config.channel
             ccsid = 1208
             setBooleanProperty(JmsConstants.USER_AUTHENTICATION_MQCSP, true)
             setIntProperty(JmsConstants.JMS_IBM_ENCODING, MQENC_NATIVE)
             setIntProperty(JmsConstants.JMS_IBM_CHARACTER_SET, 1208)
+            sslSocketFactory = SSLSocketFactory.getDefault()
+            sslCipherSuite = "*TLS13ORHIGHER"
         }
     }
 

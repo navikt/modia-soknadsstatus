@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.AppMode
+import org.slf4j.LoggerFactory
 import javax.jms.Message
 import javax.jms.MessageListener
 import javax.jms.QueueConnectionFactory
 import javax.jms.Session
 
 class JmsConsumer(private val config: Jms.Config, appMode: AppMode) {
+    val logger = LoggerFactory.getLogger(JmsConsumer::class.java)
     private val connectionFactory: QueueConnectionFactory by lazy {
         Jms.createConnectionFactory(config, appMode)
     }
@@ -20,12 +22,18 @@ class JmsConsumer(private val config: Jms.Config, appMode: AppMode) {
     suspend fun subscribe(queueName: String): Flow<Message> {
         val connection = connectionFactory.createQueueConnection()
         val session = connection.createQueueSession(false, Session.CLIENT_ACKNOWLEDGE)
-        val receiver = session.createReceiver { queueName }
+        val queue = session.createQueue(queueName)
+        val receiver = session.createReceiver(queue)
         val channel = Channel<Message>()
+
 
         receiver.messageListener = MessageListener { message ->
             runBlocking {
-                channel.send(message)
+                try {
+                    channel.send(message)
+                } catch (e: Exception) {
+                     logger.error("Failed when parsing message", e)
+                }
             }
         }
 

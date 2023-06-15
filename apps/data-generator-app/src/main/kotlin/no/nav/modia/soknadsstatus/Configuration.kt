@@ -32,6 +32,7 @@ class Handlers(appEnv: AppEnv) {
                 host = EnvUtils.getRequiredConfig("JMS_HOST"),
                 port = EnvUtils.getRequiredConfig("JMS_PORT").toInt(),
                 queueManager = EnvUtils.getRequiredConfig("JMS_QUEUEMANAGER"),
+                channel = EnvUtils.getRequiredConfig("JMS_CHANNEL"),
                 username = EnvUtils.getRequiredConfig("JMS_USERNAME"),
                 password = EnvUtils.getRequiredConfig("JMS_PASSWORD"),
             ),

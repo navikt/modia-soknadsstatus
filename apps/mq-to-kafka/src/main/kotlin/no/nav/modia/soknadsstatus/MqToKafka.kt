@@ -5,6 +5,7 @@ import io.ktor.server.engine.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import no.nav.modia.soknadsstatus.jms.Jms
 import no.nav.modia.soknadsstatus.jms.JmsConsumer
 import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.kafka.KafkaUtils
@@ -18,6 +19,13 @@ import javax.jms.TextMessage
 fun Application.mqToKafkaModule() {
     val config = AppEnv()
     val mqConfig = MqConfig()
+
+    Jms.SSLConfig(
+        appMode = config.appMode,
+        jmsKeyStorePath = mqConfig.config.jmsKeyStorePath,
+        jmsPassword = mqConfig.config.jmsKeystorePassword
+    ).injectSSLConfigIfProd()
+
     val jmsConsumer = JmsConsumer(mqConfig.config, config.appMode)
 
     val kafkaProducer = KafkaUtils.createProducer(
