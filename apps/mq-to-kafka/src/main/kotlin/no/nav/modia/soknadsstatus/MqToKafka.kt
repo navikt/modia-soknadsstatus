@@ -35,8 +35,7 @@ fun Application.mqToKafkaModule() {
 
     val transferJob = GlobalScope.launch(Dispatchers.Unbounded) {
         jmsConsumer
-            .subscribe(mqConfig.mqQueue)
-            .collect { message ->
+            .subscribe(mqConfig.mqQueue) { message ->
                 when (message) {
                     is TextMessage -> {
                         kafkaProducer.send(
