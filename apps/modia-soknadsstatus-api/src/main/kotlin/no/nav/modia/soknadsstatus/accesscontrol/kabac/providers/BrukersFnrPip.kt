@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
+import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
@@ -18,7 +19,7 @@ class BrukersFnrPip(private val pdl: PdlOppslagService) : Kabac.PolicyInformatio
         val prinicipal = checkNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }
-        val fnr = checkNotNull(pdl.hentFnr(prinicipal.token, aktorId.get())) {
+        val fnr = checkNotNull(runBlocking { pdl.hentFnr(prinicipal.token, aktorId.get())}) {
             "Fant ikke fnr for $aktorId"
         }
         return Fnr(fnr)

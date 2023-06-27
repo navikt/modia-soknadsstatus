@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
+import kotlinx.coroutines.runBlocking
 import no.nav.api.generated.pdl.enums.AdressebeskyttelseGradering
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
@@ -21,7 +22,7 @@ class BrukersDiskresjonskodePip(private val pdl: PdlOppslagService) : Kabac.Poli
         val prinicipal = checkNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }
-        return pdl.hentAdresseBeskyttelse(prinicipal.token, fnr.get()).finnStrengesteKode()
+        return runBlocking { pdl.hentAdresseBeskyttelse(prinicipal.token, fnr.get()).finnStrengesteKode()}
     }
 
     private fun List<Adressebeskyttelse>.finnStrengesteKode(): Kode? {

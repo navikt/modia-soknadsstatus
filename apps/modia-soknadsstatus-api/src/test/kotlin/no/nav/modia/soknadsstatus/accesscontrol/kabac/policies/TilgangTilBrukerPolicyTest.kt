@@ -3,6 +3,7 @@ package no.nav.modia.soknadsstatus.accesscontrol.kabac.policies
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.mockk.InternalPlatformDsl.toStr
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.api.generated.pdl.enums.AdressebeskyttelseGradering
@@ -177,7 +178,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerIkkeHarAdressebeskyttelse() {
-        every { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
+        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
             Adressebeskyttelse(
                 gradering = AdressebeskyttelseGradering.UGRADERT
             )
@@ -193,7 +194,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerHarKode6() {
-        every { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
+        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
             Adressebeskyttelse(
                 AdressebeskyttelseGradering.STRENGT_FORTROLIG
             )
@@ -201,7 +202,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerHarKode7() {
-        every { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
+        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
             Adressebeskyttelse(
                 AdressebeskyttelseGradering.FORTROLIG
             )
@@ -210,7 +211,7 @@ internal class TilgangTilBrukerPolicyTest {
 
     private fun gittAtBrukerHarEnhet(enhetId: EnhetId?) {
         val geografiskTilknyttning = UUID.randomUUID().toStr()
-        every { pdl.hentGeografiskTilknytning(any(), fnr.get()) } returns geografiskTilknyttning
+        coEvery { pdl.hentGeografiskTilknytning(any(), fnr.get()) } returns geografiskTilknyttning
 
         if (enhetId == null) {
             every { norg.finnNavKontor(geografiskTilknyttning, null) } returns null
@@ -235,10 +236,10 @@ internal class TilgangTilBrukerPolicyTest {
     private fun gittFnrAktorIdMapping(vararg fnraktoridMapping: Pair<Fnr, AktorId>) {
         val fnrmap = fnraktoridMapping.toMap()
         val aktormap = fnraktoridMapping.associate { Pair(it.second, it.first) }
-        every { pdl.hentFnr(any(), any()) } answers {
+        coEvery { pdl.hentFnr(any(), any()) } answers {
             aktormap[AktorId(arg<String>(1))]?.get()
         }
-        every { pdl.hentAktorId(any(), any()) } answers {
+        coEvery { pdl.hentAktorId(any(), any()) } answers {
             fnrmap[Fnr(arg<String>(1))]?.get()
         }
     }

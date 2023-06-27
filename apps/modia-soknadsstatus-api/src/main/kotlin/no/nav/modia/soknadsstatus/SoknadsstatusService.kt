@@ -45,7 +45,7 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
         return repository.get(ident)
     }
 
-    private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) {
+    private suspend fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) {
         try {
             val ident = pdlOppslagService.hentFnrMedSystemToken(aktoerId) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
             val soknadsstatus = SoknadsstatusDomain.SoknadsstatusOppdatering(

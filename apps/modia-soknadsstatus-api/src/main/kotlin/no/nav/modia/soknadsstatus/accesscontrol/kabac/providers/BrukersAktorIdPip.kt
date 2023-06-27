@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
+import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.AktorId
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
@@ -19,7 +20,7 @@ class BrukersAktorIdPip(private val pdl: PdlOppslagService) : Kabac.PolicyInform
             "Fikk ikke prinicipal fra authcontext"
         }
 
-        val aktorid = checkNotNull(pdl.hentAktorId(prinicipal.token, fnr.get())) {
+        val aktorid = checkNotNull(runBlocking { pdl.hentAktorId(prinicipal.token, fnr.get())}) {
             "Fant ikke aktor id for $fnr"
         }
         return AktorId(aktorid)
