@@ -24,3 +24,6 @@ spec:
     - team: personoversikt
       application: soknadsstatus-hendelse-transform
       access: read
+    - team: teamforeldrepenger
+      application: fpsak
+      access: write
