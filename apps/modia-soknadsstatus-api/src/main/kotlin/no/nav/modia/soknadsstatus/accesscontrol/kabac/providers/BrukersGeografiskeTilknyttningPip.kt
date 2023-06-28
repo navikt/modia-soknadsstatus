@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
+import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.kabac.Kabac
@@ -18,6 +19,6 @@ class BrukersGeografiskeTilknyttningPip(private val pdl: PdlOppslagService) : Ka
         val prinicipal = checkNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }
-        return pdl.hentGeografiskTilknytning(prinicipal.token, fnr)
+        return runBlocking { pdl.hentGeografiskTilknytning(prinicipal.token, fnr)}
     }
 }
