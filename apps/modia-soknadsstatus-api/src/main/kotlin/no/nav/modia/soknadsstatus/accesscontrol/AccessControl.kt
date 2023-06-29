@@ -66,7 +66,7 @@ private class Instance(
             ctx = ctx,
             policy = policy
         )
-        Logging.secureLog.info(TjenestekallLogg.format("policy-report: ${getCallId()}", report))
+        TjenestekallLogg.info(TjenestekallLogg.format("policy-report: ${getCallId()}", report), fields = mapOf())
 
         return decision
     }

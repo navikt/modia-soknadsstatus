@@ -14,7 +14,7 @@ import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerApi
 import no.nav.personoversikt.common.kabac.Decision
 import no.nav.personoversikt.common.kabac.impl.PolicyDecisionPointImpl
 import no.nav.personoversikt.common.kabac.impl.PolicyEnforcementPointImpl
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 class AccessControlConfig(
     private val pdl: PdlOppslagService,
@@ -43,7 +43,7 @@ class AccessControlConfig(
         )
 
         return AccessControlKabac(enforcementPoint) {
-            Logging.secureLog.error(it)
+            TjenestekallLogg.info("KABAC exception: $it", fields = mapOf("error" to it))
             HttpStatusException(HttpStatusCode.Forbidden, it)
         }
     }
