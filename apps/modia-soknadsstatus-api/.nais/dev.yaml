@@ -44,6 +44,13 @@ spec:
     application:
       enabled: true
       allowAllUsers: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: graph.microsoft.com
+        - host: pdl-api.dev-fss-pub.nais.io
+        - host: axsys.dev-fss-pub.nais.io
+        - host: norg2.dev-fss-pub.nais.io
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
@@ -63,3 +70,22 @@ spec:
       value: "modia_soknadsstatus_api_dlq_event_skip"
     - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
       value: "modia_soknadsstatus_api_dlq_gauge"
+    - name: NORG2_URL
+      value: "https://app-q1.adeo.no/norg2"
+    - name: PDL_API_URL
+      value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
+    - name: PDL_SCOPE
+      value: "dev-fss:pdl:pdl-api"
+    - name: AXSYS_URL
+      value: "https://axsys.dev.adeo.no"
+    - name: AXSYS_SCOPE
+      value: "dev-fss:org:axsys"
+    - name: SKJERMEDE_PERSONER_PIP_URL
+      value: "https://skjermede-personer-pip.intern.dev.nav.no"
+    - name: SKJERMEDE_PERSONER_SCOPE
+      value: "dev-gcp:nom:skjermede-personer-pip"
+    - name: MS_GRAPH_URL
+      value: "https://graph.microsoft.com/"
+    - name: MS_GRAPH_SCOPE
+      value: "https://graph.microsoft.com/.default"
+

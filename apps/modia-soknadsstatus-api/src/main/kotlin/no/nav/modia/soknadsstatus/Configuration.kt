@@ -9,7 +9,7 @@ import no.nav.personoversikt.common.ktor.utils.Security.JwksConfig
 import no.nav.personoversikt.common.ktor.utils.Security.TokenLocation
 
 interface Configuration {
-    val azureAd: AuthProviderConfig
+    val authProviderConfig: AuthProviderConfig
     val oboTokenClient: OnBehalfOfTokenClient
     val machineToMachineTokenClient: MachineToMachineTokenClient
     val repository: SoknadsstatusRepository
@@ -18,13 +18,13 @@ interface Configuration {
         fun factory(env: Env): Configuration {
             val oboTokenClient = AzureAdTokenClientBuilder.builder().oboClientFactory(env)
             val machineToMachineTokenClient = AzureAdTokenClientBuilder.builder().machineToMachineClientFactory(env)
-            val azureAd = authProviderConfigFactory(env)
+            val authProviderConfig = authProviderConfigFactory(env)
             val repository = SoknadsstatusRepository(env.datasourceConfiguration.datasource)
 
             return object : Configuration {
                 override val oboTokenClient = oboTokenClient
                 override val machineToMachineTokenClient = machineToMachineTokenClient
-                override val azureAd = azureAd
+                override val authProviderConfig = authProviderConfig
                 override val repository = repository
             }
         }

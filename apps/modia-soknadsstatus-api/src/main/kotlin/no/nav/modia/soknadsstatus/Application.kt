@@ -26,7 +26,7 @@ fun Application.soknadsstatusModule(
 ) {
     val security = Security(
         listOfNotNull(
-            configuration.azureAd
+            configuration.authProviderConfig
         )
     )
 
@@ -111,7 +111,7 @@ fun Application.soknadsstatusModule(
                         )
                         call.respondWithResult(
                             kabac
-                                .check(Policies.tilgangTilBruker(Fnr(ident))).get(
+                                .check(services.policies.tilgangTilBruker(Fnr(ident))).get(
                                     Audit.describe(
                                         call.authentication,
                                         Audit.Action.READ,
@@ -132,7 +132,7 @@ fun Application.soknadsstatusModule(
                         val kabac = services.accessControl.buildKabac(call.authentication)
                         call.respondWithResult(
                             kabac
-                                .check(Policies.tilgangTilBruker(Fnr(ident))).get(
+                                .check(services.policies.tilgangTilBruker(Fnr(ident))).get(
                                     Audit.describe(
                                         call.authentication,
                                         Audit.Action.READ,

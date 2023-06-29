@@ -14,7 +14,7 @@ class BrukersGeografiskeTilknyttningPip(private val pdl: PdlOppslagService) : Ka
     }
 
     override fun provide(ctx: EvaluationContext): String? {
-        val fnr = ctx.getValue(CommonAttributes.FNR).get()
+        val fnr = ctx.getValue(BrukersFnrPip.key).get()
         val prinicipal = checkNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }

@@ -6,7 +6,7 @@ import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
 
 object NavIdentPip : Kabac.PolicyInformationPoint<NavIdent> {
-    override val key = Key<NavIdent>(NavIdentPip)
+    override val key = Key<NavIdent>(AzureObjectIdPip)
 
     override fun provide(ctx: EvaluationContext): NavIdent {
         val principal = requireNotNull(ctx.getValue(AuthContextPip)) {

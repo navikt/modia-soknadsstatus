@@ -1,27 +1,26 @@
-package no.nav.modiapersonoversikt.infrastructure.tilgangskontroll.kabac.policies
-
+package no.nav.modia.soknadsstatus.accesscontrol.kabac.policies
 
 import no.nav.modia.soknadsstatus.accesscontrol.DenyCauseCode
-import no.nav.modia.soknadsstatus.accesscontrol.kabac.RolleListe
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersDiskresjonskodePip
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.VeiledersRollerPip
+import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
 import no.nav.personoversikt.common.kabac.Decision
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
 
-object TilgangTilBrukerMedKode6Policy : Kabac.Policy {
-    override val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode6Policy)
-    private val kode6Roller = RolleListe(
-        "0000-ga-strengt_fortrolig_adresse",
-        "0000-ga-gosys_kode6",
-        "0000-ga-pensjon_kode6"
-    )
+class TilgangTilBrukerMedKode6Policy(private val kode6Rolle: AnsattRolle) : Kabac.Policy {
+    override val key = Companion.key
+
+    companion object {
+        val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode6Policy::class.java)
+    }
 
     override fun evaluate(ctx: EvaluationContext): Decision {
-        val veilederRoller = ctx.getValue(VeiledersRollerPip)
+        val veiledersRoller = ctx.getValue(VeiledersRollerPip.key)
+        val veiledersTilgangTilKode6 = veiledersRoller.contains(kode6Rolle)
 
-        if (kode6Roller.hasIntersection(veilederRoller)) {
+        if (veiledersTilgangTilKode6) {
             return Decision.Permit()
         }
         val diskresjonskode = ctx.getValue(BrukersDiskresjonskodePip)

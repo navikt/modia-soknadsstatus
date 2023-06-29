@@ -4,9 +4,7 @@ import io.ktor.http.*
 import io.ktor.server.auth.*
 import no.nav.modia.soknadsstatus.HttpStatusException
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.*
-import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersFnrPip
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersRegionEnhetPip
-import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.NavIdentPip
 import no.nav.modia.soknadsstatus.ansatt.AnsattService
 import no.nav.modia.soknadsstatus.norg.NorgApi
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
@@ -25,8 +23,9 @@ class AccessControlConfig(
     fun buildKabac(authenticationContext: AuthenticationContext): AccessControlKabac {
         val decisionPoint = PolicyDecisionPointImpl().apply {
             install(AuthContextPip(authenticationContext))
-            install(NavIdentPip)
+            install(AzureObjectIdPip)
             install(BrukersFnrPip(pdl))
+            install(NavIdentPip)
             install(BrukersAktorIdPip(pdl))
             install(BrukersDiskresjonskodePip(pdl))
             install(BrukersSkjermingPip(skjermingApi))

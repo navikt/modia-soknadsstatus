@@ -5,6 +5,7 @@ import no.nav.personoversikt.common.utils.EnvUtils
 data class AppEnv(
     val appName: String = EnvUtils.getRequiredConfig("APP_NAME"),
     val appMode: AppMode = AppMode(EnvUtils.getRequiredConfig("APP_MODE", mapOf("APP_MODE" to "NAIS"))),
+    val appCluster: AppCluster = AppCluster(EnvUtils.getRequiredConfig(("NAIS_CLUSTER_NAME"), mapOf("NAIS_CLUSTER_NAME" to "prod-gcp"))),
     val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
     val brokerUrls: String = EnvUtils.getRequiredConfig("KAFKA_BROKERS"),
     val sourceTopic: String? = EnvUtils.getConfig("KAFKA_SOURCE_TOPIC"),

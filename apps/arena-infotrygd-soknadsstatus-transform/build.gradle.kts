@@ -20,7 +20,6 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-    implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
     implementation("no.nav.personoversikt:logging:$modia_common_version")
@@ -35,6 +34,7 @@ dependencies {
     implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("io.ktor:ktor-server-cio-jvm:2.3.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }

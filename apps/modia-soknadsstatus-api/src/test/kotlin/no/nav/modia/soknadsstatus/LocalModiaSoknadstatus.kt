@@ -26,7 +26,7 @@ fun main() {
     System.setProperty("DB_NAME", "modia-soknadsstatus")
     System.setProperty("NAIS_CLUSTER_NAME", "dev-gcp")
     setupAzureAdLocally()
-
+    setUpMocks()
     runApp(port = 9012, useMock = true)
 }
 
@@ -75,9 +75,11 @@ private fun setUpMocks() {
         MockEnv("LDAP_BASEDN", "ldap_basedn"),
         MockEnv("NOM_SCOPE", "test:nom:scope"),
         MockEnv("NOM_URL", "https://nom-api-url.no"),
-        MockEnv("NORG2_BASEURL", "https://norg2-api-url.no"),
+        MockEnv("NORG2_URL", "https://norg2-api-url.no"),
         MockEnv("SKJERMEDE_PERSONER_PIP_URL", "https://skjermede-personer-api-url.no"),
         MockEnv("SKJERMEDE_PERSONER_SCOPE", "test:skjermede-personer:scope"),
+        MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/"),
+        MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default")
     )
 
     mockEnvs.forEach {
