@@ -1,6 +1,7 @@
 package no.nav.modia.soknadsstatus.kafka
 
 import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serde
 
@@ -18,7 +19,7 @@ class KafkaSoknadsstatusProducer<VALUE_TYPE>(private val appEnv: AppEnv, valueSe
             producer.send(producerRecord)
             Result.success(Unit)
         } catch (e: Exception) {
-            Logging.secureLog.error("Failed to produce kafka message,", e)
+            TjenestekallLogg.error("Failed to produce kafka message,", fields = mapOf("key" to key, "message" to message), throwable = e)
             Result.failure(e)
         }
     }

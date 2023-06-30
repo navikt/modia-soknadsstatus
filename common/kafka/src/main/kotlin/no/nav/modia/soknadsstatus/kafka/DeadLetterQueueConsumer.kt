@@ -3,7 +3,7 @@ package no.nav.modia.soknadsstatus.kafka
 import kotlinx.coroutines.*
 import no.nav.modia.soknadsstatus.BackgroundTask
 import no.nav.modia.soknadsstatus.registerShutdownhook
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.common.errors.WakeupException
 import org.slf4j.LoggerFactory
@@ -57,12 +57,18 @@ class DeadLetterQueueConsumerImpl(
                     for (record in records) {
                         logger.info("Trying to process DL with key: ${record.key()}")
                         if (record.key() == null) {
-                            secureLog.info("Skipping a dead letter with no key: ${record.value()}")
+                            TjenestekallLogg.info(
+                                "Skipping a dead letter with no key: ${record.value()}",
+                                fields = mapOf("record" to record.value())
+                            )
                             deadLetterQueueMetricsGauge.decrement()
                             continue
                         }
                         if (deadLetterMessageSkipService.shouldSkip(record.key())) {
-                            secureLog.info("Skipping a dead letter due to key found in skip table: ${record.key()}")
+                            TjenestekallLogg.info(
+                                "Skipping a dead letter due to key found in skip table: ${record.key()}",
+                                fields = mapOf("key" to record.key(), "value" to record.value())
+                            )
                             deadLetterQueueMetricsGauge.decrement()
                             continue
                         }
@@ -82,7 +88,11 @@ class DeadLetterQueueConsumerImpl(
                 } else {
                     hasWakedUpConsumer.set(!(e is WakeupException && hasWakedUpConsumer.get()))
                 }
-                secureLog.error("Restarting DLQ consumer on topic $topic", e)
+                TjenestekallLogg.error(
+                    "Restarting DLQ consumer on topic $topic",
+                    fields = mapOf("topic" to topic),
+                    throwable = e
+                )
                 restart()
                 return
             }

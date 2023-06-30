@@ -1,6 +1,6 @@
 package no.nav.modia.soknadsstatus.kafka
 
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.apache.kafka.streams.errors.DeserializationExceptionHandler
@@ -24,7 +24,10 @@ class SendToDeadLetterQueueExceptionHandler : DeserializationExceptionHandler {
 
             if (record.key() == null) {
                 key = UUID.randomUUID().toString()
-                secureLog.error("Received a record without a key. The Dead letter was: ${record.value()}. Gave it key: $key")
+                TjenestekallLogg.error(
+                    "Received a record without a key. The Dead letter was: ${record.value()}. Gave it key: $key",
+                    fields = mapOf("value" to record.value(), "key" to key)
+                )
             } else {
                 key = StringSerde().deserializer().deserialize(record.topic(), record.key())
             }
@@ -32,7 +35,11 @@ class SendToDeadLetterQueueExceptionHandler : DeserializationExceptionHandler {
             val data = StringSerde().deserializer().deserialize(record.topic(), record.value())
             requireNotNull(dlqProducer).sendMessage(key, data)
         } catch (e: Exception) {
-            secureLog.error("Failed to parse message when sending to DLQ on topic ${record?.topic()}: ", e)
+            TjenestekallLogg.error(
+                "Failed to parse message when sending to DLQ on topic ${record?.topic()}",
+                fields = mapOf("topic" to record?.topic()),
+                throwable = e
+            )
         }
 
         return DeserializationExceptionHandler.DeserializationHandlerResponse.CONTINUE

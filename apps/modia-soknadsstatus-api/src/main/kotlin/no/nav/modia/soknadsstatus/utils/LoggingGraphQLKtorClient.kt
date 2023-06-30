@@ -6,7 +6,7 @@ import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
 import no.nav.common.utils.IdUtils
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import no.nav.personoversikt.common.utils.SelftestGenerator
 import no.nav.utils.getCallId
 import java.net.URL
@@ -27,7 +27,7 @@ open class LoggingGraphQLKtorClient(
         val callId: String = getCallId()
         val requestId = IdUtils.generateId()
         try {
-            secureLog.info(
+            TjenestekallLogg.info(
                 "$name-request: $callId ($requestId)",
                 mapOf(
                     "request" to request
@@ -41,7 +41,7 @@ open class LoggingGraphQLKtorClient(
             )
 
             if (response.errors?.isNotEmpty() == true) {
-                secureLog.error(
+                TjenestekallLogg.error(
                     "$name-response-error: $callId ($requestId)",
                     logMessage
                 )
@@ -49,14 +49,14 @@ open class LoggingGraphQLKtorClient(
                 selftestReporter.reportError(exception)
                 throw exception
             }
-            secureLog.info(
+            TjenestekallLogg.info(
                 "$name-response: $callId ($requestId)",
                 logMessage
             )
             selftestReporter.reportOk()
             return response
         } catch (exception: Throwable) {
-            secureLog.error(
+            TjenestekallLogg.error(
                 "$name-response-error: $callId ($requestId)",
                 mapOf("exception" to exception)
             )
