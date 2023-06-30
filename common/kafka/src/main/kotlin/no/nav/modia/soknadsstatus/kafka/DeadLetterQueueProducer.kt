@@ -1,8 +1,7 @@
 package no.nav.modia.soknadsstatus.kafka
 
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes.StringSerde
 
 class DeadLetterQueueProducer(
@@ -14,10 +13,10 @@ class DeadLetterQueueProducer(
         return try {
             val producerRecord = ProducerRecord(appEnv.deadLetterQueueTopic, key, message)
             producer.send(producerRecord)
-            Logging.secureLog.info("Produced dead letter $key: $message")
+            TjenestekallLogg.info("Produced dead letter $key: $message", mapOf("key" to key, "message" to message))
             Result.success(Unit)
         } catch (e: Exception) {
-            Logging.secureLog.error("Failed to produce dead letter", e)
+            TjenestekallLogg.error("Failed to produce dead letter", fields = mapOf("key" to key, "message" to message), throwable = e)
             Result.failure(e)
         }
     }

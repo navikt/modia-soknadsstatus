@@ -5,7 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 interface SoknadsstatusService {
     suspend fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?)
@@ -63,7 +63,11 @@ class SoknadsstatusServiceImpl(
             )
             repository.upsert(soknadsstatus)
         } catch (e: Exception) {
-            Logging.secureLog.error("Failed to store søknadsstatus", e)
+            TjenestekallLogg.error(
+                "Failed to store søknadsstatus",
+                fields = mapOf("aktoerId" to aktoerId, "oppdatering" to innkommendeOppdatering),
+                throwable = e
+            )
             throw e
         }
     }
