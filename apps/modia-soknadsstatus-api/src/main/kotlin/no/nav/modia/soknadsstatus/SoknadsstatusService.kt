@@ -1,13 +1,14 @@
 package no.nav.modia.soknadsstatus
 
 import io.ktor.server.plugins.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 interface SoknadsstatusService {
-    fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?)
+    suspend fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?)
     fun fetchAggregatedDataForIdent(ident: String): Result<SoknadsstatusDomain.Soknadsstatuser>
     fun fetchDataForIdent(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>>
 }
@@ -16,13 +17,11 @@ class SoknadsstatusServiceImpl(
     private val pdlOppslagService: PdlOppslagService,
     private val repository: SoknadsstatusRepository
 ) : SoknadsstatusService {
-    override fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?) {
-        if (innkommendeOppdatering != null) {
-            runBlocking(Dispatchers.IO) {
-                for (aktoerId in innkommendeOppdatering.aktorIder) {
-                    fetchIdentAndPersist(aktoerId, innkommendeOppdatering)
-                }
-            }
+    override suspend fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?) {
+        coroutineScope {
+            innkommendeOppdatering?.aktorIder?.map {
+                async { fetchIdentAndPersist(it, innkommendeOppdatering) }
+            }?.awaitAll()
         }
     }
 
