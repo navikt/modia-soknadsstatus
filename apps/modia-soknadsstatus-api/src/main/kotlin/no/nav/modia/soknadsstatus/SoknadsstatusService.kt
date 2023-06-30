@@ -2,10 +2,9 @@ package no.nav.modia.soknadsstatus
 
 import io.ktor.server.plugins.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 interface SoknadsstatusService {
     fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?)
@@ -13,12 +12,15 @@ interface SoknadsstatusService {
     fun fetchDataForIdent(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>>
 }
 
-class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService, private val repository: SoknadsstatusRepository) : SoknadsstatusService {
+class SoknadsstatusServiceImpl(
+    private val pdlOppslagService: PdlOppslagService,
+    private val repository: SoknadsstatusRepository
+) : SoknadsstatusService {
     override fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?) {
         if (innkommendeOppdatering != null) {
             runBlocking(Dispatchers.IO) {
                 for (aktoerId in innkommendeOppdatering.aktorIder) {
-                    launch { fetchIdentAndPersist(aktoerId, innkommendeOppdatering) }
+                    fetchIdentAndPersist(aktoerId, innkommendeOppdatering)
                 }
             }
         }
@@ -45,9 +47,13 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
         return repository.get(ident)
     }
 
-    private fun fetchIdentAndPersist(aktoerId: String, innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) {
+    private suspend fun fetchIdentAndPersist(
+        aktoerId: String,
+        innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering
+    ) {
         try {
-            val ident = pdlOppslagService.hentFnrMedSystemToken(aktoerId) ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
+            val ident = pdlOppslagService.hentFnrMedSystemToken(aktoerId)
+                ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
             val soknadsstatus = SoknadsstatusDomain.SoknadsstatusOppdatering(
                 ident = ident,
                 behandlingsId = innkommendeOppdatering.behandlingsId,
@@ -58,7 +64,12 @@ class SoknadsstatusServiceImpl(private val pdlOppslagService: PdlOppslagService,
             )
             repository.upsert(soknadsstatus)
         } catch (e: Exception) {
-            Logging.secureLog.error("Failed to store søknadsstatus", e)
+            TjenestekallLogg.error(
+                "Failed to store søknadsstatus",
+                fields = mapOf("aktoerId" to aktoerId, "oppdatering" to innkommendeOppdatering),
+                throwable = e
+            )
+            throw e
         }
     }
 }

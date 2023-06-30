@@ -1,6 +1,6 @@
 package no.nav.utils
 
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import okhttp3.*
 import okio.Buffer
 import org.slf4j.LoggerFactory
@@ -46,7 +46,7 @@ class LoggingInterceptor(
         val requestId = UUID.randomUUID().toString()
         val requestBody = request.peekContent(config)
 
-        secureLog.info(
+        TjenestekallLogg.info(
             "$name-request: $callId ($requestId)",
             mapOf(
                 "url" to request.url.toString(),
@@ -59,7 +59,7 @@ class LoggingInterceptor(
         val response: Response = runCatching { chain.proceed(request) }
             .onFailure { exception ->
                 log.error("$name-response-error (ID: $callId / $requestId)", exception)
-                secureLog.error(
+                TjenestekallLogg.error(
                     "$name-response-error: $callId ($requestId))",
                     mapOf(
                         "exception" to exception,
@@ -72,7 +72,7 @@ class LoggingInterceptor(
         val responseBody = response.peekContent(config)
 
         if (response.code in 200..299) {
-            secureLog.info(
+            TjenestekallLogg.info(
                 "$name-response: $callId ($requestId)",
                 mapOf(
                     "status" to "${response.code} ${response.message}",
@@ -81,7 +81,7 @@ class LoggingInterceptor(
                 )
             )
         } else {
-            secureLog.error(
+            TjenestekallLogg.error(
                 "$name-response-error: $callId ($requestId)",
                 mapOf(
                     "status" to "${response.code} ${response.message}",
