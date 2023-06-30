@@ -16,7 +16,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.time.Duration.Companion.minutes
 
 @Testcontainers
-class SoknadsstatusRepositoryTest {
+class SoknadsstatusRepositoryImplTest {
     @Container
     val container = PostgreSQLContainer("postgres:14-alpine")
 
@@ -28,7 +28,7 @@ class SoknadsstatusRepositoryTest {
             setProperty("password", "test")
         }
     }
-    val repository: SoknadsstatusRepository by lazy { SoknadsstatusRepository(dataSource) }
+    val repository: SoknadsstatusRepositoryImpl by lazy { SoknadsstatusRepositoryImpl(dataSource) }
 
     @BeforeEach
     fun setUp() {

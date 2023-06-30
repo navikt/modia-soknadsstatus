@@ -9,6 +9,8 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
 import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
@@ -65,15 +67,22 @@ fun Application.soknadsstatusModule(
         topology {
             stream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>(env.kafkaApp.sourceTopic)
                 .foreach { key, value ->
-                    try {
-                        services.soknadsstatusService.fetchIdentsAndPersist(value)
-                    } catch (e: Exception) {
-                        val encodedValue =
-                            Encoding.encode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
-                        services.dlqProducer.sendMessage(
-                            key,
-                            encodedValue
-                        )
+                    runBlocking {
+                        try {
+                            async {
+                                services.soknadsstatusService.fetchIdentsAndPersist(value)
+                            }.await()
+                        } catch (e: Exception) {
+                            val encodedValue =
+                                Encoding.encode(
+                                    SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
+                                    value
+                                )
+                            services.dlqProducer.sendMessage(
+                                key,
+                                encodedValue
+                            )
+                        }
                     }
                 }
         }

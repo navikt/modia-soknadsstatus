@@ -19,7 +19,7 @@ interface Configuration {
             val oboTokenClient = AzureAdTokenClientBuilder.builder().oboClientFactory(env)
             val machineToMachineTokenClient = AzureAdTokenClientBuilder.builder().machineToMachineClientFactory(env)
             val authProviderConfig = authProviderConfigFactory(env)
-            val repository = SoknadsstatusRepository(env.datasourceConfiguration.datasource)
+            val repository = SoknadsstatusRepositoryImpl(env.datasourceConfiguration.datasource)
 
             return object : Configuration {
                 override val oboTokenClient = oboTokenClient
