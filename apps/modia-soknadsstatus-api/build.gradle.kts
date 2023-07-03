@@ -11,6 +11,7 @@ val graphql_version: String by project
 val nav_common_version: String by project
 val mockk_version: String by project
 val caffeine_version: String by project
+val mock_webserver_version: String by project
 
 plugins {
     application
@@ -37,6 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
@@ -57,6 +59,7 @@ dependencies {
     testImplementation("com.google.guava:guava-testlib:32.0.0-jre")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
+    testImplementation("com.squareup.okhttp3:mockwebserver:$mock_webserver_version")
     testImplementation("no.nav.personoversikt:kabac:$modia_common_version") {
         artifact {
             classifier = "tests"

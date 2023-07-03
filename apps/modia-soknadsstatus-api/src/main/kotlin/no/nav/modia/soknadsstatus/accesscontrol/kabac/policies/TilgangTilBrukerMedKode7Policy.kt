@@ -1,26 +1,27 @@
 package no.nav.modiapersonoversikt.infrastructure.tilgangskontroll.kabac.policies
 
 import no.nav.modia.soknadsstatus.accesscontrol.DenyCauseCode
-import no.nav.modia.soknadsstatus.accesscontrol.kabac.RolleListe
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersDiskresjonskodePip
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.VeiledersRollerPip
+import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
 import no.nav.personoversikt.common.kabac.Decision
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
 
-object TilgangTilBrukerMedKode7Policy : Kabac.Policy {
-    override val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode7Policy)
-    private val kode7Roller = RolleListe(
-        "0000-ga-fortrolig_adresse",
-        "0000-ga-gosys_kode7",
-        "0000-ga-pensjon_kode7"
-    )
+class TilgangTilBrukerMedKode7Policy(private val kode7Rolle: AnsattRolle) : Kabac.Policy {
+    override val key = Companion.key
+
+    companion object {
+        val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode7Policy)
+    }
 
     override fun evaluate(ctx: EvaluationContext): Decision {
-        val veilederRoller = ctx.getValue(VeiledersRollerPip)
+        val veiledersRoller = ctx.getValue(VeiledersRollerPip.key)
 
-        if (kode7Roller.hasIntersection(veilederRoller)) {
+        val veiledersTilgangTilKode7 = veiledersRoller.contains(kode7Rolle)
+
+        if (veiledersTilgangTilKode7) {
             return Decision.Permit()
         }
         val diskresjonskode = ctx.getValue(BrukersDiskresjonskodePip)

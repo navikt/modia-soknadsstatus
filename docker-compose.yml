@@ -100,7 +100,7 @@ services:
       NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PORT: "5432"
       NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_USERNAME: "admin"
       NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PASSWORD: "admin"
-  fp-k9-transform:
+  soknadsstatus-hendelse-transform:
     build:
       dockerfile: ../../docker/Dockerfile
       context: apps/soknadsstatus-hendelse-transform

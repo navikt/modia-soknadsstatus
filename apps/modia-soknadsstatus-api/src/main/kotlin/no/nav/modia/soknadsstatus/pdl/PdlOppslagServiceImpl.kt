@@ -19,7 +19,6 @@ class PdlOppslagServiceImpl(
             userToken,
         )
 
-
     override suspend fun hentFnrMedSystemToken(aktorId: String): String? =
         fnrCache.getIfPresent(aktorId) ?: pdlClient.hentAktivIdent(
             aktorId,
