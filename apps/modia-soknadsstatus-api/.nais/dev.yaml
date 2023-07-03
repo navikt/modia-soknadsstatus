@@ -9,6 +9,9 @@ spec:
   image: {{image}}
   port: 8080
   team: personoversikt
+  ingresses:
+    - https://modia-soknadsstatus-api.intern.dev.no
+    - https://intern.dev.no/modia-soknadsstatus-api
   replicas:
     min: 1
     max: 1
