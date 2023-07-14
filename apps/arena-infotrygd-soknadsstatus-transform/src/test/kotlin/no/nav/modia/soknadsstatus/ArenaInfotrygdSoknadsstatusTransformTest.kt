@@ -6,48 +6,15 @@ import org.junit.jupiter.api.Test
 class ArenaInfotrygdSoknadsstatusTransformTest {
     @Language("xml")
     val behandlingOpprettet = """
-        <v2:behandlingOpprettet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
-            <hendelsesId>HEN-1</hendelsesId>
-            <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">HEN-1</hendelsesprodusentREF>
-            <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
-            <behandlingsID>BEH-1</behandlingsID>
-            <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">BEHT-1</behandlingstype>
-            <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">TEMA-1</sakstema>
-            <aktoerREF><aktoerId>AKTOR-1</aktoerId></aktoerREF>
-            <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
-            <applikasjonBehandlingREF>test</applikasjonBehandlingREF>
-            </v2:behandlingOpprettet>
+        <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><informasjon:behandlingOpprettet xmlns:informasjon="http://nav.no/melding/virksomhet/behandlingsstatus/sobproxy/v1/sobproxyBehandlingsstatus" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><hendelsesId>50090284</hendelsesId><hendelsesprodusentREF>AO01</hendelsesprodusentREF><hendelsesTidspunkt>2023-06-16T11:40:24</hendelsesTidspunkt><behandlingsID>1500oVFWH</behandlingsID><behandlingstype>O</behandlingstype><sakstema>DAGP;DAGP;FETI</sakstema><aktoerREF xsi:type="informasjon:Person"><brukerIdent>19099531196</brukerIdent></aktoerREF><ansvarligEnhetREF>9958</ansvarligEnhetREF><applikasjonSakREF>202233397</applikasjonSakREF></informasjon:behandlingOpprettet>
     """.trimIndent()
 
     val behandlingAvsluttet = """
-        <v2:behandlingAvsluttet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
-            <hendelsesId>HEN-1</hendelsesId>
-            <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">HEN-1</hendelsesprodusentREF>
-            <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
-            <behandlingsID>BEH-1</behandlingsID>
-            <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">BEHT-1</behandlingstype>
-            <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">TEMA-1</sakstema>
-            <aktoerREF><aktoerId>AKTOR-1</aktoerId></aktoerREF>
-            <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
-            <applikasjonBehandlingREF>test</applikasjonBehandlingREF>
-            <avslutningsstatus kodeverksRef="http://nav.no/kodeverk/Kodeverk/Avslutningsstatuser">AVSLUTTET</avslutningsstatus>
-            </v2:behandlingAvsluttet>
+        <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><informasjon:behandlingAvsluttet xmlns:informasjon="http://nav.no/melding/virksomhet/behandlingsstatus/sobproxy/v1/sobproxyBehandlingsstatus" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><hendelsesId>50090289</hendelsesId><hendelsesprodusentREF>AO01</hendelsesprodusentREF><hendelsesTidspunkt>2023-06-16T11:40:24</hendelsesTidspunkt><behandlingsID>1500oVFWi</behandlingsID><behandlingstype>O</behandlingstype><sakstema>DAGP;DAGP;FETI</sakstema><aktoerREF xsi:type="informasjon:Person"><brukerIdent>26127338824</brukerIdent></aktoerREF><ansvarligEnhetREF>9958</ansvarligEnhetREF><applikasjonSakREF>2021240702</applikasjonSakREF><avslutningsstatus>JA</avslutningsstatus></informasjon:behandlingAvsluttet>
     """.trimIndent()
 
     val behandlingOpprettetOgAvsluttetXml = """
-        <v2:behandlingOpprettetOgAvsluttet xmlns:v2="http://nav.no/melding/virksomhet/behandlingsstatus/hendelsehandterer/v1/hendelseshandtererBehandlingsstatus">
-            <hendelsesId>HEN-1</hendelsesId>
-            <hendelsesprodusentREF kodeverksRef="http://nav.no/kodeverk/Kodeverk/ApplikasjonIDer">HEN-1</hendelsesprodusentREF>
-            <hendelsesTidspunkt>2004-02-14T19:44:14</hendelsesTidspunkt>
-            <behandlingsID>BEH-1</behandlingsID>
-            <behandlingstype kodeverksRef="http://nav.no/kodeverk/Kodeverk/Behandlingstyper">BEHT-1</behandlingstype>
-            <sakstema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Sakstemaer">TEMA-1</sakstema>
-            <aktoerREF><aktoerId>AKTOR-1</aktoerId></aktoerREF>
-            <primaerBehandlingREF><behandlingsREF>BREF</behandlingsREF><type>forrige</type></primaerBehandlingREF>
-            <applikasjonBehandlingREF>test</applikasjonBehandlingREF>
-            <avslutningsstatus kodeverksRef="http://nav.no/kodeverk/Kodeverk/Avslutningsstatuser">AVSLUTTET</avslutningsstatus>
-            <opprettelsesTidspunkt>2004-02-24T12:14:05</opprettelsesTidspunkt>
-            </v2:behandlingOpprettetOgAvsluttet>
+        <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><informasjon:behandlingOpprettetOgAvsluttet xmlns:informasjon="http://nav.no/melding/virksomhet/behandlingsstatus/sobproxy/v1/sobproxyBehandlingsstatus" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><hendelsesId>50090289</hendelsesId><hendelsesprodusentREF>AO01</hendelsesprodusentREF><hendelsesTidspunkt>2023-06-16T11:40:24</hendelsesTidspunkt><behandlingsID>1500oVFWi</behandlingsID><behandlingstype>O</behandlingstype><sakstema>DAGP;DAGP;FETI</sakstema><aktoerREF xsi:type="informasjon:Person"><brukerIdent>26127338824</brukerIdent></aktoerREF><ansvarligEnhetREF>9958</ansvarligEnhetREF><applikasjonSakREF>2021240702</applikasjonSakREF><avslutningsstatus>JA</avslutningsstatus><opprettelsesTidspunkt>2023-06-16T11:40:24</opprettelsesTidspunkt></informasjon:behandlingOpprettetOgAvsluttet>
     """.trimIndent()
 
     @Test
@@ -70,7 +37,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
     @Test
     fun `should be able to get behandlingOpprettetOgAvsluttetXml sokand `() {
-        val behandling = XMLConverter.fromXml(behandlingAvsluttet)
+        val behandling = XMLConverter.fromXml(behandlingOpprettetOgAvsluttetXml)
 
         val oppdatering = transform(null, behandling)
 

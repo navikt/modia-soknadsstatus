@@ -18,7 +18,7 @@ import javax.xml.validation.SchemaFactory
 import javax.xml.validation.Validator
 
 object XMLConverter {
-    private const val SCHEMA_FIL_STATUS = "hendelseshandtererBehandlingsstatus.xsd"
+    private const val SCHEMA_FIL_STATUS = "sobproxyBehandlingsstatus.xsd"
 
     fun fromXml(message: String): Hendelse {
         return validateAndConvertFromXML(message)
