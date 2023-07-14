@@ -80,8 +80,8 @@ private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {
 
 private fun behandlingAvsluttetStatus(avslutningsstatus: Avslutningsstatuser): SoknadsstatusDomain.Status? {
     return when (avslutningsstatus.value.lowercase()) {
-        "avsluttet", "ok" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
-        "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
+        "avsluttet", "ok", "ja" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
+        "avbrutt", "nei", "no" -> SoknadsstatusDomain.Status.AVBRUTT
         else -> {
             secureLog.error("Ukjent behandlingsstatus mottatt: ${avslutningsstatus.value}")
             null
