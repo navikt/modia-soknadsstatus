@@ -9,4 +9,5 @@ interface PdlOppslagService {
     suspend fun hentAktorId(userToken: String, fnr: String): String?
     suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String?
     suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse>
+    suspend fun hentAktiveIdenter(userToken: String, fnr: String): List<String>
 }
