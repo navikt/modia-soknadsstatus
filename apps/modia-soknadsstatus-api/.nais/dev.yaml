@@ -48,6 +48,11 @@ spec:
       enabled: true
       allowAllUsers: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: ida
+          cluster: prod-fss
+          namespace: traktor
     outbound:
       external:
         - host: graph.microsoft.com
