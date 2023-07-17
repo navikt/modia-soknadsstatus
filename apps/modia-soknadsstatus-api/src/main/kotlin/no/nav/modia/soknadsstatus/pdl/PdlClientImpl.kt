@@ -7,10 +7,10 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.runBlocking
 import no.nav.api.generated.pdl.HentAdressebeskyttelse
 import no.nav.api.generated.pdl.HentAktorid
 import no.nav.api.generated.pdl.HentGeografiskTilknyttning
+import no.nav.api.generated.pdl.HentIdenter
 import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.accesscontrol.RestConstants
@@ -22,7 +22,15 @@ import java.net.URL
 
 typealias HeadersBuilder = HttpRequestBuilder.() -> Unit
 
-open class PdlClient(
+interface PdlClient {
+    suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String?
+    suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String,): List<Adressebeskyttelse>
+    suspend fun hentAktivIdent(userToken: String, ident: String, gruppe: IdentGruppe): String?
+    suspend fun hentAktivIdentMedSystemToken(ident: String, gruppe: IdentGruppe): String?
+    suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String>
+}
+
+open class PdlClientImpl(
     private val oboTokenProvider: BoundedOnBehalfOfTokenClient,
     private val machineToMachineTokenClient: BoundedMachineToMachineTokenClient,
     url: URL,
@@ -33,9 +41,10 @@ open class PdlClient(
     url = url,
     httpClient = httpClient,
 ),
+    PdlClient,
     Closeable {
 
-    suspend fun hentGeografiskTilknytning(fnr: String, userToken: String): String? =
+    override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
         execute(
             HentGeografiskTilknyttning(HentGeografiskTilknyttning.Variables(fnr)),
             userTokenAuthorizationHeaders(userToken),
@@ -46,7 +55,7 @@ open class PdlClient(
                 gtBydel ?: gtKommune ?: gtLand
             }
 
-    suspend fun hentAdresseBeskyttelse(fnr: String, userToken: String): List<Adressebeskyttelse> =
+    override suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse> =
         execute(
             HentAdressebeskyttelse(HentAdressebeskyttelse.Variables(fnr)),
             userTokenAuthorizationHeaders(userToken),
@@ -54,8 +63,7 @@ open class PdlClient(
             .data?.hentPerson?.adressebeskyttelse
             ?: emptyList()
 
-
-    suspend fun hentAktivIdent(ident: String, gruppe: IdentGruppe, userToken: String): String? =
+    override suspend fun hentAktivIdent(userToken: String, ident: String, gruppe: IdentGruppe): String? =
         execute(HentAktorid(HentAktorid.Variables(ident, listOf(gruppe))), userTokenAuthorizationHeaders(userToken))
             .data
             ?.hentIdenter
@@ -63,8 +71,7 @@ open class PdlClient(
             ?.firstOrNull()
             ?.ident
 
-
-    suspend fun hentAktivIdent(ident: String, gruppe: IdentGruppe): String? =
+    override suspend fun hentAktivIdentMedSystemToken(ident: String, gruppe: IdentGruppe): String? =
         execute(HentAktorid(HentAktorid.Variables(ident, listOf(gruppe))), systemTokenAuthorizationHeaders)
             .data
             ?.hentIdenter
@@ -72,6 +79,11 @@ open class PdlClient(
             ?.firstOrNull()
             ?.ident
 
+    override suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String> =
+        execute(
+            HentIdenter(HentIdenter.Variables(ident)),
+            userTokenAuthorizationHeaders(userToken)
+        ).data?.hentIdenter?.identer?.map { it.ident } ?: emptyList()
 
     override suspend fun <T : Any> execute(
         request: GraphQLClientRequest<T>,
