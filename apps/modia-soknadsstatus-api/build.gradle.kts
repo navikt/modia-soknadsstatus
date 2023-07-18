@@ -10,8 +10,8 @@ val postgres_version: String by project
 val graphql_version: String by project
 val nav_common_version: String by project
 val mockk_version: String by project
-val caffeine_version: String by project
 val mock_webserver_version: String by project
+val guava_testlib_version: String by project
 
 plugins {
     application
@@ -54,12 +54,10 @@ dependencies {
     implementation("no.nav.common:sts:2.2023.01.10_13.49-81ddc732df3a")
     implementation("no.nav.common:token-client:$nav_common_version")
     implementation("no.nav.common:client:$nav_common_version")
-    implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
-    implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
-    testImplementation("com.google.guava:guava-testlib:32.0.0-jre")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
     testImplementation("com.squareup.okhttp3:mockwebserver:$mock_webserver_version")
+    testImplementation("com.google.guava:guava-testlib:$guava_testlib_version")
     testImplementation("no.nav.personoversikt:kabac:$modia_common_version") {
         artifact {
             classifier = "tests"
