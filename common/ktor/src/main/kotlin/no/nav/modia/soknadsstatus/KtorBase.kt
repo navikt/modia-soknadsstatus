@@ -18,11 +18,7 @@ val BaseNaisApp = createApplicationPlugin("base-nais-app") {
         install(Metrics.Plugin)
         install(Selftest.Plugin)
 
-        install(StatusPages) {
-            exception<HttpStatusException> { call, exception ->
-                call.respond(exception.status, exception.message ?: "Ukjent feil")
-            }
-        }
+        configureExceptionHandling()
 
         install(ShutDownUrl.ApplicationCallPlugin) {
             shutDownUrl = "/shutdown"

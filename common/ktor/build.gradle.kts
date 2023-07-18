@@ -16,6 +16,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
     implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
+    implementation("no.nav.personoversikt:logging:$modia_common_version")
 }
 
 group = "no.nav.modia.soknadsstatus"

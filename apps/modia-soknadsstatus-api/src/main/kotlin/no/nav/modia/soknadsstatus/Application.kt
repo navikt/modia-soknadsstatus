@@ -12,7 +12,6 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
-import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
 import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
 import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
