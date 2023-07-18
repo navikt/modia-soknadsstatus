@@ -60,7 +60,6 @@ spec:
         - host: graph.microsoft.com
         - host: pdl-api.dev-fss-pub.nais.io
         - host: axsys.dev-fss-pub.nais.io
-        - host: norg2.dev-fss-pub.nais.io
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
@@ -81,7 +80,7 @@ spec:
     - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
       value: "modia_soknadsstatus_api_dlq_gauge"
     - name: NORG2_URL
-      value: "https://app-q1.adeo.no/norg2"
+      value: "https://norg2.dev.intern.nav.no/norg2/api/v1"
     - name: PDL_API_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE
