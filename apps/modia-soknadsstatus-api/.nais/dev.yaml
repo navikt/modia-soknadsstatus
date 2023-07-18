@@ -60,6 +60,8 @@ spec:
         - host: graph.microsoft.com
         - host: pdl-api.dev-fss-pub.nais.io
         - host: axsys.dev-fss-pub.nais.io
+        - host: skjermede-personer-pip.intern.dev.nav.no
+        - host: unleash.nais.io
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
