@@ -1,48 +1,50 @@
 package no.nav.modia.soknadsstatus.pdl
 
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
 import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
-import java.util.concurrent.TimeUnit
+import no.nav.modia.soknadsstatus.SuspendCache
+import no.nav.modia.soknadsstatus.SuspendCacheImpl
+import kotlin.time.Duration.Companion.minutes
 
 class PdlOppslagServiceImpl(
     private val pdlClient: PdlClientImpl,
-    private val fnrCache: Cache<String, String> = getCache(),
-    private val aktorIdCache: Cache<String, String> = getCache(),
-    private val geografiskTilknytningCache: Cache<String, String> = getCache(),
-    private val adresseBeskyttelseCache: Cache<String, List<Adressebeskyttelse>> = getCache(),
-    private val identerCache: Cache<String, List<String>> = getCache()
+    private val fnrCache: SuspendCache<String, String?> = getCache(),
+    private val aktorIdCache: SuspendCache<String, String?> = getCache(),
+    private val geografiskTilknytningCache: SuspendCache<String, String?> = getCache(),
+    private val adresseBeskyttelseCache: SuspendCache<String, List<Adressebeskyttelse>> = getCache(),
+    private val identerCache: SuspendCache<String, List<String>> = getCache()
 ) : PdlOppslagService {
     companion object {
-        fun <VALUE_TYPE> getCache(): Cache<String, VALUE_TYPE> =
-            Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
-                .maximumSize(1000)
-                .build()
+        fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(expiresAfterWrite = 1.minutes)
     }
 
-    override suspend fun hentFnr(userToken: String, aktorId: String): String? =
-        fnrCache.getIfPresent(aktorId) ?: pdlClient.hentAktivIdent(
-            userToken,
-            aktorId,
-            IdentGruppe.FOLKEREGISTERIDENT,
-        )
+    override suspend fun hentFnr(userToken: String, aktorId: String): String? {
+        return fnrCache.get(aktorId) {
+            pdlClient.hentAktivIdent(
+                userToken,
+                aktorId,
+                IdentGruppe.FOLKEREGISTERIDENT
+            )
+        }
+    }
 
     override suspend fun hentFnrMedSystemToken(aktorId: String): String? =
-        fnrCache.getIfPresent(aktorId) ?: pdlClient.hentAktivIdentMedSystemToken(
-            aktorId,
-            IdentGruppe.FOLKEREGISTERIDENT,
-        )
+        fnrCache.get(aktorId) {
+            pdlClient.hentAktivIdentMedSystemToken(
+                aktorId,
+                IdentGruppe.FOLKEREGISTERIDENT,
+            )
+        }
 
     override suspend fun hentAktorId(userToken: String, fnr: String): String? =
-        aktorIdCache.getIfPresent(fnr) ?: pdlClient.hentAktivIdent(userToken, fnr, IdentGruppe.AKTORID)
+        aktorIdCache.get(fnr) { pdlClient.hentAktivIdent(userToken, fnr, IdentGruppe.AKTORID) }
 
     override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
-        geografiskTilknytningCache.getIfPresent(fnr) ?: pdlClient.hentGeografiskTilknytning(userToken, fnr)
+        geografiskTilknytningCache.get(fnr) { pdlClient.hentGeografiskTilknytning(userToken, fnr) }
 
     override suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse> =
-        adresseBeskyttelseCache.getIfPresent(fnr) ?: pdlClient.hentAdresseBeskyttelse(userToken, fnr)
+        adresseBeskyttelseCache.get(fnr) { pdlClient.hentAdresseBeskyttelse(userToken, fnr) }
 
     override suspend fun hentAktiveIdenter(userToken: String, fnr: String): List<String> =
-        identerCache.getIfPresent(fnr) ?: pdlClient.hentAktiveIdenter(userToken, fnr)
+        identerCache.get(fnr) { pdlClient.hentAktiveIdenter(userToken, fnr) }
 }
