@@ -8,6 +8,8 @@ import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.norg.NorgEnv
 import no.nav.modia.soknadsstatus.pdl.PdlEnv
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerEnv
+import no.nav.modia.soknadsstatus.utils.DownstreamApi
+import no.nav.modia.soknadsstatus.utils.parse
 import no.nav.personoversikt.common.utils.EnvUtils
 
 interface Env {
@@ -44,7 +46,7 @@ data class EnvImpl(
     override val norgEnv: NorgEnv = NorgEnv(url = EnvUtils.getRequiredConfig("NORG2_URL")),
     override val skjermedePersonerEnv: SkjermedePersonerEnv = SkjermedePersonerEnv(
         url = EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_PIP_URL"),
-        scope = EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_SCOPE")
+        scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_SCOPE"))
     ),
     override val sensitiveTilgangsRoller: SensitiveTilgangsRoller = SensitiveTilgangsRoller(kafkaApp.appCluster),
     override val geografiskeTilgangsRoller: GeografiskeTilgangsRoller = GeografiskeTilgangsRoller(kafkaApp.appCluster),

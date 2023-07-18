@@ -3,6 +3,8 @@ package no.nav.modia.soknadsstatus.skjermedepersoner
 import no.nav.common.rest.client.RestClient
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.modia.soknadsstatus.AppMode
+import no.nav.modia.soknadsstatus.utils.DownstreamApi
+import no.nav.modia.soknadsstatus.utils.createMachineToMachineToken
 import no.nav.utils.AuthorizationInterceptor
 import no.nav.utils.LoggingInterceptor
 import no.nav.utils.XCorrelationIdInterceptor
@@ -42,5 +44,5 @@ object SkjermedePersonerConfig {
 
 data class SkjermedePersonerEnv(
     val url: String,
-    val scope: String
+    val scope: DownstreamApi
 )
