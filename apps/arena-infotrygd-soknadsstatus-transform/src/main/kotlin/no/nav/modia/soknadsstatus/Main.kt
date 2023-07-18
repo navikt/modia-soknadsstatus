@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus
 
-import Filter
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.toKotlinInstant
