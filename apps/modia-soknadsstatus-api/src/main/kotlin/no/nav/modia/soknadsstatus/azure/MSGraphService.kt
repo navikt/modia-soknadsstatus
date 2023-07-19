@@ -53,7 +53,7 @@ class AzureADServiceImpl(
                 }
             )
         } catch (e: Exception) {
-            secureLog.error("Kall til azureAD feilet", e)
+            secureLog.error("Kall til azureAD feilet", e.cause)
             return RolleListe()
         }
     }

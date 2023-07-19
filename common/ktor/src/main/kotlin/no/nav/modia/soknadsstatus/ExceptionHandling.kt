@@ -23,7 +23,7 @@ fun Application.configureExceptionHandling() {
             )
         }
         exception<Throwable> { call, cause ->
-            secureLog.error("Unhandled exception", call)
+            secureLog.error("Unhandled exception", cause)
             call.respond(
                 HttpStatusCode.InternalServerError,
                 HttpErrorResponse(
