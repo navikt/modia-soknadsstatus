@@ -13,11 +13,7 @@ class TilgangTilBrukerMedSkjermingPolicy(private val ansattRolle: AnsattRolle) :
     override val key = Companion.key
 
     companion object {
-        val key = Key<Kabac.Policy>(TilgangTilBrukerMedSkjermingPolicy)
-    }
-
-    override fun toString(): String {
-        return "TilgangTilBrukerMedSkjermingPolicy"
+        val key = Key<Kabac.Policy>(TilgangTilBrukerMedSkjermingPolicy::class.java.simpleName)
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {

@@ -13,11 +13,7 @@ class GeografiskTilgangPolicy(private val geografiskeTilgangsRoller: Geografiske
     override val key = Companion.key
 
     companion object {
-        val key = Key<Kabac.Policy>(GeografiskTilgangPolicy::class.java)
-    }
-
-    override fun toString(): String {
-        return "GeografiskTilgangPolicy"
+        val key = Key<Kabac.Policy>(GeografiskTilgangPolicy::class.java.simpleName)
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {

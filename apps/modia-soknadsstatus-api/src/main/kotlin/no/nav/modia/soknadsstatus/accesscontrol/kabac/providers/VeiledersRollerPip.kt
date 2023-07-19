@@ -10,7 +10,7 @@ class VeiledersRollerPip(private val ansattService: AnsattService) : Kabac.Polic
     override val key: Key<RolleListe> = Companion.key
 
     companion object {
-        val key = Key<RolleListe>(VeiledersRollerPip::class.java)
+        val key = Key<RolleListe>(VeiledersRollerPip::class.java.simpleName)
     }
 
     override fun provide(ctx: Kabac.EvaluationContext): RolleListe {

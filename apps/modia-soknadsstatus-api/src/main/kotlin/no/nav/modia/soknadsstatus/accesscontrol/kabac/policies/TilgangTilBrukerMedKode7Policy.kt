@@ -13,11 +13,7 @@ class TilgangTilBrukerMedKode7Policy(private val kode7Rolle: AnsattRolle) : Kaba
     override val key = Companion.key
 
     companion object {
-        val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode7Policy)
-    }
-
-    override fun toString(): String {
-        return "TilgangTilBrukerMedKode7Policy"
+        val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode7Policy::class.java.simpleName)
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {
