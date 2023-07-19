@@ -1,5 +1,7 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
+import no.nav.common.auth.Constants
+import no.nav.common.auth.utils.IdentUtils
 import no.nav.common.types.identer.NavIdent
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
@@ -12,6 +14,18 @@ object NavIdentPip : Kabac.PolicyInformationPoint<NavIdent> {
         val principal = requireNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }
-        return NavIdent(principal.subject)
+
+        val navIdentString =
+            requireNotNull(
+                principal.payload.getClaim(Constants.AAD_NAV_IDENT_CLAIM).asString() ?: principal.subject
+            ) {
+                "Fikk ikke NavIdent fra principal"
+            }
+
+        if (!IdentUtils.erGydligNavIdent(navIdentString)) {
+            throw IllegalArgumentException("Ingen gyldig nav ident funnet på token")
+        }
+
+        return NavIdent(navIdentString)
     }
 }
