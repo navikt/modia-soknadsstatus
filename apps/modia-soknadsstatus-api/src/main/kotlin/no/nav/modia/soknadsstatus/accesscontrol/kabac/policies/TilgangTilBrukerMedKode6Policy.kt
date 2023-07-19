@@ -16,6 +16,10 @@ class TilgangTilBrukerMedKode6Policy(private val kode6Rolle: AnsattRolle) : Kaba
         val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode6Policy::class.java)
     }
 
+    override fun toString(): String {
+        return "TilgangTilBrukerMedKode6Policy"
+    }
+
     override fun evaluate(ctx: EvaluationContext): Decision {
         val veiledersRoller = ctx.getValue(VeiledersRollerPip.key)
         val veiledersTilgangTilKode6 = veiledersRoller.contains(kode6Rolle)

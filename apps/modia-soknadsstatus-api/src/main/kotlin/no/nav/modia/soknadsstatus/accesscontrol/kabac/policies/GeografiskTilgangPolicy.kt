@@ -16,6 +16,10 @@ class GeografiskTilgangPolicy(private val geografiskeTilgangsRoller: Geografiske
         val key = Key<Kabac.Policy>(GeografiskTilgangPolicy::class.java)
     }
 
+    override fun toString(): String {
+        return "GeografiskTilgangPolicy"
+    }
+
     override fun evaluate(ctx: EvaluationContext): Decision {
         val veiledersRoller = ctx.getValue(VeiledersRollerPip.key)
 

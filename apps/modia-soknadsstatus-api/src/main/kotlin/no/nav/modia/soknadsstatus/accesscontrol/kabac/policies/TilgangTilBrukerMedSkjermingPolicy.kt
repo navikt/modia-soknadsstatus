@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.infrastructure.tilgangskontroll.kabac.policies
+package no.nav.modia.soknadsstatus.accesscontrol.kabac.policies
 
 import no.nav.modia.soknadsstatus.accesscontrol.DenyCauseCode
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersSkjermingPip
@@ -14,6 +14,10 @@ class TilgangTilBrukerMedSkjermingPolicy(private val ansattRolle: AnsattRolle) :
 
     companion object {
         val key = Key<Kabac.Policy>(TilgangTilBrukerMedSkjermingPolicy)
+    }
+
+    override fun toString(): String {
+        return "TilgangTilBrukerMedSkjermingPolicy"
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {

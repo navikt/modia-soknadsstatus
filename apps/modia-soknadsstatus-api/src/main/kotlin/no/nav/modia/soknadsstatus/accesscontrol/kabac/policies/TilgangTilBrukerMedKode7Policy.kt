@@ -1,4 +1,4 @@
-package no.nav.modiapersonoversikt.infrastructure.tilgangskontroll.kabac.policies
+package no.nav.modia.soknadsstatus.accesscontrol.kabac.policies
 
 import no.nav.modia.soknadsstatus.accesscontrol.DenyCauseCode
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersDiskresjonskodePip
@@ -14,6 +14,10 @@ class TilgangTilBrukerMedKode7Policy(private val kode7Rolle: AnsattRolle) : Kaba
 
     companion object {
         val key = Key<Kabac.Policy>(TilgangTilBrukerMedKode7Policy)
+    }
+
+    override fun toString(): String {
+        return "TilgangTilBrukerMedKode7Policy"
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {
