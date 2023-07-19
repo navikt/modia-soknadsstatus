@@ -7,7 +7,7 @@ import no.nav.utils.XCorrelationIdInterceptor
 import okhttp3.OkHttpClient
 
 object NorgConfig {
-    fun factory(appMode: AppMode, env: NorgEnv): NorgApi {
+    fun factory(appMode: AppMode, env: NorgEnv, consumerId: String): NorgApi {
         if (appMode == AppMode.NAIS) {
             val url = env.url
             val httpClient: OkHttpClient = RestClient.baseClient().newBuilder()
@@ -21,7 +21,7 @@ object NorgConfig {
                 )
                 .build()
 
-            return NorgApiImpl(url, httpClient)
+            return NorgApiImpl(url, consumerId, httpClient)
         }
         return NorgApiMock()
     }
@@ -30,4 +30,3 @@ object NorgConfig {
 data class NorgEnv(
     val url: String
 )
-

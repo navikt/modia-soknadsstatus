@@ -33,7 +33,7 @@ interface Services {
                 configuration.machineToMachineTokenClient
             )
             val soknadsstatusService = SoknadsstatusServiceImpl(pdl, configuration.repository)
-            val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv)
+            val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv, env.kafkaApp.appName)
             val skjermedePersonerApi = SkjermedePersonerConfig.factory(
                 env.kafkaApp.appMode,
                 env.skjermedePersonerEnv,

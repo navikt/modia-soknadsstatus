@@ -38,6 +38,7 @@ interface NorgApi : Pingable {
 
 class NorgApiImpl(
     private val url: String,
+    private val consumerId: String,
     httpClient: OkHttpClient,
     scheduler: Timer = Timer(),
     private val clock: Clock = Clock.systemDefaultZone()
@@ -128,7 +129,7 @@ class NorgApiImpl(
             retry.run {
                 cache = enhetKontaktInfoApi
                     .hentAlleEnheterInkludertKontaktinformasjonUsingGET(
-                        consumerId = "" // AppConstants.SYSTEMUSER_USERNAME
+                        consumerId = consumerId,
                     )
                     .mapNotNull {
                         try {
