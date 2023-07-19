@@ -16,7 +16,7 @@ class BrukersGeografiskeTilknyttningPip(private val pdl: PdlOppslagService) : Ka
 
     override fun provide(ctx: EvaluationContext): String? {
         val fnr = ctx.getValue(BrukersFnrPip.key).get()
-        val prinicipal = checkNotNull(ctx.getValue(AuthContextPip)) {
+        val prinicipal = requireNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }
         return runBlocking { pdl.hentGeografiskTilknytning(prinicipal.token, fnr)}

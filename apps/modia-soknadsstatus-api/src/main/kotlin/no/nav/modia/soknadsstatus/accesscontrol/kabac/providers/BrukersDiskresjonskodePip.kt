@@ -19,7 +19,7 @@ class BrukersDiskresjonskodePip(private val pdl: PdlOppslagService) : Kabac.Poli
 
     override fun provide(ctx: EvaluationContext): Kode? {
         val fnr = ctx.getValue(CommonAttributes.FNR)
-        val prinicipal = checkNotNull(ctx.getValue(AuthContextPip)) {
+        val prinicipal = requireNotNull(ctx.getValue(AuthContextPip)) {
             "Fikk ikke prinicipal fra authcontext"
         }
         return runBlocking { pdl.hentAdresseBeskyttelse(prinicipal.token, fnr.get()).finnStrengesteKode()}
