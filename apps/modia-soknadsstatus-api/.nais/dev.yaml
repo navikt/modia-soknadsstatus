@@ -62,6 +62,7 @@ spec:
         - host: axsys.dev-fss-pub.nais.io
         - host: skjermede-personer-pip.intern.dev.nav.no
         - host: unleash.nais.io
+        - host: norg2.dev.intern.nav.no
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
