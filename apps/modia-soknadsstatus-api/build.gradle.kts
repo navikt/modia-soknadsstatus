@@ -41,9 +41,9 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
-    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
-    implementation("no.nav.personoversikt:logging:$modia_common_version")
-    implementation("no.nav.personoversikt:kabac:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:kabac:$modia_common_version")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.flywaydb:flyway-core:9.8.3")
     implementation("org.postgresql:postgresql:$postgres_version")
@@ -58,7 +58,7 @@ dependencies {
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
     testImplementation("com.squareup.okhttp3:mockwebserver:$mock_webserver_version")
     testImplementation("com.google.guava:guava-testlib:$guava_testlib_version")
-    testImplementation("no.nav.personoversikt:kabac:$modia_common_version") {
+    testImplementation("com.github.navikt.modia-common-utils:kabac:$modia_common_version") {
         artifact {
             classifier = "tests"
         }

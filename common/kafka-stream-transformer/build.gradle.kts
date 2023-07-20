@@ -23,7 +23,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:$kafka_version")
-    implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
     implementation(project(":common:ktor"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:kafka"))

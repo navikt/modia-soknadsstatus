@@ -19,7 +19,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
-    implementation("no.nav.personoversikt:logging:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("com.google.guava:guava-testlib:$guava_testlib_version")

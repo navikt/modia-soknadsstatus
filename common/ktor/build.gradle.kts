@@ -14,9 +14,9 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
-    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
-    implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
-    implementation("no.nav.personoversikt:logging:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
 }
 
 group = "no.nav.modia.soknadsstatus"

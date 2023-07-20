@@ -28,7 +28,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:9.8.3")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.postgresql:postgresql:$postgres_version")
-    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.testcontainers:postgresql:$test_containers_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
