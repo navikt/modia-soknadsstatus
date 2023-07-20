@@ -30,7 +30,7 @@ interface PdlClient {
     suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String>
 }
 
-open class PdlClientImpl(
+class PdlClientImpl(
     private val oboTokenProvider: BoundedOnBehalfOfTokenClient,
     private val machineToMachineTokenClient: BoundedMachineToMachineTokenClient,
     url: URL,
@@ -84,18 +84,6 @@ open class PdlClientImpl(
             HentIdenter(HentIdenter.Variables(ident)),
             userTokenAuthorizationHeaders(userToken)
         ).data?.hentIdenter?.identer?.map { it.ident } ?: emptyList()
-
-    override suspend fun <T : Any> execute(
-        request: GraphQLClientRequest<T>,
-        requestCustomizer: HttpRequestBuilder.() -> Unit,
-    ): GraphQLClientResponse<T> {
-        return try {
-            super.execute(request, requestCustomizer)
-        } catch (e: Exception) {
-            val error = GraphQLClientException("Feilet ved oppslag mot PDL (ID: ${getCallId()})")
-            GraphQLErrorResponse(errors = listOf(error))
-        }
-    }
 
     override fun close() {
         httpClient.close()
