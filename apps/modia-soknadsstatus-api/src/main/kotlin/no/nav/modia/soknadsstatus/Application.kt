@@ -42,7 +42,7 @@ fun Application.soknadsstatusModule(
         if (env.kafkaApp.appMode == AppMode.NAIS) {
             security.setupJWT(this)
         } else {
-            security.setupMock(this, "Z999999")
+            security.setupMock(this, "Z999999", "f24261ea-60ed-4894-a2d6-29e55214df08")
         }
     }
 
