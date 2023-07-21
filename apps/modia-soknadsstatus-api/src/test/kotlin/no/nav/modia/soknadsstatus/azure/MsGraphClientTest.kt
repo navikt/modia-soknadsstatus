@@ -6,7 +6,7 @@ import no.nav.common.types.identer.AzureObjectId
 import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
-import no.nav.modia.soknadsstatus.utils.BoundedMachineToMachineTokenClient
+import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.TestInstance
 
 val GROUP_ID = AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2")
 val GROUP_NAME = "0000-GA-GOSYS_REGIONAL"
-val VEILEDER_ID = AzureObjectId("fake-veileder-id")
 val VEILEDER_NAV_IDENT = NavIdent("FK12345")
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -34,7 +33,7 @@ class MsGraphClientTest {
 
         azureADService = AzureADServiceImpl(
             httpClient = OkHttpClient(),
-            tokenClient = MockMachineToMachineClient,
+            tokenClient = MockOnBehalfOfClient,
             graphUrl = Url(mockServerBaseUrl.toString())
         )
     }
@@ -89,8 +88,8 @@ class MsGraphClientTest {
         )
 
         val result = azureADService.fetchMultipleGroupsIfUserIsMember(
+            userToken = "fake-token",
             veilederIdent = VEILEDER_NAV_IDENT,
-            veilederAzureId = VEILEDER_ID,
             groups = RolleListe(AnsattRolle(gruppeNavn = GROUP_NAME, gruppeId = GROUP_ID))
         )
         assertEquals(1, result.size)
@@ -122,16 +121,16 @@ class MsGraphClientTest {
         )
 
         val result = azureADService.fetchMultipleGroupsIfUserIsMember(
+            userToken = "fake-token",
             veilederIdent = VEILEDER_NAV_IDENT,
-            veilederAzureId = VEILEDER_ID,
             groups = RolleListe(AnsattRolle(gruppeNavn = GROUP_NAME, gruppeId = GROUP_ID))
         )
         assertEquals(0, result.size)
     }
 }
 
-object MockMachineToMachineClient : BoundedMachineToMachineTokenClient {
-    override fun createMachineToMachineToken(): String {
-        return "this-is-a-fake-token"
+private object MockOnBehalfOfClient : BoundedOnBehalfOfTokenClient {
+    override fun exchangeOnBehalfOfToken(accesstoken: String): String {
+        return accesstoken
     }
 }

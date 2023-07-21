@@ -23,7 +23,6 @@ class AccessControlConfig(
     fun buildKabac(authenticationContext: AuthenticationContext): AccessControlKabac {
         val decisionPoint = PolicyDecisionPointImpl().apply {
             install(AuthContextPip(authenticationContext))
-            install(AzureObjectIdPip)
             install(BrukersFnrPip(pdl))
             install(NavIdentPip)
             install(BrukersAktorIdPip(pdl))

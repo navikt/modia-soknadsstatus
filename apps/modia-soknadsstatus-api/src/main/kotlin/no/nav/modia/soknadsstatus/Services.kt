@@ -43,7 +43,7 @@ interface Services {
                 AxsysConfig.factory(env.kafkaApp.appMode, env.axsysEnv, configuration.machineToMachineTokenClient)
             val azureADService = AzureADServiceImpl(
                 graphUrl = Url(env.msGraphEnv.url),
-                tokenClient = configuration.machineToMachineTokenClient.bindTo(
+                tokenClient = configuration.oboTokenClient.bindTo(
                     env.msGraphEnv.scope
                 )
             )

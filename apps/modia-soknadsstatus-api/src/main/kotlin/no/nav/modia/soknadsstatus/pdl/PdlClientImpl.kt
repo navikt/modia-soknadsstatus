@@ -17,6 +17,7 @@ import no.nav.modia.soknadsstatus.accesscontrol.RestConstants
 import no.nav.modia.soknadsstatus.utils.BoundedMachineToMachineTokenClient
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import no.nav.modia.soknadsstatus.utils.LoggingGraphQLKtorClient
+import no.nav.personoversikt.common.logging.Logging
 import no.nav.utils.getCallId
 import java.net.URL
 
@@ -90,7 +91,9 @@ class PdlClientImpl(
     }
 
     private fun userTokenAuthorizationHeaders(userToken: String): HeadersBuilder = {
+        Logging.secureLog.info("Exchanging $userToken")
         val exchangedToken = oboTokenProvider.exchangeOnBehalfOfToken(userToken)
+        Logging.secureLog.info("Trying to call PDL with token $exchangedToken")
         header(
             RestConstants.AUTHORIZATION,
             RestConstants.AUTH_METHOD_BEARER + RestConstants.AUTH_SEPERATOR + exchangedToken,

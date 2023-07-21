@@ -10,7 +10,7 @@ import no.nav.personoversikt.common.logging.Logging.secureLog
 interface AnsattService {
     fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet>
     fun hentAnsattFagomrader(ident: String, enhet: String): Set<String>
-    suspend fun hentVeiledersGeografiskeOgSensitiveRoller(ident: NavIdent, azureAdId: AzureObjectId): RolleListe
+    suspend fun hentVeiledersGeografiskeOgSensitiveRoller(userToken: String, ident: NavIdent): RolleListe
 }
 
 class AnsattServiceImpl(
@@ -55,9 +55,9 @@ class AnsattServiceImpl(
     }
 
     override suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
+        userToken: String,
         ident: NavIdent,
-        azureAdId: AzureObjectId
     ): RolleListe {
-        return azureADService.fetchMultipleGroupsIfUserIsMember(ident, azureAdId, sensitiveOgGeografiskeTilgangsRoller)
+        return azureADService.fetchMultipleGroupsIfUserIsMember(userToken, ident, sensitiveOgGeografiskeTilgangsRoller)
     }
 }

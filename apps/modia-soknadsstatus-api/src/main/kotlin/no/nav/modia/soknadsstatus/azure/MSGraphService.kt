@@ -1,7 +1,6 @@
 package no.nav.modia.soknadsstatus.azure
 
 import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -10,7 +9,7 @@ import no.nav.common.types.identer.AzureObjectId
 import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
-import no.nav.modia.soknadsstatus.utils.BoundedMachineToMachineTokenClient
+import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import no.nav.personoversikt.common.logging.Logging.secureLog
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -18,32 +17,32 @@ import java.lang.IllegalArgumentException
 
 interface MSGraphService {
     suspend fun fetchMultipleGroupsIfUserIsMember(
+        userToken: String,
         veilederIdent: NavIdent,
-        veilederAzureId: AzureObjectId,
         groups: RolleListe
     ): RolleListe
 }
 
 class AzureADServiceImpl(
     private val httpClient: OkHttpClient = OkHttpClient(),
-    private val tokenClient: BoundedMachineToMachineTokenClient,
+    private val tokenClient: BoundedOnBehalfOfTokenClient,
     private val graphUrl: Url,
 ) : MSGraphService {
     private val json = Json { ignoreUnknownKeys = true }
 
     override suspend fun fetchMultipleGroupsIfUserIsMember(
+        userToken: String,
         veilederIdent: NavIdent,
-        veilederAzureId: AzureObjectId,
         groups: RolleListe
     ): RolleListe {
         val url = URLBuilder(graphUrl).apply {
-            path("v1.0/groups/$veilederAzureId/memberOf")
+            path("v1.0/groups/me/memberOf")
             parameters.append("\$filter", "id in [${groups.map { "'${it.gruppeId.get()}'" }}]")
             parameters.append("\$count", "true")
         }.buildString()
 
         try {
-            val response = handleRequest(url, veilederIdent, veilederAzureId)
+            val response = handleRequest(url, userToken, veilederIdent)
             return RolleListe(
                 response.value.map {
                     AnsattRolle(
@@ -53,30 +52,29 @@ class AzureADServiceImpl(
                 }
             )
         } catch (e: Exception) {
-            secureLog.error("Kall til azureAD feilet", e.cause)
+            println(e)
+            secureLog.error("Kall til azureAD feilet", e)
             return RolleListe()
         }
     }
 
     private fun handleRequest(
         url: String,
+        userToken: String,
         veilederIdent: NavIdent,
-        veilederAzureId: AzureObjectId,
     ): AzureCountResponse<List<AzureGroupResponse>> {
-        val token = runBlocking {
-            tokenClient.createMachineToMachineToken()
-        }
+        val token = tokenClient.exchangeOnBehalfOfToken(userToken)
 
         val request = Request.Builder().url(url).addHeader("Authorization", "Bearer $token")
             .addHeader("ConsistencyLevel", "eventual").build()
         val response = httpClient.newCall(request).execute()
 
         val body = response.body
-            ?: throw IllegalArgumentException("Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent ($veilederAzureId). Body var null")
+            ?: throw IllegalArgumentException("Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent. Body var null")
 
         if (!response.isSuccessful) {
             throw IllegalArgumentException(
-                "Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent ($veilederAzureId). Body var ${
+                "Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent. Body var ${
                     json.decodeFromString(
                         AzureErrorResponse.serializer(),
                         body.string()

@@ -16,11 +16,9 @@ class BrukersAktorIdPip(private val pdl: PdlOppslagService) : Kabac.PolicyInform
 
     override fun provide(ctx: EvaluationContext): AktorId {
         val fnr = ctx.getValue(CommonAttributes.FNR)
-        val prinicipal = requireNotNull(ctx.getValue(AuthContextPip)) {
-            "Fikk ikke prinicipal fra authcontext"
-        }
+        val prinicipal = ctx.getValue(AuthContextPip)
 
-        val aktorid = requireNotNull(runBlocking { pdl.hentAktorId(prinicipal.token, fnr.get())}) {
+        val aktorid = requireNotNull(runBlocking { pdl.hentAktorId(prinicipal.token, fnr.get()) }) {
             "Fant ikke aktor id for $fnr"
         }
         return AktorId(aktorid)

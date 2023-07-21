@@ -1,7 +1,6 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
 import kotlinx.coroutines.runBlocking
-import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
@@ -16,9 +15,8 @@ class BrukersGeografiskeTilknyttningPip(private val pdl: PdlOppslagService) : Ka
 
     override fun provide(ctx: EvaluationContext): String? {
         val fnr = ctx.getValue(BrukersFnrPip.key).get()
-        val prinicipal = requireNotNull(ctx.getValue(AuthContextPip)) {
-            "Fikk ikke prinicipal fra authcontext"
-        }
-        return runBlocking { pdl.hentGeografiskTilknytning(prinicipal.token, fnr)}
+        val prinicipal = ctx.getValue(AuthContextPip)
+
+        return runBlocking { pdl.hentGeografiskTilknytning(prinicipal.token, fnr) }
     }
 }

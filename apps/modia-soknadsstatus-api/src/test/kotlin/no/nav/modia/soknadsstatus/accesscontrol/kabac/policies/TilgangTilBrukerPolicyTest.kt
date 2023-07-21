@@ -41,7 +41,6 @@ internal class TilgangTilBrukerPolicyTest {
     private val ansattService = mockk<AnsattService>()
 
     private val ident = NavIdent("Z999999")
-    private val azureId = AzureObjectId("d9acf150-baa5-453c-9a7a-6aae2464202b")
     private val fnr = Fnr("10108000398")
     private val aktorId = AktorId("987654321987")
     private val token = JWT.create().withSubject(ident.get()).sign(Algorithm.none())
@@ -220,7 +219,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtVeilederHarRoller(roller: RolleListe) {
-        coEvery { ansattService.hentVeiledersGeografiskeOgSensitiveRoller(ident, azureId) } returns roller
+        coEvery { ansattService.hentVeiledersGeografiskeOgSensitiveRoller(token, ident) } returns roller
     }
 
     private fun gittAtVeilederHarNasjonalTilgang() {
@@ -277,7 +276,6 @@ internal class TilgangTilBrukerPolicyTest {
     private fun fellesPipTjenester(): Array<Kabac.PolicyInformationPoint<*>> {
         return arrayOf(
             AuthContextPip.key.withValue(Security.SubjectPrincipal(token)),
-            AzureObjectIdPip.key.withValue(azureId),
             BrukersFnrPip.key.withValue(fnr),
             NavIdentPip.key.withValue(ident),
             BrukersAktorIdPip(pdl),

@@ -14,11 +14,11 @@ class VeiledersRollerPip(private val ansattService: AnsattService) : Kabac.Polic
     }
 
     override fun provide(ctx: Kabac.EvaluationContext): RolleListe {
-        val veilederAzureId = ctx.getValue(AzureObjectIdPip)
+        val subject = ctx.getValue(AuthContextPip)
         val veilederNavIdent = ctx.getValue(NavIdentPip)
 
         return runBlocking {
-            ansattService.hentVeiledersGeografiskeOgSensitiveRoller(veilederNavIdent, veilederAzureId)
+            ansattService.hentVeiledersGeografiskeOgSensitiveRoller(subject.token, veilederNavIdent)
         }
     }
 }

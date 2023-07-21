@@ -11,9 +11,7 @@ object NavIdentPip : Kabac.PolicyInformationPoint<NavIdent> {
     override val key = Key<NavIdent>(NavIdentPip)
 
     override fun provide(ctx: EvaluationContext): NavIdent {
-        val principal = requireNotNull(ctx.getValue(AuthContextPip)) {
-            "Fikk ikke prinicipal fra authcontext"
-        }
+        val principal = ctx.getValue(AuthContextPip)
 
         val navIdentString =
             requireNotNull(

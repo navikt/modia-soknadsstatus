@@ -9,20 +9,21 @@ import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
 
-class BrukersDiskresjonskodePip(private val pdl: PdlOppslagService) : Kabac.PolicyInformationPoint<BrukersDiskresjonskodePip.Kode?> {
+class BrukersDiskresjonskodePip(private val pdl: PdlOppslagService) :
+    Kabac.PolicyInformationPoint<BrukersDiskresjonskodePip.Kode?> {
     enum class Kode { KODE6, KODE7 }
 
     override val key = Companion.key
+
     companion object : Kabac.AttributeKey<Kode?> {
         override val key = Key<Kode?>(BrukersDiskresjonskodePip::class.java.simpleName)
     }
 
     override fun provide(ctx: EvaluationContext): Kode? {
         val fnr = ctx.getValue(CommonAttributes.FNR)
-        val prinicipal = requireNotNull(ctx.getValue(AuthContextPip)) {
-            "Fikk ikke prinicipal fra authcontext"
-        }
-        return runBlocking { pdl.hentAdresseBeskyttelse(prinicipal.token, fnr.get()).finnStrengesteKode()}
+        val prinicipal = ctx.getValue(AuthContextPip)
+
+        return runBlocking { pdl.hentAdresseBeskyttelse(prinicipal.token, fnr.get()).finnStrengesteKode() }
     }
 
     private fun List<Adressebeskyttelse>.finnStrengesteKode(): Kode? {
