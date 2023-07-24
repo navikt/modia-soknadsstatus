@@ -1,10 +1,12 @@
 package no.nav.modia.soknadsstatus.utils
 
 import com.expediagroup.graphql.client.ktor.GraphQLKtorClient
+import com.expediagroup.graphql.client.serializer.defaultGraphQLSerializer
 import com.expediagroup.graphql.client.types.GraphQLClientRequest
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
+import kotlinx.serialization.Serializer
 import no.nav.common.utils.IdUtils
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import no.nav.personoversikt.common.utils.SelftestGenerator
@@ -30,7 +32,7 @@ open class LoggingGraphQLKtorClient(
             TjenestekallLogg.info(
                 "$name-request: $callId ($requestId)",
                 mapOf(
-                    "request" to request
+                    "request" to defaultGraphQLSerializer().serialize(request)
                 )
             )
             val response = super.execute(request, requestCustomizer)

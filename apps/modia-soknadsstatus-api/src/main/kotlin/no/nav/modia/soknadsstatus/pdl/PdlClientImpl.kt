@@ -1,13 +1,10 @@
 package no.nav.modia.soknadsstatus.pdl
 
 import io.ktor.client.*
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
 import io.ktor.utils.io.core.*
-import no.nav.api.generated.pdl.HentAdressebeskyttelse
-import no.nav.api.generated.pdl.HentAktorid
-import no.nav.api.generated.pdl.HentGeografiskTilknyttning
-import no.nav.api.generated.pdl.HentIdenter
+import no.nav.api.generated.pdl.*
 import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.accesscontrol.RestConstants
@@ -31,7 +28,7 @@ class PdlClientImpl(
     private val oboTokenProvider: BoundedOnBehalfOfTokenClient,
     private val machineToMachineTokenClient: BoundedMachineToMachineTokenClient,
     url: URL,
-    private val httpClient: HttpClient = HttpClient(engineFactory = CIO),
+    private val httpClient: HttpClient = HttpClient(OkHttp.create())
 ) : LoggingGraphQLKtorClient(
     name = "PDL",
     critical = false,
@@ -42,7 +39,7 @@ class PdlClientImpl(
     Closeable {
 
     override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
-        execute(
+         execute(
             HentGeografiskTilknyttning(HentGeografiskTilknyttning.Variables(fnr)),
             userTokenAuthorizationHeaders(userToken),
         )

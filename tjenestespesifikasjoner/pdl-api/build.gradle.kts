@@ -6,18 +6,22 @@ import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 val nav_common_version: String by project
 val graphql_version: String by project
 val kotlinx_datetime_version: String by project
+val kotlinx_serialization_version: String by project
 
 plugins {
     application
     id("setup.repository")
     kotlin("jvm") version "1.7.21"
     id("com.expediagroup.graphql") version "6.4.0"
+    kotlin("plugin.serialization") version "1.8.21"
 }
 
 dependencies {
     implementation("com.expediagroup:graphql-kotlin-client:$graphql_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
 }
 
 java {
