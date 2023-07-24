@@ -35,9 +35,7 @@ private fun AzureAdTokenClientBuilder.oboClientFactory(env: Env): OnBehalfOfToke
     if (env.kafkaApp.appMode == AppMode.NAIS) {
         return AzureAdTokenClientBuilder
             .builder()
-            .withClientId(env.azureAdConfiguration.clientId)
-            .withTokenEndpointUrl(env.azureAdConfiguration.openidConfigTokenEndpoint)
-            .withPrivateJwk(env.azureAdConfiguration.appJWK)
+            .withNaisDefaults()
             .buildOnBehalfOfTokenClient()
     }
 
@@ -60,9 +58,7 @@ private fun AzureAdTokenClientBuilder.machineToMachineClientFactory(env: Env): M
     if (env.kafkaApp.appMode == AppMode.NAIS) {
         return AzureAdTokenClientBuilder
             .builder()
-            .withClientId(env.azureAdConfiguration.clientId)
-            .withTokenEndpointUrl(env.azureAdConfiguration.openidConfigTokenEndpoint)
-            .withPrivateJwk(env.azureAdConfiguration.appJWK)
+            .withNaisDefaults()
             .buildMachineToMachineTokenClient()
     }
 
@@ -100,4 +96,3 @@ private fun authProviderConfigFactory(env: Env): AuthProviderConfig {
         )
     )
 }
-

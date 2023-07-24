@@ -10,6 +10,7 @@ import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
+import no.nav.personoversikt.common.logging.Logging
 import no.nav.personoversikt.common.logging.Logging.secureLog
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -52,7 +53,6 @@ class AzureADServiceImpl(
                 }
             )
         } catch (e: Exception) {
-            println(e)
             secureLog.error("Kall til azureAD feilet", e)
             return RolleListe()
         }

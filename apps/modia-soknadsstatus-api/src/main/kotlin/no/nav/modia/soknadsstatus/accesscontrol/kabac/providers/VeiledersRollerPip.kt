@@ -3,6 +3,7 @@ package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.ansatt.AnsattService
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
+import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.utils.Key
 
@@ -18,7 +19,7 @@ class VeiledersRollerPip(private val ansattService: AnsattService) : Kabac.Polic
         val veilederNavIdent = ctx.getValue(NavIdentPip)
 
         return runBlocking {
-            ansattService.hentVeiledersGeografiskeOgSensitiveRoller(subject.token, veilederNavIdent)
+            ansattService.hentVeiledersGeografiskeOgSensitiveRoller(subject.token.removeBearerFromToken(), veilederNavIdent)
         }
     }
 }

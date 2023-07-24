@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
 import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
+import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
@@ -17,6 +18,6 @@ class BrukersGeografiskeTilknyttningPip(private val pdl: PdlOppslagService) : Ka
         val fnr = ctx.getValue(BrukersFnrPip.key).get()
         val prinicipal = ctx.getValue(AuthContextPip)
 
-        return runBlocking { pdl.hentGeografiskTilknytning(prinicipal.token, fnr) }
+        return runBlocking { pdl.hentGeografiskTilknytning(prinicipal.token.removeBearerFromToken(), fnr) }
     }
 }
