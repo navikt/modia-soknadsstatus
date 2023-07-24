@@ -113,10 +113,7 @@ fun Application.soknadsstatusModule(
                 route("soknadsstatus") {
                     get("oppdateringer/{ident}") {
                         val kabac = services.accessControl.buildKabac(call.authentication)
-                        val ident = call.parameters["ident"] ?: throw HttpStatusException(
-                            HttpStatusCode.BadRequest,
-                            "ident missing in request"
-                        )
+                        val ident = call.getIdent()
                         call.respondWithResult(
                             kabac
                                 .check(services.policies.tilgangTilBruker(Fnr(ident))).get(
@@ -133,10 +130,7 @@ fun Application.soknadsstatusModule(
                     }
 
                     get("{ident}") {
-                        val ident = call.parameters["ident"] ?: throw HttpStatusException(
-                            HttpStatusCode.BadRequest,
-                            "ident missing in request"
-                        )
+                        val ident = call.getIdent()
                         val kabac = services.accessControl.buildKabac(call.authentication)
                         call.respondWithResult(
                             kabac
@@ -156,4 +150,11 @@ fun Application.soknadsstatusModule(
             }
         }
     }
+}
+
+private fun ApplicationCall.getIdent(): String {
+    return this.parameters["ident"] ?: throw HttpStatusException(
+        HttpStatusCode.BadRequest,
+        "ident missing in request"
+    )
 }
