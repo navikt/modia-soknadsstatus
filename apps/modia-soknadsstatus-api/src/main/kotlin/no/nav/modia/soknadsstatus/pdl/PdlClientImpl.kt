@@ -8,6 +8,7 @@ import no.nav.api.generated.pdl.*
 import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.accesscontrol.RestConstants
+import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.modia.soknadsstatus.utils.BoundedMachineToMachineTokenClient
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import no.nav.modia.soknadsstatus.utils.LoggingGraphQLKtorClient
@@ -84,7 +85,7 @@ class PdlClientImpl(
     }
 
     private fun userTokenAuthorizationHeaders(userToken: String): HeadersBuilder = {
-        val exchangedToken = oboTokenProvider.exchangeOnBehalfOfToken(userToken)
+        val exchangedToken = oboTokenProvider.exchangeOnBehalfOfToken(userToken.removeBearerFromToken())
         header(
             RestConstants.AUTHORIZATION,
             RestConstants.AUTH_METHOD_BEARER + RestConstants.AUTH_SEPERATOR + exchangedToken,

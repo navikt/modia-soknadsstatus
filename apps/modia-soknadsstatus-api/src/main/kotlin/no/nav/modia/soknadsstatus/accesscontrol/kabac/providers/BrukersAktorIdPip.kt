@@ -19,7 +19,7 @@ class BrukersAktorIdPip(private val pdl: PdlOppslagService) : Kabac.PolicyInform
         val fnr = ctx.getValue(CommonAttributes.FNR)
         val prinicipal = ctx.getValue(AuthContextPip)
 
-        val aktorid = requireNotNull(runBlocking { pdl.hentAktorId(prinicipal.token.removeBearerFromToken(), fnr.get()) }) {
+        val aktorid = requireNotNull(runBlocking { pdl.hentAktorId(prinicipal.token, fnr.get()) }) {
             "Fant ikke aktor id for $fnr"
         }
         return AktorId(aktorid)
