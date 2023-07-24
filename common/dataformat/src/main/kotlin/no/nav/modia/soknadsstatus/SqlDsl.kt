@@ -6,6 +6,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Time
 import java.sql.Timestamp
+import java.util.Collections
 import javax.sql.DataSource
 
 object SqlDsl {
@@ -13,11 +14,14 @@ object SqlDsl {
         connection.use(block)
     }
 
-    fun DataSource.executeQuery(sql: String, vararg variables: Any): Result<Row> {
+    fun <T>DataSource.executeQuery(sql: String, vararg variables: Any, block: (resultSet: ResultSet) -> T): Result<List<T>> {
         return useConnection { connection ->
-            Row(
-                preparedStatement(connection, sql, variables).executeQuery()
-            )
+            var rows = mutableListOf<T>()
+            val rs = preparedStatement(connection, sql, variables).executeQuery()
+            while (rs.next()) {
+                rows.add(block(rs))
+            }
+            Collections.unmodifiableList(rows)
         }
     }
 
@@ -53,16 +57,5 @@ object SqlDsl {
             is Timestamp -> setTimestamp(index, value)
             is String -> setString(index, value)
         }
-    }
-
-    class Row(val resultSet: ResultSet) : Sequence<Row> {
-        override fun iterator(): Iterator<Row> {
-            return object : Iterator<Row> {
-                override fun hasNext() = resultSet.next()
-                override fun next() = Row(resultSet)
-            }
-        }
-
-        val rs = resultSet
     }
 }

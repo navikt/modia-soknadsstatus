@@ -24,17 +24,15 @@ class SoknadsstatusRepositoryImpl(private val dataSource: DataSource) : Soknadss
     }
 
     override fun get(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
-        return dataSource.executeQuery("SELECT * from $Tabell where ${Tabell.ident} = ?", ident).map { rows ->
-            rows.map {
-                SoknadsstatusDomain.SoknadsstatusOppdatering(
-                    ident = it.rs.getString(Tabell.ident),
-                    behandlingsId = it.rs.getString(Tabell.behandlingsId),
-                    systemRef = it.rs.getString(Tabell.systemRef),
-                    tema = it.rs.getString(Tabell.tema),
-                    status = SoknadsstatusDomain.Status.valueOf(it.rs.getString(Tabell.status)),
-                    tidspunkt = it.rs.getTimestamp(Tabell.tidspunkt).toInstant().toKotlinInstant()
-                )
-            }.toList()
+        return dataSource.executeQuery("SELECT * from $Tabell where ${Tabell.ident} = ?", ident) {
+            SoknadsstatusDomain.SoknadsstatusOppdatering(
+                ident = it.getString(Tabell.ident),
+                behandlingsId = it.getString(Tabell.behandlingsId),
+                systemRef = it.getString(Tabell.systemRef),
+                tema = it.getString(Tabell.tema),
+                status = SoknadsstatusDomain.Status.valueOf(it.getString(Tabell.status)),
+                tidspunkt = it.getTimestamp(Tabell.tidspunkt).toInstant().toKotlinInstant()
+            )
         }
     }
 

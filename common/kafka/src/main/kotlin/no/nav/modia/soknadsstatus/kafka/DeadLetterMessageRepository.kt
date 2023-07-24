@@ -11,23 +11,24 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
     private val tabell = Tabell(tableName)
 
     private fun get(key: String): Result<List<SkipTableEntry>> {
-        return dataSource.executeQuery("SELECT * FROM $tabell WHERE ${tabell.key} = ?", key).map { rows ->
-            rows.map {
-                SkipTableEntry(
-                    key = it.rs.getString(tabell.key),
-                    createdAt = it.rs.getTimestamp(tabell.createdAt).toInstant(),
-                    skippedAt = it.rs.getTimestamp(tabell.skippedAt)?.toInstant()
-                )
-            }.toList()
+        return dataSource.executeQuery("SELECT * FROM $tabell WHERE ${tabell.key} = ?", key) {
+            SkipTableEntry(
+                key = it.getString(tabell.key),
+                createdAt = it.getTimestamp(tabell.createdAt).toInstant(),
+                skippedAt = it.getTimestamp(tabell.skippedAt)?.toInstant()
+            )
         }
     }
 
     private fun markAsSkipped(key: String): Result<Boolean> {
-        return dataSource.execute("""
+        return dataSource.execute(
+            """
             UPDATE $tabell
             SET ${tabell.skippedAt} = NOW()
             WHERE ${tabell.key} = ?
-        """.trimIndent(), key)
+            """.trimIndent(),
+            key
+        )
     }
 
     fun getAndMarkAsSkipped(key: String): List<SkipTableEntry> = get(key).fold(onSuccess = {
