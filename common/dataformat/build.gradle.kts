@@ -6,7 +6,6 @@ val test_containers_version: String by project
 val postgres_version: String by project
 val junit_version: String by project
 val kafka_version: String by project
-val meldingsdefinisjon_version: String by project
 val modia_common_version: String by project
 
 plugins {
@@ -28,7 +27,6 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
-    implementation("no.nav.personoversikt:logging:$modia_common_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.testcontainers:postgresql:$test_containers_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")

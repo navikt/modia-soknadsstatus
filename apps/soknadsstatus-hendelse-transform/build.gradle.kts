@@ -6,7 +6,6 @@ val kotlinx_datetime_version: String by project
 val modia_common_version: String by project
 val logback_version: String by project
 val junit_version: String by project
-val meldingsdefinisjon_version: String by project
 val logstash_version: String by project
 
 plugins {

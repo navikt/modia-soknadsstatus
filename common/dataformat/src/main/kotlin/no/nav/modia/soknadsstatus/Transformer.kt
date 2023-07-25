@@ -4,9 +4,10 @@ import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import org.slf4j.LoggerFactory
 
 object Transformer {
+    private val log = LoggerFactory.getLogger(Transformer::class.java)
 
     @JvmStatic
     fun behandlingsStatus(behandling: Behandling): SoknadsstatusDomain.Status? {
@@ -17,7 +18,7 @@ object Transformer {
                 "avsluttet", "ok", "ja" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
                 "avbrutt", "nei", "no" -> SoknadsstatusDomain.Status.AVBRUTT
                 else -> {
-                    secureLog.error("Ukjent behandlingsstatus mottatt: ${behandling.avslutningsstatus.value}")
+                    log.error("Ukjent behandlingsstatus mottatt: ${behandling.avslutningsstatus.value}")
                     null
                 }
             }

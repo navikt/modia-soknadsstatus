@@ -6,7 +6,6 @@ val modia_common_version: String by project
 val test_containers_version: String by project
 val postgres_version: String by project
 val junit_version: String by project
-val meldingsdefinisjon_version: String by project
 
 plugins {
     application
@@ -20,7 +19,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-    implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 

@@ -1,10 +1,6 @@
 package no.nav.modia.soknadsstatus
 
 import kotlinx.datetime.toKotlinLocalDateTime
-import no.nav.melding.virksomhet.behandlingsstatus.sobproxy.v1.sobproxybehandlingsstatus.BehandlingAvsluttet
-import no.nav.melding.virksomhet.behandlingsstatus.sobproxy.v1.sobproxybehandlingsstatus.BehandlingOpprettet
-import no.nav.melding.virksomhet.behandlingsstatus.sobproxy.v1.sobproxybehandlingsstatus.BehandlingOpprettetOgAvsluttet
-import no.nav.melding.virksomhet.behandlingsstatus.sobproxy.v1.sobproxybehandlingsstatus.BehandlingStatus
 import no.nav.modia.soknadsstatus.behandling.*
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
@@ -15,8 +11,8 @@ import java.io.IOException
 import java.io.StringReader
 import java.net.URL
 import javax.xml.XMLConstants
-import javax.xml.bind.DataBindingException
-import javax.xml.bind.JAXB
+import jakarta.xml.bind.DataBindingException
+import jakarta.xml.bind.JAXB
 import javax.xml.transform.Source
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
@@ -40,7 +36,7 @@ object XMLConverter {
 
         return when (behandlingStatus) {
             is BehandlingOpprettet -> SoknadBehandlingOpprettet(
-                aktoerREF = behandlingStatus.aktoerREF.map { AktoerREF(it.brukerIdent) },
+                aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
                 ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
                 applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
                 applikasjonSakREF = behandlingStatus.applikasjonSakREF,
@@ -58,7 +54,7 @@ object XMLConverter {
             )
 
             is BehandlingAvsluttet -> SoknadBehandlingAvsluttet(
-                aktoerREF = behandlingStatus.aktoerREF.map { AktoerREF(it.brukerIdent) },
+                aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
                 ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
                 applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
                 applikasjonSakREF = behandlingStatus.applikasjonSakREF,
@@ -196,7 +192,7 @@ object XMLConverter {
     )
 
     private fun toSekundaerBehandlingREF(behandlingStatus: BehandlingStatus) =
-        behandlingStatus.sekundaerBehandlingREF.map {
+        behandlingStatus.getSekundaerBehandlingREF().map {
             SekundaerBehandlingREF(
                 behandlingsREF = it.behandlingsREF,
                 type = Type(kodeRef = it.type.kodeRef, kodeverksRef = it.type.kodeverksRef, value = it.type.value)
@@ -204,7 +200,7 @@ object XMLConverter {
         }
 
     private fun toStyringsinformasjonListe(behandlingStatus: BehandlingStatus) =
-        behandlingStatus.styringsinformasjonListe.map {
+        behandlingStatus.getStyringsinformasjonListe().map {
             StyringsinformasjonListe(
                 key = it.key,
                 type = it.type,
