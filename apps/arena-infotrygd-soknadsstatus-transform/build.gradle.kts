@@ -7,6 +7,7 @@ val modia_common_version: String by project
 val logback_version: String by project
 val junit_version: String by project
 val meldingsdefinisjon_version: String by project
+val sobproxy_meldingsdefinisjon_version: String by project
 val glassfish_jaxb_runtime_version: String by project
 val jakarta_xml_bind_version: String by project
 val logstash_version: String by project
@@ -31,7 +32,7 @@ dependencies {
     implementation(project(":common:kafka"))
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakarta_xml_bind_version")
     implementation("org.glassfish.jaxb:jaxb-runtime:$glassfish_jaxb_runtime_version")
-    implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")
+    implementation("no.nav.meldinger.virksomhet:nav-virksomhet-sobproxy-behandlingstatus-v1-meldingsdefinisjon:$sobproxy_meldingsdefinisjon_version:jaxb@jar")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-cio-jvm:2.3.1")

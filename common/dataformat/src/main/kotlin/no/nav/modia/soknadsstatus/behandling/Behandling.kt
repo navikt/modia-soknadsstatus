@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
 sealed class Behandling {
     abstract val aktoerREF: List<AktoerREF>
     abstract val ansvarligEnhetREF: String
-    abstract val applikasjonBehandlingREF: String
+    abstract val applikasjonBehandlingREF: String?
     abstract val applikasjonSakREF: String
     abstract val behandlingsID: String
     abstract val behandlingstema: Behandlingstema?

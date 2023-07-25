@@ -1,6 +1,7 @@
 package no.nav.modia.soknadsstatus
 
 import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ArenaInfotrygdSoknadsstatusTransformTest {
@@ -23,7 +24,8 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
         val oppdatering = transform(null, behandling)
 
-        println(oppdatering)
+        assertEquals(oppdatering.aktorIder.first(), "19099531196")
+        assertEquals(oppdatering.behandlingsId, "1500oVFWH")
     }
 
     @Test
@@ -32,7 +34,8 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
         val oppdatering = transform(null, behandling)
 
-        println(oppdatering)
+        assertEquals(oppdatering.aktorIder.first(), "26127338824")
+        assertEquals(oppdatering.behandlingsId, "1500oVFWi")
     }
 
     @Test
@@ -41,6 +44,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
         val oppdatering = transform(null, behandling)
 
-        println(oppdatering)
+        assertEquals(oppdatering.aktorIder.first(), "26127338824")
+        assertEquals(oppdatering.behandlingsId, "1500oVFWi")
     }
 }

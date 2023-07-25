@@ -30,7 +30,6 @@ dependencies {
     implementation(project(":common:utils"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
