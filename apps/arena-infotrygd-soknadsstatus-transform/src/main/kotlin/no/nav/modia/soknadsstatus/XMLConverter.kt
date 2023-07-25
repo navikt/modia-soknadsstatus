@@ -212,7 +212,7 @@ object XMLConverter {
 }
 
 object BehandlingDeserializer {
-    fun deserialize(data: String): Hendelse {
+    fun deserialize(data: String): Behandling {
         return XMLConverter.fromXml(data)
     }
 }

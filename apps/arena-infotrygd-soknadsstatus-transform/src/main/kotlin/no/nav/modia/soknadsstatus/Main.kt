@@ -3,9 +3,6 @@ package no.nav.modia.soknadsstatus
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import no.nav.modia.soknadsstatus.behandling.Behandling
-import no.nav.modia.soknadsstatus.kafka.AppEnv
-import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueMetricsGaugeImpl
-import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
 import kotlinx.serialization.json.Json
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
