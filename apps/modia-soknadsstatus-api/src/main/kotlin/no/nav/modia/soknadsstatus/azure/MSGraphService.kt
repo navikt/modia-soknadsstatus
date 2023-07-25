@@ -37,8 +37,8 @@ class AzureADServiceImpl(
         groups: RolleListe
     ): RolleListe {
         val url = URLBuilder(graphUrl).apply {
-            path("v1.0/groups/me/memberOf")
-            parameters.append("\$filter", "id in [${groups.map { "'${it.gruppeId.get()}'" }}]")
+            path("v1.0/me/memberOf/microsoft.graph.group")
+            parameters.append("\$filter", "id in (${groups.joinToString(separator = ", ") { "'${it.gruppeId.get()}'" }})")
             parameters.append("\$count", "true")
         }.buildString()
 
