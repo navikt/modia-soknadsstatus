@@ -1,8 +1,7 @@
 package no.nav.modia.soknadsstatus.kafka
 
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.micrometer.core.instrument.Gauge
 import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import java.util.concurrent.atomic.AtomicInteger
 
 interface DeadLetterQueueMetricsGauge {
@@ -11,24 +10,23 @@ interface DeadLetterQueueMetricsGauge {
     fun set(newValue: Int)
 }
 
-class DeadLetterQueueMetricsGaugeImpl(gaugeTitle: String, metricsRegistry: PrometheusMeterRegistry = PrometheusMeterRegistry(
-    PrometheusConfig.DEFAULT)
+class DeadLetterQueueMetricsGaugeImpl(
+    gaugeTitle: String,
+    metricsRegistry: PrometheusMeterRegistry = PrometheusMeterRegistry(
+        PrometheusConfig.DEFAULT
+    )
 ) : DeadLetterQueueMetricsGauge {
-    private val counter = AtomicInteger(0)
-
-    private val gauge: Gauge = Gauge.builder(gaugeTitle) {
-        counter.get()
-    }.register(metricsRegistry)
+    private val gauge = metricsRegistry.gauge(gaugeTitle, AtomicInteger(0))
 
     override fun increment() {
-        counter.incrementAndGet()
+        gauge?.incrementAndGet()
     }
 
     override fun decrement() {
-        counter.decrementAndGet()
+        gauge?.decrementAndGet()
     }
 
     override fun set(newValue: Int) {
-        counter.set(newValue)
+        gauge?.set(newValue)
     }
 }
