@@ -1,5 +1,7 @@
 package no.nav.modia.soknadsstatus
 
+import jakarta.xml.bind.DataBindingException
+import jakarta.xml.bind.JAXB
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.modia.soknadsstatus.behandling.*
 import org.xml.sax.SAXException
@@ -7,8 +9,6 @@ import java.io.IOException
 import java.io.StringReader
 import java.net.URL
 import javax.xml.XMLConstants
-import jakarta.xml.bind.DataBindingException
-import jakarta.xml.bind.JAXB
 import javax.xml.transform.Source
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
@@ -24,7 +24,7 @@ object XMLConverter {
 
         val primaerBehandlingRef = if (behandlingStatus.primaerBehandlingREF != null) {
             toPrimaerBehandlingREF(
-                behandlingStatus
+                behandlingStatus,
             )
         } else {
             null
@@ -65,7 +65,7 @@ object XMLConverter {
                 sakstema = toSakstema(behandlingStatus),
                 sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
                 styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
-                avslutningsstatus = toAvslutningsstatus(behandlingStatus)
+                avslutningsstatus = toAvslutningsstatus(behandlingStatus),
             )
 
             else -> {
@@ -86,17 +86,17 @@ object XMLConverter {
                 return when (rootElementName) {
                     "behandlingOpprettet" -> JAXB.unmarshal(
                         reader,
-                        BehandlingOpprettet::class.java
+                        BehandlingOpprettet::class.java,
                     )
 
                     "behandlingAvsluttet" -> JAXB.unmarshal(
                         reader,
-                        BehandlingAvsluttet::class.java
+                        BehandlingAvsluttet::class.java,
                     )
 
                     "behandlingOpprettetOgAvsluttet" -> JAXB.unmarshal(
                         reader,
-                        BehandlingOpprettetOgAvsluttet::class.java
+                        BehandlingOpprettetOgAvsluttet::class.java,
                     )
 
                     else -> {
@@ -153,13 +153,13 @@ object XMLConverter {
     private fun toBehandlingstema(behandlingStatus: BehandlingStatus) = Behandlingstema(
         kodeRef = behandlingStatus.sakstema.kodeRef,
         kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
-        value = behandlingStatus.sakstema.value
+        value = behandlingStatus.sakstema.value,
     )
 
     private fun toBehandlingstype(behandlingStatus: BehandlingStatus) = Behandlingstype(
         kodeRef = behandlingStatus.behandlingstype.kodeRef,
         kodeverksRef = behandlingStatus.behandlingstype.kodeverksRef,
-        value = behandlingStatus.behandlingstype.value
+        value = behandlingStatus.behandlingstype.value,
     )
 
     private fun toHendelsesTidspunkt(behandlingStatus: BehandlingStatus) =
@@ -169,7 +169,7 @@ object XMLConverter {
     private fun toHendelsesprodusentREF(behandlingStatus: BehandlingStatus) = HendelsesprodusentREF(
         kodeRef = behandlingStatus.hendelsesprodusentREF.kodeRef,
         kodeverksRef = behandlingStatus.hendelsesprodusentREF.kodeverksRef,
-        value = behandlingStatus.hendelsesprodusentREF.value
+        value = behandlingStatus.hendelsesprodusentREF.value,
     )
 
     private fun toPrimaerBehandlingREF(behandlingStatus: BehandlingStatus) = PrimaerBehandlingREF(
@@ -177,21 +177,21 @@ object XMLConverter {
         type = Type(
             kodeRef = behandlingStatus.primaerBehandlingREF.type?.kodeRef,
             kodeverksRef = behandlingStatus.primaerBehandlingREF.type?.kodeverksRef,
-            value = behandlingStatus.primaerBehandlingREF.type.value
-        )
+            value = behandlingStatus.primaerBehandlingREF.type.value,
+        ),
     )
 
     private fun toSakstema(behandlingStatus: BehandlingStatus) = Sakstema(
         kodeRef = behandlingStatus.sakstema.kodeRef,
         kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
-        value = behandlingStatus.sakstema.value
+        value = behandlingStatus.sakstema.value,
     )
 
     private fun toSekundaerBehandlingREF(behandlingStatus: BehandlingStatus) =
         behandlingStatus.getSekundaerBehandlingREF().map {
             SekundaerBehandlingREF(
                 behandlingsREF = it.behandlingsREF,
-                type = Type(kodeRef = it.type.kodeRef, kodeverksRef = it.type.kodeverksRef, value = it.type.value)
+                type = Type(kodeRef = it.type.kodeRef, kodeverksRef = it.type.kodeverksRef, value = it.type.value),
             )
         }
 
@@ -200,14 +200,14 @@ object XMLConverter {
             StyringsinformasjonListe(
                 key = it.key,
                 type = it.type,
-                value = it.value
+                value = it.value,
             )
         }
 
     private fun toAvslutningsstatus(behandlingStatus: BehandlingAvsluttet) = Avslutningsstatus(
         kodeRef = behandlingStatus.avslutningsstatus.kodeRef,
         kodeverksRef = behandlingStatus.avslutningsstatus.kodeverksRef,
-        value = behandlingStatus.avslutningsstatus.value
+        value = behandlingStatus.avslutningsstatus.value,
     )
 }
 

@@ -2,8 +2,8 @@ package no.nav.modia.soknadsstatus
 
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
-import no.nav.modia.soknadsstatus.behandling.Behandling
 import kotlinx.serialization.json.Json
+import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.TjenestekallLogg
@@ -28,7 +28,7 @@ fun runApp(port: Int = 8080) {
                 appEnv = config
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                     dlqProducer = deadLetterProducer,
-                    topic = requireNotNull(config.deadLetterQueueTopic)
+                    topic = requireNotNull(config.deadLetterQueueTopic),
                 )
                 sourceTopic = requireNotNull(config.sourceTopic)
                 targetTopic = requireNotNull(config.targetTopic)
@@ -38,7 +38,7 @@ fun runApp(port: Int = 8080) {
                     TjenestekallLogg.error(
                         "Klarte ikke å serialisere melding",
                         fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
-                        throwable = exception
+                        throwable = exception,
                     )
                 }
                 configure { stream ->
@@ -56,13 +56,13 @@ fun runApp(port: Int = 8080) {
                 deserializer = ::deserialize
                 serializer = ::serialize
             }
-        }
+        },
     ).start(wait = true)
 }
 
 fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
     SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
-    value
+    value,
 )
 
 fun deserialize(key: String?, value: String) = BehandlingDeserializer.deserialize(value)
