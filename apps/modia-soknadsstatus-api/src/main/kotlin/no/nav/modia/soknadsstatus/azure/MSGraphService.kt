@@ -12,6 +12,7 @@ import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import no.nav.personoversikt.common.logging.Logging
 import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.lang.IllegalArgumentException
@@ -53,7 +54,7 @@ class AzureADServiceImpl(
                 }
             )
         } catch (e: Exception) {
-            secureLog.error("Kall til azureAD feilet", e)
+            TjenestekallLogg.error("Kall til azureAD feilet", throwable = e, fields = mapOf())
             return RolleListe()
         }
     }

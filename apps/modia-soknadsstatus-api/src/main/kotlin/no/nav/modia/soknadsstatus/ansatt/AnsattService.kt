@@ -1,11 +1,10 @@
 package no.nav.modia.soknadsstatus.ansatt
 
 import no.nav.common.client.axsys.AxsysClient
-import no.nav.common.types.identer.AzureObjectId
 import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.ansatt.domain.AnsattEnhet
 import no.nav.modia.soknadsstatus.azure.MSGraphService
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 interface AnsattService {
     fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet>
@@ -49,7 +48,11 @@ class AnsattServiceImpl(
                     ?: emptySet()
             }
             .getOrElse {
-                secureLog.error("Klarte ikke å hente ansatt fagområder for $ident $enhet", it)
+                TjenestekallLogg.error(
+                    "Klarte ikke å hente ansatt fagområder for $ident $enhet",
+                    throwable = it,
+                    fields = mapOf()
+                )
                 emptySet()
             }
     }
