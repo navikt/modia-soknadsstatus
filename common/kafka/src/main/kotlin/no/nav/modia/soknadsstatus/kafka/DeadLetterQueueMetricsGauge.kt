@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus.kafka
 
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import no.nav.personoversikt.common.ktor.utils.Metrics
 import java.util.concurrent.atomic.AtomicInteger
 
 interface DeadLetterQueueMetricsGauge {
@@ -12,9 +13,7 @@ interface DeadLetterQueueMetricsGauge {
 
 class DeadLetterQueueMetricsGaugeImpl(
     gaugeTitle: String,
-    metricsRegistry: PrometheusMeterRegistry = PrometheusMeterRegistry(
-        PrometheusConfig.DEFAULT
-    )
+    metricsRegistry: PrometheusMeterRegistry = Metrics.Registry
 ) : DeadLetterQueueMetricsGauge {
     private val gauge = metricsRegistry.gauge(gaugeTitle, AtomicInteger(0))
 
