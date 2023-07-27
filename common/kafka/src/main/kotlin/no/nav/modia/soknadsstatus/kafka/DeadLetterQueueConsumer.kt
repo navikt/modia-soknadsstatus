@@ -48,6 +48,7 @@ class DeadLetterQueueConsumerImpl(
     }
 
     private suspend fun pollAndProcessRecords() {
+        logger.info("Starting to poll and process records from $topic")
         while (!closed.get()) {
             job?.ensureActive()
             try {
@@ -89,10 +90,9 @@ class DeadLetterQueueConsumerImpl(
                 } else {
                     hasWakedUpConsumer.set(!(e is WakeupException && hasWakedUpConsumer.get()))
                 }
-                TjenestekallLogg.error(
+                logger.error(
                     "Restarting DLQ consumer on topic $topic",
-                    fields = mapOf("topic" to topic),
-                    throwable = e
+                    e
                 )
                 restart()
                 return
@@ -101,13 +101,14 @@ class DeadLetterQueueConsumerImpl(
     }
 
     private suspend fun restart() {
-        kafkaConsumer.unsubscribe()
         shutDown()
         delay(pollDurationMs.milliseconds)
         start()
     }
 
     private fun shutDown() {
+        logger.info("Shutting down DLQ consumer on topic: $topic")
+        kafkaConsumer.unsubscribe()
         if (!hasWakedUpConsumer.get()) kafkaConsumer.wakeup()
         closed.set(true)
         job?.cancel()
