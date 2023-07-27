@@ -12,6 +12,7 @@ val nav_common_version: String by project
 val mockk_version: String by project
 val mock_webserver_version: String by project
 val guava_testlib_version: String by project
+val logstash_version: String by project
 
 plugins {
     application
@@ -47,6 +48,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:9.8.3")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("com.expediagroup:graphql-kotlin-client:$graphql_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_version")

@@ -7,6 +7,7 @@ val logback_version: String by project
 val kafka_version: String by project
 val jms_api_version: String by project
 val junit_version: String by project
+val logstash_version: String by project
 
 plugins {
     application
@@ -25,9 +26,8 @@ dependencies {
     implementation(project(":common:jms"))
     implementation(project(":common:ktor"))
     implementation(project(":common:utils"))
-
     implementation("ch.qos.logback:logback-classic:$logback_version")
-
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
