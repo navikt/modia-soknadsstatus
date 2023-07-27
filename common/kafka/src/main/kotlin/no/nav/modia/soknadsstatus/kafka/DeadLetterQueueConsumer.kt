@@ -9,6 +9,7 @@ import org.apache.kafka.common.errors.WakeupException
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 interface DeadLetterQueueConsumer {
@@ -50,7 +51,7 @@ class DeadLetterQueueConsumerImpl(
         while (!closed.get()) {
             job?.ensureActive()
             try {
-                val records = kafkaConsumer.poll(pollDurationMs.milliseconds.toJavaDuration())
+                val records = kafkaConsumer.poll(5.seconds.toJavaDuration())
                 if (records.count() > 0) {
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
                     deadLetterQueueMetricsGauge.set(records.count())
@@ -99,12 +100,10 @@ class DeadLetterQueueConsumerImpl(
         }
     }
 
-    private fun restart() {
+    private suspend fun restart() {
         kafkaConsumer.unsubscribe()
         shutDown()
-        runBlocking {
-            delay(pollDurationMs.milliseconds)
-        }
+        delay(pollDurationMs.milliseconds)
         start()
     }
 
