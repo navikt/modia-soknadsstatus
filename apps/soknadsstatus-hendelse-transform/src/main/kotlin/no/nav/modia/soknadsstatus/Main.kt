@@ -19,6 +19,9 @@ fun main() {
 fun runApp(port: Int = 8080) {
     val config = AppEnv()
     val deadLetterProducer = DeadLetterQueueProducer(config)
+    val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv(appName = config.appName))
+    datasourceConfiguration.runFlyway()
+
     KtorServer.create(
         factory = CIO,
         port = port,
@@ -40,7 +43,7 @@ fun runApp(port: Int = 8080) {
                 targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 transformer = ::transform
                 filter = ::filter
-                skipTableDataSource = DatasourceConfiguration(DatasourceEnv(appName = config.appName)).datasource
+                skipTableDataSource = datasourceConfiguration.datasource
             }
         }
     ).start(wait = true)

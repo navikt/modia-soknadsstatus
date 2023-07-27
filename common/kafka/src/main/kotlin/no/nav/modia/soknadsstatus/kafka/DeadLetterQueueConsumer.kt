@@ -98,6 +98,7 @@ class DeadLetterQueueConsumerImpl(
                 return
             }
         }
+        logger.error("DLQ consumer klarte ikke å polle fordi closed var true")
     }
 
     private suspend fun restart() {
