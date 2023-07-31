@@ -58,7 +58,7 @@ spec:
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
       value: "personoversikt.modia-soknadsstatus-arena-infotrygd-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
-      value: "8.64e+7" # One day
+      value: "60000"
     - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
       value: "arena_infotrygd_dlq_event_skip"
     - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME

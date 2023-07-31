@@ -80,7 +80,7 @@ spec:
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
-      value: "3.6e+6" # One hour
+      value: "60000"
     - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
       value: "modia_soknadsstatus_api_dlq_event_skip"
     - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME

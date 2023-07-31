@@ -18,7 +18,7 @@ data class AppEnv(
     val targetTopic: String? = EnvUtils.getConfig("KAFKA_TARGET_TOPIC"),
     val deadLetterQueueTopic: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_TOPIC"),
     val deadLetterQueueConsumerPollIntervalMs: Double = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS")
-        ?.toDouble() ?: 1000.0,
+        ?.toDouble() ?: 60000.0,
     val deadLetterQueueSkipTableName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME"),
     val deadLetterQueueMetricsGaugeName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME")
 )
