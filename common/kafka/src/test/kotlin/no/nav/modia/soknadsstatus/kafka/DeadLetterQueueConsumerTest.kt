@@ -1,15 +1,12 @@
 package no.nav.modia.soknadsstatus.kafka
 
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
@@ -27,7 +24,6 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
     fun `skal konsumere data`() {
         var message: String? = null
 
-
         val dlqConsumer = DeadLetterQueueConsumerImpl(
             topic = TOPIC,
             deadLetterMessageSkipService = deadLetterMessageSkipService,
@@ -39,16 +35,19 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             Result.success(Unit)
         }
 
+
         startSubscribingToTopic(TOPIC, 1) {
             dlqConsumer.start()
         }
 
-
         val record = ConsumerRecord(
-            TOPIC, 1, 0, "test_key", "test_message"
+            TOPIC,
+            1,
+            0,
+            "test_key",
+            "test_message"
         )
         consumer!!.addRecord(record)
-
 
         runBlocking { delay(50L) }
 
@@ -58,7 +57,6 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
     @Test
     fun `skal ignorere meldinger uten nøkkel`() {
         val messages = mutableListOf<Pair<String, String>>()
-
 
         val dlqConsumer = DeadLetterQueueConsumerImpl(
             topic = TOPIC,
@@ -75,19 +73,25 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             dlqConsumer.start()
         }
 
-
         consumer!!.addRecord(
             ConsumerRecord(
-                TOPIC, 1, 0, null, "ignore_message"
+                TOPIC,
+                1,
+                0,
+                null,
+                "ignore_message"
             )
         )
 
         consumer!!.addRecord(
             ConsumerRecord(
-                TOPIC, 1, 1, "test_key", "test_message"
+                TOPIC,
+                1,
+                1,
+                "test_key",
+                "test_message"
             )
         )
-
 
         runBlocking { delay(50L) }
 
@@ -114,19 +118,25 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             dlqConsumer.start()
         }
 
-
         consumer!!.addRecord(
             ConsumerRecord(
-                TOPIC, 1, 0, IGNORE_KEY, "ignore_message"
+                TOPIC,
+                1,
+                0,
+                IGNORE_KEY,
+                "ignore_message"
             )
         )
 
         consumer!!.addRecord(
             ConsumerRecord(
-                TOPIC, 1, 1, "test_key", "test_message"
+                TOPIC,
+                1,
+                1,
+                "test_key",
+                "test_message"
             )
         )
-
 
         runBlocking { delay(50L) }
 

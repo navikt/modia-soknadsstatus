@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus.kafka
 
-import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import java.util.concurrent.atomic.AtomicInteger

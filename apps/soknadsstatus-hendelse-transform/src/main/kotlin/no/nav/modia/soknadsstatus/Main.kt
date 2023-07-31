@@ -18,7 +18,9 @@ fun main() {
 
 fun runApp(port: Int = 8080) {
     val config = AppEnv()
-    val deadLetterProducer = DeadLetterQueueProducer(config)
+    val dlqMetricsGauge =
+        DeadLetterQueueMetricsGaugeImpl(requireNotNull(config.deadLetterQueueMetricsGaugeName))
+    val deadLetterProducer = DeadLetterQueueProducer(config, dlqMetricsGauge)
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv(appName = config.appName))
     datasourceConfiguration.runFlyway()
 
@@ -44,6 +46,7 @@ fun runApp(port: Int = 8080) {
                 transformer = ::transform
                 filter = ::filter
                 skipTableDataSource = datasourceConfiguration.datasource
+                deadLetterQueueMetricsGauge = dlqMetricsGauge
             }
         }
     ).start(wait = true)

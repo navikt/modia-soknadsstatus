@@ -6,6 +6,7 @@ import io.ktor.server.cio.*
 import kotlinx.datetime.toKotlinInstant
 import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
 import no.nav.modia.soknadsstatus.kafka.AppEnv
+import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueMetricsGaugeImpl
 import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
 import no.nav.modia.soknadsstatus.kafka.SendToDeadLetterQueueExceptionHandler
 import no.nav.personoversikt.common.ktor.utils.KtorServer
@@ -17,7 +18,8 @@ fun main() {
 
 fun runApp(port: Int = 8080) {
     val config = AppEnv()
-    val deadLetterProducer = DeadLetterQueueProducer(config)
+    val dlqMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(config.deadLetterQueueMetricsGaugeName))
+    val deadLetterProducer = DeadLetterQueueProducer(config, dlqMetricsGauge)
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv((config.appName)))
     datasourceConfiguration.runFlyway()
 
@@ -45,6 +47,7 @@ fun runApp(port: Int = 8080) {
                 transformer = ::transform
                 filter = ::filter
                 skipTableDataSource = datasourceConfiguration.datasource
+                deadLetterQueueMetricsGauge = dlqMetricsGauge
             }
         }
     ).start(wait = true)

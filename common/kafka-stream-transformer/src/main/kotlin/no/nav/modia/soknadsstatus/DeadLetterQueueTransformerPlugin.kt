@@ -15,6 +15,7 @@ class DeadLetterTransformerConfig<DOMAIN_TYPE, TARGET_TYPE> {
     var targetSerde: Serde<TARGET_TYPE>? = null
     var domainSerde: Serde<DOMAIN_TYPE>? = null
     var skipTableDataSource: DataSource? = null
+    var deadLetterQueueMetricsGauge: DeadLetterQueueMetricsGauge? = null
 }
 
 class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
@@ -23,7 +24,6 @@ class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
     private var filter: ((key: String, message: DOMAIN_TYPE) -> Boolean)? = null
     private var transformer: ((key: String, message: DOMAIN_TYPE) -> TARGET_TYPE)? = null
     private var domainSerde: Serde<DOMAIN_TYPE>? = null
-
 
     private val block: (suspend (topic: String, key: String, value: String) -> Result<Unit>) = { topic, key, value ->
         val domain = requireNotNull(domainSerde).deserializer().deserialize(topic, value.toByteArray(Charsets.UTF_8))
@@ -60,7 +60,10 @@ class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
 
         transformer = configuration.transformer
         domainSerde = configuration.domainSerde
-        producer = KafkaSoknadsstatusProducer(appEnv, requireNotNull(configuration.targetSerde))
+        producer = KafkaSoknadsstatusProducer(
+            appEnv,
+            requireNotNull(configuration.targetSerde),
+        )
 
         DeadLetterQueueConsumerPlugin().install(pipeline) {
             deadLetterQueueConsumer =
@@ -78,7 +81,7 @@ class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
                             requireNotNull(configuration.skipTableDataSource)
                         )
                     ),
-                    deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(appEnv.deadLetterQueueMetricsGaugeName))
+                    deadLetterQueueMetricsGauge = requireNotNull(configuration.deadLetterQueueMetricsGauge)
                 )
         }
 

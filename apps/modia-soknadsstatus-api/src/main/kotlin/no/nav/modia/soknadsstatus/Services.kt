@@ -6,10 +6,7 @@ import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
 import no.nav.modia.soknadsstatus.ansatt.AnsattConfig
 import no.nav.modia.soknadsstatus.axsys.AxsysConfig
 import no.nav.modia.soknadsstatus.azure.AzureADServiceImpl
-import no.nav.modia.soknadsstatus.kafka.DeadLetterMessageRepository
-import no.nav.modia.soknadsstatus.kafka.DeadLetterMessageSkipService
-import no.nav.modia.soknadsstatus.kafka.DeadLetterMessageSkipServiceImpl
-import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
+import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modia.soknadsstatus.norg.NorgConfig
 import no.nav.modia.soknadsstatus.pdl.PdlConfig
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
@@ -23,6 +20,7 @@ interface Services {
     val accessControl: AccessControlConfig
     val dlqProducer: DeadLetterQueueProducer
     val dlSkipService: DeadLetterMessageSkipService
+    val dlqMetricsGauge: DeadLetterQueueMetricsGauge
 
     companion object {
         fun factory(env: Env, configuration: Configuration): Services {
@@ -61,8 +59,10 @@ interface Services {
                 norg = norgApi,
                 ansattService = ansattService
             )
+            val dlqMetricsGauge =
+                DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
             val dlqProducer =
-                DeadLetterQueueProducer(env.kafkaApp)
+                DeadLetterQueueProducer(env.kafkaApp, dlqMetricsGauge)
             val dlSkipService = DeadLetterMessageSkipServiceImpl(
                 DeadLetterMessageRepository(
                     requireNotNull(env.kafkaApp.deadLetterQueueSkipTableName),
@@ -77,6 +77,7 @@ interface Services {
                 override val accessControl = accessControl
                 override val dlSkipService = dlSkipService
                 override val dlqProducer = dlqProducer
+                override val dlqMetricsGauge = dlqMetricsGauge
             }
         }
     }

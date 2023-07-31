@@ -5,6 +5,7 @@ import no.nav.modia.soknadsstatus.BackgroundTask
 import no.nav.modia.soknadsstatus.registerShutdownhook
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.errors.WakeupException
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
@@ -35,48 +36,44 @@ class DeadLetterQueueConsumerImpl(
     init {
         registerShutdownhook {
             shutDown()
-            kafkaConsumer.close()
         }
     }
 
     override fun start() {
+        job = BackgroundTask.launch {
+            startConsumer()
+        }
+    }
+
+    private suspend fun startConsumer() {
         closed.set(false)
         kafkaConsumer.subscribe(listOf(topic))
-        job = BackgroundTask.launch {
-            pollAndProcessRecords()
-        }
+        pollAndProcessRecords()
     }
 
     private suspend fun pollAndProcessRecords() {
         logger.info("Starting to poll and process records from $topic")
-        while (!closed.get()) {
+        outer@ while (!closed.get()) {
             job?.ensureActive()
             try {
                 val records = kafkaConsumer.poll(5.seconds.toJavaDuration())
                 if (records.count() > 0) {
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
-                    deadLetterQueueMetricsGauge.set(records.count())
                     for (record in records) {
                         logger.info("Trying to process DL with key: ${record.key()}")
-                        if (record.key() == null) {
-                            TjenestekallLogg.info(
-                                "Skipping a dead letter with no key: ${record.value()}",
-                                fields = mapOf("record" to record.value())
-                            )
-                            deadLetterQueueMetricsGauge.decrement()
-                            continue
-                        }
-                        if (deadLetterMessageSkipService.shouldSkip(record.key())) {
-                            TjenestekallLogg.info(
-                                "Skipping a dead letter due to key found in skip table: ${record.key()}",
-                                fields = mapOf("key" to record.key(), "value" to record.value())
-                            )
-                            deadLetterQueueMetricsGauge.decrement()
-                            continue
-                        }
+
+                        val shouldSkipRecord = handlePossibleSkipRecord(record)
+                        if (shouldSkipRecord) continue
+
                         val result = block(record.topic(), record.key(), record.value())
                         if (result.isFailure) {
-                            throw Exception("Failed to handle DLQ ${record.key()}: ${record.value()}")
+                            TjenestekallLogg.error(
+                                "Failed to handle DLQ ${record.key()}",
+                                fields = mapOf("key" to record.key(), "value" to record.value()),
+                                throwable = Exception().fillInStackTrace()
+                            )
+                            delay(10000L)
+                            continue@outer
                         } else {
                             deadLetterQueueMetricsGauge.decrement()
                         }
@@ -84,8 +81,7 @@ class DeadLetterQueueConsumerImpl(
                     kafkaConsumer.commitSync()
                 }
             } catch (e: Exception) {
-                if (e is WakeupException && closed.get()) {
-                    // Ignore exception if closing
+                if (consumerExceptionShouldBeIgnored(e)) {
                     return
                 } else {
                     hasWakedUpConsumer.set(!(e is WakeupException && hasWakedUpConsumer.get()))
@@ -95,23 +91,50 @@ class DeadLetterQueueConsumerImpl(
                     e
                 )
                 restart()
-                return
+                continue@outer
             }
         }
-        logger.error("DLQ consumer klarte ikke å polle fordi closed var true")
     }
 
     private suspend fun restart() {
-        shutDown()
+        stopConsumer()
+        logger.info("Delaying restart of DLQ consumer with ${pollDurationMs.milliseconds}")
         delay(pollDurationMs.milliseconds)
-        start()
+        startConsumer()
     }
 
-    private fun shutDown() {
+    private fun stopConsumer() {
         logger.info("Shutting down DLQ consumer on topic: $topic")
         kafkaConsumer.unsubscribe()
         if (!hasWakedUpConsumer.get()) kafkaConsumer.wakeup()
         closed.set(true)
+    }
+
+    private fun shutDown() {
+        stopConsumer()
+        kafkaConsumer.close()
         job?.cancel()
     }
+
+    private suspend fun handlePossibleSkipRecord(record: ConsumerRecord<String, String>): Boolean {
+        if (record.key() == null) {
+            TjenestekallLogg.info(
+                "Skipping a dead letter with no key: ${record.value()}",
+                fields = mapOf("record" to record.value())
+            )
+            deadLetterQueueMetricsGauge.decrement()
+            return true
+        }
+        if (deadLetterMessageSkipService.shouldSkip(record.key())) {
+            TjenestekallLogg.info(
+                "Skipping a dead letter due to key found in skip table: ${record.key()}",
+                fields = mapOf("key" to record.key(), "value" to record.value())
+            )
+            deadLetterQueueMetricsGauge.decrement()
+            return true
+        }
+        return false
+    }
+
+    private fun consumerExceptionShouldBeIgnored(e: Exception) = e is WakeupException && closed.get()
 }

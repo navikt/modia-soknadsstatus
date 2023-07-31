@@ -1,6 +1,7 @@
 package no.nav.modia.soknadsstatus.kafka
 
-import org.apache.kafka.clients.consumer.ConsumerRecord
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.MockConsumer
 import org.apache.kafka.clients.consumer.OffsetResetStrategy
 import org.apache.kafka.clients.producer.MockProducer
@@ -9,9 +10,11 @@ import org.apache.kafka.common.serialization.Serde
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-
 object TestUtils {
-    abstract class WithKafka<KEY_TYPE, VALUE_TYPE>(private val keySerde: Serde<KEY_TYPE>, private val valueSerde: Serde<VALUE_TYPE>) {
+    abstract class WithKafka<KEY_TYPE, VALUE_TYPE>(
+        private val keySerde: Serde<KEY_TYPE>,
+        private val valueSerde: Serde<VALUE_TYPE>
+    ) {
         var producer: MockProducer<KEY_TYPE, VALUE_TYPE>? = null
         var consumer: MockConsumer<KEY_TYPE, VALUE_TYPE>? = null
 
@@ -25,7 +28,7 @@ object TestUtils {
             consumer = MockConsumer<KEY_TYPE, VALUE_TYPE>(OffsetResetStrategy.EARLIEST)
         }
 
-        fun startSubscribingToTopic(topic: String, records: Long, startSubscribing: () -> Unit){
+        fun startSubscribingToTopic(topic: String, records: Long, startSubscribing: () -> Unit) {
             val partitions: MutableCollection<TopicPartition> = ArrayList()
             val partitionsBeginningMap: MutableMap<TopicPartition, Long> = HashMap()
             val partitionsEndMap: MutableMap<TopicPartition, Long> = HashMap()
@@ -38,9 +41,17 @@ object TestUtils {
 
             startSubscribing()
 
+            makeSureConsumerJobHasStarted()
+
             consumer!!.rebalance(partitions)
             consumer!!.updateBeginningOffsets(partitionsBeginningMap)
             consumer!!.updateEndOffsets(partitionsEndMap)
+        }
+
+        private fun makeSureConsumerJobHasStarted() {
+            runBlocking {
+                delay(100L)
+            }
         }
 
         @AfterEach
