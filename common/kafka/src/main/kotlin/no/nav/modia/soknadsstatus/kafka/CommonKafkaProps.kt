@@ -69,14 +69,13 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
 }
 
 fun commonConsumerConfig(props: Properties, appConfig: AppEnv, valueDeserializer: Deserializer<*>) {
-    props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group"
+    props[ConsumerConfig.GROUP_ID_CONFIG] = "${appConfig.appName}-consumer-group-1"
     props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrls
     props[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = "1"
     props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
-    props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = "false"
+    props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = false
     props[ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG] = "" + (10 * 1024 * 1024)
     props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = valueDeserializer
-    props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC] = valueDeserializer
     if (appConfig.appMode == AppMode.NAIS) {
         aivenSecurityProps(
             props,
