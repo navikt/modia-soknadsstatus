@@ -9,6 +9,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.errors.WakeupException
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
@@ -33,7 +34,16 @@ class DeadLetterQueueConsumerImpl(
     // Used to avoid infinite WakeupException loop. WakeUp exception is thrown by the Consumer the next time calling poll, if wakeUp has been called, but the consumer did not poll when calling wakeup.
     private val hasWakedUpConsumer = AtomicBoolean(false)
 
+    companion object {
+        val KAFKA_CONSUMER_POLL_DURATION = 1.seconds
+        val KAFKA_CONSUMER_EXCEPTION_SLEEP_DURATION = 10.seconds
+    }
+
     init {
+        checkThatPollDurationIsLessThanExceptionDelay(
+            KAFKA_CONSUMER_POLL_DURATION,
+            KAFKA_CONSUMER_EXCEPTION_SLEEP_DURATION
+        )
         registerShutdownhook {
             shutDown()
         }
@@ -56,7 +66,7 @@ class DeadLetterQueueConsumerImpl(
         outer@ while (!closed.get()) {
             job?.ensureActive()
             try {
-                val records = kafkaConsumer.poll(5.seconds.toJavaDuration())
+                val records = kafkaConsumer.poll(KAFKA_CONSUMER_POLL_DURATION.toJavaDuration())
                 if (records.count() > 0) {
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
                     for (record in records) {
@@ -72,12 +82,12 @@ class DeadLetterQueueConsumerImpl(
                                 fields = mapOf("key" to record.key(), "value" to record.value()),
                                 throwable = Exception().fillInStackTrace()
                             )
-                            delay(10000L)
-                            continue@outer
+                            throw IllegalArgumentException("Failed to parse DLQ record")
                         } else {
                             deadLetterQueueMetricsGauge.decrement()
                         }
                     }
+                    logger.info("Committing offset ${kafkaConsumer.metrics()}")
                     kafkaConsumer.commitSync()
                 }
             } catch (e: Exception) {
@@ -86,9 +96,10 @@ class DeadLetterQueueConsumerImpl(
                 } else {
                     hasWakedUpConsumer.set(!(e is WakeupException && hasWakedUpConsumer.get()))
                 }
-                logger.error(
+                TjenestekallLogg.error(
                     "Restarting DLQ consumer on topic $topic",
-                    e
+                    fields = mapOf("topic" to topic),
+                    throwable = e
                 )
                 restart()
                 continue@outer
@@ -137,4 +148,14 @@ class DeadLetterQueueConsumerImpl(
     }
 
     private fun consumerExceptionShouldBeIgnored(e: Exception) = e is WakeupException && closed.get()
+
+    private fun checkThatPollDurationIsLessThanExceptionDelay(
+        pollDuration: Duration,
+        delayDuration: Duration
+    ): Boolean {
+        if (delayDuration <= pollDuration) {
+            throw IllegalArgumentException("Delay duration must be larger than the poll duration. Otherwise the commit will commit wrong offset.")
+        }
+        return true
+    }
 }

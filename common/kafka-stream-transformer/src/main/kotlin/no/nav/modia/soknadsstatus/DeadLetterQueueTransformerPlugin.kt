@@ -26,24 +26,23 @@ class DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE> :
     private var domainSerde: Serde<DOMAIN_TYPE>? = null
 
     private val block: (suspend (topic: String, key: String, value: String) -> Result<Unit>) = { topic, key, value ->
-        val domain = requireNotNull(domainSerde).deserializer().deserialize(topic, value.toByteArray(Charsets.UTF_8))
+        runCatching {
+            val domain =
+                requireNotNull(domainSerde).deserializer().deserialize(topic, value.toByteArray(Charsets.UTF_8))
 
-        if (filter == null) {
-            transformAndSendMessage(key, domain)
-        } else if (filter!!(key, domain)) {
-            transformAndSendMessage(key, domain)
-        } else {
-            Result.success(Unit)
+            if (filter == null) {
+                transformAndSendMessage(key, domain)
+            } else if (filter!!(key, domain)) {
+                transformAndSendMessage(key, domain)
+            } else {
+                Unit
+            }
         }
     }
 
     private fun transformAndSendMessage(key: String, value: DOMAIN_TYPE): Result<Unit> {
-        return try {
-            val transformedValue = requireNotNull(transformer).invoke(key, value)
-            requireNotNull(producer).sendMessage(key, transformedValue)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        val transformedValue = requireNotNull(transformer).invoke(key, value)
+        return requireNotNull(producer).sendMessage(key, transformedValue)
     }
 
     override val key: AttributeKey<DeadLetterQueueTransformerPlugin<DOMAIN_TYPE, TARGET_TYPE>> =
