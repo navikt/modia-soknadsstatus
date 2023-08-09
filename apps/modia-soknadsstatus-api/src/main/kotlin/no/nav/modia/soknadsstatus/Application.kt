@@ -17,7 +17,6 @@ import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
-import org.apache.kafka.common.serialization.Serdes.StringSerde
 import org.slf4j.event.Level
 
 fun Application.soknadsstatusModule(
@@ -57,12 +56,8 @@ fun Application.soknadsstatusModule(
         mdc("userId") { security.getSubject(it).joinToString(";") }
     }
 
-    install(KafkaStreamPlugin<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+    install(KafkaStreamPlugin()) {
         appEnv = env.kafkaApp
-        valueSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
-        deserializationExceptionHandler =
-            SendToDeadLetterQueueExceptionHandler()
-        deadLetterQueueProducer = services.dlqProducer
         topology {
             stream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>(env.kafkaApp.sourceTopic)
                 .foreach { key, value ->
@@ -93,9 +88,9 @@ fun Application.soknadsstatusModule(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
                 kafkaConsumer = KafkaUtils.createConsumer(
                     env.kafkaApp,
-                    StringSerde()
                 ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
+                exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
                 deadLetterMessageSkipService = services.dlSkipService,
                 deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
             ) { _, _, value ->

@@ -13,8 +13,6 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.kafka.AppEnv
-import org.apache.kafka.common.serialization.Serdes.StringSerde
-import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
 
 fun Application.dataGeneratorModule() {
     val config = Configuration()
@@ -36,10 +34,8 @@ fun Application.dataGeneratorModule() {
 
     val handlers = Handlers(env).handlers
 
-    install(KafkaStreamPlugin<String>()) {
+    install(KafkaStreamPlugin()) {
         appEnv = env
-        deserializationExceptionHandler = LogAndContinueExceptionHandler()
-        valueSerde = StringSerde()
 
         topology {
             stream<String, String>(config.soknadsstatusTopic)

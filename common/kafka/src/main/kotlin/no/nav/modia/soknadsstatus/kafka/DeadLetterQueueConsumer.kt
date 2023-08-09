@@ -11,11 +11,14 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 interface DeadLetterQueueConsumer {
     fun start()
+    fun waitForStart()
+    fun waitForShutdown()
+    fun shutDownAndWait()
+    fun startAndWait()
 }
 
 class DeadLetterQueueConsumerImpl(
@@ -23,29 +26,29 @@ class DeadLetterQueueConsumerImpl(
     private val deadLetterMessageSkipService: DeadLetterMessageSkipService,
     private val kafkaConsumer: Consumer<String, String>,
     private val pollDurationMs: Double,
+    private val exceptionRestartDelayMs: Double,
     private val deadLetterQueueMetricsGauge: DeadLetterQueueMetricsGauge,
     private val block: suspend (topic: String, key: String, value: String) -> Result<Unit>,
 ) : DeadLetterQueueConsumer {
     private val logger = LoggerFactory.getLogger("${DeadLetterQueueConsumerImpl::class.java.name}-$topic")
 
     private val closed = AtomicBoolean(false)
+    private val isRunning = AtomicBoolean(false)
+
     private var job: Job? = null
 
     // Used to avoid infinite WakeupException loop. WakeUp exception is thrown by the Consumer the next time calling poll, if wakeUp has been called, but the consumer did not poll when calling wakeup.
     private val hasWakedUpConsumer = AtomicBoolean(false)
 
-    companion object {
-        val KAFKA_CONSUMER_POLL_DURATION = 1.seconds
-        val KAFKA_CONSUMER_EXCEPTION_SLEEP_DURATION = 10.seconds
-    }
-
     init {
         checkThatPollDurationIsLessThanExceptionDelay(
-            KAFKA_CONSUMER_POLL_DURATION,
-            KAFKA_CONSUMER_EXCEPTION_SLEEP_DURATION
+            pollDurationMs.milliseconds,
+            exceptionRestartDelayMs.milliseconds
         )
         registerShutdownhook {
-            shutDown()
+            runBlocking {
+                shutDown()
+            }
         }
     }
 
@@ -65,13 +68,13 @@ class DeadLetterQueueConsumerImpl(
         logger.info("Starting to poll and process records from $topic")
         outer@ while (!closed.get()) {
             job?.ensureActive()
+            isRunning.set(true)
             try {
-                val records = kafkaConsumer.poll(KAFKA_CONSUMER_POLL_DURATION.toJavaDuration())
+                val records = kafkaConsumer.poll(pollDurationMs.milliseconds.toJavaDuration())
                 if (records.count() > 0) {
                     logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
                     for (record in records) {
                         logger.info("Trying to process DL with key: ${record.key()}")
-
                         val shouldSkipRecord = handlePossibleSkipRecord(record)
                         if (shouldSkipRecord) continue
 
@@ -91,6 +94,7 @@ class DeadLetterQueueConsumerImpl(
                     kafkaConsumer.commitSync()
                 }
             } catch (e: Exception) {
+                isRunning.set(false)
                 if (consumerExceptionShouldBeIgnored(e)) {
                     return
                 } else {
@@ -109,8 +113,8 @@ class DeadLetterQueueConsumerImpl(
 
     private suspend fun restart() {
         stopConsumer()
-        logger.info("Delaying restart of DLQ consumer with ${pollDurationMs.milliseconds}")
-        delay(pollDurationMs.milliseconds)
+        logger.info("Delaying restart of DLQ consumer with $exceptionRestartDelayMs")
+        delay(exceptionRestartDelayMs.toLong())
         startConsumer()
     }
 
@@ -121,10 +125,10 @@ class DeadLetterQueueConsumerImpl(
         closed.set(true)
     }
 
-    private fun shutDown() {
+    suspend fun shutDown() {
         stopConsumer()
         kafkaConsumer.close()
-        job?.cancel()
+        job?.cancelAndJoin()
     }
 
     private suspend fun handlePossibleSkipRecord(record: ConsumerRecord<String, String>): Boolean {
@@ -157,5 +161,31 @@ class DeadLetterQueueConsumerImpl(
             throw IllegalArgumentException("Delay duration must be larger than the poll duration. Otherwise the commit will commit wrong offset.")
         }
         return true
+    }
+
+    override fun waitForStart() {
+        while (!isRunning.get()) {
+            continue
+        }
+    }
+
+    override fun waitForShutdown() {
+        while (isRunning.get()) {
+            continue
+        }
+    }
+
+    override fun startAndWait() {
+        start()
+        waitForStart()
+    }
+
+    override fun shutDownAndWait() {
+        runCatching {
+            runBlocking {
+                shutDown()
+            }
+        }
+        waitForShutdown()
     }
 }
