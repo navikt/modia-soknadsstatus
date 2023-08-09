@@ -71,7 +71,7 @@ val xjc by tasks.registering(JavaExec::class) {
         project.group.toString(),
         "-no-header",
         "-quiet",
-        schemaDir,
+        schemaDir
     )
 }
 
@@ -85,7 +85,7 @@ sourceSets {
             srcDirs(
                 files(xjcOutputDir) {
                     builtBy(xjc)
-                },
+                }
             )
         }
     }
