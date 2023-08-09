@@ -4,46 +4,37 @@ import io.ktor.server.application.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import no.nav.modia.soknadsstatus.kafka.AppEnv
-import no.nav.modia.soknadsstatus.kafka.DeadLetterQueueProducer
 import no.nav.modia.soknadsstatus.kafka.KafkaUtils
 import no.nav.personoversikt.common.utils.SelftestGenerator
-import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration.Companion.seconds
 
-class KafkaStreamConfig<TARGET_TYPE> {
+class KafkaStreamConfig {
     var appEnv: AppEnv? = null
-    var valueSerde: Serde<TARGET_TYPE>? = null
     var topology: (StreamsBuilder.() -> Unit)? = null
-    var deserializationExceptionHandler: DeserializationExceptionHandler? = null
-    var deadLetterQueueProducer: DeadLetterQueueProducer? = null
     fun topology(fn: StreamsBuilder.() -> Unit) {
         this.topology = fn
     }
 }
 
-class KafkaStreamPlugin<TARGET_TYPE> :
-    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig<TARGET_TYPE>, KafkaStreamPlugin<TARGET_TYPE>> {
+class KafkaStreamPlugin :
+    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig, KafkaStreamPlugin> {
     private var stream: KafkaStreams? = null
 
-    override val key: AttributeKey<KafkaStreamPlugin<TARGET_TYPE>> = AttributeKey("kafka-stream")
+    override val key: AttributeKey<KafkaStreamPlugin> = AttributeKey("kafka-stream")
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: KafkaStreamConfig<TARGET_TYPE>.() -> Unit
-    ): KafkaStreamPlugin<TARGET_TYPE> {
-        val configuration = KafkaStreamConfig<TARGET_TYPE>()
+        configure: KafkaStreamConfig.() -> Unit
+    ): KafkaStreamPlugin {
+        val configuration = KafkaStreamConfig()
         configuration.configure()
 
         stream = KafkaUtils.createStream(
             appConfig = requireNotNull(configuration.appEnv),
             configure = requireNotNull(configuration.topology),
-            valueSerde = requireNotNull(configuration.valueSerde),
-            deserializationExceptionHandler = requireNotNull(configuration.deserializationExceptionHandler),
-            deadLetterQueueProducer = configuration.deadLetterQueueProducer,
         )
 
         stream?.start()

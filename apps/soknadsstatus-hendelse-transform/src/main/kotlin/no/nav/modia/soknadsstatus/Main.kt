@@ -4,13 +4,14 @@ import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.serialization.json.Json
 import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
-import no.nav.modia.soknadsstatus.behandling.BehandlingJsonSerdes
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 fun main() {
     runApp()
@@ -20,7 +21,7 @@ fun runApp(port: Int = 8080) {
     val config = AppEnv()
     val dlqMetricsGauge =
         DeadLetterQueueMetricsGaugeImpl(requireNotNull(config.deadLetterQueueMetricsGaugeName))
-    val deadLetterProducer = DeadLetterQueueProducer(config, dlqMetricsGauge)
+    val deadLetterProducer = DeadLetterQueueProducerImpl(config, dlqMetricsGauge)
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv(appName = config.appName))
     datasourceConfiguration.runFlyway()
 
@@ -30,19 +31,32 @@ fun runApp(port: Int = 8080) {
         application = {
             install(BaseNaisApp)
             install(KafkaStreamTransformPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
-                appEnv = config
-                domainSerde = BehandlingJsonSerdes.JsonSerde()
-                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
-                deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler()
-                deadLetterQueueProducer = deadLetterProducer
+                deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
+                    topic = requireNotNull(config.deadLetterQueueTopic),
+                    dlqProducer = deadLetterProducer
+                )
+                sourceTopic = requireNotNull(config.sourceTopic)
+                targetTopic = requireNotNull(config.targetTopic)
+                deserializer = { _, value -> Json.decodeFromString(Behandling.serializer(), value) }
+                serializer = { _, value ->
+                    Json.encodeToString(
+                        SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
+                        value
+                    )
+                }
+                onSerializationException = { record, exception ->
+                    TjenestekallLogg.error(
+                        "Klarte ikke å serialisere melding",
+                        fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
+                        throwable = exception
+                    )
+                }
                 configure { stream ->
                     stream.filter(::filter).mapValues(::transform)
                 }
             }
             install(DeadLetterQueueTransformerPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
-                domainSerde = BehandlingJsonSerdes.JsonSerde()
-                targetSerde = SoknadsstatusDomain.SoknadsstatusInkommendeOppdateringSerde()
                 transformer = ::transform
                 filter = ::filter
                 skipTableDataSource = datasourceConfiguration.datasource
