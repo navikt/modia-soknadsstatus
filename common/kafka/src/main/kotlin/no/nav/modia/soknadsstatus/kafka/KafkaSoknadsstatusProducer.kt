@@ -2,21 +2,19 @@ package no.nav.modia.soknadsstatus.kafka
 
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serde
 
-interface SoknadsstatusProducer<VALUE_TYPE> {
-    fun sendMessage(key: String, message: VALUE_TYPE): Result<Unit>
+interface SoknadsstatusProducer {
+    fun sendMessage(key: String, message: String): Result<Unit>
 }
 
-class KafkaSoknadsstatusProducer<VALUE_TYPE>(
+class KafkaSoknadsstatusProducer(
     private val appEnv: AppEnv,
-    valueSerde: Serde<VALUE_TYPE>,
 ) :
 
-    SoknadsstatusProducer<VALUE_TYPE> {
-    private val producer = KafkaUtils.createProducer(appEnv, valueSerde)
+    SoknadsstatusProducer {
+    private val producer = KafkaUtils.createProducer(appEnv)
 
-    override fun sendMessage(key: String, message: VALUE_TYPE): Result<Unit> {
+    override fun sendMessage(key: String, message: String): Result<Unit> {
         return try {
             val producerRecord = ProducerRecord(appEnv.targetTopic, key, message)
             producer.send(producerRecord)

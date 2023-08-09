@@ -2,52 +2,41 @@ package no.nav.modia.soknadsstatus.kafka
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import org.slf4j.LoggerFactory
 import java.util.*
 
 object KafkaUtils {
     private val log = LoggerFactory.getLogger("KafkaUtils")
-    fun <T> createProducer(
+    fun createProducer(
         appConfig: AppEnv,
-        valueSerde: Serde<T>
-    ): KafkaProducer<String, T> {
+    ): KafkaProducer<String, String> {
         val props = Properties()
         commonProducerConfig(props, appConfig)
 
-        return KafkaProducer(props, StringSerializer(), valueSerde.serializer())
+        return KafkaProducer(props, StringSerializer(), StringSerializer())
     }
 
-    fun <T> createConsumer(
+    fun createConsumer(
         appConfig: AppEnv,
-        valueSerde: Serde<T>,
-    ): KafkaConsumer<String, T> {
+    ): KafkaConsumer<String, String> {
         val props = Properties()
-        val deserializer = valueSerde.deserializer()
-        commonConsumerConfig(props, appConfig, deserializer)
+        commonConsumerConfig(props, appConfig)
 
-        return KafkaConsumer(props, StringDeserializer(), deserializer)
+        return KafkaConsumer(props, StringDeserializer(), StringDeserializer())
     }
 
-    fun <TARGET_TYPE> createStream(
+    fun createStream(
         appConfig: AppEnv,
-        valueSerde: Serde<TARGET_TYPE>,
-        deserializationExceptionHandler: DeserializationExceptionHandler,
-        deadLetterQueueProducer: DeadLetterQueueProducer?,
         configure: StreamsBuilder.() -> Unit,
     ): KafkaStreams {
         val props = Properties()
         commonStreamsConfig(
             props,
             appConfig,
-            valueSerde,
-            deserializationExceptionHandler,
-            deadLetterQueueProducer
         )
 
         val builder = StreamsBuilder()

@@ -62,7 +62,7 @@ interface Services {
             val dlqMetricsGauge =
                 DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
             val dlqProducer =
-                DeadLetterQueueProducer(env.kafkaApp, dlqMetricsGauge)
+                DeadLetterQueueProducerImpl(env.kafkaApp, dlqMetricsGauge)
             val dlSkipService = DeadLetterMessageSkipServiceImpl(
                 DeadLetterMessageRepository(
                     requireNotNull(env.kafkaApp.deadLetterQueueSkipTableName),

@@ -2,10 +2,6 @@ package no.nav.modia.soknadsstatus
 
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.modia.soknadsstatus.behandling.*
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.common.serialization.Serializer
-import org.slf4j.LoggerFactory
 import org.xml.sax.SAXException
 import java.io.IOException
 import java.io.StringReader
@@ -215,30 +211,8 @@ object XMLConverter {
     )
 }
 
-object BehandlingXmlSerdes {
-    val log = LoggerFactory.getLogger(BehandlingXmlSerializer::class.java)
-
-    class BehandlingXmlSerializer : Serializer<Behandling> {
-        override fun serialize(topic: String?, data: Behandling?): ByteArray {
-            // We don't serialize to xml
-            log.error("Prøvde å serialisere til xml. Dette er ikke støttet.")
-            return ByteArray(0)
-        }
-    }
-
-    class BehandlingXmlDeserializer : Deserializer<Behandling> {
-        override fun deserialize(topic: String?, data: ByteArray?): Behandling? {
-            if (data == null) {
-                return null
-            }
-
-            val encodedString = data.toString(Charsets.UTF_8)
-            return XMLConverter.fromXml(encodedString)
-        }
-    }
-
-    class XMLSerde : Serde<Behandling> {
-        override fun serializer() = BehandlingXmlSerializer()
-        override fun deserializer() = BehandlingXmlDeserializer()
+object BehandlingDeserializer {
+    fun deserialize(data: String): Hendelse {
+        return XMLConverter.fromXml(data)
     }
 }

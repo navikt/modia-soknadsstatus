@@ -30,7 +30,6 @@ fun Application.mqToKafkaModule() {
 
     val kafkaProducer = KafkaUtils.createProducer(
         config,
-        StringSerde()
     )
 
     val transferJob = GlobalScope.launch(Dispatchers.Unbounded) {
