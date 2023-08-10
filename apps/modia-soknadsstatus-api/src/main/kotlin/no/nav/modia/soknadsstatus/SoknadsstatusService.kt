@@ -50,6 +50,10 @@ class SoknadsstatusServiceImpl(
         aktoerId: String,
         innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering,
     ) {
+        TjenestekallLogg.info(
+            "Mottok søknadsstatus-oppdatering",
+            mapOf("aktoerId" to aktoerId, "oppdatering" to innkommendeOppdatering)
+        )
         try {
             val ident = pdlOppslagService.hentFnrMedSystemToken(aktoerId)
                 ?: throw NotFoundException("Fant ikke ident for aktørId $aktoerId")
