@@ -7,7 +7,7 @@ fun main() {
     runApp()
 }
 
-fun runApp(port: Int = 8080, useMock: Boolean = false) {
+fun runApp(port: Int = 8080) {
     val env = Env()
     val configuration = Configuration.factory(env)
     val services = Services.factory(env, configuration)

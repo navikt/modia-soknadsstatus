@@ -15,7 +15,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.kafka.AppEnv
 
 fun Application.dataGeneratorModule() {
-    val config = Configuration()
     val isLocal = true
     val wsConnections = mutableListOf<DefaultWebSocketSession>()
 
@@ -23,15 +22,13 @@ fun Application.dataGeneratorModule() {
         appName = "data-generator",
         appMode = AppMode.LOCALLY_WITHIN_DOCKER,
         appVersion = "test",
-        brokerUrls = config.brokerUrl,
-        sourceTopic = config.soknadsstatusTopic,
-        targetTopic = null,
         deadLetterQueueTopic = null,
         deadLetterQueueConsumerPollIntervalMs = 10000.0,
         deadLetterQueueSkipTableName = null,
         deadLetterQueueMetricsGaugeName = null,
     )
 
+    val config = Configuration(env)
     val handlers = Handlers(env).handlers
 
     install(KafkaStreamPlugin()) {

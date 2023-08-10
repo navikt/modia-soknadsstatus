@@ -26,7 +26,10 @@ class AzureAdConfiguration(
     )
 
     companion object {
-        fun load(): AzureAdConfiguration {
+        fun load(appMode: AppMode): AzureAdConfiguration {
+            if (appMode != AppMode.NAIS) {
+                MockData.setupAzureAdLocally()
+            }
             val clientId = EnvUtils.getRequiredConfig(AzureAdEnvironmentVariables.AZURE_APP_CLIENT_ID)
             val clientSecret = EnvUtils.getRequiredConfig(AzureAdEnvironmentVariables.AZURE_APP_CLIENT_SECRET)
             val tenantId = EnvUtils.getRequiredConfig(AzureAdEnvironmentVariables.AZURE_APP_TENANT_ID)
@@ -40,6 +43,7 @@ class AzureAdConfiguration(
                 EnvUtils.getRequiredConfig(AzureAdEnvironmentVariables.AZURE_OPENID_CONFIG_JWKS_URI)
             val openidConfigTokenEndpoint =
                 EnvUtils.getRequiredConfig(AzureAdEnvironmentVariables.AZURE_OPENID_CONFIG_TOKEN_ENDPOINT)
+
 
             return AzureAdConfiguration(
                 clientId = clientId,
