@@ -6,9 +6,8 @@ import no.nav.personoversikt.common.utils.EnvUtils
 
 private const val examples = "apps/data-generator-app/src/main/resources/examples"
 
-class Configuration(
-    val brokerUrl: String = "localhost:9092",
-    val soknadsstatusTopic: String = "modia-soknadsstatus",
+class Configuration(appEnv: AppEnv) {
+    val soknadsstatusTopic: String = requireNotNull(appEnv.sourceTopic)
     val sources: List<Source> = listOf(
         Source(
             name = "Infotrygd/Arena",
@@ -19,11 +18,11 @@ class Configuration(
         Source(
             name = "Foreldrepenger/Pleiepenger",
             type = Source.Type.KAFKA,
-            resourceId = "aapen-sob-oppgaveHendelse-v1",
+            resourceId = requireNotNull(appEnv.targetTopic),
             exampleFile = "$examples/pf-k9.json",
         ),
-        ),
-)
+    ),
+}
 
 class Handlers(appEnv: AppEnv) {
     val handlers: Map<Source.Type, PostHandler> = mapOf(

@@ -1,12 +1,5 @@
 package no.nav.modia.soknadsstatus
 
-import com.nimbusds.jose.jwk.KeyUse
-import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
-import java.util.*
-
 fun main() {
     System.setProperty("APP_MODE", "LOCALLY_WITHIN_IDEA")
     System.setProperty("APP_NAME", "modia-soknadsstatus-api")
@@ -15,7 +8,7 @@ fun main() {
     System.setProperty("KAFKA_SOURCE_TOPIC", "modia-soknadsstatus")
     System.setProperty("KAFKA_BROKERS", "localhost:9092")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_TOPIC", "modia-soknadsstatus-dlq")
-    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "60000")
+    System.setProperty("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS", "10000")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME", "modia_soknadsstatus_dlq_event_skip")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME", "modia_soknadsstatus_api_dlq_gauge")
 
@@ -25,9 +18,9 @@ fun main() {
     System.setProperty("NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_PASSWORD", "admin")
     System.setProperty("DB_NAME", "modia-soknadsstatus")
     System.setProperty("NAIS_CLUSTER_NAME", "dev-gcp")
-    setupAzureAdLocally()
-    setUpMocks()
-    runApp(port = 9012, useMock = true)
+    MockData.setupAzureAdLocally()
+    MockData.setUpMocks()
+    runApp(port = 9012)
 }
 
 private fun setupAzureAdLocally() {

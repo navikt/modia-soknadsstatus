@@ -14,7 +14,13 @@ import no.nav.personoversikt.common.utils.EnvUtils
 
 interface Env {
     companion object {
-        operator fun invoke() = EnvImpl()
+        operator fun invoke(): Env {
+            val kafkaApp = AppEnv()
+            if (kafkaApp.appMode != AppMode.NAIS) {
+                MockData.setUpMocks()
+            }
+            return EnvImpl(kafkaApp = kafkaApp)
+        }
     }
 
     val appVersion: String
@@ -34,7 +40,7 @@ data class EnvImpl(
     override val kafkaApp: AppEnv = AppEnv(),
     override val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
     override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(DatasourceEnv(kafkaApp.appName)),
-    override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(),
+    override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(appMode = kafkaApp.appMode),
     override val pdlEnv: PdlEnv = PdlEnv(
         url = EnvUtils.getRequiredConfig("PDL_API_URL"),
         scope = EnvUtils.getRequiredConfig("PDL_SCOPE"),

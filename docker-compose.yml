@@ -43,7 +43,7 @@ services:
       - "8080:8080"
     depends_on:
       - redpanda
-  postgres:
+  postgres-soknadsstatus-api:
     image: postgres:14.6-alpine
     ports:
       - "5432:5432"
@@ -53,6 +53,32 @@ services:
       POSTGRES_DB: "modia-soknadsstatus"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d modia-soknadsstatus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  postgres-arena-infotrygd:
+    image: postgres:14.6-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: "modia-soknadsstatus"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d modia-soknadsstatus" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  postgres-soknadsstatus-hendelse-transform:
+    image: postgres:14.6-alpine
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: "modia-soknadsstatus"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d modia-soknadsstatus" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -68,12 +94,14 @@ services:
     environment:
       APP_NAME: "mq-to-kafka"
       APP_VERSION: "dev"
+      APP_MODE: "LOCALLY_WITHIN_IDEA"
       KAFKA_TARGET_TOPIC: "arena-infotrygd-soknadsstatus"
       KAFKA_BROKERS: "redpanda:29092"
       JMS_CHANNEL: "arena-infotrygd-soknadsstatus"
       JMS_HOST: "activemq"
       JMS_PORT: "61616"
-      JMS_QUEUEMANAGER: ""
+      JMS_QUEUE_MANAGER: ""
+      JMS_QUEUE_NAME: "mq-ss"
       JMS_USERNAME: ""
       JMS_PASSWORD: ""
   arena-infotrygd-transform:
@@ -84,19 +112,21 @@ services:
       - "9010:8080"
     depends_on:
       - redpanda
+      - postgres-arena-infotrygd
     environment:
       APP_NAME: "arena-infotrygd-soknadsstatus-transform"
       APP_VERSION: "dev"
       APP_MODE: "LOCALLY_WITHIN_IDEA"
 
-      KAFKA_SOURCE_TOPIC: "arena-infotrygd-soknadsstatus"
-      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
+      KAFKA_SOURCE_TOPIC: "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering"
+      KAFKA_TARGET_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering"
       KAFKA_BROKERS: "redpanda:29092"
-      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "arena-infotrygd-soknadsstatus-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
-      KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "fp_k9_dlq_event_skip"
+      KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "arena_infotrygd_dlq_event_skip"
+      KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME: "modia_soknadsstatus_arena_infotrygd_dlq_gauge"
       DB_NAME: "modia-soknadsstatus"
-      NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_HOST: "localhost"
+      NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_HOST: "postgres-arena-infotrygd"
       NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PORT: "5432"
       NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_USERNAME: "admin"
       NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PASSWORD: "admin"
@@ -108,22 +138,24 @@ services:
       - "9014:8080"
     depends_on:
       - redpanda
+      - postgres-soknadsstatus-hendelse-transform
     environment:
       APP_NAME: "soknadsstatus-hendelse-transform"
       APP_VERSION: "dev"
       APP_MODE: "LOCALLY_WITHIN_IDEA"
 
-      KAFKA_SOURCE_TOPIC: "aapen-sob-oppgaveHendelse-v1"
-      KAFKA_TARGET_TOPIC: "modia-soknadsstatus"
+      KAFKA_SOURCE_TOPIC: "personoversikt.modia-soknadsstatus-hendelse"
+      KAFKA_TARGET_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering"
       KAFKA_BROKERS: "redpanda:29092"
-      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "aapen-sob-oppgaveHendelse-v1-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "personoversikt.modia-soknadsstatus-hendelse-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
-      KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "fp_k9_dlq_event_skip"
+      KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "hendelse_dlq_event_skip"
+      KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME: "modia_soknadsstatus_hendelse_dlq_gauge"
       DB_NAME: "modia-soknadsstatus"
-      NAIS_DATABASE_FP_K9_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_HOST: "localhost"
-      NAIS_DATABASE_FP_K9_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PORT: "5432"
-      NAIS_DATABASE_FP_K9_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_USERNAME: "admin"
-      NAIS_DATABASE_FP_K9_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PASSWORD: "admin"
+      NAIS_DATABASE_SOKNADSSTATUS_HENDELSE_TRANSFORM_MODIA_SOKNADSSTATUS_HOST: "postgres-soknadsstatus-hendelse-transform"
+      NAIS_DATABASE_SOKNADSSTATUS_HENDELSE_TRANSFORM_MODIA_SOKNADSSTATUS_PORT: "5432"
+      NAIS_DATABASE_SOKNADSSTATUS_HENDELSE_TRANSFORM_MODIA_SOKNADSSTATUS_USERNAME: "admin"
+      NAIS_DATABASE_SOKNADSSTATUS_HENDELSE_TRANSFORM_MODIA_SOKNADSSTATUS_PASSWORD: "admin"
   modia-soknadsstatus-api:
     build:
       dockerfile: ../../docker/Dockerfile
@@ -133,21 +165,22 @@ services:
     depends_on:
       redpanda:
         condition: service_started
-      postgres:
+      postgres-soknadsstatus-api:
         condition: service_healthy
     environment:
       APP_NAME: "modia-soknadsstatus-api"
       APP_VERSION: "dev"
       APP_MODE: "LOCALLY_WITHIN_IDEA"
 
-      KAFKA_SOURCE_TOPIC: "modia-soknadsstatus"
+      KAFKA_SOURCE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKERS: "redpanda:29092"
-      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "modia-soknadsstatus-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
       KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "modia_soknadsstatus_dlq_event_skip"
+      KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME: "modia_soknadsstatus_api_dlq_gauge"
       DB_NAME: "modia-soknadsstatus"
-      NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_HOST: "localhost"
+      NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_HOST: "postgres-soknadsstatus-api"
       NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_PORT: "5432"
       NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_USERNAME: "admin"
       NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_PASSWORD: "admin"
