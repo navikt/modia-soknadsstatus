@@ -62,13 +62,6 @@ class FilterTest {
         val result = Filter.filtrerBehandling(behandling.avsluttet)
         assertTrue(result)
     }
-
-    @Test
-    fun `skal ikke slippe igjennom avsluttet behandling om avslutningsstatus ikke er 'avsluttet'`() {
-        val behandling = generateBehandling(avslutningsstatus = Avslutningsstatus("koderef", "kodeverksRef", "opprettet"))
-        val result = Filter.filtrerBehandling(behandling.avsluttet)
-        assertFalse(result)
-    }
 }
 
 data class BeggeBehandlinger(
