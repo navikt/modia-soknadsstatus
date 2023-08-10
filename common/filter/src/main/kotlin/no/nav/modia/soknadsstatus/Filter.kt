@@ -11,7 +11,6 @@ object Filter {
 
     private fun harLovligSaksTema(behandling: Behandling) = behandling.sakstema.value !in ulovligeSakstema
 
-    // TODO: Se på forskjellen på disse to
     private fun harLovlingStatusPaBehandling(behandling: Behandling): Boolean {
         if (behandling is BehandlingOpprettet) {
             return !erKvitteringstype(behandling.hendelseType)
@@ -28,15 +27,23 @@ object Filter {
         return true
     }
 
-    private fun harLovligPrefix(behandling: Behandling) = behandling.primaerBehandlingREF?.behandlingsREF?.startsWith(ULOVLIG_PREFIX)?.not() ?: false
+    private fun harLovligPrefix(behandling: Behandling) =
+        behandling.primaerBehandlingREF?.behandlingsREF?.startsWith(ULOVLIG_PREFIX)?.not() ?: false
 
     private fun harPrimaerBehandling(behandling: Behandling) = behandling.primaerBehandlingREF != null
 
-    private fun harLovligBehandlingstype(behandling: Behandling) = behandling.behandlingstype?.value in lovligeBehandlingstyper
+    private fun harLovligBehandlingstype(behandling: Behandling) =
+        behandling.behandlingstype?.value in lovligeBehandlingstyper
 
     @JvmStatic
     fun filtrerBehandling(behandling: Behandling): Boolean {
-        val checks = listOf<(behandling: Behandling) -> Boolean>(::harLovligSaksTema, ::harPrimaerBehandling, ::harLovligPrefix, ::harLovligBehandlingstype, ::harLovlingStatusPaBehandling)
+        val checks = listOf<(behandling: Behandling) -> Boolean>(
+            ::harLovligSaksTema,
+            ::harPrimaerBehandling,
+            ::harLovligPrefix,
+            ::harLovligBehandlingstype,
+            ::harLovlingStatusPaBehandling
+        )
 
         for (check in checks) {
             if (!check(behandling)) {

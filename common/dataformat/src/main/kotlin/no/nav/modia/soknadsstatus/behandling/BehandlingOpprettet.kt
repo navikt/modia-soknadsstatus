@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class BehandlingOpprettet(
     override val aktoerREF: List<AktoerREF>,
     override val ansvarligEnhetREF: String,
-    override val applikasjonBehandlingREF: String,
+    override val applikasjonBehandlingREF: String?,
     override val applikasjonSakREF: String,
     override val behandlingsID: String,
     override val behandlingstema: Behandlingstema,

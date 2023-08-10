@@ -6,7 +6,6 @@ val kotlinx_datetime_version: String by project
 val modia_common_version: String by project
 val logback_version: String by project
 val junit_version: String by project
-val meldingsdefinisjon_version: String by project
 val logstash_version: String by project
 
 plugins {
@@ -30,7 +29,6 @@ dependencies {
     implementation(project(":common:utils"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("com.github.navikt.tjenestespesifikasjoner:nav-virksomhet-hendelsehandterer-behandlingstatus-v1-meldingsdefinisjon:$meldingsdefinisjon_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 

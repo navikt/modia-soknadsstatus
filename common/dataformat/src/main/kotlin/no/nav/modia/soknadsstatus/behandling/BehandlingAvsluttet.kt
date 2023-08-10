@@ -8,7 +8,7 @@ data class BehandlingAvsluttet(
     val avslutningsstatus: Avslutningsstatus,
     override val aktoerREF: List<AktoerREF>,
     override val ansvarligEnhetREF: String,
-    override val applikasjonBehandlingREF: String,
+    override val applikasjonBehandlingREF: String?,
     override val applikasjonSakREF: String,
     override val behandlingsID: String,
     override val behandlingstema: Behandlingstema,
