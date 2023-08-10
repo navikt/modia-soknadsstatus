@@ -1,5 +1,12 @@
 package no.nav.modia.soknadsstatus
 
+import com.nimbusds.jose.jwk.KeyUse
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
+import java.util.UUID
+
 fun main() {
     System.setProperty("APP_MODE", "LOCALLY_WITHIN_IDEA")
     System.setProperty("APP_NAME", "modia-soknadsstatus-api")

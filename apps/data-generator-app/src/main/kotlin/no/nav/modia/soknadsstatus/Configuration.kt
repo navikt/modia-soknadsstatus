@@ -21,7 +21,7 @@ class Configuration(appEnv: AppEnv) {
             resourceId = requireNotNull(appEnv.targetTopic),
             exampleFile = "$examples/pf-k9.json",
         ),
-    ),
+    )
 }
 
 class Handlers(appEnv: AppEnv) {
