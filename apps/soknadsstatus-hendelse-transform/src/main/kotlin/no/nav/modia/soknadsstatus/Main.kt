@@ -59,7 +59,7 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun deserialize(key: String?, value: String) = Json.decodeFromString(Behandling.serializer(), value)
+fun deserialize(key: String?, value: String) = Json.decodeFromString(BehandlingSerializer, value)
 
 fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
     SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),

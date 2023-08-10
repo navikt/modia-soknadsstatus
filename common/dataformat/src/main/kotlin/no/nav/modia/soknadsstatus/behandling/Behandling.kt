@@ -62,7 +62,7 @@ object BehandlingJsonSerdes {
 }
 
 object BehandlingSerializer : JsonContentPolymorphicSerializer<Behandling>(Behandling::class) {
-    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Behandling> = when {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<Behandling> = when {
         "avslutningsstatus" in element.jsonObject -> BehandlingAvsluttet.serializer()
         else -> BehandlingOpprettet.serializer()
     }
