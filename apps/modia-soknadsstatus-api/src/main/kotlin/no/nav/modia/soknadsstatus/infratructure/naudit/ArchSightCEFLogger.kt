@@ -7,7 +7,7 @@ import java.time.Instant
 private val auditLogg = LoggerFactory.getLogger("AuditLogger")
 
 enum class CEFSeverity {
-    INFO, WARN;
+    INFO, WARN
 }
 
 fun escapeHeader(value: String): String = value
@@ -25,7 +25,7 @@ data class CEFLoggerConfig(
     val logFormatVersion: String = "1.0",
     val eventType: String = "audit:access",
     val description: String = "SporingsLogger",
-    val filter: (event: CEFEvent) -> Boolean = { true }
+    val filter: (event: CEFEvent) -> Boolean = { true },
 )
 
 data class CEFEvent(
@@ -34,7 +34,7 @@ data class CEFEvent(
     val subject: String,
     val identifiers: Array<out Pair<AuditIdentifier, String?>>,
     val severity: CEFSeverity = CEFSeverity.INFO,
-    val time: Long = Instant.now().toEpochMilli()
+    val time: Long = Instant.now().toEpochMilli(),
 )
 
 enum class CEFAttributeName(val attribute: String) {
@@ -54,7 +54,8 @@ enum class CEFAttributeName(val attribute: String) {
     STR5("cs5"),
     STR5_LABEL("cs5Label"),
     STR6("cs6"),
-    STR6_LABEL("cs6Label");
+    STR6_LABEL("cs6Label"),
+    ;
 
     companion object {
         fun getStringKey(id: Int): CEFAttributeName = valueOf("STR$id")
@@ -91,7 +92,7 @@ class CEFAttributes {
                     is CEFAttributesType.EnumDescriptor -> listOf(it.attribute to it.value)
                     is CEFAttributesType.StringDescriptor -> listOf(
                         CEFAttributeName.getStringKey(counter) to it.value,
-                        CEFAttributeName.getStringLabelKey(counter++) to it.attribute
+                        CEFAttributeName.getStringLabelKey(counter++) to it.attribute,
                     )
                 }
             }
@@ -106,7 +107,7 @@ class ArchSightCEFLogger(private val config: CEFLoggerConfig) {
         escapeHeader(config.logName),
         escapeHeader(config.logFormatVersion),
         escapeHeader(config.eventType),
-        escapeHeader(config.description)
+        escapeHeader(config.description),
     )
 
     internal fun create(event: CEFEvent): String? {

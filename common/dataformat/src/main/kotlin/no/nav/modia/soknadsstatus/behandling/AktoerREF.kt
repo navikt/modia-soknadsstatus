@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AktoerREF(
-    val aktoerId: String
+    val aktoerId: String,
 )

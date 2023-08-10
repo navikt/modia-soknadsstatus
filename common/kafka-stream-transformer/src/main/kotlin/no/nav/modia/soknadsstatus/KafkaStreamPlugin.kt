@@ -27,7 +27,7 @@ class KafkaStreamPlugin :
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: KafkaStreamConfig.() -> Unit
+        configure: KafkaStreamConfig.() -> Unit,
     ): KafkaStreamPlugin {
         val configuration = KafkaStreamConfig()
         configuration.configure()

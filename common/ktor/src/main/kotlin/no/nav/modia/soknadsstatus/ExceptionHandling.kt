@@ -17,8 +17,8 @@ fun Application.configureExceptionHandling() {
             call.respond(
                 cause.status,
                 HttpErrorResponse(
-                    message = cause.message
-                )
+                    message = cause.message,
+                ),
             )
         }
         exception<Throwable> { call, cause ->
@@ -26,8 +26,8 @@ fun Application.configureExceptionHandling() {
             call.respond(
                 HttpStatusCode.InternalServerError,
                 HttpErrorResponse(
-                    message = cause.message
-                )
+                    message = cause.message,
+                ),
             )
         }
         status(HttpStatusCode.Unauthorized) { statusCode ->

@@ -30,7 +30,7 @@ val BaseNaisApp = createApplicationPlugin("base-nais-app") {
 class HttpStatusException(
     val status: HttpStatusCode,
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : IllegalStateException(message, cause)
 
 suspend inline fun <reified T : Any> ApplicationCall.respondWithResult(result: Result<T>) {

@@ -19,7 +19,7 @@ typealias HeadersBuilder = HttpRequestBuilder.() -> Unit
 
 interface PdlClient {
     suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String?
-    suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String,): List<Adressebeskyttelse>
+    suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse>
     suspend fun hentAktivIdent(userToken: String, ident: String, gruppe: IdentGruppe): String?
     suspend fun hentAktivIdentMedSystemToken(ident: String, gruppe: IdentGruppe): String?
     suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String>
@@ -29,7 +29,7 @@ class PdlClientImpl(
     private val oboTokenProvider: BoundedOnBehalfOfTokenClient,
     private val machineToMachineTokenClient: BoundedMachineToMachineTokenClient,
     url: URL,
-    private val httpClient: HttpClient = HttpClient(OkHttp.create())
+    private val httpClient: HttpClient = HttpClient(OkHttp.create()),
 ) : LoggingGraphQLKtorClient(
     name = "PDL",
     critical = false,
@@ -40,7 +40,7 @@ class PdlClientImpl(
     Closeable {
 
     override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
-         execute(
+        execute(
             HentGeografiskTilknyttning(HentGeografiskTilknyttning.Variables(fnr)),
             userTokenAuthorizationHeaders(userToken),
         )
@@ -77,7 +77,7 @@ class PdlClientImpl(
     override suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String> =
         execute(
             HentIdenter(HentIdenter.Variables(ident)),
-            userTokenAuthorizationHeaders(userToken)
+            userTokenAuthorizationHeaders(userToken),
         ).data?.hentIdenter?.identer?.map { it.ident } ?: emptyList()
 
     override fun close() {

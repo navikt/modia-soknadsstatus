@@ -10,6 +10,6 @@ fun main() {
     KtorServer.create(
         factory = CIO,
         port = port,
-        application = Application::mqToKafkaModule
+        application = Application::mqToKafkaModule,
     ).start(wait = true)
 }

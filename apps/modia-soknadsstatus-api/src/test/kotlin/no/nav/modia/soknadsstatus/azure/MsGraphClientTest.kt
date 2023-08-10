@@ -34,7 +34,7 @@ class MsGraphClientTest {
         azureADService = AzureADServiceImpl(
             httpClient = OkHttpClient(),
             tokenClient = MockOnBehalfOfClient,
-            graphUrl = Url(mockServerBaseUrl.toString())
+            graphUrl = Url(mockServerBaseUrl.toString()),
         )
     }
 
@@ -83,14 +83,14 @@ class MsGraphClientTest {
         }
     ]
 }
-                """.trimIndent()
-            ).setResponseCode(200)
+                """.trimIndent(),
+            ).setResponseCode(200),
         )
 
         val result = azureADService.fetchMultipleGroupsIfUserIsMember(
             userToken = "fake-token",
             veilederIdent = VEILEDER_NAV_IDENT,
-            groups = RolleListe(AnsattRolle(gruppeNavn = GROUP_NAME, gruppeId = GROUP_ID))
+            groups = RolleListe(AnsattRolle(gruppeNavn = GROUP_NAME, gruppeId = GROUP_ID)),
         )
         assertEquals(1, result.size)
 
@@ -116,14 +116,14 @@ class MsGraphClientTest {
                         }
                     }
                 }
-                """.trimIndent()
-            ).setResponseCode(400)
+                """.trimIndent(),
+            ).setResponseCode(400),
         )
 
         val result = azureADService.fetchMultipleGroupsIfUserIsMember(
             userToken = "fake-token",
             veilederIdent = VEILEDER_NAV_IDENT,
-            groups = RolleListe(AnsattRolle(gruppeNavn = GROUP_NAME, gruppeId = GROUP_ID))
+            groups = RolleListe(AnsattRolle(gruppeNavn = GROUP_NAME, gruppeId = GROUP_ID)),
         )
         assertEquals(0, result.size)
     }

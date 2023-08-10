@@ -11,8 +11,8 @@ data class AppEnv(
     val appCluster: AppCluster = AppCluster(
         EnvUtils.getRequiredConfig(
             ("NAIS_CLUSTER_NAME"),
-            mapOf("NAIS_CLUSTER_NAME" to "prod-gcp")
-        )
+            mapOf("NAIS_CLUSTER_NAME" to "prod-gcp"),
+        ),
     ),
     val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
     val brokerUrls: String = EnvUtils.getRequiredConfig("KAFKA_BROKERS"),
@@ -24,5 +24,5 @@ data class AppEnv(
     val deadLetterQueueExceptionRestartDelayMs: Double = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_EXCEPTION_DELAY")
         ?.toDouble() ?: 10.minutes.toDouble(DurationUnit.MILLISECONDS),
     val deadLetterQueueSkipTableName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME"),
-    val deadLetterQueueMetricsGaugeName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME")
+    val deadLetterQueueMetricsGaugeName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME"),
 )

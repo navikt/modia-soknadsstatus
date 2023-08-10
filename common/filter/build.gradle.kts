@@ -21,7 +21,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
-
 }
 
 group = "no.nav.modia.soknadsstatus"

@@ -8,7 +8,7 @@ import no.nav.modia.soknadsstatus.MockData
 class NorgApiMock : NorgApi {
     override fun finnNavKontor(
         geografiskTilknytning: String,
-        diskresjonskode: NorgDomain.DiskresjonsKode?
+        diskresjonskode: NorgDomain.DiskresjonsKode?,
     ): NorgDomain.Enhet = MockData.veileder.enhet
 
     override fun hentRegionalEnheter(enhet: List<EnhetId>): List<EnhetId> = listOf(EnhetId(MockData.veileder.enhetId))

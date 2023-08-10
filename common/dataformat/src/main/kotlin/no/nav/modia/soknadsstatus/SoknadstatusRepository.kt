@@ -31,7 +31,7 @@ class SoknadsstatusRepositoryImpl(private val dataSource: DataSource) : Soknadss
                 systemRef = it.getString(Tabell.systemRef),
                 tema = it.getString(Tabell.tema),
                 status = SoknadsstatusDomain.Status.valueOf(it.getString(Tabell.status)),
-                tidspunkt = it.getTimestamp(Tabell.tidspunkt).toInstant().toKotlinInstant()
+                tidspunkt = it.getTimestamp(Tabell.tidspunkt).toInstant().toKotlinInstant(),
             )
         }
     }

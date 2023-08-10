@@ -15,7 +15,7 @@ interface SoknadsstatusService {
 
 class SoknadsstatusServiceImpl(
     private val pdlOppslagService: PdlOppslagService,
-    private val repository: SoknadsstatusRepository
+    private val repository: SoknadsstatusRepository,
 ) : SoknadsstatusService {
     override suspend fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?) {
         coroutineScope {
@@ -48,7 +48,7 @@ class SoknadsstatusServiceImpl(
 
     private suspend fun fetchIdentAndPersist(
         aktoerId: String,
-        innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering
+        innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering,
     ) {
         try {
             val ident = pdlOppslagService.hentFnrMedSystemToken(aktoerId)
@@ -59,14 +59,14 @@ class SoknadsstatusServiceImpl(
                 systemRef = innkommendeOppdatering.systemRef,
                 tema = innkommendeOppdatering.tema,
                 status = innkommendeOppdatering.status,
-                tidspunkt = innkommendeOppdatering.tidspunkt
+                tidspunkt = innkommendeOppdatering.tidspunkt,
             )
             repository.upsert(soknadsstatus)
         } catch (e: Exception) {
             TjenestekallLogg.error(
                 "Failed to store søknadsstatus",
                 fields = mapOf("aktoerId" to aktoerId, "oppdatering" to innkommendeOppdatering),
-                throwable = e
+                throwable = e,
             )
             throw e
         }

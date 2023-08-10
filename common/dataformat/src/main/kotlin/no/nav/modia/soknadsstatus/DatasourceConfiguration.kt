@@ -19,7 +19,6 @@ class DatasourceConfiguration(datasourceEnv: DatasourceEnv) {
         config.password = datasourceEnv.password
 
         HikariDataSource(config)
-
     }
 
     fun runFlyway() {

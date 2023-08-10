@@ -22,7 +22,7 @@ class AzureAdConfiguration(
     @Serializable
     class PreauthorizedApp(
         val name: String,
-        val clientId: String
+        val clientId: String,
     )
 
     companion object {

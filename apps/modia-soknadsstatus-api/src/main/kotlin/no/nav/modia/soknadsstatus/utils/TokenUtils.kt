@@ -2,7 +2,6 @@ package no.nav.modia.soknadsstatus.utils
 
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
-import no.nav.personoversikt.common.logging.Logging
 
 class DownstreamApi(
     val cluster: String,

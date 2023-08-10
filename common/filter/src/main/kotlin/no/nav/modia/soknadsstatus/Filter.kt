@@ -42,7 +42,7 @@ object Filter {
             ::harPrimaerBehandling,
             ::harLovligPrefix,
             ::harLovligBehandlingstype,
-            ::harLovlingStatusPaBehandling
+            ::harLovlingStatusPaBehandling,
         )
 
         for (check in checks) {

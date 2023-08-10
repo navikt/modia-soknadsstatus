@@ -45,7 +45,7 @@ object SoknadsstatusDomain {
     @Serializable
     data class Soknadsstatuser(
         val ident: String,
-        val tema: Map<String, Soknadsstatus>
+        val tema: Map<String, Soknadsstatus>,
     )
 
     @Serializable
@@ -72,7 +72,7 @@ class SoknadsstatusInnkommendeOppdateringDeserializer :
     Deserializer<SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering> {
     override fun deserialize(
         topic: String?,
-        data: ByteArray?
+        data: ByteArray?,
     ): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering? {
         if (data == null) {
             return null

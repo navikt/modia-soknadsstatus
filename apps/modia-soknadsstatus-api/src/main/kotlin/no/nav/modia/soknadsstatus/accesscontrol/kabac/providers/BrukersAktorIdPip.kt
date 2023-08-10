@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.AktorId
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
-import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 

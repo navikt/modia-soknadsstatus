@@ -6,7 +6,7 @@ import no.nav.personoversikt.common.utils.EnvUtils.getRequiredConfig
 
 data class MqConfig(
     val mqQueue: String = getRequiredConfig("JMS_QUEUE_NAME"),
-    val config: Jms.Config = createMqConfig()
+    val config: Jms.Config = createMqConfig(),
 )
 
 private fun createMqConfig() = Jms.Config(

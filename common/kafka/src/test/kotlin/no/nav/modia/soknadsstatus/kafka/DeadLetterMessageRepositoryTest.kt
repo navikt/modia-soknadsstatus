@@ -13,7 +13,6 @@ import java.nio.file.Paths
 import javax.sql.DataSource
 import kotlin.io.path.absolutePathString
 
-
 private const val KEY = "skip_key"
 
 @Testcontainers

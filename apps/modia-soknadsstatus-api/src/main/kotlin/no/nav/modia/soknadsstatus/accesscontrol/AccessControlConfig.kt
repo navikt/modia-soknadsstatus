@@ -37,7 +37,7 @@ class AccessControlConfig(
         }
         val enforcementPoint = PolicyEnforcementPointImpl(
             bias = Decision.Type.DENY,
-            policyDecisionPoint = decisionPoint
+            policyDecisionPoint = decisionPoint,
         )
 
         return AccessControlKabac(enforcementPoint) {

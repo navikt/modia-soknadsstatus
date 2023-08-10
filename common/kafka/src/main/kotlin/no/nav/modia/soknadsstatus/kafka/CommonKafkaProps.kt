@@ -42,7 +42,7 @@ fun commonStreamsConfig(
     if (appConfig.appMode == AppMode.NAIS) {
         aivenSecurityProps(
             props,
-            KafkaSecurityConfig()
+            KafkaSecurityConfig(),
         )
     }
 }
@@ -54,7 +54,7 @@ fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
     if (appConfig.appMode == AppMode.NAIS) {
         aivenSecurityProps(
             props,
-            KafkaSecurityConfig()
+            KafkaSecurityConfig(),
         )
     }
 }
@@ -70,7 +70,7 @@ fun commonConsumerConfig(props: Properties, appConfig: AppEnv) {
     if (appConfig.appMode == AppMode.NAIS) {
         aivenSecurityProps(
             props,
-            KafkaSecurityConfig()
+            KafkaSecurityConfig(),
         )
     }
 }

@@ -29,7 +29,7 @@ class DeadLetterQueueProducerImpl(
             TjenestekallLogg.error(
                 "Failed to produce dead letter",
                 fields = mapOf("key" to key, "message" to message),
-                throwable = e
+                throwable = e,
             )
             Result.failure(e)
         }

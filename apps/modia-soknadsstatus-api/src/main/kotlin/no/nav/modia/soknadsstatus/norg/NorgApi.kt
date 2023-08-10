@@ -41,7 +41,7 @@ class NorgApiImpl(
     private val consumerId: String,
     httpClient: OkHttpClient,
     scheduler: Timer = Timer(),
-    private val clock: Clock = Clock.systemDefaultZone()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : NorgApi {
     private val log: Logger = LoggerFactory.getLogger(NorgApi::class.java)
     private val cacheRetention = 1.hours
@@ -57,8 +57,8 @@ class NorgApiImpl(
             initDelay = 30.seconds,
             growthFactor = 2.0,
             delayLimit = 1.hours,
-            scheduler = scheduler
-        )
+            scheduler = scheduler,
+        ),
     )
 
     private val arbeidsfordelingApi = ArbeidsfordelingApi(url, httpClient)
@@ -73,7 +73,7 @@ class NorgApiImpl(
             period = cacheRetention.inWholeMilliseconds,
             action = {
                 hentEnheterOgKontaktinformasjon()
-            }
+            },
         )
     }
 
@@ -83,7 +83,7 @@ class NorgApiImpl(
             if (geografiskTilknytning.isNumeric()) {
                 enhetApi.getEnhetByGeografiskOmraadeUsingGET(
                     geografiskOmraade = geografiskTilknytning,
-                    disk = diskresjonskode?.name
+                    disk = diskresjonskode?.name,
                 ).let(::toInternalDomain)
             } else {
                 /**
@@ -107,7 +107,7 @@ class NorgApiImpl(
     }
     override fun ping() = SelfTestCheck(
         "NorgApi via $url (${cache.size}, ${gtCache.estimatedSize()}, ${navkontorCache.estimatedSize()}, ${regionalkontorCache.estimatedSize()})",
-        false
+        false,
     ) {
         val limit = LocalDateTime.now(clock).minus(cacheRetention.toJavaDuration()).plus(cacheGraceperiod)
         val cacheIsFresh = lastUpdateOfCache?.isAfter(limit) == true
@@ -119,7 +119,7 @@ class NorgApiImpl(
                 """
                 Last updated: $lastUpdateOfCache
                 CacheSize: ${cache.size}
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
@@ -147,7 +147,7 @@ class NorgApiImpl(
 
     private fun <KEY, VALUE> createNorgCache() = CacheUtils.createCache<KEY, VALUE>(
         expireAfterWrite = cacheRetention,
-        maximumSize = 2000
+        maximumSize = 2000,
     )
 
     companion object {
@@ -155,14 +155,14 @@ class NorgApiImpl(
             alternativEnhetId = kontor.alternativEnhetId?.toString(),
             enhetId = kontor.enhetId?.toString(),
             geografiskOmraade = kontor.geografiskOmraade,
-            navKontorId = kontor.navKontorId?.toString()
+            navKontorId = kontor.navKontorId?.toString(),
         )
 
         internal fun toInternalDomain(enhet: RsEnhetDTO) = NorgDomain.Enhet(
             enhetId = requireNotNull(enhet.enhetNr),
             enhetNavn = requireNotNull(enhet.navn),
             status = NorgDomain.EnhetStatus.safeValueOf(enhet.status),
-            oppgavebehandler = requireNotNull(enhet.oppgavebehandler)
+            oppgavebehandler = requireNotNull(enhet.oppgavebehandler),
         )
 
         internal fun toInternalDomain(enhet: RsEnhetInkludertKontaktinformasjonDTO) =
@@ -170,14 +170,14 @@ class NorgApiImpl(
                 enhet = toInternalDomain(requireNotNull(enhet.enhet)),
                 publikumsmottak = enhet.kontaktinformasjon?.publikumsmottak?.map { toInternalDomain(it) }
                     ?: emptyList(),
-                overordnetEnhet = enhet.overordnetEnhet?.let(::EnhetId)
+                overordnetEnhet = enhet.overordnetEnhet?.let(::EnhetId),
             )
 
         private fun toInternalDomain(mottak: RsPublikumsmottakDTO) = NorgDomain.Publikumsmottak(
             besoksadresse = mottak.besoeksadresse?.let { toInternalDomain(it) },
             apningstider = mottak.aapningstider
                 ?.filter { it.dag != null }
-                ?.map { toInternalDomain(it) } ?: emptyList()
+                ?.map { toInternalDomain(it) } ?: emptyList(),
         )
 
         private fun toInternalDomain(adresse: RsStedsadresseDTO) = NorgDomain.Gateadresse(
@@ -185,14 +185,14 @@ class NorgApiImpl(
             husnummer = adresse.husnummer,
             husbokstav = adresse.husbokstav,
             postnummer = adresse.postnummer,
-            poststed = adresse.poststed
+            poststed = adresse.poststed,
         )
 
         private fun toInternalDomain(aapningstid: RsAapningstidDTO) = NorgDomain.Apningstid(
             ukedag = NorgDomain.Ukedag.safeValueOf(aapningstid.dag),
             stengt = aapningstid.stengt ?: false,
             apentFra = aapningstid.fra,
-            apentTil = aapningstid.til
+            apentTil = aapningstid.til,
         )
     }
 }

@@ -17,7 +17,7 @@ object NorgConfig {
                         requireNotNull(request.header("X-Correlation-ID")) {
                             "Kall uten \"X-Correlation-ID\" er ikke lov"
                         }
-                    }
+                    },
                 )
                 .build()
 
@@ -28,5 +28,5 @@ object NorgConfig {
 }
 
 data class NorgEnv(
-    val url: String
+    val url: String,
 )

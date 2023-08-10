@@ -10,8 +10,6 @@ import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
-import no.nav.personoversikt.common.logging.Logging
-import no.nav.personoversikt.common.logging.Logging.secureLog
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,7 +19,7 @@ interface MSGraphService {
     suspend fun fetchMultipleGroupsIfUserIsMember(
         userToken: String,
         veilederIdent: NavIdent,
-        groups: RolleListe
+        groups: RolleListe,
     ): RolleListe
 }
 
@@ -35,7 +33,7 @@ class AzureADServiceImpl(
     override suspend fun fetchMultipleGroupsIfUserIsMember(
         userToken: String,
         veilederIdent: NavIdent,
-        groups: RolleListe
+        groups: RolleListe,
     ): RolleListe {
         val url = URLBuilder(graphUrl).apply {
             path("v1.0/me/memberOf/microsoft.graph.group")
@@ -49,9 +47,9 @@ class AzureADServiceImpl(
                 response.value.map {
                     AnsattRolle(
                         gruppeNavn = requireNotNull(it.displayName),
-                        gruppeId = AzureObjectId(requireNotNull(it.id))
+                        gruppeId = AzureObjectId(requireNotNull(it.id)),
                     )
-                }
+                },
             )
         } catch (e: Exception) {
             TjenestekallLogg.error("Kall til azureAD feilet", throwable = e, fields = mapOf())
@@ -78,7 +76,7 @@ class AzureADServiceImpl(
                 "Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent. Body var ${
                     json.decodeFromString(
                         AzureErrorResponse.serializer(),
-                        body.string()
+                        body.string(),
                     )
                 }",
             )
@@ -86,34 +84,34 @@ class AzureADServiceImpl(
 
         return json.decodeFromString(
             AzureCountResponse.serializer(
-                ListSerializer(AzureGroupResponse.serializer())
+                ListSerializer(AzureGroupResponse.serializer()),
             ),
-            body.string()
+            body.string(),
         )
     }
 }
 
 data class MsGraphEnv(
     val url: String,
-    val scope: String
+    val scope: String,
 )
 
 @Serializable
 private data class AzureCountResponse<BODY>(
     @SerialName("@odata.count")
     val count: Int,
-    val value: BODY
+    val value: BODY,
 )
 
 @Serializable
 private data class AzureErrorResponse(
-    val error: NestedAzureErrorResponse
+    val error: NestedAzureErrorResponse,
 )
 
 @Serializable
 private data class NestedAzureErrorResponse(
     val code: String,
-    val message: String
+    val message: String,
 )
 
 @Serializable
@@ -149,5 +147,5 @@ private data class AzureGroupResponse(
     val securityIdentifier: String? = null,
     val theme: String? = null,
     val visibility: String? = null,
-    val onPremisesProvisioningErrors: List<String> = listOf()
+    val onPremisesProvisioningErrors: List<String> = listOf(),
 )

@@ -3,7 +3,8 @@ package no.nav.modia.soknadsstatus.kafka
 enum class AppCluster {
     PROD,
     PREPROD,
-    LOCALLY;
+    LOCALLY,
+    ;
 
     companion object {
         operator fun invoke(cluster: String?): AppCluster {
