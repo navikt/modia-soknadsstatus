@@ -30,7 +30,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             kafkaConsumer = consumer,
             pollDurationMs = 100.0,
             exceptionRestartDelayMs = 1000.0,
-            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge")
+            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge"),
         ) { _, key, value ->
             consumer.acknowledgeMessage(Pair(key, value))
             Result.success(Unit)
@@ -62,7 +62,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             kafkaConsumer = consumer,
             pollDurationMs = 100.0,
             exceptionRestartDelayMs = 1000.0,
-            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge")
+            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge"),
         ) { _, key, value ->
             consumer.acknowledgeMessage(Pair(key, value))
             Result.success(Unit)
@@ -74,12 +74,12 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
 
         consumer.addRecord(
             null,
-            "ignore_message"
+            "ignore_message",
         )
 
         consumer.addRecord(
             "test_key",
-            "test_message"
+            "test_message",
         )
 
         consumer.waitForMessages(1)
@@ -100,7 +100,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
             kafkaConsumer = consumer,
             pollDurationMs = 100.0,
             exceptionRestartDelayMs = 1000.0,
-            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge")
+            deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge"),
         ) { _, key, value ->
             consumer.acknowledgeMessage(Pair(key, value))
             Result.success(Unit)
@@ -110,12 +110,12 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
 
         consumer.addRecord(
             IGNORE_KEY,
-            "ignore_message"
+            "ignore_message",
         )
 
         consumer.addRecord(
             "test_key",
-            "test_message"
+            "test_message",
         )
 
         consumer.waitForMessages(1)

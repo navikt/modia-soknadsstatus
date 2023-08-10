@@ -52,8 +52,8 @@ class SoknadsstatusRepositoryImplTest {
         repository.upsert(
             dummyOppdatering.copy(
                 status = SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-                tidspunkt = Clock.System.now()
-            )
+                tidspunkt = Clock.System.now(),
+            ),
         )
 
         assertSuccess(repository.get(ident)) { oppdateringer ->
@@ -68,8 +68,8 @@ class SoknadsstatusRepositoryImplTest {
         repository.upsert(
             dummyOppdatering.copy(
                 status = SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-                tidspunkt = Clock.System.now().minus(1.minutes)
-            )
+                tidspunkt = Clock.System.now().minus(1.minutes),
+            ),
         )
 
         assertSuccess(repository.get(ident)) { oppdateringer ->
@@ -85,7 +85,7 @@ class SoknadsstatusRepositoryImplTest {
         systemRef = "infotrygd",
         tema = "DAG",
         status = SoknadsstatusDomain.Status.UNDER_BEHANDLING,
-        tidspunkt = Clock.System.now()
+        tidspunkt = Clock.System.now(),
     )
 
     fun <T> assertSuccess(result: Result<T>, block: (T) -> Unit) {

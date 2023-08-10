@@ -47,7 +47,7 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>.() -> Unit
+        configure: DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>.() -> Unit,
     ): DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> {
         val configuration = DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>()
         configuration.configure()
@@ -76,10 +76,10 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
                     deadLetterMessageSkipService = DeadLetterMessageSkipServiceImpl(
                         DeadLetterMessageRepository(
                             requireNotNull(appEnv.deadLetterQueueSkipTableName),
-                            requireNotNull(configuration.skipTableDataSource)
-                        )
+                            requireNotNull(configuration.skipTableDataSource),
+                        ),
                     ),
-                    deadLetterQueueMetricsGauge = requireNotNull(configuration.deadLetterQueueMetricsGauge)
+                    deadLetterQueueMetricsGauge = requireNotNull(configuration.deadLetterQueueMetricsGauge),
                 )
         }
 

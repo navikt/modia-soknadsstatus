@@ -6,7 +6,6 @@ import com.expediagroup.graphql.client.types.GraphQLClientRequest
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
-import kotlinx.serialization.Serializer
 import no.nav.common.utils.IdUtils
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import no.nav.personoversikt.common.utils.SelftestGenerator
@@ -24,7 +23,7 @@ open class LoggingGraphQLKtorClient(
 
     override suspend fun <T : Any> execute(
         request: GraphQLClientRequest<T>,
-        requestCustomizer: HttpRequestBuilder.() -> Unit
+        requestCustomizer: HttpRequestBuilder.() -> Unit,
     ): GraphQLClientResponse<T> {
         val callId: String = getCallId()
         val requestId = IdUtils.generateId()
@@ -32,20 +31,20 @@ open class LoggingGraphQLKtorClient(
             TjenestekallLogg.info(
                 "$name-request: $callId ($requestId)",
                 mapOf(
-                    "request" to defaultGraphQLSerializer().serialize(request)
-                )
+                    "request" to defaultGraphQLSerializer().serialize(request),
+                ),
             )
             val response = super.execute(request, requestCustomizer)
             val logMessage = mapOf(
                 "data" to response.data,
                 "errors" to response.errors,
-                "extensions" to response.extensions
+                "extensions" to response.extensions,
             )
 
             if (response.errors?.isNotEmpty() == true) {
                 TjenestekallLogg.error(
                     "$name-response-error: $callId ($requestId)",
-                    logMessage
+                    logMessage,
                 )
                 val exception = Exception(response.errors!!.joinToString(", ") { it.message })
                 selftestReporter.reportError(exception)
@@ -53,14 +52,14 @@ open class LoggingGraphQLKtorClient(
             }
             TjenestekallLogg.info(
                 "$name-response: $callId ($requestId)",
-                logMessage
+                logMessage,
             )
             selftestReporter.reportOk()
             return response
         } catch (exception: Throwable) {
             TjenestekallLogg.error(
                 "$name-response-error: $callId ($requestId)",
-                mapOf("exception" to exception)
+                mapOf("exception" to exception),
             )
             selftestReporter.reportError(exception)
             throw exception

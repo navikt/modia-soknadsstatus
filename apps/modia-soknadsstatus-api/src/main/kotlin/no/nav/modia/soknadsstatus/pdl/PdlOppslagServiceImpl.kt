@@ -12,7 +12,7 @@ class PdlOppslagServiceImpl(
     private val aktorIdCache: SuspendCache<String, String?> = getCache(),
     private val geografiskTilknytningCache: SuspendCache<String, String?> = getCache(),
     private val adresseBeskyttelseCache: SuspendCache<String, List<Adressebeskyttelse>> = getCache(),
-    private val identerCache: SuspendCache<String, List<String>> = getCache()
+    private val identerCache: SuspendCache<String, List<String>> = getCache(),
 ) : PdlOppslagService {
     companion object {
         fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(expiresAfterWrite = 1.minutes)
@@ -23,7 +23,7 @@ class PdlOppslagServiceImpl(
             pdlClient.hentAktivIdent(
                 userToken,
                 aktorId,
-                IdentGruppe.FOLKEREGISTERIDENT
+                IdentGruppe.FOLKEREGISTERIDENT,
             )
         }
     }

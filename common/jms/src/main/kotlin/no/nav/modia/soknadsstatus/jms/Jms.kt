@@ -55,9 +55,13 @@ object Jms {
                 connectionFactory = UserCredentialsConnectionFactoryAdapter(
                     username = config.username,
                     password = config.password,
-                    connectionFactory = if (appMode == AppMode.NAIS) createIBMConnectionFactory(config) else createActiveMQConnectionFactory(
-                        config
-                    )
+                    connectionFactory = if (appMode == AppMode.NAIS) {
+                        createIBMConnectionFactory(config)
+                    } else {
+                        createActiveMQConnectionFactory(
+                            config,
+                        )
+                    },
                 )
             }
         }
@@ -85,7 +89,7 @@ object Jms {
         return ActiveMQConnectionFactory(
             config.username,
             config.password,
-            "nio://${config.host}:${config.port}"
+            "nio://${config.host}:${config.port}",
         )
     }
 }

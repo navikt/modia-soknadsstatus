@@ -16,7 +16,7 @@ dependencies {
 }
 
 group = "no.nav.modia.soknadsstatus"
-//description = "norg-api"
+// description = "norg-api"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -37,8 +37,8 @@ openApiGenerate {
         mapOf(
             "useTags" to "true",
             "enumPropertyNaming" to "original",
-            "serializationLibrary" to "jackson"
-        )
+            "serializationLibrary" to "jackson",
+        ),
     )
 }
 

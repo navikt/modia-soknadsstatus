@@ -9,8 +9,8 @@ class AnsattServiceMock : AnsattService {
         AnsattEnhet(
             MockData.veileder.enhetId,
             MockData.veileder.enhetNavn,
-            "AKTIV"
-        )
+            "AKTIV",
+        ),
     )
 
     override fun hentAnsattFagomrader(ident: String, enhet: String): Set<String> = setOf(MockData.veileder.fagområder)

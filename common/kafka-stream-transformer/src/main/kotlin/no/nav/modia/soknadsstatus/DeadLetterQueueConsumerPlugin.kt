@@ -16,7 +16,7 @@ class DeadLetterQueueConsumerPlugin : Plugin<Pipeline<*, ApplicationCall>, DeadL
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: DeadLetterConfig.() -> Unit
+        configure: DeadLetterConfig.() -> Unit,
     ): DeadLetterQueueConsumerPlugin {
         val configuration = DeadLetterConfig()
         configuration.configure()

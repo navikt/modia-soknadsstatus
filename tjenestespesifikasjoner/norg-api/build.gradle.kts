@@ -40,8 +40,8 @@ openApiGenerate {
         mapOf(
             "useTags" to "true",
             "enumPropertyNaming" to "original",
-            "serializationLibrary" to "jackson"
-        )
+            "serializationLibrary" to "jackson",
+        ),
     )
 }
 

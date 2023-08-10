@@ -14,8 +14,8 @@ val cefLogger = ArchSightCEFLogger(
         logName = "soknadsstatus",
         filter = { (action: Audit.Action) ->
             action != Audit.Action.READ
-        }
-    )
+        },
+    ),
 )
 
 class Audit {
@@ -104,7 +104,7 @@ class Audit {
                 "resource='${resourceType.resource}'",
                 *identifiers
                     .map { "${it.first}='${it.second ?: "-"}'" }
-                    .toTypedArray()
+                    .toTypedArray(),
             )
                 .joinToString(" ")
 

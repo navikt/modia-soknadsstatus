@@ -10,7 +10,7 @@ object AnsattConfig {
         axsys: AxsysClient,
         azureADService: MSGraphService,
         sensitiveTilgangsRoller: SensitiveTilgangsRoller,
-        geografiskeTilgangsRoller: GeografiskeTilgangsRoller
+        geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
     ): AnsattService {
         if (appMode == AppMode.NAIS) {
             return AnsattServiceImpl(axsys, azureADService, sensitiveTilgangsRoller, geografiskeTilgangsRoller)

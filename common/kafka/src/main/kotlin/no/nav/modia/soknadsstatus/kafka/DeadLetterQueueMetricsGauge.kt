@@ -12,7 +12,7 @@ interface DeadLetterQueueMetricsGauge {
 
 class DeadLetterQueueMetricsGaugeImpl(
     gaugeTitle: String,
-    metricsRegistry: PrometheusMeterRegistry = Metrics.Registry
+    metricsRegistry: PrometheusMeterRegistry = Metrics.Registry,
 ) : DeadLetterQueueMetricsGauge {
     private val gauge = metricsRegistry.gauge(gaugeTitle, AtomicInteger(0))
 

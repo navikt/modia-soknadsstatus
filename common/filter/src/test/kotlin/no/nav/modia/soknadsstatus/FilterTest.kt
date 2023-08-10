@@ -73,7 +73,7 @@ class FilterTest {
 
 data class BeggeBehandlinger(
     val opprettet: BehandlingOpprettet,
-    val avsluttet: BehandlingAvsluttet
+    val avsluttet: BehandlingAvsluttet,
 )
 
 private fun generateBehandling(
@@ -92,7 +92,7 @@ private fun generateBehandling(
     primaerBehandlingREF: PrimaerBehandlingREF? = PrimaerBehandlingREF("behandlingsRef", Type("koderef", "kodeverksRef", "behandlingstype")),
     sakstema: Sakstema = Sakstema("koderef", "kodeverksRef", "sakstema"),
     sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
-    styringsinformasjonListe: List<StyringsinformasjonListe> = listOf()
+    styringsinformasjonListe: List<StyringsinformasjonListe> = listOf(),
 ): BeggeBehandlinger {
     return BeggeBehandlinger(
         BehandlingOpprettet(
@@ -110,7 +110,7 @@ private fun generateBehandling(
             primaerBehandlingREF,
             sakstema,
             sekundaerBehandlingREF,
-            styringsinformasjonListe
+            styringsinformasjonListe,
         ),
         BehandlingAvsluttet(
             avslutningsstatus,
@@ -129,6 +129,6 @@ private fun generateBehandling(
             sakstema,
             sekundaerBehandlingREF,
             styringsinformasjonListe,
-        )
+        ),
     )
 }

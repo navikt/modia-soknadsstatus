@@ -31,25 +31,25 @@ class KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> :
 
     override fun install(
         pipeline: Pipeline<*, ApplicationCall>,
-        configure: KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>.() -> Unit
+        configure: KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>.() -> Unit,
     ): KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> {
         val configuration = KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>()
         configuration.configure()
 
         KafkaStreamPlugin().install(
-            pipeline
+            pipeline,
         ) {
             appEnv = requireNotNull(configuration.appEnv)
             topology {
                 val stream = stream<String, String>(requireNotNull(configuration.sourceTopic))
                 val deserializedStream: KStream<String, IN_TYPE> = stream.processValues({
                     SerDesHandler<String, String, IN_TYPE>(
-                        requireNotNull(configuration.deserializer)
+                        requireNotNull(configuration.deserializer),
                     ) { record, exception ->
                         requireNotNull(configuration.deserializationExceptionHandler).handle(
                             record.key(),
                             record.value(),
-                            exception
+                            exception,
                         )
                     }
                 })
@@ -57,7 +57,7 @@ class KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> :
                 val serializedStream: KStream<String, String> = transformedStream.processValues({
                     SerDesHandler<String, OUT_TYPE, String>(
                         requireNotNull(configuration.serializer),
-                        requireNotNull(configuration.onSerializationException)
+                        requireNotNull(configuration.onSerializationException),
                     )
                 })
 
@@ -70,7 +70,6 @@ class KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> :
         return KafkaStreamTransformPlugin()
     }
 }
-
 
 private class SerDesHandler<KEY_TYPE : String, VALUE_IN_TYPE, VALUE_OUT_TYPE>(
     private val block: (key: KEY_TYPE, value: VALUE_IN_TYPE) -> VALUE_OUT_TYPE?,

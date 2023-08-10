@@ -12,12 +12,12 @@ import no.nav.personoversikt.common.kabac.Kabac
 
 class Policies(
     private val sensitiveTilgangsRoller: SensitiveTilgangsRoller,
-    private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller
+    private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) {
     fun tilgangTilBruker(
-        eksternBrukerId: EksternBrukerId
+        eksternBrukerId: EksternBrukerId,
     ) = TilgangTilBrukerPolicy(sensitiveTilgangsRoller, geografiskeTilgangsRoller).withAttributes(
-        eksternBrukerId.toAttributeValue()
+        eksternBrukerId.toAttributeValue(),
     )
 
     private fun Kabac.Policy.withAttributes(vararg attributes: AttributeValue<*>) =

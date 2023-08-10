@@ -47,7 +47,7 @@ object KafkaUtils {
             """
             Created KStream: 
             ${topology.describe()}
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         return KafkaStreams(topology, props)

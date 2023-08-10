@@ -1,4 +1,4 @@
-package no.nav.modia.soknadsstatus.ansatt.domain;
+package no.nav.modia.soknadsstatus.ansatt.domain
 
 import kotlinx.serialization.Serializable
 
@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class Ansatt(
     val fornavn: String,
     val etternavn: String,
-    val ident: String
+    val ident: String,
 )

@@ -24,16 +24,16 @@ object MockData {
             enhetId,
             enhetNavn,
             NorgDomain.EnhetStatus.AKTIV,
-            true
+            true,
         )
         val navIdent = "Z999999"
         val roller = RolleListe(
             sensitiveTilgangsRoller.kode6,
             sensitiveTilgangsRoller.kode7,
-            sensitiveTilgangsRoller.skjermedePersoner
+            sensitiveTilgangsRoller.skjermedePersoner,
         ).apply {
             addAll(
-                geografiskeTilgangsRoller.regionaleTilgangsRoller
+                geografiskeTilgangsRoller.regionaleTilgangsRoller,
             )
             addAll(geografiskeTilgangsRoller.nasjonaleTilgangsRoller)
         }

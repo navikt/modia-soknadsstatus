@@ -19,7 +19,6 @@ class JmsConsumer(private val config: Jms.Config, appMode: AppMode) {
         val queue = session.createQueue(queueName)
         val receiver = session.createReceiver(queue)
 
-
         receiver.messageListener = MessageListener { message ->
             try {
                 onMessage(message)

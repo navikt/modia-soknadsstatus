@@ -61,7 +61,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     exclude(
         "META-INF/*.SF",
         "META-INF/*.DSA",
-        "META-INF/*.RSA"
+        "META-INF/*.RSA",
     )
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)

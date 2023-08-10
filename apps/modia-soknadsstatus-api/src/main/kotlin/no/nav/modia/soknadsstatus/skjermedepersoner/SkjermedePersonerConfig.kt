@@ -14,7 +14,7 @@ object SkjermedePersonerConfig {
     fun factory(
         appMode: AppMode,
         env: SkjermedePersonerEnv,
-        tokenProvider: MachineToMachineTokenClient
+        tokenProvider: MachineToMachineTokenClient,
     ): SkjermedePersonerApi {
         if (appMode == AppMode.NAIS) {
             val scope = env.scope
@@ -27,12 +27,12 @@ object SkjermedePersonerConfig {
                         requireNotNull(request.header("X-Correlation-ID")) {
                             "Kall uten \"X-Correlation-ID\" er ikke lov"
                         }
-                    }
+                    },
                 )
                 .addInterceptor(
                     AuthorizationInterceptor {
                         tokenProvider.createMachineToMachineToken(scope)
-                    }
+                    },
                 )
                 .build()
             return SkjermedePersonerApiImpl(url, httpClient)
@@ -44,5 +44,5 @@ object SkjermedePersonerConfig {
 
 data class SkjermedePersonerEnv(
     val url: String,
-    val scope: DownstreamApi
+    val scope: DownstreamApi,
 )

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class Behandlingstema(
     val kodeRef: String?,
     val kodeverksRef: String?,
-    val value: String
+    val value: String,
 )
