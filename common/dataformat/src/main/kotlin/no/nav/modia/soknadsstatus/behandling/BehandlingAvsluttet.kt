@@ -8,7 +8,7 @@ data class BehandlingAvsluttet(
     val avslutningsstatus: Avslutningsstatus,
     override val aktoerREF: List<AktoerREF>,
     override val ansvarligEnhetREF: String,
-    override val applikasjonBehandlingREF: String?,
+    override val applikasjonBehandlingREF: String? = null,
     override val applikasjonSakREF: String,
     override val behandlingsID: String,
     override val behandlingstema: Behandlingstema,
@@ -17,8 +17,8 @@ data class BehandlingAvsluttet(
     override val hendelsesId: String,
     override val hendelsesTidspunkt: LocalDateTime,
     override val hendelsesprodusentREF: HendelsesprodusentREF,
-    override val primaerBehandlingREF: PrimaerBehandlingREF?,
+    override val primaerBehandlingREF: PrimaerBehandlingREF? = null,
     override val sakstema: Sakstema,
-    override val sekundaerBehandlingREF: List<SekundaerBehandlingREF>,
-    override val styringsinformasjonListe: List<StyringsinformasjonListe>,
+    override val sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
+    override val styringsinformasjonListe: List<StyringsinformasjonListe> = listOf()
 ) : Behandling()
