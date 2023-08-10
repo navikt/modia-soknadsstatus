@@ -1,7 +1,5 @@
-import no.nav.modia.soknadsstatus.FilterUtils
 import no.nav.modia.soknadsstatus.FilterUtils.erKvitteringstype
 import no.nav.modia.soknadsstatus.behandling.Behandling
-import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
 
 object Filter {
@@ -11,24 +9,20 @@ object Filter {
 
     private fun harLovligSaksTema(behandling: Behandling) = behandling.sakstema.value !in ulovligeSakstema
 
-    private fun harLovlingStatusPaBehandling(behandling: Behandling): Boolean {
+    private fun harLovligKvitteringsType(behandling: Behandling): Boolean {
         if (behandling is BehandlingOpprettet) {
             return !erKvitteringstype(behandling.hendelseType)
-        } else if (behandling is BehandlingAvsluttet) {
-            return behandling.avslutningsstatus.value == FilterUtils.AVSLUTTET
-        }
-        return false
-    }
-
-    private fun harLovligBehandlingsstatus(behandling: Behandling): Boolean {
-        if (behandling is BehandlingAvsluttet) {
-            return behandling.avslutningsstatus.value !== FilterUtils.AVSLUTTET
         }
         return true
     }
 
-    private fun harLovligPrefix(behandling: Behandling) =
-        behandling.primaerBehandlingREF?.behandlingsREF?.startsWith(ULOVLIG_PREFIX)?.not() ?: false
+    private fun harLovligPrefix(behandling: Behandling): Boolean {
+        val behandlingsRef = behandling.primaerBehandlingREF?.behandlingsREF
+        if (behandlingsRef != null) {
+            return !behandlingsRef.startsWith(ULOVLIG_PREFIX)
+        }
+        return true
+    }
 
     private fun harPrimaerBehandling(behandling: Behandling) = behandling.primaerBehandlingREF != null
 
@@ -42,7 +36,7 @@ object Filter {
             ::harPrimaerBehandling,
             ::harLovligPrefix,
             ::harLovligBehandlingstype,
-            ::harLovlingStatusPaBehandling,
+            ::harLovligKvitteringsType,
         )
 
         for (check in checks) {

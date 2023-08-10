@@ -78,9 +78,11 @@ fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeO
 )
 
 fun filter(key: String?, value: Behandling): Boolean {
-    Transformer.behandlingsStatus(value) ?: return false
-
-    return Filter.filtrerBehandling(value)
+    val shouldFilter = Filter.filtrerBehandling(value)
+    if (shouldFilter) {
+        TjenestekallLogg.info("Filtrerer ut behandling", fields = mapOf("key" to key, "value" to value))
+    }
+    return shouldFilter
 }
 
 fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling)
