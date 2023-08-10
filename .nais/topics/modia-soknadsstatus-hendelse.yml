@@ -27,3 +27,6 @@ spec:
     - team: teamforeldrepenger
       application: fpsak
       access: write
+    - team: personoversikt
+      application: modia-soknadsstatus-kafka-manager
+      access: read

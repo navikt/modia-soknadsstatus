@@ -21,3 +21,6 @@ spec:
     - team: personoversikt
       application: soknadsstatus-hendelse-transform
       access: readwrite
+    - team: personoversikt
+      application: modia-soknadsstatus-kafka-manager
+      access: read
