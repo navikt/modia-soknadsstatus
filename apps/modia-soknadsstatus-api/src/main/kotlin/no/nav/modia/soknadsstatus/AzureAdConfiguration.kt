@@ -1,7 +1,6 @@
 package no.nav.modia.soknadsstatus
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
 import no.nav.personoversikt.common.utils.EnvUtils

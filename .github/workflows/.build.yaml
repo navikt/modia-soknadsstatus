@@ -18,6 +18,12 @@ jobs:
           distribution: temurin
           java-version: 17.x
           cache: gradle
+      - name: Setup ktlint
+        uses: nbadal/action-ktlint-setup@v1
+        with:
+          ktlint_version: '0.47.1'
+      - name: Ktlint
+        run: bash ./linting.sh
       - name: Gradle test and build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
