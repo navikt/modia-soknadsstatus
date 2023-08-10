@@ -51,8 +51,8 @@ class LoggingInterceptor(
             mapOf(
                 "url" to request.url.toString(),
                 "headers" to request.headers.names().joinToString(", "),
-                "body" to requestBody
-            )
+                "body" to requestBody,
+            ),
         )
 
         val timer: Long = System.currentTimeMillis()
@@ -63,8 +63,8 @@ class LoggingInterceptor(
                     "$name-response-error: $callId ($requestId))",
                     mapOf(
                         "exception" to exception,
-                        "time" to timer.measure()
-                    )
+                        "time" to timer.measure(),
+                    ),
                 )
             }
             .getOrThrow()
@@ -77,8 +77,8 @@ class LoggingInterceptor(
                 mapOf(
                     "status" to "${response.code} ${response.message}",
                     "time" to timer.measure(),
-                    "body" to responseBody
-                )
+                    "body" to responseBody,
+                ),
             )
         } else {
             TjenestekallLogg.error(
@@ -86,8 +86,8 @@ class LoggingInterceptor(
                 mapOf(
                     "status" to "${response.code} ${response.message}",
                     "time" to timer.measure(),
-                    "body" to responseBody
-                )
+                    "body" to responseBody,
+                ),
             )
         }
         return response

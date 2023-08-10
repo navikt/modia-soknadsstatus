@@ -7,7 +7,6 @@ import no.nav.personoversikt.common.kabac.AttributeValue
 import no.nav.personoversikt.common.kabac.CombiningAlgorithm
 import no.nav.personoversikt.common.kabac.Decision
 import no.nav.personoversikt.common.kabac.Kabac
-import no.nav.personoversikt.common.logging.Logging
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import no.nav.utils.getCallId
 
@@ -22,12 +21,12 @@ private typealias NoAccessHandler = (String) -> java.lang.RuntimeException
 
 data class PolicyWithAttributes(
     val policy: Kabac.Policy,
-    val attributes: List<AttributeValue<*>>
+    val attributes: List<AttributeValue<*>>,
 )
 
 private class Instance(
     private val enforcementPoint: Kabac.PolicyEnforcementPoint,
-    private val noAccessHandler: NoAccessHandler
+    private val noAccessHandler: NoAccessHandler,
 ) : AccessControlInstance {
     private val policies = mutableListOf<PolicyWithAttributes>()
     private var combiningAlgorithm = CombiningAlgorithm.denyOverride
@@ -64,7 +63,7 @@ private class Instance(
         val (decision, report) = enforcementPoint.evaluatePolicyWithContextWithReport(
             bias = bias,
             ctx = ctx,
-            policy = policy
+            policy = policy,
         )
         TjenestekallLogg.info(TjenestekallLogg.format("policy-report: ${getCallId()}", report), fields = mapOf())
 
@@ -74,7 +73,7 @@ private class Instance(
 
 open class AccessControlKabac(
     private val enforcementPoint: Kabac.PolicyEnforcementPoint,
-    private val noAccessHandler: NoAccessHandler
+    private val noAccessHandler: NoAccessHandler,
 ) : AccessControl {
     override fun check(policy: PolicyWithAttributes): AccessControlInstance {
         return Instance(enforcementPoint, noAccessHandler).check(policy)

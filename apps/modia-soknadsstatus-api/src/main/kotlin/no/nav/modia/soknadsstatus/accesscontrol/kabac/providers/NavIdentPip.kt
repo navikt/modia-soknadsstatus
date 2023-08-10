@@ -15,7 +15,7 @@ object NavIdentPip : Kabac.PolicyInformationPoint<NavIdent> {
 
         val navIdentString =
             requireNotNull(
-                principal.payload.getClaim(Constants.AAD_NAV_IDENT_CLAIM).asString() ?: principal.subject
+                principal.payload.getClaim(Constants.AAD_NAV_IDENT_CLAIM).asString() ?: principal.subject,
             ) {
                 "Fikk ikke NavIdent fra principal"
             }

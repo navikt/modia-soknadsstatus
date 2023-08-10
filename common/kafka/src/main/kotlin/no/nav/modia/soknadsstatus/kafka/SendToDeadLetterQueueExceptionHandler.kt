@@ -9,7 +9,7 @@ interface ExceptionHandler {
 
 class SendToDeadLetterQueueExceptionHandler(
     private val topic: String,
-    private val dlqProducer: DeadLetterQueueProducer
+    private val dlqProducer: DeadLetterQueueProducer,
 ) : ExceptionHandler {
     override fun handle(key: String?, value: String?, exception: java.lang.Exception) {
         try {
@@ -22,7 +22,7 @@ class SendToDeadLetterQueueExceptionHandler(
                 dlqKey = UUID.randomUUID().toString()
                 TjenestekallLogg.error(
                     "Received a record without a key. The Dead letter was: $value. Gave it key: $dlqKey",
-                    fields = mapOf("value" to value, "key" to dlqKey)
+                    fields = mapOf("value" to value, "key" to dlqKey),
                 )
             }
 
@@ -31,7 +31,7 @@ class SendToDeadLetterQueueExceptionHandler(
             TjenestekallLogg.error(
                 "Failed to parse message when sending to DLQ on topic $topic",
                 fields = mapOf("topic" to topic),
-                throwable = e
+                throwable = e,
             )
         }
     }

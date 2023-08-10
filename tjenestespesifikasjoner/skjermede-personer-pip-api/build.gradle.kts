@@ -38,8 +38,8 @@ openApiGenerate {
     configOptions.set(
         mapOf(
             "enumPropertyNaming" to "original",
-            "serializationLibrary" to "jackson"
-        )
+            "serializationLibrary" to "jackson",
+        ),
     )
 }
 

@@ -20,7 +20,7 @@ val oppdatering = SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
     systemRef = "test",
     tema = "tema",
     status = SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-    tidspunkt = Clock.System.now()
+    tidspunkt = Clock.System.now(),
 )
 
 @TestInstance(Lifecycle.PER_METHOD)
@@ -46,7 +46,7 @@ class SoknadsstatusServiceTest {
         assertEquals(
             2,
             repository.getAll().size,
-            "PdlOppslagService lagret ikke status oppdatering for begge aktør ider"
+            "PdlOppslagService lagret ikke status oppdatering for begge aktør ider",
         )
         val firstElement = soknadsstatusService.fetchDataForIdent(aktorIder.first())
         assertNotNull(firstElement, "Manglet soknadsstatus for ident")

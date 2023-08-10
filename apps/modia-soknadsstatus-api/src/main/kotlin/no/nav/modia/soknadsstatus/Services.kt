@@ -28,22 +28,22 @@ interface Services {
                 env.kafkaApp.appMode,
                 env.pdlEnv,
                 configuration.oboTokenClient,
-                configuration.machineToMachineTokenClient
+                configuration.machineToMachineTokenClient,
             )
             val soknadsstatusService = SoknadsstatusServiceImpl(pdl, configuration.repository)
             val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv, env.kafkaApp.appName)
             val skjermedePersonerApi = SkjermedePersonerConfig.factory(
                 env.kafkaApp.appMode,
                 env.skjermedePersonerEnv,
-                configuration.machineToMachineTokenClient
+                configuration.machineToMachineTokenClient,
             )
             val axsysApi =
                 AxsysConfig.factory(env.kafkaApp.appMode, env.axsysEnv, configuration.machineToMachineTokenClient)
             val azureADService = AzureADServiceImpl(
                 graphUrl = Url(env.msGraphEnv.url),
                 tokenClient = configuration.oboTokenClient.bindTo(
-                    env.msGraphEnv.scope
-                )
+                    env.msGraphEnv.scope,
+                ),
             )
             val ansattService =
                 AnsattConfig.factory(
@@ -51,13 +51,13 @@ interface Services {
                     axsysApi,
                     azureADService,
                     env.sensitiveTilgangsRoller,
-                    env.geografiskeTilgangsRoller
+                    env.geografiskeTilgangsRoller,
                 )
             val accessControl = AccessControlConfig(
                 pdl = pdl,
                 skjermingApi = skjermedePersonerApi,
                 norg = norgApi,
-                ansattService = ansattService
+                ansattService = ansattService,
             )
             val dlqMetricsGauge =
                 DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
@@ -66,8 +66,8 @@ interface Services {
             val dlSkipService = DeadLetterMessageSkipServiceImpl(
                 DeadLetterMessageRepository(
                     requireNotNull(env.kafkaApp.deadLetterQueueSkipTableName),
-                    env.datasourceConfiguration.datasource
-                )
+                    env.datasourceConfiguration.datasource,
+                ),
             )
 
             return object : Services {

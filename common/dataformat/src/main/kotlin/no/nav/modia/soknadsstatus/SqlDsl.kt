@@ -34,7 +34,7 @@ object SqlDsl {
     private fun preparedStatement(
         connection: Connection,
         sql: String,
-        variables: Array<out Any>
+        variables: Array<out Any>,
     ): PreparedStatement {
         val stmt = connection.prepareStatement(sql)
         variables.forEachIndexed { index, value ->

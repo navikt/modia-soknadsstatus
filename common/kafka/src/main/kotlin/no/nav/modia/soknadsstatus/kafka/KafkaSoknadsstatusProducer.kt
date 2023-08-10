@@ -23,7 +23,7 @@ class KafkaSoknadsstatusProducer(
             TjenestekallLogg.error(
                 "Failed to produce kafka message,",
                 fields = mapOf("key" to key, "message" to message),
-                throwable = e
+                throwable = e,
             )
             Result.failure(e)
         }

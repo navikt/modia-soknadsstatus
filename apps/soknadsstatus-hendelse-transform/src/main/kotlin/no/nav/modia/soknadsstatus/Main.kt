@@ -29,7 +29,7 @@ fun runApp(port: Int = 8080) {
                 appEnv = config
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                     topic = requireNotNull(config.deadLetterQueueTopic),
-                    dlqProducer = deadLetterProducer
+                    dlqProducer = deadLetterProducer,
                 )
                 sourceTopic = requireNotNull(config.sourceTopic)
                 targetTopic = requireNotNull(config.targetTopic)
@@ -39,7 +39,7 @@ fun runApp(port: Int = 8080) {
                     TjenestekallLogg.error(
                         "Klarte ikke å serialisere melding",
                         fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
-                        throwable = exception
+                        throwable = exception,
                     )
                 }
                 configure { stream ->
@@ -55,7 +55,7 @@ fun runApp(port: Int = 8080) {
                 deserializer = ::deserialize
                 serializer = ::serialize
             }
-        }
+        },
     ).start(wait = true)
 }
 
@@ -63,7 +63,7 @@ fun deserialize(key: String?, value: String) = Json.decodeFromString(Behandling.
 
 fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
     SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
-    value
+    value,
 )
 
 fun filter(key: String?, value: Behandling): Boolean {

@@ -14,15 +14,15 @@ class Configuration(
             name = "Infotrygd/Arena",
             type = Source.Type.JMS,
             resourceId = "arena-infotrygd-soknadsstatus",
-            exampleFile = "$examples/infotrygd.xml"
+            exampleFile = "$examples/infotrygd.xml",
         ),
         Source(
             name = "Foreldrepenger/Pleiepenger",
             type = Source.Type.KAFKA,
             resourceId = "aapen-sob-oppgaveHendelse-v1",
-            exampleFile = "$examples/pf-k9.json"
+            exampleFile = "$examples/pf-k9.json",
         ),
-    )
+        ),
 )
 
 class Handlers(appEnv: AppEnv) {
@@ -36,10 +36,10 @@ class Handlers(appEnv: AppEnv) {
                 username = EnvUtils.getRequiredConfig("JMS_USERNAME"),
                 password = EnvUtils.getRequiredConfig("JMS_PASSWORD"),
             ),
-            appEnv.appMode
+            appEnv.appMode,
         ),
         Source.Type.KAFKA to KafkaHandler(
-            appEnv
-        )
+            appEnv,
+        ),
     )
 }

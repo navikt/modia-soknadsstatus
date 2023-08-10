@@ -12,6 +12,6 @@ fun runApp(port: Int = 8080) {
     KtorServer.create(
         factory = CIO,
         port = port,
-        application = Application::dataGeneratorModule
+        application = Application::dataGeneratorModule,
     ).start(wait = true)
 }

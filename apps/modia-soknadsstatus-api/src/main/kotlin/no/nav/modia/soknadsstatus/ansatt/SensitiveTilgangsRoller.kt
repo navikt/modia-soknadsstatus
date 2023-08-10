@@ -13,23 +13,23 @@ private const val SKJERMEDE_PERSONER_PREPROD = "dbe4ad45-320b-4e9a-aaa1-73cca4ee
 private enum class SensitiveRoller(
     val groupName: String,
     val productionRole: AzureObjectId,
-    val preprodRole: AzureObjectId
+    val preprodRole: AzureObjectId,
 ) {
     KODE6(
         groupName = "0000-GA-STRENGT_FORTROLIG_ADRESSE",
         productionRole = AzureObjectId(KODE6_PROD),
-        preprodRole = AzureObjectId(KODE6_PREPROD)
+        preprodRole = AzureObjectId(KODE6_PREPROD),
     ),
     KODE7(
         groupName = "0000-GA-FORTROLIG_ADRESSE",
         productionRole = AzureObjectId(KODE7_PROD),
-        preprodRole = AzureObjectId(KODE7_PREPROD)
+        preprodRole = AzureObjectId(KODE7_PREPROD),
     ),
     SKJERMEDE_PERSONER(
         groupName = "0000-GA-EGNE_ANSATTE",
         productionRole = AzureObjectId(SKJERMEDE_PERSONER_PROD),
-        preprodRole = AzureObjectId(SKJERMEDE_PERSONER_PREPROD)
-    )
+        preprodRole = AzureObjectId(SKJERMEDE_PERSONER_PREPROD),
+        ),
 }
 
 class SensitiveTilgangsRoller(appCluster: AppCluster) {

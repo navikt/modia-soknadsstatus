@@ -12,7 +12,6 @@ import no.nav.modia.soknadsstatus.kafka.KafkaUtils
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serdes.StringSerde
 import java.util.*
 import javax.jms.TextMessage
 
@@ -23,7 +22,7 @@ fun Application.mqToKafkaModule() {
     Jms.SSLConfig(
         appMode = config.appMode,
         jmsKeyStorePath = mqConfig.config.jmsKeyStorePath,
-        jmsPassword = mqConfig.config.jmsKeystorePassword
+        jmsPassword = mqConfig.config.jmsKeystorePassword,
     ).injectSSLConfigIfProd()
 
     val jmsConsumer = JmsConsumer(mqConfig.config, config.appMode)
@@ -41,8 +40,8 @@ fun Application.mqToKafkaModule() {
                             ProducerRecord(
                                 requireNotNull(config.targetTopic),
                                 UUID.randomUUID().toString(),
-                                message.text
-                            )
+                                message.text,
+                            ),
                         )
                     }
 

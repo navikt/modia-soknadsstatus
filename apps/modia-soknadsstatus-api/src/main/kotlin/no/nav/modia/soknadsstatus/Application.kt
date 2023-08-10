@@ -26,8 +26,8 @@ fun Application.soknadsstatusModule(
 ) {
     val security = Security(
         listOfNotNull(
-            configuration.authProviderConfig
-        )
+            configuration.authProviderConfig,
+        ),
     )
 
     install(CORS) {
@@ -70,11 +70,11 @@ fun Application.soknadsstatusModule(
                             val encodedValue =
                                 Encoding.encode(
                                     SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
-                                    value
+                                    value,
                                 )
                             services.dlqProducer.sendMessage(
                                 key,
-                                encodedValue
+                                encodedValue,
                             )
                         }
                     }
@@ -92,7 +92,7 @@ fun Application.soknadsstatusModule(
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
                 deadLetterMessageSkipService = services.dlSkipService,
-                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
+                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName)),
             ) { _, _, value ->
                 kotlin.runCatching {
                     val inkommendeOppdatering =
@@ -116,11 +116,11 @@ fun Application.soknadsstatusModule(
                                         call.authentication,
                                         Audit.Action.READ,
                                         AuditResources.Person.SakOgBehandling.Les,
-                                        AuditIdentifier.FNR to ident
-                                    )
+                                        AuditIdentifier.FNR to ident,
+                                    ),
                                 ) {
                                     services.soknadsstatusService.fetchDataForIdent(ident)
-                                }
+                                },
                         )
                     }
 
@@ -135,10 +135,10 @@ fun Application.soknadsstatusModule(
                                         Audit.Action.READ,
                                         AuditResources.Person.SakOgBehandling.Les,
                                         AuditIdentifier.FNR to ident,
-                                    )
+                                    ),
                                 ) {
                                     services.soknadsstatusService.fetchAggregatedDataForIdent(ident)
-                                }
+                                },
                         )
                     }
                 }
@@ -150,6 +150,6 @@ fun Application.soknadsstatusModule(
 private fun ApplicationCall.getIdent(): String {
     return this.parameters["ident"] ?: throw HttpStatusException(
         HttpStatusCode.BadRequest,
-        "ident missing in request"
+        "ident missing in request",
     )
 }

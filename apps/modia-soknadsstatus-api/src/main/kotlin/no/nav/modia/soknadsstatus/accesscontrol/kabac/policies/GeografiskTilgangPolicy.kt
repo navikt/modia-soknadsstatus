@@ -41,7 +41,7 @@ class GeografiskTilgangPolicy(private val geografiskeTilgangsRoller: Geografiske
 
         return Decision.Deny(
             "Veileder har ikke tilgang til bruker basert på geografisk tilgang",
-            DenyCauseCode.FP4_GEOGRAFISK
+            DenyCauseCode.FP4_GEOGRAFISK,
         )
     }
 }

@@ -22,6 +22,6 @@ fun main() {
     KtorServer.create(
         factory = CIO,
         port = 9001,
-        application = Application::mqToKafkaModule
+        application = Application::mqToKafkaModule,
     ).start(wait = true)
 }

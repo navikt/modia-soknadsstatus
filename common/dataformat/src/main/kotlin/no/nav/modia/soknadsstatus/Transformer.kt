@@ -34,7 +34,7 @@ object Transformer {
             behandlingsId = behandling.behandlingsID,
             systemRef = behandling.hendelsesprodusentREF.value,
             status = behandlingsStatus(behandling)!!,
-            tidspunkt = behandling.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault())
+            tidspunkt = behandling.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault()),
         )
     }
 }

@@ -15,7 +15,7 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
             SkipTableEntry(
                 key = it.getString(tabell.key),
                 createdAt = it.getTimestamp(tabell.createdAt).toInstant(),
-                skippedAt = it.getTimestamp(tabell.skippedAt)?.toInstant()
+                skippedAt = it.getTimestamp(tabell.skippedAt)?.toInstant(),
             )
         }
     }
@@ -27,7 +27,7 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
             SET ${tabell.skippedAt} = NOW()
             WHERE ${tabell.key} = ?
             """.trimIndent(),
-            key
+            key,
         )
     }
 
@@ -46,7 +46,7 @@ private data class Tabell(
     val tableName: String,
     val key: String = "key",
     val createdAt: String = "created_at",
-    val skippedAt: String = "skipped_at"
+    val skippedAt: String = "skipped_at",
 ) {
     override fun toString(): String = tableName
 }
@@ -54,5 +54,5 @@ private data class Tabell(
 data class SkipTableEntry(
     val key: String,
     val createdAt: Instant,
-    val skippedAt: Instant? = null
+    val skippedAt: Instant? = null,
 )

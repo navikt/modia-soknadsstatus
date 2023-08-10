@@ -26,13 +26,13 @@ class SkjermedePersonerApiImpl(
         return requireNotNull(
             cache.get(fnr) {
                 skjermingPipApi.isSkjermetPostUsingPOST(SkjermetDataRequestDTO(fnr.get()))
-            }
+            },
         )
     }
 
     override fun ping() = SelfTestCheck(
         "SkjermedePersonerApi via $url",
-        false
+        false,
     ) {
         HealthCheckUtils.pingUrl(UrlUtils.joinPaths(url, "/internal/health/liveness"), client)
     }

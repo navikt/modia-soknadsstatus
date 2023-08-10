@@ -16,7 +16,7 @@ class AnsattServiceImpl(
     private val axsys: AxsysClient,
     private val azureADService: MSGraphService,
     private val sensitiveTilgangsRoller: SensitiveTilgangsRoller,
-    private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller
+    private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) : AnsattService {
 
     private val sensitiveOgGeografiskeTilgangsRoller: RolleListe
@@ -24,7 +24,7 @@ class AnsattServiceImpl(
             return RolleListe(
                 sensitiveTilgangsRoller.kode6,
                 sensitiveTilgangsRoller.kode7,
-                sensitiveTilgangsRoller.skjermedePersoner
+                sensitiveTilgangsRoller.skjermedePersoner,
             ).apply {
                 addAll(geografiskeTilgangsRoller.regionaleTilgangsRoller)
                 addAll(geografiskeTilgangsRoller.nasjonaleTilgangsRoller)
@@ -51,7 +51,7 @@ class AnsattServiceImpl(
                 TjenestekallLogg.error(
                     "Klarte ikke å hente ansatt fagområder for $ident $enhet",
                     throwable = it,
-                    fields = mapOf()
+                    fields = mapOf(),
                 )
                 emptySet()
             }

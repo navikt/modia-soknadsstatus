@@ -17,13 +17,13 @@ private val NASJONALE_TILGANGER_PROD = listOf(
     "3063daf5-24c6-409c-9139-2d843cb4327",
     "ad3ee064-44b7-4c58-a618-5df1e1cb05db",
     "f8ceac75-30fe-4f0f-aec6-db706986caf0",
-    "baf0a4b6-71ca-45dd-9731-9f3469627c38"
+    "baf0a4b6-71ca-45dd-9731-9f3469627c38",
 )
 private val NASJONALE_TILGANGER_PREPROD = listOf(
     "924badcd-b936-44f4-b7bf-97c03de0893a",
     "2ffe3262-6c0e-44f3-94f0-34dfa5659a04",
     "ea7411eb-8b48-41a0-bc56-7b521fbf0c25",
-    "753805ea-65a7-4855-bdc3-e6130348df9f"
+    "753805ea-65a7-4855-bdc3-e6130348df9f",
 )
 private val REGIONALE_TILGANGER_PROD =
     listOf("422852aa-aad5-4601-a8c8-917ef42b6601", "14caf09e-dd9a-43fe-b25e-7f58dd9fdcae")

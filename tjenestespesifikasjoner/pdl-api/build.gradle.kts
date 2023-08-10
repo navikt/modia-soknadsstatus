@@ -52,22 +52,22 @@ val generatePDLClient by tasks.creating(GraphQLGenerateClientTask::class) {
         GraphQLScalar(
             "Long",
             "no.nav.api.pdl.converters.PdlLong",
-            "no.nav.api.pdl.converters.LongScalarConverter"
-        )
+            "no.nav.api.pdl.converters.LongScalarConverter",
+        ),
     )
     customScalars.add(
         GraphQLScalar(
             "Date",
             "kotlinx.datetime.LocalDate",
-            "no.nav.api.pdl.converters.DateScalarConverter"
-        )
+            "no.nav.api.pdl.converters.DateScalarConverter",
+        ),
     )
     customScalars.add(
         GraphQLScalar(
             "DateTime",
             "kotlinx.datetime.LocalDateTime",
-            "no.nav.api.pdl.converters.DateTimeScalarConverter"
-        )
+            "no.nav.api.pdl.converters.DateTimeScalarConverter",
+        ),
     )
 }
 

@@ -32,8 +32,8 @@ internal class TilgangTilBrukerPolicyTest {
     private val policy = KabacTestUtils.PolicyTester(
         TilgangTilBrukerPolicy(
             sensitiveTilgangsRoller,
-            geografiskeTilgangsRoller
-        )
+            geografiskeTilgangsRoller,
+        ),
     )
     private val pdl = mockk<PdlOppslagService>()
     private val norg = mockk<NorgApi>()
@@ -173,8 +173,8 @@ internal class TilgangTilBrukerPolicyTest {
     private fun gittAtBrukerIkkeHarAdressebeskyttelse() {
         coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
             Adressebeskyttelse(
-                gradering = AdressebeskyttelseGradering.UGRADERT
-            )
+                gradering = AdressebeskyttelseGradering.UGRADERT,
+            ),
         )
     }
 
@@ -189,16 +189,16 @@ internal class TilgangTilBrukerPolicyTest {
     private fun gittAtBrukerHarKode6() {
         coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
             Adressebeskyttelse(
-                AdressebeskyttelseGradering.STRENGT_FORTROLIG
-            )
+                AdressebeskyttelseGradering.STRENGT_FORTROLIG,
+            ),
         )
     }
 
     private fun gittAtBrukerHarKode7() {
         coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
             Adressebeskyttelse(
-                AdressebeskyttelseGradering.FORTROLIG
-            )
+                AdressebeskyttelseGradering.FORTROLIG,
+            ),
         )
     }
 
@@ -213,7 +213,7 @@ internal class TilgangTilBrukerPolicyTest {
                 enhetId = enhetId.get(),
                 enhetNavn = "Navn",
                 status = NorgDomain.EnhetStatus.AKTIV,
-                oppgavebehandler = false
+                oppgavebehandler = false,
             )
         }
     }
@@ -286,7 +286,7 @@ internal class TilgangTilBrukerPolicyTest {
             BrukersRegionEnhetPip(norg),
             VeiledersRollerPip(ansattService),
             VeiledersEnheterPip(ansattService),
-            VeiledersRegionEnheterPip(norg)
+            VeiledersRegionEnheterPip(norg),
         )
     }
 }

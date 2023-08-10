@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.milliseconds
 object TestUtils {
     abstract class WithKafka<KEY_TYPE, VALUE_TYPE>(
         private val keySerde: Serde<KEY_TYPE>,
-        private val valueSerde: Serde<VALUE_TYPE>
+        private val valueSerde: Serde<VALUE_TYPE>,
     ) {
         private var partitionCounter = AtomicInteger(0)
 
@@ -27,7 +27,7 @@ object TestUtils {
         class ExtendedMockConsumer<KEY_TYPE, VALUE_TYPE>(
             private val topic: String,
             private val partition: Int,
-            private val numberOfRecords: Long
+            private val numberOfRecords: Long,
         ) :
             MockConsumer<KEY_TYPE, VALUE_TYPE>(OffsetResetStrategy.EARLIEST) {
             private val topicPartition = TopicPartition(topic, partition)
@@ -35,7 +35,7 @@ object TestUtils {
             val messages = mutableListOf<Pair<KEY_TYPE, VALUE_TYPE>>()
 
             fun startSubscribingToTopic(
-                startSubscribing: () -> Unit
+                startSubscribing: () -> Unit,
             ) {
                 val partitions: MutableCollection<TopicPartition> = ArrayList()
                 val partitionsBeginningMap: MutableMap<TopicPartition, Long> = HashMap()
@@ -58,7 +58,7 @@ object TestUtils {
                     partition,
                     getAndIncrementOffset(),
                     key,
-                    value
+                    value,
                 )
 
                 this.addRecord(record)
@@ -69,7 +69,7 @@ object TestUtils {
             fun waitForMessages(
                 expectedNumberOfMessages: Int,
                 delayDuration: Duration = 500.milliseconds,
-                retry: Int = 10
+                retry: Int = 10,
             ) {
                 var counter = 0
                 while (messages.size != expectedNumberOfMessages && counter < retry) {

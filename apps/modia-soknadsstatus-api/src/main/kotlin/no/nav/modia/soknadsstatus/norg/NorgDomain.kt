@@ -27,16 +27,16 @@ object NorgDomain {
         val enhetId: String,
         val enhetNavn: String,
         val status: EnhetStatus,
-        val oppgavebehandler: Boolean
+        val oppgavebehandler: Boolean,
     )
     data class EnhetKontaktinformasjon(
         val enhet: Enhet,
         val publikumsmottak: List<Publikumsmottak>,
-        val overordnetEnhet: EnhetId?
+        val overordnetEnhet: EnhetId?,
     )
     data class Publikumsmottak(
         val besoksadresse: Gateadresse?,
-        val apningstider: List<Apningstid>
+        val apningstider: List<Apningstid>,
     )
 
     data class Gateadresse(
@@ -58,7 +58,7 @@ object NorgDomain {
         val ukedag: Ukedag,
         val stengt: Boolean,
         val apentFra: String?,
-        val apentTil: String?
+        val apentTil: String?,
     )
 
     private fun safeEnumValue(value: String?) = requireNotNull(value).uppercase().replace(' ', '_')

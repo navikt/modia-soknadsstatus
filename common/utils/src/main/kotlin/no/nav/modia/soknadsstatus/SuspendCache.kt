@@ -22,7 +22,7 @@ interface SuspendCache<KEY_TYPE, VALUE_TYPE> {
 class SuspendCacheImpl<KEY_TYPE, VALUE_TYPE>(
     maximumSize: Long = 10_000,
     expiresAfterWrite: Duration = 1.hours,
-    private val ticker: Ticker? = null
+    private val ticker: Ticker? = null,
 ) : SuspendCache<KEY_TYPE, VALUE_TYPE> {
     private val cache: AsyncCache<KEY_TYPE, VALUE_TYPE> =
         Caffeine.newBuilder().maximumSize(maximumSize).expireAfterWrite(expiresAfterWrite.toJavaDuration())

@@ -43,7 +43,7 @@ class DeadLetterQueueConsumerImpl(
     init {
         checkThatPollDurationIsLessThanExceptionDelay(
             pollDurationMs.milliseconds,
-            exceptionRestartDelayMs.milliseconds
+            exceptionRestartDelayMs.milliseconds,
         )
         registerShutdownhook {
             runBlocking {
@@ -83,7 +83,7 @@ class DeadLetterQueueConsumerImpl(
                             TjenestekallLogg.error(
                                 "Failed to handle DLQ ${record.key()}",
                                 fields = mapOf("key" to record.key(), "value" to record.value()),
-                                throwable = Exception().fillInStackTrace()
+                                throwable = Exception().fillInStackTrace(),
                             )
                             throw IllegalArgumentException("Failed to parse DLQ record")
                         } else {
@@ -103,7 +103,7 @@ class DeadLetterQueueConsumerImpl(
                 TjenestekallLogg.error(
                     "Restarting DLQ consumer on topic $topic",
                     fields = mapOf("topic" to topic),
-                    throwable = e
+                    throwable = e,
                 )
                 restart()
                 continue@outer
@@ -135,7 +135,7 @@ class DeadLetterQueueConsumerImpl(
         if (record.key() == null) {
             TjenestekallLogg.info(
                 "Skipping a dead letter with no key: ${record.value()}",
-                fields = mapOf("record" to record.value())
+                fields = mapOf("record" to record.value()),
             )
             deadLetterQueueMetricsGauge.decrement()
             return true
@@ -143,7 +143,7 @@ class DeadLetterQueueConsumerImpl(
         if (deadLetterMessageSkipService.shouldSkip(record.key())) {
             TjenestekallLogg.info(
                 "Skipping a dead letter due to key found in skip table: ${record.key()}",
-                fields = mapOf("key" to record.key(), "value" to record.value())
+                fields = mapOf("key" to record.key(), "value" to record.value()),
             )
             deadLetterQueueMetricsGauge.decrement()
             return true
@@ -155,7 +155,7 @@ class DeadLetterQueueConsumerImpl(
 
     private fun checkThatPollDurationIsLessThanExceptionDelay(
         pollDuration: Duration,
-        delayDuration: Duration
+        delayDuration: Duration,
     ): Boolean {
         if (delayDuration <= pollDuration) {
             throw IllegalArgumentException("Delay duration must be larger than the poll duration. Otherwise the commit will commit wrong offset.")

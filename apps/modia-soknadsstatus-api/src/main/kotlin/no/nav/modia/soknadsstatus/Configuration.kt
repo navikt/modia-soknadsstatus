@@ -80,8 +80,8 @@ private fun authProviderConfigFactory(env: Env): AuthProviderConfig {
             name = AzureAD,
             jwksConfig = JwksConfig.OidcWellKnownUrl(env.azureAdConfiguration.wellKnownUrl),
             tokenLocations = listOf(
-                TokenLocation.Header(HttpHeaders.Authorization)
-            )
+                TokenLocation.Header(HttpHeaders.Authorization),
+            ),
         )
     }
 
@@ -89,10 +89,10 @@ private fun authProviderConfigFactory(env: Env): AuthProviderConfig {
         name = AzureAD,
         jwksConfig = JwksConfig.JwksUrl(
             env.azureAdConfiguration.openidConfigJWKSUri,
-            env.azureAdConfiguration.openidConfigIssuer
+            env.azureAdConfiguration.openidConfigIssuer,
         ),
         tokenLocations = listOf(
-            TokenLocation.Header(HttpHeaders.Authorization)
-        )
+            TokenLocation.Header(HttpHeaders.Authorization),
+        ),
     )
 }

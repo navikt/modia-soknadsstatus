@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class Sakstema(
     val kodeRef: String?,
     val kodeverksRef: String?,
-    val value: String
+    val value: String,
 )

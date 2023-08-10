@@ -7,7 +7,7 @@ import java.util.function.Function
 data class AnsattEnhet(
     val enhetId: String,
     val enhetNavn: String,
-    val status: String? = null
+    val status: String? = null,
 ) {
     fun erAktiv(): Boolean {
         return "AKTIV" == status?.uppercase()
