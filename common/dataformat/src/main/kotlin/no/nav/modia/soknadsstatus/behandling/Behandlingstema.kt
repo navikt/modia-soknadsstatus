@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Behandlingstema(
-    val kodeRef: String?,
-    val kodeverksRef: String?,
+    val kodeRef: String? = null,
+    val kodeverksRef: String? = null,
     val value: String,
 )
