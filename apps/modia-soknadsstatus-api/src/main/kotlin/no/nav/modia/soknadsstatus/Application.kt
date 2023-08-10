@@ -17,6 +17,7 @@ import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.slf4j.event.Level
 
 fun Application.soknadsstatusModule(
@@ -93,11 +94,20 @@ fun Application.soknadsstatusModule(
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
                 deadLetterMessageSkipService = services.dlSkipService,
                 deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName)),
-            ) { _, _, value ->
-                kotlin.runCatching {
-                    val inkommendeOppdatering =
-                        Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
-                    services.soknadsstatusService.fetchIdentsAndPersist(inkommendeOppdatering)
+            ) { _, key, value ->
+                runCatching {
+                    try {
+                        val inkommendeOppdatering =
+                            Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                        services.soknadsstatusService.fetchIdentsAndPersist(inkommendeOppdatering)
+                    } catch (e: Exception) {
+                        TjenestekallLogg.error(
+                            "Klarte ikke å håndtere DL",
+                            fields = mapOf("key" to key, "value" to value),
+                            throwable = e
+                        )
+                        throw e
+                    }
                 }
             }
     }

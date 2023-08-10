@@ -12,6 +12,11 @@ class SendToDeadLetterQueueExceptionHandler(
     private val dlqProducer: DeadLetterQueueProducer,
 ) : ExceptionHandler {
     override fun handle(key: String?, value: String?, exception: java.lang.Exception) {
+        TjenestekallLogg.error(
+            "Producing dead letter $key: $value",
+            mapOf("key" to key, "message" to value),
+            throwable = exception
+        )
         try {
             if (value == null) {
                 return

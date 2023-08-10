@@ -80,12 +80,7 @@ class DeadLetterQueueConsumerImpl(
 
                         val result = block(record.topic(), record.key(), record.value())
                         if (result.isFailure) {
-                            TjenestekallLogg.error(
-                                "Failed to handle DLQ ${record.key()}",
-                                fields = mapOf("key" to record.key(), "value" to record.value()),
-                                throwable = Exception().fillInStackTrace(),
-                            )
-                            throw IllegalArgumentException("Failed to parse DLQ record")
+                            throw result.exceptionOrNull() ?: Exception().fillInStackTrace()
                         } else {
                             deadLetterQueueMetricsGauge.decrement()
                         }

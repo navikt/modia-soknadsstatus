@@ -65,7 +65,18 @@ fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeO
     value,
 )
 
-fun deserialize(key: String?, value: String) = BehandlingDeserializer.deserialize(value)
+fun deserialize(key: String?, value: String): Behandling {
+    return try {
+        BehandlingDeserializer.deserialize(value)
+    } catch (e: Exception) {
+        TjenestekallLogg.error(
+            "Klarte ikke å håndtere DL",
+            fields = mapOf("key" to key, "value" to value),
+            throwable = e
+        )
+        throw e
+    }
+}
 
 fun filter(key: String?, value: Behandling): Boolean {
     Transformer.behandlingsStatus(value) ?: return false

@@ -59,7 +59,18 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun deserialize(key: String?, value: String) = Json.decodeFromString(BehandlingSerializer, value)
+fun deserialize(key: String?, value: String): Behandling {
+    return try {
+        Json.decodeFromString(BehandlingSerializer, value)
+    } catch (e: Exception) {
+        TjenestekallLogg.error(
+            "Klarte ikke å parse dead letter",
+            fields = mapOf("key" to key, "value" to value),
+            throwable = e
+        )
+        throw e
+    }
+}
 
 fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
     SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
