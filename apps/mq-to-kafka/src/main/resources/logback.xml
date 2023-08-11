@@ -2,7 +2,4 @@
 <configuration>
     <include resource="logback-stdout-json.xml"/>
     <include resource="logback-securelogs.xml"/>
-    <logger name="org.apache.kafka" level="error" additivity="false">
-        <appender-ref ref="stdout_json"/>
-    </logger>
 </configuration>
