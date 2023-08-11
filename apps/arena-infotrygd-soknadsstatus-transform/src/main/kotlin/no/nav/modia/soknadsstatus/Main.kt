@@ -43,14 +43,12 @@ fun runApp(port: Int = 8080) {
                 }
                 configure { stream ->
                     stream
-                        .filter(::filter)
                         .mapValues(::transform)
                 }
             }
             install(DeadLetterQueueTransformerPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
                 transformer = ::transform
-                filter = ::filter
                 skipTableDataSource = datasourceConfiguration.datasource
                 deadLetterQueueMetricsGauge = dlqMetricsGauge
                 deserializer = ::deserialize
@@ -76,14 +74,6 @@ fun deserialize(key: String?, value: String): Behandling {
         )
         throw e
     }
-}
-
-fun filter(key: String?, value: Behandling): Boolean {
-    val shouldFilter = Filter.filtrerBehandling(value)
-    if (shouldFilter) {
-        TjenestekallLogg.info("Filtrerer ut behandling", fields = mapOf("key" to key, "value" to value))
-    }
-    return shouldFilter
 }
 
 fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling)
