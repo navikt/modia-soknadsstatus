@@ -53,9 +53,9 @@ class DeadLetterQueueConsumerImpl(
     }
 
     override fun start() {
-//        job = BackgroundTask.launch {
-//            startConsumer()
-//        }
+        job = BackgroundTask.launch {
+            startConsumer()
+        }
     }
 
     private suspend fun startConsumer() {
