@@ -60,22 +60,21 @@ fun Application.soknadsstatusModule(
     install(KafkaStreamPlugin()) {
         appEnv = env.kafkaApp
         topology {
-            stream<String, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>(env.kafkaApp.sourceTopic)
+            stream<String, String>(env.kafkaApp.sourceTopic)
                 .foreach { key, value ->
                     runBlocking {
                         try {
+                            val decodedValue = Encoding.decode(
+                                SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
+                                value
+                            )
                             async {
-                                services.soknadsstatusService.fetchIdentsAndPersist(value)
+                                services.soknadsstatusService.fetchIdentsAndPersist(decodedValue)
                             }.await()
                         } catch (e: Exception) {
-                            val encodedValue =
-                                Encoding.encode(
-                                    SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
-                                    value,
-                                )
                             services.dlqProducer.sendMessage(
                                 key,
-                                encodedValue,
+                                value,
                             )
                         }
                     }
@@ -97,9 +96,9 @@ fun Application.soknadsstatusModule(
             ) { _, key, value ->
                 runCatching {
                     try {
-                        val inkommendeOppdatering =
+                        val decodedValue =
                             Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
-                        services.soknadsstatusService.fetchIdentsAndPersist(inkommendeOppdatering)
+                        services.soknadsstatusService.fetchIdentsAndPersist(decodedValue)
                     } catch (e: Exception) {
                         TjenestekallLogg.error(
                             "Klarte ikke å håndtere DL",
