@@ -9,6 +9,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
@@ -68,7 +69,7 @@ fun Application.soknadsstatusModule(
                                 SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
                                 value
                             )
-                            async {
+                            async(Dispatchers.IO) {
                                 services.soknadsstatusService.fetchIdentsAndPersist(decodedValue)
                             }.await()
                         } catch (e: Exception) {

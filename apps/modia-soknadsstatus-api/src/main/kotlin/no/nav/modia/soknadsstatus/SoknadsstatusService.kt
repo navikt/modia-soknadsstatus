@@ -1,6 +1,7 @@
 package no.nav.modia.soknadsstatus
 
 import io.ktor.server.plugins.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -20,7 +21,7 @@ class SoknadsstatusServiceImpl(
     override suspend fun fetchIdentsAndPersist(innkommendeOppdatering: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering?) {
         coroutineScope {
             innkommendeOppdatering?.aktorIder?.map {
-                async { fetchIdentAndPersist(it, innkommendeOppdatering) }
+                async(Dispatchers.IO) { fetchIdentAndPersist(it, innkommendeOppdatering) }
             }?.awaitAll()
         }
     }
