@@ -44,7 +44,7 @@ object SoknadsstatusDomain {
 
     @Serializable
     data class Soknadsstatuser(
-        val ident: String,
+        val identer: List<String>,
         val tema: Map<String, Soknadsstatus>,
     )
 

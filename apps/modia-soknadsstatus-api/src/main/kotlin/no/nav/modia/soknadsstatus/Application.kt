@@ -70,7 +70,7 @@ fun Application.soknadsstatusModule(
                                 value
                             )
                             async(Dispatchers.IO) {
-                                services.soknadsstatusService.fetchIdentsAndPersist(decodedValue)
+                                services.soknadsstatusService.persistUpdate(decodedValue)
                             }.await()
                         } catch (e: Exception) {
                             services.dlqProducer.sendMessage(
@@ -99,7 +99,7 @@ fun Application.soknadsstatusModule(
                     try {
                         val decodedValue =
                             Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
-                        services.soknadsstatusService.fetchIdentsAndPersist(decodedValue)
+                        services.soknadsstatusService.persistUpdate(decodedValue)
                     } catch (e: Exception) {
                         TjenestekallLogg.error(
                             "Klarte ikke å håndtere DL",
@@ -129,7 +129,7 @@ fun Application.soknadsstatusModule(
                                         AuditIdentifier.FNR to ident,
                                     ),
                                 ) {
-                                    services.soknadsstatusService.fetchDataForIdent(ident)
+                                    services.soknadsstatusService.fetchDataForIdent(userToken = call.getUserToken(), ident)
                                 },
                         )
                     }
@@ -147,7 +147,7 @@ fun Application.soknadsstatusModule(
                                         AuditIdentifier.FNR to ident,
                                     ),
                                 ) {
-                                    services.soknadsstatusService.fetchAggregatedDataForIdent(ident)
+                                    services.soknadsstatusService.fetchAggregatedDataForIdent(call.getUserToken(), ident)
                                 },
                         )
                     }
@@ -162,4 +162,10 @@ private fun ApplicationCall.getIdent(): String {
         HttpStatusCode.BadRequest,
         "ident missing in request",
     )
+}
+
+
+private fun ApplicationCall.getUserToken(): String {
+    return this.principal<Security.SubjectPrincipal>()?.token?.removeBearerFromToken()
+        ?: throw IllegalStateException("Ingen gyldig token funnet")
 }

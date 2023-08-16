@@ -20,8 +20,8 @@ typealias HeadersBuilder = HttpRequestBuilder.() -> Unit
 interface PdlClient {
     suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String?
     suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse>
-    suspend fun hentAktivIdent(userToken: String, ident: String, gruppe: IdentGruppe): String?
-    suspend fun hentAktivIdentMedSystemToken(ident: String, gruppe: IdentGruppe): String?
+    suspend fun hentAktivIdent(userToken: String, aktoerId: String, gruppe: IdentGruppe): String?
+    suspend fun hentAktivIdentMedSystemToken(aktoerId: String, gruppe: IdentGruppe): String?
     suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String>
 }
 
@@ -58,16 +58,16 @@ class PdlClientImpl(
             .data?.hentPerson?.adressebeskyttelse
             ?: emptyList()
 
-    override suspend fun hentAktivIdent(userToken: String, ident: String, gruppe: IdentGruppe): String? =
-        execute(HentAktorid(HentAktorid.Variables(ident, listOf(gruppe))), userTokenAuthorizationHeaders(userToken))
+    override suspend fun hentAktivIdent(userToken: String, aktoerId: String, gruppe: IdentGruppe): String? =
+        execute(HentIdenter(HentIdenter.Variables(aktoerId, listOf(gruppe))), userTokenAuthorizationHeaders(userToken))
             .data
             ?.hentIdenter
             ?.identer
             ?.firstOrNull()
             ?.ident
 
-    override suspend fun hentAktivIdentMedSystemToken(ident: String, gruppe: IdentGruppe): String? =
-        execute(HentAktorid(HentAktorid.Variables(ident, listOf(gruppe))), systemTokenAuthorizationHeaders)
+    override suspend fun hentAktivIdentMedSystemToken(aktoerId: String, gruppe: IdentGruppe): String? =
+        execute(HentIdenter(HentIdenter.Variables(aktoerId, listOf(gruppe))), systemTokenAuthorizationHeaders)
             .data
             ?.hentIdenter
             ?.identer
