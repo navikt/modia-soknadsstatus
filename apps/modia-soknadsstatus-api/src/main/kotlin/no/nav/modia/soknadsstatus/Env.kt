@@ -25,6 +25,7 @@ interface Env {
 
     val appVersion: String
     val kafkaApp: AppEnv
+    val hendelseConsumerEnv: HendelseConsumerEnv
     val azureAdConfiguration: AzureAdConfiguration
     val datasourceConfiguration: DatasourceConfiguration
     val axsysEnv: AxsysEnv
@@ -39,6 +40,7 @@ interface Env {
 data class EnvImpl(
     override val kafkaApp: AppEnv = AppEnv(),
     override val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
+    override val hendelseConsumerEnv: HendelseConsumerEnv = HendelseConsumerEnv(),
     override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(DatasourceEnv(kafkaApp.appName)),
     override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(appMode = kafkaApp.appMode),
     override val pdlEnv: PdlEnv = PdlEnv(
@@ -59,5 +61,10 @@ data class EnvImpl(
     override val msGraphEnv: MsGraphEnv = MsGraphEnv(
         url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
         scope = EnvUtils.getRequiredConfig("MS_GRAPH_SCOPE"),
-        ),
+    ),
 ) : Env
+
+data class HendelseConsumerEnv(
+    val pollDurationMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_POLL_DURATION_MS").toDouble(),
+    val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_RESTART_DELAY_MS").toDouble()
+)

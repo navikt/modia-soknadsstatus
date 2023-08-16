@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
+import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
+import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
 import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
 import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
@@ -58,37 +60,37 @@ fun Application.soknadsstatusModule(
         mdc("userId") { security.getSubject(it).joinToString(";") }
     }
 
-    install(KafkaStreamPlugin()) {
-        appEnv = env.kafkaApp
-        topology {
-            stream<String, String>(env.kafkaApp.sourceTopic)
-                .foreach { key, value ->
-                    runBlocking {
-                        try {
-                            val decodedValue = Encoding.decode(
-                                SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
-                                value
-                            )
-                            async(Dispatchers.IO) {
-                                services.soknadsstatusService.persistUpdate(decodedValue)
-                            }.await()
-                        } catch (e: Exception) {
-                            services.dlqProducer.sendMessage(
-                                key,
-                                value,
-                            )
-                        }
-                    }
-                }
+    install(HendelseConsumerPlugin()) {
+        hendelseConsumer = HendelseConsumer(
+            sendToDeadLetterQueueExceptionHandler = SendToDeadLetterQueueExceptionHandler(
+                requireNotNull(env.kafkaApp.deadLetterQueueTopic),
+                services.dlqProducer
+            ),
+            topic = requireNotNull(env.kafkaApp.sourceTopic),
+            kafkaConsumer = KafkaUtils.createConsumer(
+                env.kafkaApp,
+                consumerGroup = "${env.kafkaApp.appName}-hendelse-consumer",
+                autoCommit = true,
+                pollRecords = 10
+            ),
+            pollDurationMs = env.hendelseConsumerEnv.pollDurationMs,
+            exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
+        ) { _, _, value ->
+            runCatching {
+                val decodedValue =
+                    Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
+                services.soknadsstatusService.persistUpdate(decodedValue)
+            }
         }
     }
 
     install(DeadLetterQueueConsumerPlugin()) {
         deadLetterQueueConsumer =
-            DeadLetterQueueConsumerImpl(
+            DeadLetterQueueConsumer(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
                 kafkaConsumer = KafkaUtils.createConsumer(
                     env.kafkaApp,
+                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer"
                 ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
@@ -129,7 +131,10 @@ fun Application.soknadsstatusModule(
                                         AuditIdentifier.FNR to ident,
                                     ),
                                 ) {
-                                    services.soknadsstatusService.fetchDataForIdent(userToken = call.getUserToken(), ident)
+                                    services.soknadsstatusService.fetchDataForIdent(
+                                        userToken = call.getUserToken(),
+                                        ident
+                                    )
                                 },
                         )
                     }
@@ -147,7 +152,10 @@ fun Application.soknadsstatusModule(
                                         AuditIdentifier.FNR to ident,
                                     ),
                                 ) {
-                                    services.soknadsstatusService.fetchAggregatedDataForIdent(call.getUserToken(), ident)
+                                    services.soknadsstatusService.fetchAggregatedDataForIdent(
+                                        call.getUserToken(),
+                                        ident
+                                    )
                                 },
                         )
                     }

@@ -25,7 +25,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
     fun `skal konsumere data`() {
         val consumer = getExtendedMockConsumer(TOPIC, 1)
 
-        val dlqConsumer = DeadLetterQueueConsumerImpl(
+        val dlqConsumer = DeadLetterQueueConsumer(
             topic = TOPIC,
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer,
@@ -57,7 +57,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
     fun `skal ignorere meldinger uten nøkkel`() {
         val consumer = getExtendedMockConsumer(TOPIC, 2)
 
-        val dlqConsumer = DeadLetterQueueConsumerImpl(
+        val dlqConsumer = DeadLetterQueueConsumer(
             topic = TOPIC,
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer,
@@ -95,7 +95,7 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
     fun `skal ignorere meldinger når keyen ligger i skip tabellen`() {
         val consumer = getExtendedMockConsumer(TOPIC, 2)
 
-        val dlqConsumer = DeadLetterQueueConsumerImpl(
+        val dlqConsumer = DeadLetterQueueConsumer(
             topic = TOPIC,
             deadLetterMessageSkipService = deadLetterMessageSkipService,
             kafkaConsumer = consumer,
