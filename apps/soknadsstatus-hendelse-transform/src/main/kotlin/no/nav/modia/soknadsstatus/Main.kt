@@ -76,4 +76,4 @@ fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeO
     value,
 )
 
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling)
+fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling, HendelseAvslutningsstatusMapper)

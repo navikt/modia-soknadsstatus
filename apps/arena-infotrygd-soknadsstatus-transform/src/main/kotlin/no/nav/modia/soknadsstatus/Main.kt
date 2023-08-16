@@ -76,4 +76,4 @@ fun deserialize(key: String?, value: String): Behandling {
     }
 }
 
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling)
+fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling, InfotrygdAvslutningsstatusMapper)
