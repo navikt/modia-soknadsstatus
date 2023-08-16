@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":common:dataformat"))
     implementation(project(":common:filter"))
     implementation(project(":common:kafka"))
+    implementation(project(":tjenestespesifikasjoner:pdl-api"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-cio-jvm:2.3.1")

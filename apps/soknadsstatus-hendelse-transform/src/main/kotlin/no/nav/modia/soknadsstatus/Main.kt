@@ -3,6 +3,7 @@ package no.nav.modia.soknadsstatus
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.serialization.json.Json
+import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
@@ -76,4 +77,8 @@ fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeO
     value,
 )
 
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(behandling, HendelseAvslutningsstatusMapper)
+fun transform(key: String?, behandling: Behandling) = Transformer.transform(
+    behandling = behandling,
+    identGruppe = IdentGruppe.AKTORID,
+    statusMapper = HendelseAvslutningsstatusMapper
+)
