@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.Location
@@ -38,16 +39,16 @@ class SoknadsstatusRepositoryImplTest {
     }
 
     @Test
-    fun `should insert new change record`() {
+    fun `should insert new change record`() = runBlocking {
         repository.upsert(dummyOppdatering)
 
-        assertSuccess(repository.get(ident)) { oppdateringer ->
+        assertSuccess(repository.get(arrayOf(ident))) { oppdateringer ->
             assertEquals(1, oppdateringer.size)
         }
     }
 
     @Test
-    fun `should update existing record if newer`() {
+    fun `should update existing record if newer`() = runBlocking {
         repository.upsert(dummyOppdatering)
         repository.upsert(
             dummyOppdatering.copy(
@@ -56,14 +57,14 @@ class SoknadsstatusRepositoryImplTest {
             ),
         )
 
-        assertSuccess(repository.get(ident)) { oppdateringer ->
+        assertSuccess(repository.get(arrayOf(ident))) { oppdateringer ->
             assertEquals(1, oppdateringer.size)
             assertEquals(SoknadsstatusDomain.Status.FERDIG_BEHANDLET, oppdateringer.first().status)
         }
     }
 
     @Test
-    fun `should ignore updates older then current saved state`() {
+    fun `should ignore updates older then current saved state`() = runBlocking {
         repository.upsert(dummyOppdatering)
         repository.upsert(
             dummyOppdatering.copy(
@@ -72,7 +73,7 @@ class SoknadsstatusRepositoryImplTest {
             ),
         )
 
-        assertSuccess(repository.get(ident)) { oppdateringer ->
+        assertSuccess(repository.get(arrayOf(ident))) { oppdateringer ->
             assertEquals(1, oppdateringer.size)
             assertEquals(SoknadsstatusDomain.Status.UNDER_BEHANDLING, oppdateringer.first().status)
         }

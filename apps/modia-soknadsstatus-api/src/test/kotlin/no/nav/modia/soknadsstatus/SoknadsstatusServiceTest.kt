@@ -39,17 +39,18 @@ class SoknadsstatusServiceTest {
     @Test
     fun `skal lagre alle aktørider i databasen`() {
         coEvery { pdlOppslagServiceImpl.hentFnrMedSystemToken(any()) }.returnsMany(aktorIder.first(), aktorIder[1])
+        coEvery { pdlOppslagServiceImpl.hentAktiveIdenter(any(), any()) }.returnsMany(listOf(aktorIder.first()))
 
         runBlocking {
-            soknadsstatusService.fetchIdentsAndPersist(oppdatering)
+            soknadsstatusService.persistUpdate(oppdatering)
         }
         assertEquals(
             2,
             repository.getAll().size,
             "PdlOppslagService lagret ikke status oppdatering for begge aktør ider",
         )
-        val firstElement = soknadsstatusService.fetchDataForIdent(aktorIder.first())
-        assertNotNull(firstElement, "Manglet soknadsstatus for ident")
+        val firstElement = soknadsstatusService.fetchDataForIdent("fake-token", aktorIder.first())
+        assertEquals(1, firstElement.getOrNull()?.size, "Manglet soknadsstatus for ident")
     }
 
     @Test
@@ -57,7 +58,7 @@ class SoknadsstatusServiceTest {
         coEvery { pdlOppslagServiceImpl.hentFnrMedSystemToken(any()) }.throws(IllegalStateException("Dummy exception"))
         assertThrows<IllegalStateException> {
             runBlocking {
-                soknadsstatusService.fetchIdentsAndPersist(oppdatering)
+                soknadsstatusService.persistUpdate(oppdatering)
             }
         }
     }
@@ -74,12 +75,11 @@ private class MockRepository : SoknadsstatusRepository {
         db[key] = soknadsstatusOppdatering
     }
 
-    override fun get(ident: String): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
-        return Result.success(db.values.filter { it.ident == ident })
+    override fun get(idents: Array<String>): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
+        return Result.success(db.values.filter { idents.contains(it.ident) })
     }
 
-    override fun upsert(state: SoknadsstatusDomain.SoknadsstatusOppdatering): Result<Boolean> {
-        println(state.ident)
+    override suspend fun upsert(state: SoknadsstatusDomain.SoknadsstatusOppdatering): Result<Boolean> {
         storeSoknadsstatusOppdatering(state)
         return Result.success(true)
     }
