@@ -65,10 +65,11 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
 
         DeadLetterQueueConsumerPlugin().install(pipeline) {
             deadLetterQueueConsumer =
-                DeadLetterQueueConsumerImpl(
+                DeadLetterQueueConsumer(
                     topic = requireNotNull(appEnv.deadLetterQueueTopic),
                     kafkaConsumer = KafkaUtils.createConsumer(
                         appEnv,
+                        consumerGroup = "${appEnv.appName}-dlq"
                     ),
                     block = block,
                     pollDurationMs = appEnv.deadLetterQueueConsumerPollIntervalMs,

@@ -19,6 +19,9 @@ fun main() {
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME", "modia_soknadsstatus_dlq_event_skip")
     System.setProperty("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME", "modia_soknadsstatus_api_dlq_gauge")
 
+    System.setProperty("HENDELSE_CONSUMER_POLL_DURATION_MS", "1000")
+    System.setProperty("HENDELSE_CONSUMER_RESTART_DELAY_MS", "2000")
+
     System.setProperty("NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_HOST", "localhost")
     System.setProperty("NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_PORT", "5432")
     System.setProperty("NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_USERNAME", "admin")

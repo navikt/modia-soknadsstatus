@@ -85,6 +85,10 @@ spec:
       value: "soknadsstatus_api_dlq_event_skip"
     - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
       value: "modia_soknadsstatus_api_dlq_gauge"
+    - name: HENDELSE_CONSUMER_POLL_DURATION_MS
+      value: 1000
+    - name: HENDELSE_CONSUMER_RESTART_DELAY_MS
+      value: 2000
     - name: NORG2_URL
       value: "https://norg2.dev-fss-pub.nais.io/norg2"
     - name: PDL_API_URL

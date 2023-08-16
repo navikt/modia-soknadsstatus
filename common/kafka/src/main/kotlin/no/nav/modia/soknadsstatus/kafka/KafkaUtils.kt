@@ -22,9 +22,12 @@ object KafkaUtils {
 
     fun createConsumer(
         appConfig: AppEnv,
+        consumerGroup: String,
+        autoCommit: Boolean = false,
+        pollRecords: Int = 1,
     ): KafkaConsumer<String, String> {
         val props = Properties()
-        commonConsumerConfig(props, appConfig)
+        commonConsumerConfig(props, appConfig, consumerGroup, autoCommit, pollRecords)
 
         return KafkaConsumer(props, StringDeserializer(), StringDeserializer())
     }
