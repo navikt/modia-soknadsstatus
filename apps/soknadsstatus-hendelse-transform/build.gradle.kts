@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":common:filter"))
     implementation(project(":common:kafka"))
     implementation(project(":common:utils"))
+    implementation(project(":tjenestespesifikasjoner:pdl-api"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")

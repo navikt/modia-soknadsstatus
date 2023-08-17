@@ -19,6 +19,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":common:utils"))
     implementation(project(":common:ktor"))
+    implementation(project(":tjenestespesifikasjoner:pdl-api"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")

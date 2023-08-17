@@ -13,7 +13,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.assertThrows
 
-val aktorIder = listOf("10108000398", "2222222222")
+val aktorIder = listOf("1010800039812", "222222222212")
 val oppdatering = SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
     aktorIder = aktorIder,
     behandlingsId = "12345",
@@ -37,7 +37,7 @@ class SoknadsstatusServiceTest {
     }
 
     @Test
-    fun `skal lagre alle aktørider i databasen`() {
+    fun `skal lagre alle identer i databasen`() {
         coEvery { pdlOppslagServiceImpl.hentFnrMedSystemToken(any()) }.returnsMany(aktorIder.first(), aktorIder[1])
         coEvery { pdlOppslagServiceImpl.hentAktiveIdenter(any(), any()) }.returnsMany(listOf(aktorIder.first()))
 
