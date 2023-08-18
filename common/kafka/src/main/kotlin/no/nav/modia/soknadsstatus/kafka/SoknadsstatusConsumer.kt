@@ -37,8 +37,6 @@ open class SoknadsstatusConsumerImpl(
     open suspend fun handleRecords(records: ConsumerRecords<String, String>, commitSync: () -> Unit): Unit =
         throw NotImplementedError("handleRecords må implementeres av arvende klasse")
 
-
-
     // Used to avoid infinite WakeupException loop. WakeUp exception is thrown by the Consumer the next time calling poll, if wakeUp has been called, but the consumer did not poll when calling wakeup.
     private val hasWakedUpConsumer = AtomicBoolean(false)
 

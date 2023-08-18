@@ -18,7 +18,7 @@ class SoknadsstatusServiceImpl(
 ) : SoknadsstatusService {
     override fun fetchAggregatedDataForIdent(
         userToken: String,
-        ident: String
+        ident: String,
     ): Result<SoknadsstatusDomain.Soknadsstatuser> {
         val idents = runBlocking { pdlOppslagService.hentAktiveIdenter(userToken, ident) }
         return repository.get(idents.toTypedArray())
@@ -39,7 +39,7 @@ class SoknadsstatusServiceImpl(
 
     override fun fetchDataForIdent(
         userToken: String,
-        ident: String
+        ident: String,
     ): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
         val idents = runBlocking { pdlOppslagService.hentAktiveIdenter(userToken, ident) }
 
@@ -63,11 +63,11 @@ class SoknadsstatusServiceImpl(
 
     private suspend fun persistUpdateForAktorId(
         aktoerId: String,
-        update: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering
+        update: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering,
     ) {
         TjenestekallLogg.info(
             "Mottok søknadsstatus-oppdatering for aktør",
-            mapOf("aktoerId" to aktoerId, "type" to IdentGruppe.AKTORID, "oppdatering" to update)
+            mapOf("aktoerId" to aktoerId, "type" to IdentGruppe.AKTORID, "oppdatering" to update),
         )
         try {
             val ident = getIdent(aktoerId)
@@ -96,7 +96,7 @@ class SoknadsstatusServiceImpl(
     ) {
         TjenestekallLogg.info(
             "Mottok søknadsstatus-oppdatering for ident",
-            mapOf("ident" to identType.ident, "type" to identType.type, "oppdatering" to update)
+            mapOf("ident" to identType.ident, "type" to identType.type, "oppdatering" to update),
         )
         try {
             val ident = getIdent(identType)
@@ -132,12 +132,14 @@ class SoknadsstatusServiceImpl(
     }
 
     private suspend fun getIdent(aktoerId: String): String {
-        if (isAktoerId(aktoerId)) return getIdent(
-            SoknadsstatusDomain.IdentType(
-                ident = aktoerId,
-                type = IdentGruppe.AKTORID
+        if (isAktoerId(aktoerId)) {
+            return getIdent(
+                SoknadsstatusDomain.IdentType(
+                    ident = aktoerId,
+                    type = IdentGruppe.AKTORID,
+                ),
             )
-        )
+        }
         return aktoerId
     }
 
@@ -145,6 +147,5 @@ class SoknadsstatusServiceImpl(
         val regex = Regex("^\\d{13}$")
 
         return aktoerId.matches(regex)
-
     }
 }

@@ -29,7 +29,7 @@ private enum class SensitiveRoller(
         groupName = "0000-GA-EGNE_ANSATTE",
         productionRole = AzureObjectId(SKJERMEDE_PERSONER_PROD),
         preprodRole = AzureObjectId(SKJERMEDE_PERSONER_PREPROD),
-        ),
+    ),
 }
 
 class SensitiveTilgangsRoller(appCluster: AppCluster) {

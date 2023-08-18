@@ -23,7 +23,7 @@ class HendelseConsumer(
                     sendToDeadLetterQueueExceptionHandler.handle(
                         record.key(),
                         record.value(),
-                        result.exceptionOrNull() ?: Exception().fillInStackTrace()
+                        result.exceptionOrNull() ?: Exception().fillInStackTrace(),
                     )
                 }
             }

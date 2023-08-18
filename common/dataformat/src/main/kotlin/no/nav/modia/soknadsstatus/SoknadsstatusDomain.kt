@@ -3,9 +3,6 @@ package no.nav.modia.soknadsstatus
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import no.nav.api.generated.pdl.enums.IdentGruppe
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.common.serialization.Serializer
 
 object SoknadsstatusDomain {
     @Serializable
@@ -48,7 +45,7 @@ object SoknadsstatusDomain {
     @Serializable
     data class IdentType(
         val ident: String,
-        val type: IdentGruppe
+        val type: IdentGruppe,
     )
 
     @Serializable

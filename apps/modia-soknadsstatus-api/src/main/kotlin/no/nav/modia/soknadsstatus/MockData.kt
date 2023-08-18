@@ -57,7 +57,7 @@ object MockData {
             listOf(
                 AzureAdConfiguration.PreauthorizedApp(name = "other-app", clientId = "some-random-id"),
                 AzureAdConfiguration.PreauthorizedApp(name = "another-app", clientId = "another-random-id"),
-            )
+            ),
         )
 
         System.setProperty(AzureAdEnvironmentVariables.AZURE_APP_TENANT_ID, "tenant")
@@ -67,16 +67,16 @@ object MockData {
         System.setProperty(AzureAdEnvironmentVariables.AZURE_APP_PRE_AUTHORIZED_APPS, preauthApps)
         System.setProperty(
             AzureAdEnvironmentVariables.AZURE_APP_WELL_KNOWN_URL,
-            "http://localhost:9015/azuread/.well-known/openid-configuration"
+            "http://localhost:9015/azuread/.well-known/openid-configuration",
         )
         System.setProperty(AzureAdEnvironmentVariables.AZURE_OPENID_CONFIG_ISSUER, "azuread")
         System.setProperty(
             AzureAdEnvironmentVariables.AZURE_OPENID_CONFIG_JWKS_URI,
-            "http://localhost:9015/azuread/.well-known/jwks.json"
+            "http://localhost:9015/azuread/.well-known/jwks.json",
         )
         System.setProperty(
             AzureAdEnvironmentVariables.AZURE_OPENID_CONFIG_TOKEN_ENDPOINT,
-            "http://localhost:9015/azuread/oauth/token"
+            "http://localhost:9015/azuread/oauth/token",
         )
     }
 
@@ -96,7 +96,7 @@ object MockData {
             MockEnv("SKJERMEDE_PERSONER_PIP_URL", "https://skjermede-personer-api-url.no"),
             MockEnv("SKJERMEDE_PERSONER_SCOPE", "test:skjermede-personer:scope"),
             MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/"),
-            MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default")
+            MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default"),
         )
 
         mockEnvs.forEach {
@@ -106,6 +106,6 @@ object MockData {
 
     private data class MockEnv(
         val key: String,
-        val value: String
+        val value: String,
     )
 }
