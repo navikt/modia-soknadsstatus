@@ -20,16 +20,11 @@ object Transformer {
     @JvmStatic
     fun transform(
         behandling: Behandling,
-        identGruppe: IdentGruppe,
-        statusMapper: AvslutningsStatusMapper
+        statusMapper: AvslutningsStatusMapper,
+        identer: List<SoknadsstatusDomain.IdentType>,
     ): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
         return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
-            identer = behandling.aktoerREF.map {
-                SoknadsstatusDomain.IdentType(
-                    ident = it.aktoerId,
-                    identGruppe,
-                )
-            },
+            identer = identer,
             tema = behandling.sakstema.value,
             behandlingsId = behandling.behandlingsID,
             systemRef = behandling.hendelsesprodusentREF.value,
