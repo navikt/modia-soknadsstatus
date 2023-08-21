@@ -9,9 +9,6 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
@@ -64,14 +61,14 @@ fun Application.soknadsstatusModule(
         hendelseConsumer = HendelseConsumer(
             sendToDeadLetterQueueExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                 requireNotNull(env.kafkaApp.deadLetterQueueTopic),
-                services.dlqProducer
+                services.dlqProducer,
             ),
             topic = requireNotNull(env.kafkaApp.sourceTopic),
             kafkaConsumer = KafkaUtils.createConsumer(
                 env.kafkaApp,
                 consumerGroup = "${env.kafkaApp.appName}-hendelse-consumer",
                 autoCommit = true,
-                pollRecords = 10
+                pollRecords = 10,
             ),
             pollDurationMs = env.hendelseConsumerEnv.pollDurationMs,
             exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
@@ -90,7 +87,7 @@ fun Application.soknadsstatusModule(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
                 kafkaConsumer = KafkaUtils.createConsumer(
                     env.kafkaApp,
-                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer"
+                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
                 ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
@@ -106,7 +103,7 @@ fun Application.soknadsstatusModule(
                         TjenestekallLogg.error(
                             "Klarte ikke å håndtere DL",
                             fields = mapOf("key" to key, "value" to value),
-                            throwable = e
+                            throwable = e,
                         )
                         throw e
                     }
@@ -133,7 +130,7 @@ fun Application.soknadsstatusModule(
                                 ) {
                                     services.soknadsstatusService.fetchDataForIdent(
                                         userToken = call.getUserToken(),
-                                        ident
+                                        ident,
                                     )
                                 },
                         )
@@ -154,7 +151,7 @@ fun Application.soknadsstatusModule(
                                 ) {
                                     services.soknadsstatusService.fetchAggregatedDataForIdent(
                                         call.getUserToken(),
-                                        ident
+                                        ident,
                                     )
                                 },
                         )
@@ -171,7 +168,6 @@ private fun ApplicationCall.getIdent(): String {
         "ident missing in request",
     )
 }
-
 
 private fun ApplicationCall.getUserToken(): String {
     return this.principal<Security.SubjectPrincipal>()?.token?.removeBearerFromToken()

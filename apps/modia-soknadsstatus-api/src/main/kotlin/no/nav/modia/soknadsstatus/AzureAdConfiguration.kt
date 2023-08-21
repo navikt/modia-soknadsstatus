@@ -43,7 +43,6 @@ class AzureAdConfiguration(
             val openidConfigTokenEndpoint =
                 EnvUtils.getRequiredConfig(AzureAdEnvironmentVariables.AZURE_OPENID_CONFIG_TOKEN_ENDPOINT)
 
-
             return AzureAdConfiguration(
                 clientId = clientId,
                 clientSecret = clientSecret,

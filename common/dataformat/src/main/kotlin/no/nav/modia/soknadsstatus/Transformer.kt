@@ -14,7 +14,9 @@ object Transformer {
             return SoknadsstatusDomain.Status.UNDER_BEHANDLING
         } else if (behandling is BehandlingAvsluttet) {
             return mapper.getAvslutningsstatus(behandling.avslutningsstatus.value.lowercase())
-        } else throw IllegalArgumentException("Mottok ukjent behandlingstype $behandling")
+        } else {
+            throw IllegalArgumentException("Mottok ukjent behandlingstype $behandling")
+        }
     }
 
     @JvmStatic

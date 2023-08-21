@@ -9,6 +9,7 @@ import java.io.IOException
 import java.io.StringReader
 import java.net.URL
 import javax.xml.XMLConstants
+import javax.xml.datatype.XMLGregorianCalendar
 import javax.xml.transform.Source
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.SchemaFactory
@@ -41,12 +42,33 @@ object XMLConverter {
                 behandlingstype = toBehandlingstype(behandlingStatus),
                 hendelseType = "",
                 hendelsesId = behandlingStatus.hendelsesId,
-                hendelsesTidspunkt = toHendelsesTidspunkt(behandlingStatus),
+                hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
                 hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
                 primaerBehandlingREF = primaerBehandlingRef,
                 sakstema = toSakstema(behandlingStatus),
                 sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
                 styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
+            )
+
+            is BehandlingOpprettetOgAvsluttet -> SoknadBehandlingAvsluttet(
+                aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
+                ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
+                applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
+                applikasjonSakREF = behandlingStatus.applikasjonSakREF,
+                behandlingsID = behandlingStatus.behandlingsID,
+                behandlingstema = toBehandlingstema(behandlingStatus),
+                behandlingstype = toBehandlingstype(behandlingStatus),
+                hendelseType = "",
+                hendelsesId = behandlingStatus.hendelsesId,
+                hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
+                hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
+                primaerBehandlingREF = primaerBehandlingRef,
+                sakstema = toSakstema(behandlingStatus),
+                sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
+                styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
+                avslutningsstatus = toAvslutningsstatus(behandlingStatus),
+                opprettelsesTidspunkt = toZonedDateTime(behandlingStatus.opprettelsesTidspunkt),
+
             )
 
             is BehandlingAvsluttet -> SoknadBehandlingAvsluttet(
@@ -59,7 +81,7 @@ object XMLConverter {
                 behandlingstype = toBehandlingstype(behandlingStatus),
                 hendelseType = "",
                 hendelsesId = behandlingStatus.hendelsesId,
-                hendelsesTidspunkt = toHendelsesTidspunkt(behandlingStatus),
+                hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
                 hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
                 primaerBehandlingREF = primaerBehandlingRef,
                 sakstema = toSakstema(behandlingStatus),
@@ -162,8 +184,8 @@ object XMLConverter {
         value = behandlingStatus.behandlingstype.value,
     )
 
-    private fun toHendelsesTidspunkt(behandlingStatus: BehandlingStatus) =
-        behandlingStatus.hendelsesTidspunkt.toGregorianCalendar().toZonedDateTime()
+    private fun toZonedDateTime(xmlGregorianCalendar: XMLGregorianCalendar) =
+        xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime()
             .toLocalDateTime().toKotlinLocalDateTime()
 
     private fun toHendelsesprodusentREF(behandlingStatus: BehandlingStatus) = HendelsesprodusentREF(

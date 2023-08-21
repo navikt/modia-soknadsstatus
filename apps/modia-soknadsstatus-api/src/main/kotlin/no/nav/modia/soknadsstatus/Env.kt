@@ -66,5 +66,5 @@ data class EnvImpl(
 
 data class HendelseConsumerEnv(
     val pollDurationMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_POLL_DURATION_MS").toDouble(),
-    val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_RESTART_DELAY_MS").toDouble()
+    val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_RESTART_DELAY_MS").toDouble(),
 )
