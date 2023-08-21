@@ -3,7 +3,6 @@ package no.nav.modia.soknadsstatus
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
