@@ -21,3 +21,4 @@ sealed class Behandling {
     abstract val sekundaerBehandlingREF: List<SekundaerBehandlingREF>
     abstract val styringsinformasjonListe: List<StyringsinformasjonListe>
 }
+
