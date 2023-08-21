@@ -15,7 +15,7 @@ class SendToDeadLetterQueueExceptionHandler(
         TjenestekallLogg.error(
             "Producing dead letter $key: $value",
             mapOf("key" to key, "message" to value),
-            throwable = exception
+            throwable = exception,
         )
         try {
             if (value == null) {

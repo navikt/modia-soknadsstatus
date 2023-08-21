@@ -26,7 +26,6 @@ class SoknadsstatusRepositoryImpl(private val dataSource: DataSource) : Soknadss
     override fun get(idents: Array<String>): Result<List<SoknadsstatusDomain.SoknadsstatusOppdatering>> {
         val preparedVariables = idents.map { "?" }.joinToString()
 
-
         return dataSource.executeQuery("SELECT * from $Tabell where ${Tabell.ident} IN ($preparedVariables)", *idents) {
             SoknadsstatusDomain.SoknadsstatusOppdatering(
                 ident = it.getString(Tabell.ident),

@@ -71,7 +71,7 @@ fun deserialize(key: String?, value: String): Behandling {
         TjenestekallLogg.error(
             "Klarte ikke å håndtere DL",
             fields = mapOf("key" to key, "value" to value),
-            throwable = e
+            throwable = e,
         )
         throw e
     }
@@ -80,5 +80,5 @@ fun deserialize(key: String?, value: String): Behandling {
 fun transform(key: String?, behandling: Behandling) = Transformer.transform(
     behandling = behandling,
     identGruppe = IdentGruppe.AKTORID,
-    statusMapper = InfotrygdAvslutningsstatusMapper
+    statusMapper = InfotrygdAvslutningsstatusMapper,
 )

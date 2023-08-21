@@ -14,14 +14,16 @@ object Transformer {
             return SoknadsstatusDomain.Status.UNDER_BEHANDLING
         } else if (behandling is BehandlingAvsluttet) {
             return mapper.getAvslutningsstatus(behandling.avslutningsstatus.value.lowercase())
-        } else throw IllegalArgumentException("Mottok ukjent behandlingstype $behandling")
+        } else {
+            throw IllegalArgumentException("Mottok ukjent behandlingstype $behandling")
+        }
     }
 
     @JvmStatic
     fun transform(
         behandling: Behandling,
         identGruppe: IdentGruppe,
-        statusMapper: AvslutningsStatusMapper
+        statusMapper: AvslutningsStatusMapper,
     ): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
         return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
             identer = behandling.aktoerREF.map {

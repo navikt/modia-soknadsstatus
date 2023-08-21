@@ -4,7 +4,7 @@ import java.io.InputStream
 
 data class MappedStatusEntry(
     private val key: String,
-    val status: SoknadsstatusDomain.Status
+    val status: SoknadsstatusDomain.Status,
 )
 
 object InfotrygdAvslutningsstatusMapper : AvslutningsStatusMapper {

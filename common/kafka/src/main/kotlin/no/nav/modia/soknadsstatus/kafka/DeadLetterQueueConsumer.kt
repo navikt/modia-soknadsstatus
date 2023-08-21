@@ -15,8 +15,7 @@ class DeadLetterQueueConsumer(
     private val block: suspend (topic: String, key: String, value: String) -> Result<Unit>,
 ) : SoknadsstatusConsumerImpl(topic, kafkaConsumer, pollDurationMs, exceptionRestartDelayMs) {
 
-
-    override suspend fun handleRecords(records: ConsumerRecords<String, String>, commitSync: () -> Unit): Unit {
+    override suspend fun handleRecords(records: ConsumerRecords<String, String>, commitSync: () -> Unit) {
         if (records.count() > 0) {
             logger.info("Received number of DLQ records on topic $topic: ${records.count()}")
             for (record in records) {
