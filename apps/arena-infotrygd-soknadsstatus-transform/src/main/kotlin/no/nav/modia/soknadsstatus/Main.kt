@@ -79,6 +79,11 @@ fun deserialize(key: String?, value: String): Behandling {
 
 fun transform(key: String?, behandling: Behandling) = Transformer.transform(
     behandling = behandling,
-    identGruppe = IdentGruppe.AKTORID,
     statusMapper = InfotrygdAvslutningsstatusMapper,
+    identer = behandling.aktoerREF.map {
+        SoknadsstatusDomain.IdentType(
+            ident = it.aktoerId,
+            type = IdentGruppe.FOLKEREGISTERIDENT
+        )
+    }
 )
