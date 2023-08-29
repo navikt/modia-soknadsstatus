@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import no.nav.api.generated.pdl.enums.IdentGruppe
+import no.nav.modia.soknadsstatus.behandling.*
 
 object SoknadsstatusDomain {
     @Serializable
@@ -49,6 +50,7 @@ object SoknadsstatusDomain {
         val tema: String,
         val status: Status,
         val tidspunkt: Instant,
+        val behandling: Behandling?=null
     ) {
         init {
             if (aktorIder == null && identer == null) {
@@ -77,19 +79,18 @@ object SoknadsstatusDomain {
     )
 
     @Serializable
-    data class InnkommendeHendelse(
-        val aktoerIder: List<String> = listOf(),
-        val identer: List<String> = listOf(),
-        val hendelsesId: String,
+    data class BehandlingDAO(
+        val id: String,
         val behandlingId: String,
-        val hendelseProdusent: String,
-        val hendelseTidspunkt: String,
-        val hendelseType: HendelseType,
+        val produsentSystem: String,
+        val startTidspunkt: LocalDateTime,
+        val sluttTidspunkt: LocalDateTime? = null,
+        val sistOppdatert: LocalDateTime,
+        val sakstema: String,
+        val behandlingsTema: String,
         val status: Status,
         val ansvarligEnhet: String,
-        val produsentSystem: String,
-        val primaerBehandling: String? = null,
-        val sekundaerBehandlinger: List<String> = listOf(),
+        val primaerBehandling: String?
     )
 
     @Serializable
@@ -106,7 +107,7 @@ object SoknadsstatusDomain {
     )
 
     @Serializable
-    data class BehandlingDAO(
+    data class BehandlingDTO(
         val id: String,
         val behandlingId: String,
         val produsentSystem: String,
@@ -117,6 +118,20 @@ object SoknadsstatusDomain {
         val behandlingsTema: String,
         val status: Status,
         val ansvarligEnhet: String,
-        val primaerBehandling: String?
+        val primaerBehandling: String?,
+        val hendelser: List<HendelseDTO>? = null
+    )
+
+    @Serializable
+    data class HendelseDTO(
+        val id: String,
+        val hendelseId: String,
+        val behandlingId: String,
+        val hendelseProdusent: String,
+        val hendelseTidspunkt: LocalDateTime,
+        val hendelseType: HendelseType,
+        val status: Status,
+        val ansvarligEnhet: String,
+        val produsentSystem: String,
     )
 }
