@@ -9,7 +9,7 @@ CREATE TABLE identer
 CREATE TABLE behandlinger
 (
     id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    behandling_id         VARCHAR(20),
+    behandling_id         VARCHAR(20) UNIQUE,
     produsent_system      VARCHAR(20) NOT NULL,
     start_tidspunkt       TIMESTAMPTZ NOT NULL,
     slutt_tidspunkt       TIMESTAMPTZ,
@@ -19,15 +19,6 @@ CREATE TABLE behandlinger
     status                statusEnum  NOT NULL,
     ansvarlig_enhet       VARCHAR(20) NOT NULL,
     primaer_behandling_id VARCHAR(20)
-);
-
-
-
-CREATE TABLE sekundaer_behandlinger
-(
-    fra_behandling VARCHAR(20) NOT NULL,
-    til_behandling VARCHAR(20) NOT NULL,
-    PRIMARY KEY (fra_behandling, til_behandling)
 );
 
 CREATE TABLE behandling_eiere
@@ -40,7 +31,7 @@ CREATE TABLE behandling_eiere
 CREATE TABLE hendelser
 (
     id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    hendelses_id       VARCHAR(20),
+    hendelses_id       VARCHAR(20) UNIQUE,
     behandling_id      UUID REFERENCES behandlinger (id) ON DELETE CASCADE,
     hendelse_produsent VARCHAR(20) NOT NULL,
     hendelse_tidspunkt TIMESTAMPTZ NOT NULL,

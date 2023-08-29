@@ -22,4 +22,4 @@ data class BehandlingAvsluttet(
     override val sakstema: Sakstema,
     override val sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
     override val styringsinformasjonListe: List<StyringsinformasjonListe> = listOf(),
-) : Behandling()
+) : Hendelse()

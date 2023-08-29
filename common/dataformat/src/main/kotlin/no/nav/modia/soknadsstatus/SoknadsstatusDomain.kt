@@ -50,7 +50,7 @@ object SoknadsstatusDomain {
         val tema: String,
         val status: Status,
         val tidspunkt: Instant,
-        val behandling: Behandling?=null
+        val hendelse: Hendelse? = null
     ) {
         init {
             if (aktorIder == null && identer == null) {
@@ -80,30 +80,29 @@ object SoknadsstatusDomain {
 
     @Serializable
     data class BehandlingDAO(
-        val id: String,
-        val behandlingId: String,
-        val produsentSystem: String,
-        val startTidspunkt: LocalDateTime,
+        val id: String? = null,
+        val behandlingId: String? = null,
+        val produsentSystem: String? = null,
+        val startTidspunkt: LocalDateTime? = null,
         val sluttTidspunkt: LocalDateTime? = null,
-        val sistOppdatert: LocalDateTime,
-        val sakstema: String,
-        val behandlingsTema: String,
+        val sistOppdatert: LocalDateTime? = null,
+        val sakstema: String? = null,
+        val behandlingsTema: String? = null,
         val status: Status,
-        val ansvarligEnhet: String,
-        val primaerBehandling: String?
+        val ansvarligEnhet: String? = null,
+        val primaerBehandling: String? = null,
     )
 
     @Serializable
     data class HendelseDAO(
-        val id: String,
-        val hendelseId: String,
-        val behandlingId: String,
-        val hendelseProdusent: String,
-        val hendelseTidspunkt: LocalDateTime,
-        val hendelseType: HendelseType,
-        val status: Status,
-        val ansvarligEnhet: String,
-        val produsentSystem: String,
+        val id: String? = null,
+        val hendelseId: String? = null,
+        val behandlingId: String? = null,
+        val hendelseProdusent: String? = null,
+        val hendelseTidspunkt: LocalDateTime? = null,
+        val hendelseType: HendelseType? = null,
+        val status: Status? = null,
+        val ansvarligEnhet: String? = null,
     )
 
     @Serializable

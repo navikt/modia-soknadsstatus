@@ -4,6 +4,7 @@ import jakarta.xml.bind.DataBindingException
 import jakarta.xml.bind.JAXB
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.modia.soknadsstatus.behandling.*
+import no.nav.modia.soknadsstatus.behandling.Hendelse
 import org.xml.sax.SAXException
 import java.io.IOException
 import java.io.StringReader
@@ -20,7 +21,7 @@ import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet as SoknadBehand
 object XMLConverter {
     private const val SCHEMA_FIL_STATUS = "schema/behandlingsstatus.xsd"
 
-    fun fromXml(message: String): Behandling {
+    fun fromXml(message: String): Hendelse {
         val behandlingStatus = validateAndConvertFromXML(message)
 
         val primaerBehandlingRef = if (behandlingStatus.primaerBehandlingREF != null) {
@@ -234,7 +235,7 @@ object XMLConverter {
 }
 
 object BehandlingDeserializer {
-    fun deserialize(data: String): Behandling {
+    fun deserialize(data: String): Hendelse {
         return XMLConverter.fromXml(data)
     }
 }

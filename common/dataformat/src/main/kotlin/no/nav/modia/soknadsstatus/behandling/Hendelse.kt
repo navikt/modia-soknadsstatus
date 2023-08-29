@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Behandling {
+sealed class Hendelse {
     abstract val aktoerREF: List<AktoerREF>
     abstract val ansvarligEnhetREF: String
     abstract val applikasjonBehandlingREF: String?

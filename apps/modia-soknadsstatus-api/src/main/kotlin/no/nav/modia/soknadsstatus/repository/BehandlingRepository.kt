@@ -2,24 +2,27 @@ package no.nav.modia.soknadsstatus.repository
 
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
+import no.nav.modia.soknadsstatus.SoknadsstatusRepositoryImpl
 import no.nav.modia.soknadsstatus.SqlDsl.execute
 import no.nav.modia.soknadsstatus.SqlDsl.executeQuery
+import no.nav.modia.soknadsstatus.SqlDsl.executeWithResult
+import java.sql.Connection
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-interface BehandlingRepository {
-    suspend fun create(behandling: SoknadsstatusDomain.BehandlingDAO): Result<Boolean>
-    suspend fun update(
-        id: String,
+interface BehandlingRepository : TransactionRepository {
+    suspend fun upsert(
+        connection: Connection,
         behandling: SoknadsstatusDomain.BehandlingDAO
-    ): Result<Boolean>
+    ): SoknadsstatusDomain.BehandlingDAO?
 
-    suspend fun get(id: String): Result<SoknadsstatusDomain.BehandlingDAO?>
-    suspend fun getByIdents(idents: Array<String>): Result<List<SoknadsstatusDomain.BehandlingDAO>>
-    suspend fun delete(id: String)
+    suspend fun get(id: String): SoknadsstatusDomain.BehandlingDAO?
+    suspend fun getByBehandlingId(connection: Connection, behandlingId: String): SoknadsstatusDomain.BehandlingDAO?
+    suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.BehandlingDAO>
+    suspend fun delete(connection: Connection, id: String)
 }
 
-class BehandlingRepositoryImpl(private val dataSource: DataSource) : BehandlingRepository {
+class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, TransactionRepositoryImpl(dataSource) {
     object Tabell {
         override fun toString(): String = "behandlinger"
         const val id = "id"
@@ -35,33 +38,17 @@ class BehandlingRepositoryImpl(private val dataSource: DataSource) : BehandlingR
         const val primaerBehandlingId = "primaer_behandling_id"
     }
 
-
-    override suspend fun create(behandling: SoknadsstatusDomain.BehandlingDAO): Result<Boolean> {
-        return dataSource.execute(
+    override suspend fun upsert(
+        connection: Connection,
+        behandling: SoknadsstatusDomain.BehandlingDAO
+    ): SoknadsstatusDomain.BehandlingDAO? {
+        return connection.executeWithResult(
             """
                INSERT INTO ${Tabell}(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingstema}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId})
                VALUES (?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?)
-           """.trimIndent(),
-            behandling.behandlingId,
-            behandling.produsentSystem,
-            behandling.startTidspunkt,
-            behandling.sluttTidspunkt,
-            behandling.sistOppdatert,
-            behandling.sakstema,
-            behandling.behandlingsTema,
-            behandling.status,
-            behandling.ansvarligEnhet,
-            behandling.primaerBehandling
-        )
-    }
-
-    override suspend fun update(
-        id: String,
-        behandling: SoknadsstatusDomain.BehandlingDAO
-    ): Result<Boolean> {
-        return dataSource.execute(
-            """
-               UPDATE $Tabell SET ${Tabell.behandlingId} = ?, ${Tabell.produsentSystem} = ?, ${Tabell.startTidspunkt} = ?, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert}, = ? ${Tabell.sakstema} = ?, ${Tabell.behandlingstema} = ?, ${Tabell.status} = ?::statusEnum, ${Tabell.ansvarligEnhet} = ?, ${Tabell.primaerBehandlingId} = ? WHERE ${Tabell.id} = ?
+               ON CONFLICT ${Tabell.behandlingId} DO
+                    UPDATE SET ${Tabell.status} = ?::statusenum, ${Tabell.sistOppdatert} = ? WHERE ${Tabell}.${Tabell.sistOppdatert} < ?
+               RETURNING *;
            """.trimIndent(),
             behandling.behandlingId,
             behandling.produsentSystem,
@@ -73,25 +60,31 @@ class BehandlingRepositoryImpl(private val dataSource: DataSource) : BehandlingR
             behandling.status,
             behandling.ansvarligEnhet,
             behandling.primaerBehandling,
-            id
-        )
+            behandling.status,
+            behandling.sistOppdatert,
+            behandling.sistOppdatert
+        ) {
+            convertResultSetToBehandlingDao(it)
+        }.firstOrNull()
     }
 
-    override suspend fun get(id: String): Result<SoknadsstatusDomain.BehandlingDAO?> {
-        val result =
-            dataSource.executeQuery("SELECT * FROM $Tabell WHERE ${Tabell.id} = $id") {
-                convertResultSetToBehandlingDao(it)
-            }
-        if (result.isSuccess) {
-            return Result.success(result.getOrNull()?.firstOrNull())
-        } else {
-            return Result.failure(result.exceptionOrNull() ?: throw UnknownError("Ukjent feil oppsto"))
-        }
+    override suspend fun get(id: String): SoknadsstatusDomain.BehandlingDAO? {
+        return dataSource.executeQuery("SELECT * FROM $Tabell WHERE ${Tabell.id} = ?", id) {
+            convertResultSetToBehandlingDao(it)
+        }.firstOrNull()
     }
 
-    override suspend fun getByIdents(idents: Array<String>): Result<List<SoknadsstatusDomain.BehandlingDAO>> {
+    override suspend fun getByBehandlingId(
+        connection: Connection,
+        behandlingId: String
+    ): SoknadsstatusDomain.BehandlingDAO? {
+        return connection.executeQuery("SELECT * FROM $Tabell WHERE ${Tabell.behandlingId} = ?", behandlingId) {
+            convertResultSetToBehandlingDao(it)
+        }.firstOrNull()
+    }
+
+    override suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.BehandlingDAO> {
         val preparedVariables = idents.map { "?" }.joinToString()
-
         return dataSource.executeQuery(
             """
             SELECT *
@@ -105,8 +98,8 @@ class BehandlingRepositoryImpl(private val dataSource: DataSource) : BehandlingR
         }
     }
 
-    override suspend fun delete(id: String) {
-        dataSource.execute("DELETE FROM $Tabell WHERE ${Tabell.id} = $id")
+    override suspend fun delete(connection: Connection, id: String) {
+        connection.execute("DELETE FROM $Tabell WHERE ${Tabell.id} = $id")
     }
 
     private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.BehandlingDAO {

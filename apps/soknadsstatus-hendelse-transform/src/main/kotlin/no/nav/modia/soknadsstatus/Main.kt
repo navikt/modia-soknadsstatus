@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.serialization.json.Json
 import no.nav.api.generated.pdl.enums.IdentGruppe
-import no.nav.modia.soknadsstatus.behandling.Behandling
+import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.TjenestekallLogg
@@ -26,7 +26,7 @@ fun runApp(port: Int = 8080) {
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(KafkaStreamTransformPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                     topic = requireNotNull(config.deadLetterQueueTopic),
@@ -47,7 +47,7 @@ fun runApp(port: Int = 8080) {
                     stream.mapValues(::transform)
                 }
             }
-            install(DeadLetterQueueTransformerPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(DeadLetterQueueTransformerPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
                 appEnv = config
                 transformer = ::transform
                 skipTableDataSource = datasourceConfiguration.datasource
@@ -59,7 +59,7 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun deserialize(key: String?, value: String): Behandling {
+fun deserialize(key: String?, value: String): Hendelse {
     return try {
         Json.decodeFromString(BehandlingSerializer, value)
     } catch (e: Exception) {
@@ -77,8 +77,8 @@ fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeO
     value,
 )
 
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(
-    behandling = behandling,
+fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+    hendelse = hendelse,
     identGruppe = IdentGruppe.AKTORID,
     statusMapper = HendelseAvslutningsstatusMapper,
 )

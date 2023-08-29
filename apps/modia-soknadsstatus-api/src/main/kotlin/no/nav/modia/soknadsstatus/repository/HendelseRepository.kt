@@ -2,14 +2,19 @@ package no.nav.modia.soknadsstatus.repository
 
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.SqlDsl.execute
+import java.sql.Connection
 import javax.sql.DataSource
 
-interface HendelseRepository {
-    suspend fun create(hendelse: SoknadsstatusDomain.HendelseDAO): Result<Boolean>
-    suspend fun update(hendelseId: String, hendelse: SoknadsstatusDomain.HendelseDAO): Result<Boolean>
+interface HendelseRepository : TransactionRepository {
+    suspend fun create(connection: Connection, hendelse: SoknadsstatusDomain.HendelseDAO): Boolean
+    suspend fun update(
+        connection: Connection,
+        hendelseId: String,
+        hendelse: SoknadsstatusDomain.HendelseDAO
+    ): Boolean
 }
 
-class HendelseRepositoryImpl(private val dataSource: DataSource) : HendelseRepository {
+class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, TransactionRepositoryImpl(dataSource) {
     object Tabell {
         override fun toString(): String = "hendelser"
         const val id = "id"
@@ -24,8 +29,8 @@ class HendelseRepositoryImpl(private val dataSource: DataSource) : HendelseRepos
     }
 
 
-    override suspend fun create(hendelse: SoknadsstatusDomain.HendelseDAO): Result<Boolean> {
-        return dataSource.execute(
+    override suspend fun create(connection: Connection, hendelse: SoknadsstatusDomain.HendelseDAO): Boolean {
+        return connection.execute(
             """
             INSERT INTO $Tabell(${Tabell.hendelseId}, ${Tabell.behandlingId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.produsentSystem})
             VALUES (?, ?, ?, ?, ?, ?::statusEnum, ?, ?) 
@@ -41,8 +46,12 @@ class HendelseRepositoryImpl(private val dataSource: DataSource) : HendelseRepos
         )
     }
 
-    override suspend fun update(hendelseId: String, hendelse: SoknadsstatusDomain.HendelseDAO): Result<Boolean> {
-        return dataSource.execute(
+    override suspend fun update(
+        connection: Connection,
+        hendelseId: String,
+        hendelse: SoknadsstatusDomain.HendelseDAO
+    ): Boolean {
+        return connection.execute(
             """
             UPDATE $Tabell SET ${Tabell.hendelseProdusent} = ?, ${Tabell.hendelseTidspunkt} = ?, ${Tabell.hendelseType} = ?, ${Tabell.status} = ?, ${Tabell.ansvarligEnhet} = ?, ${Tabell.produsentSystem} = ?  WHERE ${Tabell.hendelseId} = ? 
         """.trimIndent(),
