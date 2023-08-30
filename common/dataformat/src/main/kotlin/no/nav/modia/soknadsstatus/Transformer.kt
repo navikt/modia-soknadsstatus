@@ -1,8 +1,5 @@
 package no.nav.modia.soknadsstatus
 
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
@@ -21,17 +18,24 @@ object Transformer {
 
     @JvmStatic
     fun transform(
-        behandling: Behandling,
+        hendelse: Hendelse,
         statusMapper: AvslutningsStatusMapper,
-        identer: List<SoknadsstatusDomain.IdentType>,
-    ): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
-        return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
+        identer: List<String>,
+    ): InnkommendeHendelse {
+        return InnkommendeHendelse(
+            aktoerer = hendelse.aktoerREF.map { it.aktoerId },
             identer = identer,
-            tema = behandling.sakstema.value,
-            behandlingsId = behandling.behandlingsID,
-            systemRef = behandling.hendelsesprodusentREF.value,
-            status = behandlingsStatus(behandling, statusMapper),
-            tidspunkt = behandling.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault()),
+            behandlingsId = hendelse.behandlingsID,
+            behandlingsTema = hendelse.behandlingstema?.value ?: "",
+            behandlingsType = hendelse.behandlingstype?.value ?: "",
+            hendelsesId = hendelse.hendelsesId,
+            hendelsesProdusent = hendelse.hendelsesprodusentREF.value,
+            hendelsesTidspunkt = hendelse.hendelsesTidspunkt,
+            hendelsesType = SoknadsstatusDomain.HendelseType.convertFromString(hendelse.hendelseType),
+            status = behandlingsStatus(hendelse, statusMapper),
+            sakstema = hendelse.sakstema.value,
+            ansvarligEnhet = hendelse.ansvarligEnhetREF,
+            primaerBehandling = hendelse.primaerBehandlingREF?.type?.value,
         )
     }
 }

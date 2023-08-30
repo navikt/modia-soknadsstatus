@@ -26,7 +26,7 @@ fun runApp(port: Int = 8080) {
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
                 appEnv = config
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                     topic = requireNotNull(config.deadLetterQueueTopic),
@@ -47,7 +47,7 @@ fun runApp(port: Int = 8080) {
                     stream.mapValues(::transform)
                 }
             }
-            install(DeadLetterQueueTransformerPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
                 appEnv = config
                 transformer = ::transform
                 skipTableDataSource = datasourceConfiguration.datasource
@@ -72,21 +72,21 @@ fun deserialize(key: String?, value: String): Hendelse {
     }
 }
 
-fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
-    SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
+fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
+    InnkommendeHendelse.serializer(),
     value,
 )
 
 
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(
-    behandling = behandling,
-    identer = getIdenter(behandling),
+fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+    hendelse = hendelse,
+    identer = hendelse.identREF.map { it.ident },
     statusMapper = HendelseAvslutningsstatusMapper
 )
 
-private fun getIdenter(behandling: Behandling) = if (behandling.identREF.isNotEmpty()) behandling.identREF.map {
+private fun getIdenter(hendelse: Hendelse) = if (hendelse.identREF.isNotEmpty()) hendelse.identREF.map {
     SoknadsstatusDomain.IdentType(
         ident = it.ident,
         type = IdentGruppe.FOLKEREGISTERIDENT
     )
-} else behandling.aktoerREF.map { SoknadsstatusDomain.IdentType(ident = it.aktoerId, type = IdentGruppe.AKTORID) }
+} else hendelse.aktoerREF.map { SoknadsstatusDomain.IdentType(ident = it.aktoerId, type = IdentGruppe.AKTORID) }

@@ -9,7 +9,7 @@ import no.nav.modia.soknadsstatus.repository.HendelseRepository
 import no.nav.modia.soknadsstatus.repository.IdentDAO
 
 interface HendelseService {
-    suspend fun onNewHendelse(hendelse: InnkommendeHendelse)
+    suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse)
 }
 
 class HendelseServiceImpl(

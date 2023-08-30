@@ -3,7 +3,6 @@ package no.nav.modia.soknadsstatus
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.serialization.json.Json
-import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
@@ -25,7 +24,7 @@ fun runApp(port: Int = 8080) {
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
                 appEnv = config
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                     dlqProducer = deadLetterProducer,
@@ -47,7 +46,7 @@ fun runApp(port: Int = 8080) {
                         .mapValues(::transform)
                 }
             }
-            install(DeadLetterQueueTransformerPlugin<Hendelse, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
                 appEnv = config
                 transformer = ::transform
                 skipTableDataSource = datasourceConfiguration.datasource
@@ -59,8 +58,8 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
-    SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
+fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
+    InnkommendeHendelse.serializer(),
     value,
 )
 
@@ -77,13 +76,8 @@ fun deserialize(key: String?, value: String): Hendelse {
     }
 }
 
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(
-    behandling = behandling,
+fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+    hendelse = hendelse,
     statusMapper = InfotrygdAvslutningsstatusMapper,
-    identer = behandling.aktoerREF.map {
-        SoknadsstatusDomain.IdentType(
-            ident = it.aktoerId,
-            type = IdentGruppe.FOLKEREGISTERIDENT
-        )
-    }
+    identer = hendelse.aktoerREF.map { it.aktoerId }
 )

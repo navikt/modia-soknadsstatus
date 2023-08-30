@@ -10,7 +10,7 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
     private val log = LoggerFactory.getLogger("${DeadLetterMessageRepository::class.java}-$tableName")
     private val tabell = Tabell(tableName)
 
-    private fun get(key: String): Result<List<SkipTableEntry>> {
+    private fun get(key: String): List<SkipTableEntry> {
         return dataSource.executeQuery("SELECT * FROM $tabell WHERE ${tabell.key} = ?", key) {
             SkipTableEntry(
                 key = it.getString(tabell.key),
@@ -20,7 +20,7 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
         }
     }
 
-    private fun markAsSkipped(key: String): Result<Boolean> {
+    private fun markAsSkipped(key: String): Boolean {
         return dataSource.execute(
             """
             UPDATE $tabell
@@ -31,14 +31,9 @@ class DeadLetterMessageRepository(tableName: String, private val dataSource: Dat
         )
     }
 
-    fun getAndMarkAsSkipped(key: String): List<SkipTableEntry> = get(key).fold(onSuccess = {
-        if (it.isNotEmpty()) {
-            markAsSkipped(key)
-        }
+    fun getAndMarkAsSkipped(key: String): List<SkipTableEntry> = get(key).map {
+        markAsSkipped(key)
         it
-    }) {
-        log.error("Failed to retrieve dead letter key from DB", it)
-        listOf()
     }
 }
 
