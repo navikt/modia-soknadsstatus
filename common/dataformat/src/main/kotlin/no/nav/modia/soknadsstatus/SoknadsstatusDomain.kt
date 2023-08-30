@@ -21,7 +21,7 @@ object SoknadsstatusDomain {
         BEHANDLING_OPPRETTET_OG_AVSLUTTET;
 
         companion object {
-            fun convertFromMessage(type: String): HendelseType {
+            fun convertFromString(type: String): HendelseType {
                 return HendelseType.values().first { it.name.lowercase() == type.lowercase() }
             }
         }
@@ -104,7 +104,6 @@ object SoknadsstatusDomain {
         val hendelseType: HendelseType? = null,
         val status: Status? = null,
         val ansvarligEnhet: String? = null,
-        val sakstema: String? = null,
     )
 
     @Serializable

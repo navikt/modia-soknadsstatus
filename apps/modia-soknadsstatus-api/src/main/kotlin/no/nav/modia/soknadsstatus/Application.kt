@@ -9,6 +9,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
@@ -75,8 +76,8 @@ fun Application.soknadsstatusModule(
         ) { _, _, value ->
             runCatching {
                 val decodedValue =
-                    Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
-                services.soknadsstatusService.persistUpdate(decodedValue)
+                    Encoding.decode(InnkommendeHendelse.serializer(), value)
+                services.hendelseService.onNewHendelse(decodedValue)
             }
         }
     }
@@ -97,8 +98,8 @@ fun Application.soknadsstatusModule(
                 runCatching {
                     try {
                         val decodedValue =
-                            Encoding.decode(SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(), value)
-                        services.soknadsstatusService.persistUpdate(decodedValue)
+                            Encoding.decode(InnkommendeHendelse.serializer(), value)
+                        services.hendelseService.onNewHendelse(decodedValue)
                     } catch (e: Exception) {
                         TjenestekallLogg.error(
                             "Klarte ikke å håndtere DL",
@@ -115,46 +116,30 @@ fun Application.soknadsstatusModule(
         authenticate(*security.authproviders) {
             route("api") {
                 route("soknadsstatus") {
-                    get("oppdateringer/{ident}") {
-                        val kabac = services.accessControl.buildKabac(call.authentication)
-                        val ident = call.getIdent()
-                        call.respondWithResult(
-                            kabac
-                                .check(services.policies.tilgangTilBruker(Fnr(ident))).get(
+                    route("behandling") {
+                        get("{ident}") {
+                            val kabac = services.accessControl.buildKabac(call.authentication)
+                            val ident = call.getIdent()
+                            call.respondWithResult(
+                                kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
                                     Audit.describe(
                                         call.authentication,
                                         Audit.Action.READ,
                                         AuditResources.Person.SakOgBehandling.Les,
                                         AuditIdentifier.FNR to ident,
-                                    ),
-                                ) {
-                                    services.soknadsstatusService.fetchDataForIdent(
-                                        userToken = call.getUserToken(),
-                                        ident,
                                     )
-                                },
-                        )
-                    }
-
-                    get("{ident}") {
-                        val ident = call.getIdent()
-                        val kabac = services.accessControl.buildKabac(call.authentication)
-                        call.respondWithResult(
-                            kabac
-                                .check(services.policies.tilgangTilBruker(Fnr(ident))).get(
-                                    Audit.describe(
-                                        call.authentication,
-                                        Audit.Action.READ,
-                                        AuditResources.Person.SakOgBehandling.Les,
-                                        AuditIdentifier.FNR to ident,
-                                    ),
                                 ) {
-                                    services.soknadsstatusService.fetchAggregatedDataForIdent(
-                                        call.getUserToken(),
-                                        ident,
-                                    )
-                                },
-                        )
+                                    runCatching {
+                                        runBlocking {
+                                            services.behandlingService.getAllForIdent(
+                                                userToken = call.getUserToken(),
+                                                ident
+                                            )
+                                        }
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }

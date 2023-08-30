@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus.service
 
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.behandling.Hendelse
+import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.repository.BehandlingRepository
 import java.sql.Connection
 
@@ -11,10 +12,12 @@ interface BehandlingService {
         behandling: SoknadsstatusDomain.BehandlingDAO,
     ): SoknadsstatusDomain.BehandlingDAO?
 
-    suspend fun getAllForIdent(idents: List<String>): List<SoknadsstatusDomain.BehandlingDAO>
+    suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.BehandlingDAO>
+
+    suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.BehandlingDAO>
 }
 
-class BehandlingServiceImpl(private val behandlingRepository: BehandlingRepository) : BehandlingService {
+class BehandlingServiceImpl(private val behandlingRepository: BehandlingRepository, private val pdlOppslagService: PdlOppslagService) : BehandlingService {
     override suspend fun upsert(
         connection: Connection?,
         behandling: SoknadsstatusDomain.BehandlingDAO,
@@ -26,7 +29,12 @@ class BehandlingServiceImpl(private val behandlingRepository: BehandlingReposito
         }
     }
 
-    override suspend fun getAllForIdent(idents: List<String>): List<SoknadsstatusDomain.BehandlingDAO> {
+    override suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.BehandlingDAO> {
         return behandlingRepository.getByIdents(idents.toTypedArray())
+    }
+
+    override suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.BehandlingDAO> {
+        val idents = pdlOppslagService.hentAktiveIdenter(userToken, ident)
+        return getAllForIdents(idents)
     }
 }

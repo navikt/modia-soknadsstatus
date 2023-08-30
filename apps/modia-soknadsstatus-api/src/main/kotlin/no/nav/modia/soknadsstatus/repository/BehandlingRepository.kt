@@ -2,7 +2,6 @@ package no.nav.modia.soknadsstatus.repository
 
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
-import no.nav.modia.soknadsstatus.SoknadsstatusRepositoryImpl
 import no.nav.modia.soknadsstatus.SqlDsl.execute
 import no.nav.modia.soknadsstatus.SqlDsl.executeQuery
 import no.nav.modia.soknadsstatus.SqlDsl.executeWithResult
@@ -32,7 +31,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         const val sluttTidspunkt = "slutt_tidspunkt"
         const val sistOppdatert = "sist_oppdatert"
         const val sakstema = "sakstema"
-        const val behandlingstema = "behandlingstema"
+        const val behandlingsTema = "behandlings_tema"
+        const val behandlingsType = "behandlings_type"
         const val status = "status"
         const val ansvarligEnhet = "ansvarlig_enhet"
         const val primaerBehandlingId = "primaer_behandling_id"
@@ -44,7 +44,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
     ): SoknadsstatusDomain.BehandlingDAO? {
         return connection.executeWithResult(
             """
-               INSERT INTO ${Tabell}(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingstema}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId})
+               INSERT INTO ${Tabell}(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId})
                VALUES (?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?)
                ON CONFLICT ${Tabell.behandlingId} DO
                     UPDATE SET ${Tabell.status} = ?::statusenum, ${Tabell.sistOppdatert} = ? WHERE ${Tabell}.${Tabell.sistOppdatert} < ?
@@ -57,6 +57,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             behandling.sistOppdatert,
             behandling.sakstema,
             behandling.behandlingsTema,
+            behandling.behandlingsType,
             behandling.status,
             behandling.ansvarligEnhet,
             behandling.primaerBehandling,
@@ -88,9 +89,9 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         return dataSource.executeQuery(
             """
             SELECT *
-            FROM ${BehandlingEiereRepositoryImpl.Tabell}
-            LEFT JOIN $Tabell ON ${Tabell.behandlingId} = ${BehandlingEiereRepositoryImpl.Tabell}.${BehandlingEiereRepositoryImpl.Tabell.behandlingId}
-            WHERE ${BehandlingEiereRepositoryImpl.Tabell.ident} IN $preparedVariables 
+            FROM ${BehandlingEierRepositoryImpl.Tabell}
+            LEFT JOIN $Tabell ON ${Tabell.behandlingId} = ${BehandlingEierRepositoryImpl.Tabell}.${BehandlingEierRepositoryImpl.Tabell.behandlingId}
+            WHERE ${BehandlingEierRepositoryImpl.Tabell.ident} IN $preparedVariables 
         """.trimIndent(),
             idents
         ) {
@@ -111,7 +112,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             sluttTidspunkt = resultSet.getTimestamp(Tabell.sluttTidspunkt).toLocalDateTime().toKotlinLocalDateTime(),
             sistOppdatert = resultSet.getTimestamp(Tabell.sistOppdatert).toLocalDateTime().toKotlinLocalDateTime(),
             sakstema = resultSet.getString(Tabell.sakstema),
-            behandlingsTema = resultSet.getString(Tabell.behandlingstema),
+            behandlingsTema = resultSet.getString(Tabell.behandlingsTema),
+            behandlingsType = resultSet.getString(Tabell.behandlingsType),
             status = SoknadsstatusDomain.Status.valueOf(resultSet.getString(Tabell.status)),
             ansvarligEnhet = resultSet.getString(Tabell.ansvarligEnhet),
             primaerBehandling = resultSet.getString(Tabell.primaerBehandlingId)

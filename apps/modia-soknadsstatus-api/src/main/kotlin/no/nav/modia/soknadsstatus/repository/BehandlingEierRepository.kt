@@ -8,19 +8,20 @@ import java.sql.ResultSet
 import javax.sql.DataSource
 
 interface BehandlingEiereRepository : TransactionRepository {
-    fun create(connection: Connection, eier: BehandlingEier): Boolean
+    fun create(connection: Connection, eier: BehandlingEierDAO): Boolean
 
-    suspend fun upsert(connection: Connection, eier: BehandlingEier)
-    fun getForIdent(ident: String): List<BehandlingEier>
+    suspend fun upsert(connection: Connection, eier: BehandlingEierDAO)
+    fun getForIdent(ident: String): List<BehandlingEierDAO>
 }
 
 @Serializable
-data class BehandlingEier(
-    val ident: String,
-    val behandlingId: String,
+data class BehandlingEierDAO(
+    val id: String? = null,
+    val ident: String? = null,
+    val behandlingId: String? = null,
 )
 
-class BehandlingEiereRepositoryImpl(dataSource: DataSource) : BehandlingEiereRepository,
+class BehandlingEierRepositoryImpl(dataSource: DataSource) : BehandlingEiereRepository,
     TransactionRepositoryImpl(dataSource) {
     object Tabell {
         override fun toString(): String = "behandling_eiere"
@@ -28,7 +29,7 @@ class BehandlingEiereRepositoryImpl(dataSource: DataSource) : BehandlingEiereRep
         const val behandlingId = "behandling_id"
     }
 
-    override fun create(connection: Connection, eier: BehandlingEier): Boolean {
+    override fun create(connection: Connection, eier: BehandlingEierDAO): Boolean {
         return connection.execute(
             "INSERT INTO ${Tabell}(${Tabell.ident}, ${Tabell.behandlingId}) VALUES(?, ?)",
             eier.ident,
@@ -36,14 +37,18 @@ class BehandlingEiereRepositoryImpl(dataSource: DataSource) : BehandlingEiereRep
         )
     }
 
-    override fun getForIdent(ident: String): List<BehandlingEier> {
+    override suspend fun upsert(connection: Connection, eier: BehandlingEierDAO) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getForIdent(ident: String): List<BehandlingEierDAO> {
         return dataSource.executeQuery("DELETE FROM $Tabell WHERE ${Tabell.ident} = ?", ident) {
             convertResultSetToBehandlingEier(it)
         }
     }
 
-    private fun convertResultSetToBehandlingEier(resultSet: ResultSet): BehandlingEier {
-        return BehandlingEier(
+    private fun convertResultSetToBehandlingEier(resultSet: ResultSet): BehandlingEierDAO {
+        return BehandlingEierDAO(
             ident = resultSet.getString(Tabell.ident),
             behandlingId = resultSet.getString(Tabell.behandlingId)
         )

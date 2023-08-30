@@ -11,7 +11,7 @@ data class InnkommendeHendelse(
     val behandlingsId: String,
     val behandlingsTema: String,
     val behandlingsType: String,
-    val hendelsesType: SoknadsstatusDomain.HendelseType,
+    val hendelsesType: SoknadsstatusDomain.HendelseType? = null,
     val hendelsesId: String,
     val hendelsesTidspunkt: LocalDateTime,
     val hendelsesProdusent: String,

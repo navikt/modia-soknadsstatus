@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS soknadsstatus;
 
 CREATE TABLE identer
 (
+    id    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     ident VARCHAR(11) UNIQUE
 );
 
@@ -16,6 +17,7 @@ CREATE TABLE behandlinger
     sist_oppdatert        TIMESTAMPTZ NOT NULL,
     sakstema              VARCHAR(10),
     behandlingstema       VARCHAR(10),
+    behandlingstype       VARCHAR(10),
     status                statusEnum  NOT NULL,
     ansvarlig_enhet       VARCHAR(20) NOT NULL,
     primaer_behandling_id VARCHAR(20)
@@ -23,9 +25,10 @@ CREATE TABLE behandlinger
 
 CREATE TABLE behandling_eiere
 (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     ident         VARCHAR(11) REFERENCES identer (ident) ON DELETE CASCADE,
     behandling_id VARCHAR(20) REFERENCES behandlinger (behandling_id) ON DELETE CASCADE,
-    PRIMARY KEY (ident, behandling_id)
+    UNIQUE (ident, behandling_id)
 );
 
 CREATE TABLE hendelser
@@ -43,9 +46,10 @@ CREATE TABLE hendelser
 
 CREATE TABLE hendelse_eiere
 (
-    ident       VARCHAR(11) REFERENCES identer (ident) ON DELETE CASCADE,
-    hendelse_id VARCHAR(20) REFERENCES hendelser (hendelses_id) ON DELETE CASCADE,
-    PRIMARY KEY (ident, hendelse_id)
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ident       UUID REFERENCES identer (id) ON DELETE CASCADE,
+    hendelse_id UUID REFERENCES hendelser (id) ON DELETE CASCADE,
+    UNIQUE (ident, hendelse_id)
 );
 
 
