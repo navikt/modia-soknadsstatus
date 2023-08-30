@@ -88,6 +88,7 @@ object SoknadsstatusDomain {
         val sistOppdatert: LocalDateTime? = null,
         val sakstema: String? = null,
         val behandlingsTema: String? = null,
+        val behandlingsType: String? = null,
         val status: Status,
         val ansvarligEnhet: String? = null,
         val primaerBehandling: String? = null,
