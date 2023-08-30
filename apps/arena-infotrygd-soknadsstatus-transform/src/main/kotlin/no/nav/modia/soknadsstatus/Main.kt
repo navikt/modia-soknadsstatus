@@ -77,8 +77,13 @@ fun deserialize(key: String?, value: String): Hendelse {
     }
 }
 
-fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
-    hendelse = hendelse,
-    identGruppe = IdentGruppe.AKTORID,
+fun transform(key: String?, behandling: Behandling) = Transformer.transform(
+    behandling = behandling,
     statusMapper = InfotrygdAvslutningsstatusMapper,
+    identer = behandling.aktoerREF.map {
+        SoknadsstatusDomain.IdentType(
+            ident = it.aktoerId,
+            type = IdentGruppe.FOLKEREGISTERIDENT
+        )
+    }
 )

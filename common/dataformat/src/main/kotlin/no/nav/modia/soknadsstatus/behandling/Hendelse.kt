@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class Hendelse {
     abstract val aktoerREF: List<AktoerREF>
+    abstract val identREF: List<IdentREF>
     abstract val ansvarligEnhetREF: String
     abstract val applikasjonBehandlingREF: String?
     abstract val applikasjonSakREF: String?

@@ -21,22 +21,17 @@ object Transformer {
 
     @JvmStatic
     fun transform(
-        hendelse: Hendelse,
-        identGruppe: IdentGruppe,
+        behandling: Behandling,
         statusMapper: AvslutningsStatusMapper,
+        identer: List<SoknadsstatusDomain.IdentType>,
     ): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
         return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
-            identer = hendelse.aktoerREF.map {
-                SoknadsstatusDomain.IdentType(
-                    ident = it.aktoerId,
-                    identGruppe,
-                )
-            },
-            tema = hendelse.sakstema.value,
-            behandlingsId = hendelse.behandlingsID,
-            systemRef = hendelse.hendelsesprodusentREF.value,
-            status = behandlingsStatus(hendelse, statusMapper),
-            tidspunkt = hendelse.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault()),
+            identer = identer,
+            tema = behandling.sakstema.value,
+            behandlingsId = behandling.behandlingsID,
+            systemRef = behandling.hendelsesprodusentREF.value,
+            status = behandlingsStatus(behandling, statusMapper),
+            tidspunkt = behandling.hendelsesTidspunkt.toInstant(TimeZone.currentSystemDefault()),
         )
     }
 }

@@ -77,8 +77,16 @@ fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeO
     value,
 )
 
-fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
-    hendelse = hendelse,
-    identGruppe = IdentGruppe.AKTORID,
-    statusMapper = HendelseAvslutningsstatusMapper,
+
+fun transform(key: String?, behandling: Behandling) = Transformer.transform(
+    behandling = behandling,
+    identer = getIdenter(behandling),
+    statusMapper = HendelseAvslutningsstatusMapper
 )
+
+private fun getIdenter(behandling: Behandling) = if (behandling.identREF.isNotEmpty()) behandling.identREF.map {
+    SoknadsstatusDomain.IdentType(
+        ident = it.ident,
+        type = IdentGruppe.FOLKEREGISTERIDENT
+    )
+} else behandling.aktoerREF.map { SoknadsstatusDomain.IdentType(ident = it.aktoerId, type = IdentGruppe.AKTORID) }
