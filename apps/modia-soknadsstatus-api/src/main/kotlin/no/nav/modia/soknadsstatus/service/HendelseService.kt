@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.service
 
+import no.nav.modia.soknadsstatus.InnkommendeHendelse
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
@@ -14,7 +15,7 @@ class HendelseServiceImpl(
     private val hendelseRepository: HendelseRepository,
     private val behandlingService: BehandlingService,
 ) : HendelseService {
-    override suspend fun onNewHendelse(hendelse: Hendelse): Boolean {
+    override suspend fun onNewHendelse(hendelse: InnkommendeHendelse): Boolean {
         hendelseRepository.useTransactionConnection {
             hendelseRepository.create(it, hendelseToHendelseDAO(hendelse))
             behandlingService.upsert(it, hendelseToBehandlingDAO(hendelse))
@@ -22,46 +23,29 @@ class HendelseServiceImpl(
         }
     }
 
-    private fun hendelseToHendelseDAO(hendelse: Hendelse): SoknadsstatusDomain.HendelseDAO {
+    private fun hendelseToHendelseDAO(hendelse: InnkommendeHendelse): SoknadsstatusDomain.HendelseDAO {
         return SoknadsstatusDomain.HendelseDAO(
             hendelseId = hendelse.hendelsesId,
-            behandlingId = hendelse.behandlingsID,
-            hendelseProdusent = hendelse.hendelsesprodusentREF.value,
-            hendelseType = SoknadsstatusDomain.HendelseType.convertFromMessage(hendelse.hendelseType),
+            behandlingId = hendelse.behandlingsId,
+            hendelseProdusent = hendelse.hendelsesProdusent,
+            hendelseType = hendelse.hendelsesType,
             hendelseTidspunkt = hendelse.hendelsesTidspunkt,
-            status = getStatusFromHendelse(hendelse),
-            ansvarligEnhet = hendelse.ansvarligEnhetREF,
+            status = hendelse.status,
+            ansvarligEnhet = hendelse.ansvarligEnhet,
         )
     }
 
-    private fun getStatusFromHendelse(hendelse: Hendelse): SoknadsstatusDomain.Status {
-       return when(hendelse) {
-           is BehandlingOpprettet -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
-           is BehandlingAvsluttet -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
-       }
-
-
-        return SoknadsstatusDomain.Status.UNDER_BEHANDLING // TODO handle Infotrygd statuses and avbrutt
-    }
-
-    private fun hendelseToBehandlingDAO(hendelse: Hendelse): SoknadsstatusDomain.BehandlingDAO {
-        val status = getStatusFromHendelse(hendelse)
-
-        val startTidspunkt =
-            if (status == SoknadsstatusDomain.Status.UNDER_BEHANDLING) hendelse.hendelsesTidspunkt else null
-        val sluttTidspunkt = if (status != SoknadsstatusDomain.Status.UNDER_BEHANDLING) hendelse.hendelsesTidspunkt else null
-
+    private fun hendelseToBehandlingDAO(hendelse: InnkommendeHendelse): SoknadsstatusDomain.BehandlingDAO {
         return SoknadsstatusDomain.BehandlingDAO(
-            behandlingId = hendelse.behandlingsID,
-            produsentSystem = hendelse.hendelsesprodusentREF.value,
-            startTidspunkt = startTidspunkt,
-            sluttTidspunkt = sluttTidspunkt,
+            behandlingId = hendelse.behandlingsId,
+            produsentSystem = hendelse.hendelsesProdusent,
             sistOppdatert = hendelse.hendelsesTidspunkt,
-            primaerBehandling = hendelse.primaerBehandlingREF?.behandlingsREF,
-            status = status,
-            behandlingsTema = hendelse.behandlingstema?.value,
-            ansvarligEnhet = hendelse.ansvarligEnhetREF,
-            sakstema = hendelse.sakstema.value
+            primaerBehandling = hendelse.primaerBehandling,
+            status = hendelse.status,
+            behandlingsTema = hendelse.behandlingsTema,
+            ansvarligEnhet = hendelse.ansvarligEnhet,
+            sakstema = hendelse.sakstema,
+            behandlingsType = hendelse.behandlingsType
         )
     }
 }

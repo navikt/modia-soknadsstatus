@@ -104,6 +104,7 @@ object SoknadsstatusDomain {
         val hendelseType: HendelseType? = null,
         val status: Status? = null,
         val ansvarligEnhet: String? = null,
+        val sakstema: String? = null,
     )
 
     @Serializable
