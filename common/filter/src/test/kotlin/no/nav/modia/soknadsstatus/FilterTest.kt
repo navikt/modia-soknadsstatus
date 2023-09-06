@@ -108,8 +108,6 @@ private fun generateBehandling(
             styringsinformasjonListe,
         ),
         BehandlingAvsluttet(
-            avslutningsstatus,
-            hendelsesTidspunkt,
             aktoerREF,
             identREF,
             ansvarligEnhetREF,
@@ -126,6 +124,8 @@ private fun generateBehandling(
             sakstema,
             sekundaerBehandlingREF,
             styringsinformasjonListe,
+            avslutningsstatus,
+            hendelsesTidspunkt,
         ),
     )
 }

@@ -17,7 +17,6 @@ interface Configuration {
     val behandlingRepository: BehandlingRepository
     val hendelseRepository: HendelseRepository
     val hendelseEierRepository: HendelseEierRepository
-    val identRepository: IdentRepository
 
     companion object {
         fun factory(env: Env): Configuration {
@@ -28,7 +27,6 @@ interface Configuration {
             val behandlingRepository = BehandlingRepositoryImpl(env.datasourceConfiguration.datasource)
             val hendelseRepository = HendelseRepositoryImpl(env.datasourceConfiguration.datasource)
             val hendelseEierRepository = HendelseEierRepositoryImpl(env.datasourceConfiguration.datasource)
-            val identRepository = IdentRepositoryImpl(env.datasourceConfiguration.datasource)
 
             return object : Configuration {
                 override val oboTokenClient = oboTokenClient
@@ -38,7 +36,6 @@ interface Configuration {
                 override val behandlingRepository = behandlingRepository
                 override val hendelseRepository = hendelseRepository
                 override val hendelseEierRepository = hendelseEierRepository
-                override val identRepository = identRepository
             }
         }
     }

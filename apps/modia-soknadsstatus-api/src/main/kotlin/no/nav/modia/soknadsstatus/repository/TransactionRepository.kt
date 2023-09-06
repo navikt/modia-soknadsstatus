@@ -6,14 +6,14 @@ import javax.sql.DataSource
 interface TransactionRepository {
     suspend fun <T> useTransactionConnection(
         existingConnection: Connection? = null,
-        block: suspend (Connection) -> T
+        block: suspend (Connection) -> T,
     ): T
 }
 
 open class TransactionRepositoryImpl(protected val dataSource: DataSource) : TransactionRepository {
     override suspend fun <T> useTransactionConnection(
         existingConnection: Connection?,
-        block: suspend (Connection) -> T
+        block: suspend (Connection) -> T,
     ): T {
         return if (existingConnection == null) {
             dataSource.connection.useTransactionConnection {

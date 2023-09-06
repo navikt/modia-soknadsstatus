@@ -1,11 +1,6 @@
 DROP TABLE IF EXISTS soknadsstatus;
 
-CREATE TABLE identer
-(
-    id    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    ident VARCHAR(11) UNIQUE
-);
-
+CREATE TYPE hendelseTypeEnum AS ENUM ('BEHANDLING_OPPRETTET', 'BEHANDLING_OPPRETTET_OG_AVSLUTTET', 'BEHANDLING_AVSLUTTET');
 
 CREATE TABLE behandlinger
 (
@@ -23,14 +18,6 @@ CREATE TABLE behandlinger
     primaer_behandling_id VARCHAR(20)
 );
 
-CREATE TABLE behandling_eiere
-(
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    ident         VARCHAR(11) REFERENCES identer (ident) ON DELETE CASCADE,
-    behandling_id VARCHAR(20) REFERENCES behandlinger (behandling_id) ON DELETE CASCADE,
-    UNIQUE (ident, behandling_id)
-);
-
 CREATE TABLE hendelser
 (
     id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -38,16 +25,23 @@ CREATE TABLE hendelser
     behandling_id      UUID REFERENCES behandlinger (id) ON DELETE CASCADE,
     hendelse_produsent VARCHAR(20) NOT NULL,
     hendelse_tidspunkt TIMESTAMPTZ NOT NULL,
-    hendelse_type      VARCHAR(20) NOT NULL,
+    hendelse_type      hendelseTypeEnum  NOT NULL,
     status             statusEnum  NOT NULL,
-    ansvarlig_enhet    VARCHAR(20) NOT NULL,
-    produsent_system   VARCHAR(20) NOT NULL
+    ansvarlig_enhet    VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE behandling_eiere
+(
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ident         VARCHAR(11),
+    behandling_id UUID REFERENCES behandlinger (id) ON DELETE CASCADE,
+    UNIQUE (ident, behandling_id)
 );
 
 CREATE TABLE hendelse_eiere
 (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    ident       UUID REFERENCES identer (id) ON DELETE CASCADE,
+    ident       VARCHAR(11),
     hendelse_id UUID REFERENCES hendelser (id) ON DELETE CASCADE,
     UNIQUE (ident, hendelse_id)
 );

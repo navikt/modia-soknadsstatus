@@ -1,8 +1,8 @@
 package no.nav.modia.soknadsstatus
 
-import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
+import no.nav.modia.soknadsstatus.behandling.Hendelse
 
 object Transformer {
     @JvmStatic
@@ -10,7 +10,7 @@ object Transformer {
         if (hendelse is BehandlingOpprettet) {
             return SoknadsstatusDomain.Status.UNDER_BEHANDLING
         } else if (hendelse is BehandlingAvsluttet) {
-            return mapper.getAvslutningsstatus(hendelse.avslutningsstatus.value.lowercase())
+            return hendelse.avslutningsstatus?.let { mapper.getAvslutningsstatus(it.value.lowercase()) } ?: SoknadsstatusDomain.Status.FERDIG_BEHANDLET
         } else {
             throw IllegalArgumentException("Mottok ukjent behandlingstype $hendelse")
         }
@@ -31,6 +31,7 @@ object Transformer {
             hendelsesId = hendelse.hendelsesId,
             hendelsesProdusent = hendelse.hendelsesprodusentREF.value,
             hendelsesTidspunkt = hendelse.hendelsesTidspunkt,
+            opprettelsesTidspunkt = hendelse.opprettelsesTidspunkt,
             hendelsesType = SoknadsstatusDomain.HendelseType.convertFromString(hendelse.hendelseType),
             status = behandlingsStatus(hendelse, statusMapper),
             sakstema = hendelse.sakstema.value,

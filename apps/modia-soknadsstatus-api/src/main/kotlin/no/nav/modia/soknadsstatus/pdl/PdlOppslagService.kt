@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus.pdl
 
-import io.ktor.server.auth.*
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 
 interface PdlOppslagService {

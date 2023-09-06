@@ -127,17 +127,42 @@ fun Application.soknadsstatusModule(
                                         Audit.Action.READ,
                                         AuditResources.Person.SakOgBehandling.Les,
                                         AuditIdentifier.FNR to ident,
-                                    )
+                                    ),
                                 ) {
                                     runCatching {
                                         runBlocking {
                                             services.behandlingService.getAllForIdent(
                                                 userToken = call.getUserToken(),
-                                                ident
+                                                ident,
                                             )
                                         }
                                     }
-                                }
+                                },
+                            )
+                        }
+                    }
+                    route("hendlese") {
+                        get("{ident}") {
+                            val kabac = services.accessControl.buildKabac(call.authentication)
+                            val ident = call.getIdent()
+                            call.respondWithResult(
+                                kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
+                                    Audit.describe(
+                                        call.authentication,
+                                        Audit.Action.READ,
+                                        AuditResources.Person.SakOgBehandling.Les,
+                                        AuditIdentifier.FNR to ident,
+                                    ),
+                                ) {
+                                    runCatching {
+                                        runBlocking {
+                                            services.hendelseService.getAllForIdent(
+                                                userToken = call.getUserToken(),
+                                                ident,
+                                            )
+                                        }
+                                    }
+                                },
                             )
                         }
                     }

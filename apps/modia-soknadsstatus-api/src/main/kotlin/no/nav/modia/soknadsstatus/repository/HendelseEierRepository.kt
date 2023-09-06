@@ -6,7 +6,7 @@ import java.sql.Connection
 import javax.sql.DataSource
 
 interface HendelseEierRepository : TransactionRepository {
-    fun upsert(connection: Connection, hendelseEier: HendelseEierDAO): HendelseEierDAO?
+    suspend fun upsert(connection: Connection, hendelseEier: HendelseEierDAO): HendelseEierDAO?
 }
 
 @Serializable
@@ -25,18 +25,20 @@ class HendelseEierRepositoryImpl(dataSource: DataSource) : HendelseEierRepositor
         val hendelseId = "hendelse_id"
     }
 
-    override fun upsert(connection: Connection, hendelseEier: HendelseEierDAO): HendelseEierDAO? {
+    override suspend fun upsert(connection: Connection, hendelseEier: HendelseEierDAO): HendelseEierDAO? {
         return connection.executeWithResult(
             """
-           INSERT INTO ${Tabell}(${Tabell.ident}, ${Tabell.hendelseId}) VALUES(?, ?)
+           INSERT INTO $Tabell(${Tabell.hendelseId}, ${Tabell.ident}) VALUES(?::uuid, ?)
             ON CONFLICT DO NOTHING
             RETURNING *;
-        """.trimIndent(), hendelseEier.ident, hendelseEier.hendelseId
+            """.trimIndent(),
+            hendelseEier.hendelseId,
+            hendelseEier.ident,
         ) {
             HendelseEierDAO(
                 id = it.getString(Tabell.id),
                 ident = it.getString(Tabell.ident),
-                hendelseId = it.getString(Tabell.hendelseId)
+                hendelseId = it.getString(Tabell.hendelseId),
             )
         }.firstOrNull()
     }

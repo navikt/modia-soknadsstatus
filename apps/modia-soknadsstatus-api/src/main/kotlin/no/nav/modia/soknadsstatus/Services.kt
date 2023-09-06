@@ -25,7 +25,6 @@ interface Services {
     val behandlingService: BehandlingService
     val hendelseService: HendelseService
     val hendelseEierService: HendelseEierService
-    val identService: IdentService
 
     companion object {
         fun factory(env: Env, configuration: Configuration): Services {
@@ -75,13 +74,11 @@ interface Services {
             )
             val behandlingEierService = BehandlingEierServiceImpl(configuration.behandlingEiereRepository)
             val behandlingService = BehandlingServiceImpl(configuration.behandlingRepository, pdl)
-            val identService = IdentServiceImpl(configuration.identRepository)
             val hendelseEierService = HendelseEierServiceImpl(configuration.hendelseEierRepository)
             val hendelseService = HendelseServiceImpl(
                 pdlOppslagService = pdl,
                 hendelseRepository = configuration.hendelseRepository,
                 behandlingService = behandlingService,
-                identService = identService,
                 behandlingEierService = behandlingEierService,
                 hendelseEierService,
             )
@@ -97,7 +94,6 @@ interface Services {
                 override val behandlingService = behandlingService
                 override val hendelseService = hendelseService
                 override val hendelseEierService = hendelseEierService
-                override val identService = identService
             }
         }
     }

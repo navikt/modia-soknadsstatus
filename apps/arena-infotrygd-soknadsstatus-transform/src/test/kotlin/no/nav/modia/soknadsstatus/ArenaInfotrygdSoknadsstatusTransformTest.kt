@@ -24,7 +24,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
         val oppdatering = transform(null, hendelse)
 
-        assertEquals("19099531196", oppdatering.identer?.first())
+        assertEquals("19099531196", oppdatering.identer.first())
         assertEquals(oppdatering.behandlingsId, "1500oVFWH")
     }
 
@@ -34,7 +34,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
         val oppdatering = transform(null, hendelse)
 
-        assertEquals("26127338824", oppdatering.identer?.first())
+        assertEquals("26127338824", oppdatering.identer.first())
         assertEquals("1500oVFWi", oppdatering.behandlingsId)
     }
 
@@ -44,7 +44,7 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
         val oppdatering = transform(null, hendelse)
 
-        assertEquals("26127338824", oppdatering.identer?.first())
+        assertEquals("26127338824", oppdatering.identer.first())
         assertEquals("1500oVFWi", oppdatering.behandlingsId)
     }
 }

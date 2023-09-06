@@ -78,6 +78,6 @@ fun deserialize(key: String?, value: String): Hendelse {
 
 fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
     hendelse = hendelse,
+    identer = hendelse.aktoerREF.map { it.aktoerId },
     statusMapper = InfotrygdAvslutningsstatusMapper,
-    identer = hendelse.aktoerREF.map { it.aktoerId }
 )

@@ -3,7 +3,6 @@ package no.nav.modia.soknadsstatus
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.serialization.json.Json
-import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
@@ -77,16 +76,8 @@ fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
     value,
 )
 
-
 fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
     hendelse = hendelse,
     identer = hendelse.identREF.map { it.ident },
-    statusMapper = HendelseAvslutningsstatusMapper
+    statusMapper = HendelseAvslutningsstatusMapper,
 )
-
-private fun getIdenter(hendelse: Hendelse) = if (hendelse.identREF.isNotEmpty()) hendelse.identREF.map {
-    SoknadsstatusDomain.IdentType(
-        ident = it.ident,
-        type = IdentGruppe.FOLKEREGISTERIDENT
-    )
-} else hendelse.aktoerREF.map { SoknadsstatusDomain.IdentType(ident = it.aktoerId, type = IdentGruppe.AKTORID) }

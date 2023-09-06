@@ -4,7 +4,6 @@ import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.SQLException
 import java.sql.Time
 import java.sql.Timestamp
 import java.sql.Types
@@ -14,11 +13,10 @@ import javax.sql.DataSource
 object SqlDsl {
     private fun <T> DataSource.useConnection(block: (Connection) -> T): T = connection.use(block)
 
-
     fun <T> DataSource.executeQuery(
         sql: String,
         vararg variables: Any,
-        block: (resultSet: ResultSet) -> T
+        block: (resultSet: ResultSet) -> T,
     ): List<T> {
         return useConnection { connection ->
             var rows = mutableListOf<T>()
@@ -39,7 +37,7 @@ object SqlDsl {
     fun <T> Connection.executeQuery(
         sql: String,
         vararg variables: Any,
-        block: (resultSet: ResultSet) -> T
+        block: (resultSet: ResultSet) -> T,
     ): List<T> {
         var rows = mutableListOf<T>()
         val rs = preparedStatement(this, sql, variables).executeQuery()
@@ -56,7 +54,7 @@ object SqlDsl {
     fun <T> Connection.executeWithResult(
         sql: String,
         vararg variables: Any?,
-        block: (resultSet: ResultSet) -> T
+        block: (resultSet: ResultSet) -> T,
     ): List<T> {
         val stmt = preparedStatement(this, sql, variables)
         stmt.execute()

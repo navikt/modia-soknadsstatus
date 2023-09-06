@@ -25,7 +25,7 @@ open class TestUtilsWithDataSource {
     }
 
     open fun setUp() {
-        val resourceDirectory = Paths.get("src", "test", "resources", "db", "migration")
+        val resourceDirectory = Paths.get("src", "main", "resources", "db", "migration")
         val location = Location("filesystem:${resourceDirectory.absolutePathString()}")
         Flyway.configure().dataSource(dataSource).locations(location).load().migrate()
     }

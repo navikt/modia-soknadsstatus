@@ -21,4 +21,6 @@ data class BehandlingOpprettet(
     override val sakstema: Sakstema,
     override val sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
     override val styringsinformasjonListe: List<StyringsinformasjonListe> = listOf(),
+    override val avslutningsstatus: Avslutningsstatus? = null,
+    override val opprettelsesTidspunkt: LocalDateTime? = null,
 ) : Hendelse()

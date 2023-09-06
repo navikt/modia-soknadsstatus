@@ -21,5 +21,6 @@ sealed class Hendelse {
     abstract val sakstema: Sakstema
     abstract val sekundaerBehandlingREF: List<SekundaerBehandlingREF>
     abstract val styringsinformasjonListe: List<StyringsinformasjonListe>
+    abstract val avslutningsstatus: Avslutningsstatus?
+    abstract val opprettelsesTidspunkt: LocalDateTime?
 }
-

@@ -1,6 +1,6 @@
 import no.nav.modia.soknadsstatus.FilterUtils.erKvitteringstype
-import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
+import no.nav.modia.soknadsstatus.behandling.Hendelse
 
 object Filter {
     private const val ULOVLIG_PREFIX = "17" // ukjent årsak til dette ulovlige prefixet
