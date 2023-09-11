@@ -33,7 +33,7 @@ fun commonStreamsConfig(
     props: Properties,
     appConfig: AppEnv,
 ) {
-    props[StreamsConfig.APPLICATION_ID_CONFIG] = appConfig.appName
+    props[StreamsConfig.APPLICATION_ID_CONFIG] = "${appConfig.appName}-stream"
     props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrls
     props[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.StringSerde().javaClass
     props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.StringSerde().javaClass
