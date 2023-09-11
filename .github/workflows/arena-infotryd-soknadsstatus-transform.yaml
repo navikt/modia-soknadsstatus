@@ -13,3 +13,5 @@ jobs:
   build:
     uses: ./.github/workflows/.build.yaml
     secrets: inherit
+    permissions:
+      packages: write
