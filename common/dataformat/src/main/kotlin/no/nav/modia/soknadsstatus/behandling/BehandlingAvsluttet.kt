@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BehandlingAvsluttet(
-    val avslutningsstatus: Avslutningsstatus,
-    val opprettelsesTidspunkt: LocalDateTime? = null,
     override val aktoerREF: List<AktoerREF>,
     override val identREF: List<IdentREF> = listOf(),
     override val ansvarligEnhetREF: String,
@@ -23,4 +21,6 @@ data class BehandlingAvsluttet(
     override val sakstema: Sakstema,
     override val sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
     override val styringsinformasjonListe: List<StyringsinformasjonListe> = listOf(),
-) : Behandling()
+    override val avslutningsstatus: Avslutningsstatus? = null,
+    override val opprettelsesTidspunkt: LocalDateTime? = null,
+) : Hendelse()

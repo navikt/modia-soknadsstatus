@@ -3,8 +3,7 @@ package no.nav.modia.soknadsstatus
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import kotlinx.serialization.json.Json
-import no.nav.api.generated.pdl.enums.IdentGruppe
-import no.nav.modia.soknadsstatus.behandling.Behandling
+import no.nav.modia.soknadsstatus.behandling.Hendelse
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 import no.nav.personoversikt.common.logging.TjenestekallLogg
@@ -26,7 +25,7 @@ fun runApp(port: Int = 8080) {
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
                 appEnv = config
                 deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
                     topic = requireNotNull(config.deadLetterQueueTopic),
@@ -47,7 +46,7 @@ fun runApp(port: Int = 8080) {
                     stream.mapValues(::transform)
                 }
             }
-            install(DeadLetterQueueTransformerPlugin<Behandling, SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering>()) {
+            install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
                 appEnv = config
                 transformer = ::transform
                 skipTableDataSource = datasourceConfiguration.datasource
@@ -59,7 +58,7 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun deserialize(key: String?, value: String): Behandling {
+fun deserialize(key: String?, value: String): Hendelse {
     return try {
         Json.decodeFromString(BehandlingSerializer, value)
     } catch (e: Exception) {
@@ -72,21 +71,13 @@ fun deserialize(key: String?, value: String): Behandling {
     }
 }
 
-fun serialize(key: String?, value: SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering) = Json.encodeToString(
-    SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering.serializer(),
+fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
+    InnkommendeHendelse.serializer(),
     value,
 )
 
-
-fun transform(key: String?, behandling: Behandling) = Transformer.transform(
-    behandling = behandling,
-    identer = getIdenter(behandling),
-    statusMapper = HendelseAvslutningsstatusMapper
+fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+    hendelse = hendelse,
+    identer = hendelse.identREF.map { it.ident },
+    statusMapper = HendelseAvslutningsstatusMapper,
 )
-
-private fun getIdenter(behandling: Behandling) = if (behandling.identREF.isNotEmpty()) behandling.identREF.map {
-    SoknadsstatusDomain.IdentType(
-        ident = it.ident,
-        type = IdentGruppe.FOLKEREGISTERIDENT
-    )
-} else behandling.aktoerREF.map { SoknadsstatusDomain.IdentType(ident = it.aktoerId, type = IdentGruppe.AKTORID) }

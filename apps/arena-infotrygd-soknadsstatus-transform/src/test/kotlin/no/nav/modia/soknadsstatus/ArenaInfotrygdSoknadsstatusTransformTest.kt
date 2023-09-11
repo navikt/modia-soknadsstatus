@@ -20,31 +20,31 @@ class ArenaInfotrygdSoknadsstatusTransformTest {
 
     @Test
     fun `should be able to get behandlingOpprettet sokand`() {
-        val behandling = XMLConverter.fromXml(behandlingOpprettet)
+        val hendelse = XMLConverter.fromXml(behandlingOpprettet)
 
-        val oppdatering = transform(null, behandling)
+        val oppdatering = transform(null, hendelse)
 
-        assertEquals("19099531196", oppdatering.identer?.first()?.ident)
+        assertEquals("19099531196", oppdatering.identer.first())
         assertEquals(oppdatering.behandlingsId, "1500oVFWH")
     }
 
     @Test
     fun `should be able to get behandlingAvsluttet sokand`() {
-        val behandling = XMLConverter.fromXml(behandlingAvsluttet)
+        val hendelse = XMLConverter.fromXml(behandlingAvsluttet)
 
-        val oppdatering = transform(null, behandling)
+        val oppdatering = transform(null, hendelse)
 
-        assertEquals("26127338824", oppdatering.identer?.first()?.ident)
+        assertEquals("26127338824", oppdatering.identer.first())
         assertEquals("1500oVFWi", oppdatering.behandlingsId)
     }
 
     @Test
     fun `should be able to get behandlingOpprettetOgAvsluttetXml sokand `() {
-        val behandling = XMLConverter.fromXml(behandlingOpprettetOgAvsluttetXml)
+        val hendelse = XMLConverter.fromXml(behandlingOpprettetOgAvsluttetXml)
 
-        val oppdatering = transform(null, behandling)
+        val oppdatering = transform(null, hendelse)
 
-        assertEquals("26127338824", oppdatering.identer?.first()?.ident)
+        assertEquals("26127338824", oppdatering.identer.first())
         assertEquals("1500oVFWi", oppdatering.behandlingsId)
     }
 }

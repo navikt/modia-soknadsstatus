@@ -4,6 +4,7 @@ import io.ktor.http.*
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
+import no.nav.modia.soknadsstatus.repository.*
 import no.nav.personoversikt.common.ktor.utils.Security.AuthProviderConfig
 import no.nav.personoversikt.common.ktor.utils.Security.JwksConfig
 import no.nav.personoversikt.common.ktor.utils.Security.TokenLocation
@@ -12,20 +13,29 @@ interface Configuration {
     val authProviderConfig: AuthProviderConfig
     val oboTokenClient: OnBehalfOfTokenClient
     val machineToMachineTokenClient: MachineToMachineTokenClient
-    val repository: SoknadsstatusRepository
+    val behandlingEiereRepository: BehandlingEiereRepository
+    val behandlingRepository: BehandlingRepository
+    val hendelseRepository: HendelseRepository
+    val hendelseEierRepository: HendelseEierRepository
 
     companion object {
         fun factory(env: Env): Configuration {
             val oboTokenClient = AzureAdTokenClientBuilder.builder().oboClientFactory(env)
             val machineToMachineTokenClient = AzureAdTokenClientBuilder.builder().machineToMachineClientFactory(env)
             val authProviderConfig = authProviderConfigFactory(env)
-            val repository = SoknadsstatusRepositoryImpl(env.datasourceConfiguration.datasource)
+            val behandlingEiereRepository = BehandlingEierRepositoryImpl(env.datasourceConfiguration.datasource)
+            val behandlingRepository = BehandlingRepositoryImpl(env.datasourceConfiguration.datasource)
+            val hendelseRepository = HendelseRepositoryImpl(env.datasourceConfiguration.datasource)
+            val hendelseEierRepository = HendelseEierRepositoryImpl(env.datasourceConfiguration.datasource)
 
             return object : Configuration {
                 override val oboTokenClient = oboTokenClient
                 override val machineToMachineTokenClient = machineToMachineTokenClient
                 override val authProviderConfig = authProviderConfig
-                override val repository = repository
+                override val behandlingEiereRepository = behandlingEiereRepository
+                override val behandlingRepository = behandlingRepository
+                override val hendelseRepository = hendelseRepository
+                override val hendelseEierRepository = hendelseEierRepository
             }
         }
     }

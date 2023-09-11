@@ -72,6 +72,7 @@ data class BeggeBehandlinger(
 private fun generateBehandling(
     avslutningsstatus: Avslutningsstatus = Avslutningsstatus("koderef", "kodeverksref", FilterUtils.AVSLUTTET),
     aktoerREF: List<AktoerREF> = listOf(AktoerREF(aktoerId = "123456789")),
+    identREF: List<IdentREF> = listOf(IdentREF(ident = "123456789")),
     ansvarligEnhetREF: String = "ansvarligEnhet",
     applikasjonBehandlingREF: String = "applikasjon behandling",
     applikasjonSakREF: String = "applikasjonsak",
@@ -90,6 +91,7 @@ private fun generateBehandling(
     return BeggeBehandlinger(
         BehandlingOpprettet(
             aktoerREF,
+            identREF,
             ansvarligEnhetREF,
             applikasjonBehandlingREF,
             applikasjonSakREF,
@@ -106,8 +108,8 @@ private fun generateBehandling(
             styringsinformasjonListe,
         ),
         BehandlingAvsluttet(
-            avslutningsstatus,
             aktoerREF,
+            identREF,
             ansvarligEnhetREF,
             applikasjonBehandlingREF,
             applikasjonSakREF,
@@ -122,6 +124,8 @@ private fun generateBehandling(
             sakstema,
             sekundaerBehandlingREF,
             styringsinformasjonListe,
+            avslutningsstatus,
+            hendelsesTidspunkt,
         ),
     )
 }

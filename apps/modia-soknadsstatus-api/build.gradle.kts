@@ -13,6 +13,7 @@ val mockk_version: String by project
 val mock_webserver_version: String by project
 val guava_testlib_version: String by project
 val logstash_version: String by project
+val test_containers_version: String by project
 
 plugins {
     application
@@ -56,6 +57,8 @@ dependencies {
     implementation("no.nav.common:token-client:$nav_common_version")
     implementation("no.nav.common:client:$nav_common_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+    testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
+    testImplementation("org.testcontainers:postgresql:$test_containers_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
     testImplementation("com.squareup.okhttp3:mockwebserver:$mock_webserver_version")
     testImplementation("com.google.guava:guava-testlib:$guava_testlib_version")

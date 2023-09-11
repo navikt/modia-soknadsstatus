@@ -1,37 +1,37 @@
 import no.nav.modia.soknadsstatus.FilterUtils.erKvitteringstype
-import no.nav.modia.soknadsstatus.behandling.Behandling
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet
+import no.nav.modia.soknadsstatus.behandling.Hendelse
 
 object Filter {
     private const val ULOVLIG_PREFIX = "17" // ukjent årsak til dette ulovlige prefixet
     private val ulovligeSakstema = arrayOf("FEI", "SAK", "SAP", "OPP", "YRA", "GEN", "AAR", "KLA", "HEL")
     private val lovligeBehandlingstyper = arrayOf("ae0047", "ae0034", "ae0014", "ae0020", "ae0019", "ae0011", "ae0045")
 
-    private fun harLovligSaksTema(behandling: Behandling) = behandling.sakstema.value !in ulovligeSakstema
+    private fun harLovligSaksTema(hendelse: Hendelse) = hendelse.sakstema.value !in ulovligeSakstema
 
-    private fun harLovligKvitteringsType(behandling: Behandling): Boolean {
-        if (behandling is BehandlingOpprettet) {
-            return !erKvitteringstype(behandling.hendelseType)
+    private fun harLovligKvitteringsType(hendelse: Hendelse): Boolean {
+        if (hendelse is BehandlingOpprettet) {
+            return !erKvitteringstype(hendelse.hendelseType)
         }
         return true
     }
 
-    private fun harLovligPrefix(behandling: Behandling): Boolean {
-        val behandlingsRef = behandling.primaerBehandlingREF?.behandlingsREF
+    private fun harLovligPrefix(hendelse: Hendelse): Boolean {
+        val behandlingsRef = hendelse.primaerBehandlingREF?.behandlingsREF
         if (behandlingsRef != null) {
             return !behandlingsRef.startsWith(ULOVLIG_PREFIX)
         }
         return true
     }
 
-    private fun harPrimaerBehandling(behandling: Behandling) = behandling.primaerBehandlingREF != null
+    private fun harPrimaerBehandling(hendelse: Hendelse) = hendelse.primaerBehandlingREF != null
 
-    private fun harLovligBehandlingstype(behandling: Behandling) =
-        behandling.behandlingstype?.value in lovligeBehandlingstyper
+    private fun harLovligBehandlingstype(hendelse: Hendelse) =
+        hendelse.behandlingstype?.value in lovligeBehandlingstyper
 
     @JvmStatic
-    fun filtrerBehandling(behandling: Behandling): Boolean {
-        val checks = listOf<(behandling: Behandling) -> Boolean>(
+    fun filtrerBehandling(hendelse: Hendelse): Boolean {
+        val checks = listOf<(hendelse: Hendelse) -> Boolean>(
             ::harLovligSaksTema,
             ::harPrimaerBehandling,
             ::harLovligPrefix,
@@ -40,7 +40,7 @@ object Filter {
         )
 
         for (check in checks) {
-            if (!check(behandling)) {
+            if (!check(hendelse)) {
                 return false
             }
         }

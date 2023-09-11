@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class IdentREF(
-    val ident: String
+    val ident: String,
 )
