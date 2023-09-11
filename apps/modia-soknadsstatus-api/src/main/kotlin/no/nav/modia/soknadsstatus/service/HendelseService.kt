@@ -10,9 +10,9 @@ import no.nav.modia.soknadsstatus.repository.HendelseRepository
 interface HendelseService {
     suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse)
 
-    suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.HendelseDAO>
+    suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse>
 
-    suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.HendelseDAO>
+    suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.Hendelse>
 }
 
 class HendelseServiceImpl(
@@ -51,12 +51,12 @@ class HendelseServiceImpl(
         }
     }
 
-    override suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.HendelseDAO> {
+    override suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.Hendelse> {
         val idents = pdlOppslagService.hentAktiveIdenter(userToken, ident)
         return getAllForIdents(idents)
     }
 
-    override suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.HendelseDAO> {
+    override suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse> {
         return hendelseRepository.getByIdents(idents)
     }
 
@@ -80,8 +80,8 @@ class HendelseServiceImpl(
         return aktoerId.matches(regex)
     }
 
-    private fun hendelseToHendelseDAO(behandlingsId: String, hendelse: InnkommendeHendelse): SoknadsstatusDomain.HendelseDAO {
-        return SoknadsstatusDomain.HendelseDAO(
+    private fun hendelseToHendelseDAO(behandlingsId: String, hendelse: InnkommendeHendelse): SoknadsstatusDomain.Hendelse {
+        return SoknadsstatusDomain.Hendelse(
             hendelseId = hendelse.hendelsesId,
             behandlingId = behandlingsId,
             hendelseProdusent = hendelse.hendelsesProdusent,
@@ -92,7 +92,7 @@ class HendelseServiceImpl(
         )
     }
 
-    private fun hendelseToBehandlingDAO(hendelse: InnkommendeHendelse): SoknadsstatusDomain.BehandlingDAO {
+    private fun hendelseToBehandlingDAO(hendelse: InnkommendeHendelse): SoknadsstatusDomain.Behandling {
         val sluttTidspunkt = if (hendelse.hendelsesType != SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET) {
             hendelse.hendelsesTidspunkt
         } else {
@@ -107,7 +107,7 @@ class HendelseServiceImpl(
             hendelse.hendelsesTidspunkt
         }
 
-        return SoknadsstatusDomain.BehandlingDAO(
+        return SoknadsstatusDomain.Behandling(
             behandlingId = hendelse.behandlingsId,
             produsentSystem = hendelse.hendelsesProdusent,
             startTidspunkt = startTidspunkt,

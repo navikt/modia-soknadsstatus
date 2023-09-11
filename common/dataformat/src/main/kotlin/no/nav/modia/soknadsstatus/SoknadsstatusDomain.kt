@@ -26,7 +26,7 @@ object SoknadsstatusDomain {
     }
 
     @Serializable
-    data class BehandlingDAO(
+    data class Behandling(
         val id: String? = null,
         val behandlingId: String,
         val produsentSystem: String? = null,
@@ -42,7 +42,7 @@ object SoknadsstatusDomain {
     )
 
     @Serializable
-    data class HendelseDAO(
+    data class Hendelse(
         val id: String? = null,
         val hendelseId: String,
         val behandlingId: String,
@@ -51,33 +51,5 @@ object SoknadsstatusDomain {
         val hendelseType: HendelseType,
         val status: Status,
         val ansvarligEnhet: String? = null,
-    )
-
-    @Serializable
-    data class BehandlingDTO(
-        val id: String,
-        val behandlingId: String,
-        val produsentSystem: String,
-        val startTidspunkt: LocalDateTime,
-        val sluttTidspunkt: LocalDateTime? = null,
-        val sistOppdatert: LocalDateTime,
-        val sakstema: String,
-        val behandlingsTema: String,
-        val status: Status,
-        val ansvarligEnhet: String,
-        val primaerBehandling: String?,
-        val hendelser: List<HendelseDTO>? = null,
-    )
-
-    @Serializable
-    data class HendelseDTO(
-        val id: String,
-        val hendelseId: String,
-        val behandlingId: String,
-        val hendelseProdusent: String,
-        val hendelseTidspunkt: LocalDateTime,
-        val hendelseType: HendelseType,
-        val status: Status,
-        val ansvarligEnhet: String,
     )
 }

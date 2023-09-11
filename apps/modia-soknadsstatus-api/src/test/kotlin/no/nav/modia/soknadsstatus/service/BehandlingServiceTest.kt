@@ -25,7 +25,7 @@ class BehandlingServiceTest : TestUtilsWithDataSource() {
 
     @Test
     fun `opprette behandling`() = runBlocking {
-        val behandling = SoknadsstatusDomain.BehandlingDAO(
+        val behandling = SoknadsstatusDomain.Behandling(
             behandlingId = "1500oVFWi",
             produsentSystem = "A100",
             startTidspunkt = LocalDateTime.parse("2023-06-16T11:40:24"),

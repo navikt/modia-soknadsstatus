@@ -14,13 +14,13 @@ import no.nav.modia.soknadsstatus.repository.HendelseEierRepositoryImpl.Tabell a
 interface HendelseRepository : TransactionRepository {
     suspend fun create(
         connection: Connection,
-        hendelse: SoknadsstatusDomain.HendelseDAO,
-    ): SoknadsstatusDomain.HendelseDAO?
+        hendelse: SoknadsstatusDomain.Hendelse,
+    ): SoknadsstatusDomain.Hendelse?
 
-    suspend fun getById(id: String): SoknadsstatusDomain.HendelseDAO?
-    suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.HendelseDAO>
+    suspend fun getById(id: String): SoknadsstatusDomain.Hendelse?
+    suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse>
 
-    suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.HendelseDAO>
+    suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.Hendelse>
 }
 
 class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, TransactionRepositoryImpl(dataSource) {
@@ -38,8 +38,8 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
 
     override suspend fun create(
         connection: Connection,
-        hendelse: SoknadsstatusDomain.HendelseDAO,
-    ): SoknadsstatusDomain.HendelseDAO? {
+        hendelse: SoknadsstatusDomain.Hendelse,
+    ): SoknadsstatusDomain.Hendelse? {
         return connection.executeWithResult(
             """
             INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
@@ -58,13 +58,13 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
         }.firstOrNull()
     }
 
-    override suspend fun getById(id: String): SoknadsstatusDomain.HendelseDAO? {
+    override suspend fun getById(id: String): SoknadsstatusDomain.Hendelse? {
         return dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.id} = ?", id) {
             convertResultSetToHendelseDAO(it)
         }.firstOrNull()
     }
 
-    override suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.HendelseDAO> {
+    override suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse> {
         val preparedVariables = idents.map { "'$it'" }.joinToString(",")
         return dataSource.executeQuery(
             """
@@ -78,14 +78,14 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
         }
     }
 
-    override suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.HendelseDAO> {
+    override suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.Hendelse> {
         return dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.behandlingId} = ?", behandlingId) {
             convertResultSetToHendelseDAO(it)
         }
     }
 
-    private fun convertResultSetToHendelseDAO(resultSet: ResultSet): SoknadsstatusDomain.HendelseDAO {
-        return SoknadsstatusDomain.HendelseDAO(
+    private fun convertResultSetToHendelseDAO(resultSet: ResultSet): SoknadsstatusDomain.Hendelse {
+        return SoknadsstatusDomain.Hendelse(
             id = resultSet.getString(Tabell.id),
             hendelseId = resultSet.getString(Tabell.hendelseId),
             behandlingId = resultSet.getString(Tabell.behandlingId),

@@ -15,12 +15,12 @@ import no.nav.modia.soknadsstatus.repository.BehandlingEierRepositoryImpl.Tabell
 interface BehandlingRepository : TransactionRepository {
     suspend fun upsert(
         connection: Connection,
-        behandling: SoknadsstatusDomain.BehandlingDAO,
-    ): SoknadsstatusDomain.BehandlingDAO?
+        behandling: SoknadsstatusDomain.Behandling,
+    ): SoknadsstatusDomain.Behandling?
 
-    suspend fun getForId(id: String): SoknadsstatusDomain.BehandlingDAO?
-    suspend fun getByBehandlingId(behandlingId: String): SoknadsstatusDomain.BehandlingDAO?
-    suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.BehandlingDAO>
+    suspend fun getForId(id: String): SoknadsstatusDomain.Behandling?
+    suspend fun getByBehandlingId(behandlingId: String): SoknadsstatusDomain.Behandling?
+    suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Behandling>
     suspend fun delete(id: String)
 }
 
@@ -43,8 +43,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
 
     override suspend fun upsert(
         connection: Connection,
-        behandling: SoknadsstatusDomain.BehandlingDAO,
-    ): SoknadsstatusDomain.BehandlingDAO? {
+        behandling: SoknadsstatusDomain.Behandling,
+    ): SoknadsstatusDomain.Behandling? {
         return connection.executeWithResult(
             """
                    INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId})
@@ -72,7 +72,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         }.firstOrNull()
     }
 
-    override suspend fun getForId(id: String): SoknadsstatusDomain.BehandlingDAO? {
+    override suspend fun getForId(id: String): SoknadsstatusDomain.Behandling? {
         return dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.id} = ?", id) {
             convertResultSetToBehandlingDao(it)
         }.firstOrNull()
@@ -80,13 +80,13 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
 
     override suspend fun getByBehandlingId(
         behandlingId: String,
-    ): SoknadsstatusDomain.BehandlingDAO? {
+    ): SoknadsstatusDomain.Behandling? {
         return dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.behandlingId} = ?", behandlingId) {
             convertResultSetToBehandlingDao(it)
         }.firstOrNull()
     }
 
-    override suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.BehandlingDAO> {
+    override suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Behandling> {
         val preparedVariables = idents.map { "'$it'" }.joinToString(",")
         return dataSource.executeQuery(
             """
@@ -104,8 +104,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         dataSource.execute("DELETE FROM $Tabell WHERE ${Tabell.id} = $id")
     }
 
-    private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.BehandlingDAO {
-        return SoknadsstatusDomain.BehandlingDAO(
+    private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.Behandling {
+        return SoknadsstatusDomain.Behandling(
             id = resultSet.getString(Tabell.id),
             behandlingId = resultSet.getString(Tabell.behandlingId),
             produsentSystem = resultSet.getString(Tabell.produsentSystem),
