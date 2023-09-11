@@ -141,7 +141,7 @@ fun Application.soknadsstatusModule(
                             )
                         }
                     }
-                    route("hendlese") {
+                    route("hendelse") {
                         get("{ident}") {
                             val kabac = services.accessControl.buildKabac(call.authentication)
                             val ident = call.getIdent()
