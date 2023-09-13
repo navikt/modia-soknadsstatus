@@ -47,6 +47,7 @@ object SoknadsstatusDomain {
         val id: String? = null,
         val hendelseId: String,
         val behandlingId: String,
+        val modiaBehandlingId: String,
         val hendelseProdusent: String? = null,
         val hendelseTidspunkt: LocalDateTime,
         val hendelseType: HendelseType,
