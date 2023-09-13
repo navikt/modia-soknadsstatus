@@ -59,7 +59,7 @@ class BehandlingServiceImpl(
 
         return behandlinger.map {
             val behandlingMedHendelser =
-                it.copy(hendelser = hendelser.filter { hendelse -> hendelse.behandlingId == requireNotNull(it.id) })
+                it.copy(hendelser = hendelser.filter { hendelse -> hendelse.modiaBehandlingId == requireNotNull(it.id) })
             behandlingMedHendelser
         }
     }

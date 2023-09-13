@@ -2,13 +2,11 @@ package no.nav.modia.soknadsstatus.service
 
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import no.nav.modia.soknadsstatus.InnkommendeHendelse
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.TestUtilsWithDataSource
-import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.repository.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -64,7 +62,8 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
         val hendelseResult = hendelseService.getAllForIdent("mock-token", "19099531196")
         assertNotNull(hendelseResult)
         assertEquals(1, hendelseResult.size)
-        assertEquals(behandlingResult.first().id, hendelseResult.first().behandlingId)
+        assertEquals(behandlingResult.first().id, hendelseResult.first().modiaBehandlingId)
+        assertEquals(behandlingResult.first().behandlingId, hendelseResult.first().behandlingId)
         assertEquals("50090284", hendelseResult.first().hendelseId)
         assertEquals(SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET, hendelseResult.first().hendelseType)
         assertEquals(SoknadsstatusDomain.Status.UNDER_BEHANDLING, hendelseResult.first().status)

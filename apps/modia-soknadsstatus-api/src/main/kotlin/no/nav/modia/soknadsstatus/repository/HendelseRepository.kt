@@ -27,6 +27,7 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
     object Tabell {
         override fun toString(): String = "hendelser"
         const val id = "id"
+        const val modia_behandlingId = "modia_behandling_id"
         const val hendelseId = "hendelses_id"
         const val behandlingId = "behandling_id"
         const val hendelseProdusent = "hendelse_produsent"
@@ -42,10 +43,11 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
     ): SoknadsstatusDomain.Hendelse? {
         return connection.executeWithResult(
             """
-            INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
-            VALUES (?::uuid, ?, ?, ?, ?::hendelseTypeEnum, ?::statusEnum, ?)
+            INSERT INTO $Tabell(${Tabell.modia_behandlingId}, ${Tabell.behandlingId}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
+            VALUES (?::uuid, ?, ?, ?, ?, ?::hendelseTypeEnum, ?::statusEnum, ?)
             RETURNING *;
             """.trimIndent(),
+            hendelse.modiaBehandlingId,
             hendelse.behandlingId,
             hendelse.hendelseId,
             hendelse.hendelseProdusent,
@@ -88,6 +90,7 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
     private fun convertResultSetToHendelseDAO(resultSet: ResultSet): SoknadsstatusDomain.Hendelse {
         return SoknadsstatusDomain.Hendelse(
             id = resultSet.getString(Tabell.id),
+            modiaBehandlingId = resultSet.getString(Tabell.modia_behandlingId),
             hendelseId = resultSet.getString(Tabell.hendelseId),
             behandlingId = resultSet.getString(Tabell.behandlingId),
             hendelseProdusent = resultSet.getString(Tabell.hendelseProdusent),

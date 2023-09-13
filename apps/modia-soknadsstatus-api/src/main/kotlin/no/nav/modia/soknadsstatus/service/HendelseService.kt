@@ -86,12 +86,13 @@ class HendelseServiceImpl(
     }
 
     private fun hendelseToHendelseDAO(
-        behandlingsId: String,
+        modiaBehandlingId: String,
         hendelse: InnkommendeHendelse
     ): SoknadsstatusDomain.Hendelse {
         return SoknadsstatusDomain.Hendelse(
+            modiaBehandlingId = modiaBehandlingId,
             hendelseId = hendelse.hendelsesId,
-            behandlingId = behandlingsId,
+            behandlingId = hendelse.behandlingsId,
             hendelseProdusent = hendelse.hendelsesProdusent,
             hendelseType = hendelse.hendelsesType,
             hendelseTidspunkt = hendelse.hendelsesTidspunkt,
