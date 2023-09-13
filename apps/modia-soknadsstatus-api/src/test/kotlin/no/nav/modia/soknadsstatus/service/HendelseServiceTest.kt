@@ -64,6 +64,8 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
         assertEquals(1, hendelseResult.size)
         assertEquals(behandlingResult.first().id, hendelseResult.first().modiaBehandlingId)
         assertEquals(behandlingResult.first().behandlingId, hendelseResult.first().behandlingId)
+        assertEquals(behandlingResult.first().behandlingsType, hendelseResult.first().behandlingsType)
+        assertEquals(behandlingResult.first().behandlingsTema, hendelseResult.first().behandlingsTema)
         assertEquals("50090284", hendelseResult.first().hendelseId)
         assertEquals(SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET, hendelseResult.first().hendelseType)
         assertEquals(SoknadsstatusDomain.Status.UNDER_BEHANDLING, hendelseResult.first().status)

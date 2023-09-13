@@ -30,6 +30,8 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
         const val modia_behandlingId = "modia_behandling_id"
         const val hendelseId = "hendelses_id"
         const val behandlingId = "behandling_id"
+        const val behandlingsTema = "behandlingstema"
+        const val behandlingsType = "behandlingstype"
         const val hendelseProdusent = "hendelse_produsent"
         const val hendelseTidspunkt = "hendelse_tidspunkt"
         const val hendelseType = "hendelse_type"
@@ -43,12 +45,14 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
     ): SoknadsstatusDomain.Hendelse? {
         return connection.executeWithResult(
             """
-            INSERT INTO $Tabell(${Tabell.modia_behandlingId}, ${Tabell.behandlingId}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
-            VALUES (?::uuid, ?, ?, ?, ?, ?::hendelseTypeEnum, ?::statusEnum, ?)
+            INSERT INTO $Tabell(${Tabell.modia_behandlingId}, ${Tabell.behandlingId}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
+            VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?::hendelseTypeEnum, ?::statusEnum, ?)
             RETURNING *;
             """.trimIndent(),
             hendelse.modiaBehandlingId,
             hendelse.behandlingId,
+            hendelse.behandlingsTema,
+            hendelse.behandlingsType,
             hendelse.hendelseId,
             hendelse.hendelseProdusent,
             Timestamp.valueOf(hendelse.hendelseTidspunkt.toJavaLocalDateTime()),
@@ -93,6 +97,8 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
             modiaBehandlingId = resultSet.getString(Tabell.modia_behandlingId),
             hendelseId = resultSet.getString(Tabell.hendelseId),
             behandlingId = resultSet.getString(Tabell.behandlingId),
+            behandlingsTema = resultSet.getString(Tabell.behandlingsTema),
+            behandlingsType = resultSet.getString(Tabell.behandlingsType),
             hendelseProdusent = resultSet.getString(Tabell.hendelseProdusent),
             hendelseTidspunkt = resultSet.getTimestamp(Tabell.hendelseTidspunkt).toLocalDateTime().toKotlinLocalDateTime(),
             hendelseType = SoknadsstatusDomain.HendelseType.valueOf(resultSet.getString(Tabell.hendelseType)),

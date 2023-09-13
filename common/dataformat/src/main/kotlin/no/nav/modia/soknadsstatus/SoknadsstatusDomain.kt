@@ -50,6 +50,8 @@ object SoknadsstatusDomain {
         val modiaBehandlingId: String,
         val hendelseProdusent: String? = null,
         val hendelseTidspunkt: LocalDateTime,
+        val behandlingsTema: String? = null,
+        val behandlingsType: String? = null,
         val hendelseType: HendelseType,
         val status: Status,
         val ansvarligEnhet: String? = null,

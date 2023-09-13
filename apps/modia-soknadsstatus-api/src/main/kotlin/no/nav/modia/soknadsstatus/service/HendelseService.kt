@@ -93,6 +93,8 @@ class HendelseServiceImpl(
             modiaBehandlingId = modiaBehandlingId,
             hendelseId = hendelse.hendelsesId,
             behandlingId = hendelse.behandlingsId,
+            behandlingsTema = hendelse.behandlingsTema,
+            behandlingsType = hendelse.behandlingsType,
             hendelseProdusent = hendelse.hendelsesProdusent,
             hendelseType = hendelse.hendelsesType,
             hendelseTidspunkt = hendelse.hendelsesTidspunkt,
