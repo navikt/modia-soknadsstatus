@@ -20,7 +20,7 @@ interface BehandlingRepository : TransactionRepository {
 
     suspend fun getForId(id: String): SoknadsstatusDomain.Behandling?
     suspend fun getByBehandlingId(behandlingId: String): SoknadsstatusDomain.Behandling?
-    suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Behandling>
+    suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Behandling>
     suspend fun delete(id: String)
 }
 
@@ -86,8 +86,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         }.firstOrNull()
     }
 
-    override suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Behandling> {
-        val preparedVariables = idents.map { "'$it'" }.joinToString(",")
+    override suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Behandling> {
+        val preparedVariables = createPreparedVariables(idents.size)
         return dataSource.executeQuery(
             """
             SELECT DISTINCT ON ($Tabell.${Tabell.id}) *
@@ -95,6 +95,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             LEFT JOIN $BehandlingEierTabell ON $BehandlingEierTabell.${BehandlingEierTabell.behandlingId} = $Tabell.${Tabell.id}
             WHERE ${BehandlingEierTabell.ident} IN ($preparedVariables)
             """.trimIndent(),
+            *idents
         ) {
             convertResultSetToBehandlingDao(it)
         }
@@ -103,6 +104,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
     override suspend fun delete(id: String) {
         dataSource.execute("DELETE FROM $Tabell WHERE ${Tabell.id} = $id")
     }
+
 
     private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.Behandling {
         return SoknadsstatusDomain.Behandling(

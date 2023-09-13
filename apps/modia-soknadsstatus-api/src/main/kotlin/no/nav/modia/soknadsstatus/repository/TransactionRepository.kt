@@ -8,6 +8,14 @@ interface TransactionRepository {
         existingConnection: Connection? = null,
         block: suspend (Connection) -> T,
     ): T
+
+    fun createPreparedVariables(length: Int): String {
+        val res = mutableListOf<String>();
+        for (i in 0..length) {
+            res.add("?")
+        }
+        return res.joinToString()
+    }
 }
 
 open class TransactionRepositoryImpl(protected val dataSource: DataSource) : TransactionRepository {
@@ -22,6 +30,14 @@ open class TransactionRepositoryImpl(protected val dataSource: DataSource) : Tra
         } else {
             block(existingConnection)
         }
+    }
+
+    override fun createPreparedVariables(length: Int): String {
+        val res = mutableListOf<String>();
+        for (i in 1..length) {
+            res.add("?")
+        }
+        return res.joinToString()
     }
 }
 

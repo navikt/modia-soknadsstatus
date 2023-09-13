@@ -17,20 +17,9 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class HendelseServiceTest : TestUtilsWithDataSource() {
-    lateinit var hendelseService: HendelseService
-    lateinit var behandlingService: BehandlingService
-    val pdlOppslagService = mockk<PdlOppslagService>()
 
     @BeforeEach
     override fun setUp() {
-        val hendelseRepository = HendelseRepositoryImpl(dataSource)
-        val behandlingEiereRepository = BehandlingEierRepositoryImpl(dataSource)
-        val behandlingEierService = BehandlingEierServiceImpl(behandlingEiereRepository)
-        val hendelseEierRepository = HendelseEierRepositoryImpl(dataSource)
-        val hendelseEierService = HendelseEierServiceImpl(hendelseEierRepository)
-        val behanRepository = BehandlingRepositoryImpl(dataSource)
-        behandlingService = BehandlingServiceImpl(behanRepository, pdlOppslagService)
-        hendelseService = HendelseServiceImpl(pdlOppslagService, hendelseRepository, behandlingService, behandlingEierService, hendelseEierService)
         super.setUp()
     }
 
@@ -54,7 +43,14 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
 
         every { runBlocking { pdlOppslagService.hentFnrMedSystemToken("1909953119612") } } returns "19099531196"
         every { runBlocking { pdlOppslagService.hentFnrMedSystemToken("2612733882412") } } returns "26127338824"
-        every { runBlocking { pdlOppslagService.hentAktiveIdenter("mock-token", "19099531196") } } returns listOf("19099531196", "26127338824")
+        every {
+            runBlocking {
+                pdlOppslagService.hentAktiveIdenter(
+                    "mock-token",
+                    "19099531196"
+                )
+            }
+        } returns listOf("19099531196", "26127338824")
 
         hendelseService.onNewHendelse(innkommendeHendelse = opprettHendelse)
 
@@ -107,7 +103,10 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
     fun `opprette behandling og hendelse roll back`() = runBlocking {
         coEvery { pdlOppslagService.hentFnrMedSystemToken("1909953119612") } throws Exception()
         coEvery { pdlOppslagService.hentFnrMedSystemToken("2612733882412") } returns "26127338824"
-        coEvery { pdlOppslagService.hentAktiveIdenter("mock-token", "19099531196") } returns listOf("19099531196", "26127338824")
+        coEvery { pdlOppslagService.hentAktiveIdenter("mock-token", "19099531196") } returns listOf(
+            "19099531196",
+            "26127338824"
+        )
         coEvery { pdlOppslagService.hentAktiveIdenter("mock-token", "26127338824") } returns listOf("2612733882412")
 
         val opprettHendelse = InnkommendeHendelse(
@@ -140,4 +139,6 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
         val hendelseResult2 = hendelseService.getAllForIdent("mock-token", "26127338824")
         assertEquals(0, hendelseResult2.size)
     }
+
+
 }
