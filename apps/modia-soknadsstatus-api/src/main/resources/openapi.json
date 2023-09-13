@@ -119,12 +119,12 @@
         ]
       }
     },
-    "/rest/ping": {
+    "/internal/isAlive": {
       "get": {
         "tags": [
           "soknadsstatus-controller"
         ],
-        "operationId": "getPing",
+        "operationId": "ping",
         "responses": {
           "200": {
             "description": "OK",
@@ -149,6 +149,9 @@
     "schemas": {
       "Behandling": {
         "type": "object",
+        "required": [
+          "behandlingId", "startTidspunkt", "sistOppdatert", "sakstema", "behandlingsTema", "behandlingsType", "status"
+        ],
         "properties": {
           "behandlingId": {
             "type": "string"
@@ -178,7 +181,8 @@
             "type": "string"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "enum": ["UNDER_BEHANDLING","FERDIG_BEHANDLET","AVBRUTT"]
           },
           "ansvarligEnhet": {
             "type": "string"
@@ -197,6 +201,9 @@
       },
       "Hendelse": {
         "type": "object",
+        "required": [
+          "hendelseId", "behandlingId", "hendelseType", "status"
+        ],
         "properties": {
           "hendelseId": {
             "type": "string"
@@ -211,7 +218,8 @@
             "type": "string"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "enum": ["UNDER_BEHANDLING","FERDIG_BEHANDLET","AVBRUTT"]
           },
           "ansvarligEnhet": {
             "type": "string"
