@@ -1,0 +1,3 @@
+
+ALTER TABLE hendelser DROP CONSTRAINT hendelser_hendelses_id_key;
+ALTER TABLE behandlinger DROP CONSTRAINT behandlinger_behandling_id_key;
