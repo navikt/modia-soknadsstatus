@@ -10,6 +10,7 @@ ALTER TABLE behandlinger ALTER COLUMN primaer_behandling_id TYPE VARCHAR(128);
 ALTER TABLE hendelser ALTER COLUMN hendelses_id TYPE VARCHAR(128);
 ALTER TABLE hendelser ALTER COLUMN hendelse_produsent TYPE VARCHAR(128);
 ALTER TABLE hendelser ALTER COLUMN ansvarlig_enhet TYPE VARCHAR(128);
+ALTER TABLE hendelser ALTER COLUMN hendelses_id DROP NOT NULL;
 
 ALTER TABLE hendelser RENAME COLUMN behandling_id TO modia_behandling_id;
 ALTER TABLE hendelser ADD COLUMN behandling_id VARCHAR(128);
