@@ -8,20 +8,25 @@ import no.nav.modia.soknadsstatus.repository.HendelseEierDAO
 import no.nav.modia.soknadsstatus.repository.HendelseRepository
 
 interface HendelseService {
+    fun init(behandlingService: BehandlingService)
     suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse)
-
     suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse>
-
     suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.Hendelse>
 }
 
 class HendelseServiceImpl(
     private val pdlOppslagService: PdlOppslagService,
     private val hendelseRepository: HendelseRepository,
-    private val behandlingService: BehandlingService,
     private val behandlingEierService: BehandlingEierService,
     private val hendelseEierService: HendelseEierService,
 ) : HendelseService {
+    private lateinit var behandlingService: BehandlingService
+
+    override fun init(behandlingService: BehandlingService) {
+        this.behandlingService = behandlingService
+    }
+
+
     override suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse) {
         hendelseRepository.useTransactionConnection {
             val behandling = behandlingService.upsert(it, hendelseToBehandlingDAO(innkommendeHendelse))
@@ -57,7 +62,7 @@ class HendelseServiceImpl(
     }
 
     override suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse> {
-        return hendelseRepository.getByIdents(idents)
+        return hendelseRepository.getByIdents(idents.toTypedArray())
     }
 
     private suspend fun fetchIdents(aktoerer: List<String>): List<String> {
@@ -80,7 +85,10 @@ class HendelseServiceImpl(
         return aktoerId.matches(regex)
     }
 
-    private fun hendelseToHendelseDAO(behandlingsId: String, hendelse: InnkommendeHendelse): SoknadsstatusDomain.Hendelse {
+    private fun hendelseToHendelseDAO(
+        behandlingsId: String,
+        hendelse: InnkommendeHendelse
+    ): SoknadsstatusDomain.Hendelse {
         return SoknadsstatusDomain.Hendelse(
             hendelseId = hendelse.hendelsesId,
             behandlingId = behandlingsId,

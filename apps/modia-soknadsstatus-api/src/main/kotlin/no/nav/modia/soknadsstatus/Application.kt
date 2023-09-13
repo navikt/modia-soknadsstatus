@@ -131,10 +131,17 @@ fun Application.soknadsstatusModule(
                                 ) {
                                     runCatching {
                                         runBlocking {
-                                            services.behandlingService.getAllForIdent(
-                                                userToken = call.getUserToken(),
-                                                ident,
-                                            )
+                                            if (call.request.queryParameters["inkluderHendelser"].toBoolean()) {
+                                                services.behandlingService.getAllForIdentWithHendelser(
+                                                    userToken = call.getUserToken(),
+                                                    ident
+                                                )
+                                            } else {
+                                                services.behandlingService.getAllForIdent(
+                                                    userToken = call.getUserToken(),
+                                                    ident,
+                                                )
+                                            }
                                         }
                                     }
                                 },

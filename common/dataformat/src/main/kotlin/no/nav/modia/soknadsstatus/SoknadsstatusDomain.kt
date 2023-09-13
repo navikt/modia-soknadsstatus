@@ -39,6 +39,7 @@ object SoknadsstatusDomain {
         val status: Status,
         val ansvarligEnhet: String? = null,
         val primaerBehandling: String? = null,
+        val hendelser: List<Hendelse>? = null,
     )
 
     @Serializable

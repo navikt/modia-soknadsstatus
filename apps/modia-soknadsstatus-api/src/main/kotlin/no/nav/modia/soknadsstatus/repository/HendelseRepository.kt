@@ -18,7 +18,7 @@ interface HendelseRepository : TransactionRepository {
     ): SoknadsstatusDomain.Hendelse?
 
     suspend fun getById(id: String): SoknadsstatusDomain.Hendelse?
-    suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse>
+    suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Hendelse>
 
     suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.Hendelse>
 }
@@ -64,8 +64,8 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
         }.firstOrNull()
     }
 
-    override suspend fun getByIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse> {
-        val preparedVariables = idents.map { "'$it'" }.joinToString(",")
+    override suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Hendelse> {
+        val preparedVariables = createPreparedVariables(idents.size)
         return dataSource.executeQuery(
             """
             SELECT DISTINCT ON ($Tabell.${Tabell.id}) *
@@ -73,6 +73,7 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
             LEFT JOIN $HendelseEierTabell ON $HendelseEierTabell.${HendelseEierTabell.hendelseId} = $Tabell.${Tabell.id}
             WHERE $HendelseEierTabell.${HendelseEierTabell.ident} IN ($preparedVariables)
             """.trimIndent(),
+            *idents
         ) {
             convertResultSetToHendelseDAO(it)
         }

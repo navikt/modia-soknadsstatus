@@ -78,10 +78,12 @@ interface Services {
             val hendelseService = HendelseServiceImpl(
                 pdlOppslagService = pdl,
                 hendelseRepository = configuration.hendelseRepository,
-                behandlingService = behandlingService,
                 behandlingEierService = behandlingEierService,
-                hendelseEierService,
+                hendelseEierService = hendelseEierService,
             )
+
+            behandlingService.init(hendelseService)
+            hendelseService.init(behandlingService)
 
             return object : Services {
                 override val policies: Policies = Policies(env.sensitiveTilgangsRoller, env.geografiskeTilgangsRoller)
