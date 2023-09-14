@@ -10,7 +10,7 @@ interface TransactionRepository {
     ): T
 
     fun createPreparedVariables(length: Int): String {
-        val res = mutableListOf<String>();
+        val res = mutableListOf<String>()
         for (i in 0..length) {
             res.add("?")
         }
@@ -33,7 +33,7 @@ open class TransactionRepositoryImpl(protected val dataSource: DataSource) : Tra
     }
 
     override fun createPreparedVariables(length: Int): String {
-        val res = mutableListOf<String>();
+        val res = mutableListOf<String>()
         for (i in 1..length) {
             res.add("?")
         }

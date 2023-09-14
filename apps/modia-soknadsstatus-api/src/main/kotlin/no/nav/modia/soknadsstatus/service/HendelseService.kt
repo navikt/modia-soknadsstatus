@@ -26,7 +26,6 @@ class HendelseServiceImpl(
         this.behandlingService = behandlingService
     }
 
-
     override suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse) {
         hendelseRepository.useTransactionConnection {
             val behandling = behandlingService.upsert(it, hendelseToBehandlingDAO(innkommendeHendelse))
@@ -87,7 +86,7 @@ class HendelseServiceImpl(
 
     private fun hendelseToHendelseDAO(
         modiaBehandlingId: String,
-        hendelse: InnkommendeHendelse
+        hendelse: InnkommendeHendelse,
     ): SoknadsstatusDomain.Hendelse {
         return SoknadsstatusDomain.Hendelse(
             modiaBehandlingId = modiaBehandlingId,
@@ -124,7 +123,8 @@ class HendelseServiceImpl(
             startTidspunkt = startTidspunkt,
             sluttTidspunkt = sluttTidspunkt,
             sistOppdatert = hendelse.hendelsesTidspunkt,
-            primaerBehandling = hendelse.primaerBehandling,
+            primaerBehandlingId = hendelse.primaerBehandling?.behandlingId,
+            primaerBehandlingType = hendelse.primaerBehandling?.type,
             status = hendelse.status,
             behandlingsTema = hendelse.behandlingsTema,
             ansvarligEnhet = hendelse.ansvarligEnhet,

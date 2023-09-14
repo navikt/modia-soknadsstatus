@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrimaerBehandlingREF(
-    val behandlingsREF: String? = null,
+    val behandlingsREF: String,
     val type: Type,
 )

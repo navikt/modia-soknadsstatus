@@ -36,7 +36,7 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
             hendelsesProdusent = "AO01",
             sakstema = "DAGP",
             status = SoknadsstatusDomain.Status.UNDER_BEHANDLING,
-            primaerBehandling = "",
+            primaerBehandling = SoknadsstatusDomain.PrimaerBehandling("1500oVFWj", "forrige"),
         )
 
         every { runBlocking { pdlOppslagService.hentFnrMedSystemToken("1909953119612") } } returns "19099531196"
@@ -45,7 +45,7 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
             runBlocking {
                 pdlOppslagService.hentAktiveIdenter(
                     "mock-token",
-                    "19099531196"
+                    "19099531196",
                 )
             }
         } returns listOf("19099531196", "26127338824")
@@ -57,6 +57,8 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
         assertEquals(behandlingResult.size, 1)
         assertEquals("1500oVFWi", behandlingResult.first().behandlingId)
         assertEquals("DAGP", behandlingResult.first().sakstema)
+        assertEquals("1500oVFWj", behandlingResult.first().primaerBehandlingId)
+        assertEquals("forrige", behandlingResult.first().primaerBehandlingType)
         assertEquals(SoknadsstatusDomain.Status.UNDER_BEHANDLING, behandlingResult.first().status)
 
         val hendelseResult = hendelseService.getAllForIdent("mock-token", "19099531196")
@@ -83,7 +85,7 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
             hendelsesProdusent = "AO01",
             sakstema = "DAGP",
             status = SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-            primaerBehandling = "",
+            primaerBehandling = SoknadsstatusDomain.PrimaerBehandling("1500oVFWj", "forrige"),
         )
 
         hendelseService.onNewHendelse(innkommendeHendelse = avsluttHendelse)
@@ -106,7 +108,7 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
         coEvery { pdlOppslagService.hentFnrMedSystemToken("2612733882412") } returns "26127338824"
         coEvery { pdlOppslagService.hentAktiveIdenter("mock-token", "19099531196") } returns listOf(
             "19099531196",
-            "26127338824"
+            "26127338824",
         )
         coEvery { pdlOppslagService.hentAktiveIdenter("mock-token", "26127338824") } returns listOf("2612733882412")
 
@@ -123,7 +125,7 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
             hendelsesProdusent = "AO01",
             sakstema = "DAGP",
             status = SoknadsstatusDomain.Status.UNDER_BEHANDLING,
-            primaerBehandling = "",
+            primaerBehandling = SoknadsstatusDomain.PrimaerBehandling("1500oVFWj", "forrige"),
         )
 
         runCatching { hendelseService.onNewHendelse(innkommendeHendelse = opprettHendelse) }
@@ -140,6 +142,4 @@ class HendelseServiceTest : TestUtilsWithDataSource() {
         val hendelseResult2 = hendelseService.getAllForIdent("mock-token", "26127338824")
         assertEquals(0, hendelseResult2.size)
     }
-
-
 }

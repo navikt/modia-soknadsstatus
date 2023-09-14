@@ -39,6 +39,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         const val status = "status"
         const val ansvarligEnhet = "ansvarlig_enhet"
         const val primaerBehandlingId = "primaer_behandling_id"
+        const val primaerBehandlingType = "primaer_behandling_type"
     }
 
     override suspend fun upsert(
@@ -47,8 +48,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
     ): SoknadsstatusDomain.Behandling? {
         return connection.executeWithResult(
             """
-                   INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId})
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?)
+                   INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType})
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?)
                    ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
                    RETURNING *;
             """.trimIndent(),
@@ -62,7 +63,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             behandling.behandlingsType,
             behandling.status.name,
             behandling.ansvarligEnhet,
-            behandling.primaerBehandling,
+            behandling.primaerBehandlingId,
+            behandling.primaerBehandlingType,
             behandling.status.name,
             Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
             Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
@@ -95,7 +97,7 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             LEFT JOIN $BehandlingEierTabell ON $BehandlingEierTabell.${BehandlingEierTabell.behandlingId} = $Tabell.${Tabell.id}
             WHERE ${BehandlingEierTabell.ident} IN ($preparedVariables)
             """.trimIndent(),
-            *idents
+            *idents,
         ) {
             convertResultSetToBehandlingDao(it)
         }
@@ -104,7 +106,6 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
     override suspend fun delete(id: String) {
         dataSource.execute("DELETE FROM $Tabell WHERE ${Tabell.id} = $id")
     }
-
 
     private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.Behandling {
         return SoknadsstatusDomain.Behandling(
@@ -119,7 +120,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             behandlingsType = resultSet.getString(Tabell.behandlingsType),
             status = SoknadsstatusDomain.Status.valueOf(resultSet.getString(Tabell.status)),
             ansvarligEnhet = resultSet.getString(Tabell.ansvarligEnhet),
-            primaerBehandling = resultSet.getString(Tabell.primaerBehandlingId),
+            primaerBehandlingId = resultSet.getString(Tabell.primaerBehandlingId),
+            primaerBehandlingType = resultSet.getString(Tabell.primaerBehandlingType),
         )
     }
 }

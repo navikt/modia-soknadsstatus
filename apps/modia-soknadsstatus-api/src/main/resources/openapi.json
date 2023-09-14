@@ -187,7 +187,10 @@
           "ansvarligEnhet": {
             "type": "string"
           },
-          "primaerBehandling": {
+          "primaerBehandlingId": {
+            "type": "string"
+          },
+          "primaerBehandlingType": {
             "type": "string"
           },
           "hendelser": {

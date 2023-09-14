@@ -134,7 +134,7 @@ fun Application.soknadsstatusModule(
                                             if (call.request.queryParameters["inkluderHendelser"].toBoolean()) {
                                                 services.behandlingService.getAllForIdentWithHendelser(
                                                     userToken = call.getUserToken(),
-                                                    ident
+                                                    ident,
                                                 )
                                             } else {
                                                 services.behandlingService.getAllForIdent(

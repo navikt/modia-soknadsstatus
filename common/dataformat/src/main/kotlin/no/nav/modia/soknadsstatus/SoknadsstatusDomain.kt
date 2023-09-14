@@ -38,7 +38,8 @@ object SoknadsstatusDomain {
         val behandlingsType: String? = null,
         val status: Status,
         val ansvarligEnhet: String? = null,
-        val primaerBehandling: String? = null,
+        val primaerBehandlingId: String? = null,
+        val primaerBehandlingType: String? = null,
         val hendelser: List<Hendelse>? = null,
     )
 
@@ -55,5 +56,11 @@ object SoknadsstatusDomain {
         val hendelseType: HendelseType,
         val status: Status,
         val ansvarligEnhet: String? = null,
+    )
+
+    @Serializable
+    data class PrimaerBehandling(
+        val behandlingId: String,
+        val type: String,
     )
 }

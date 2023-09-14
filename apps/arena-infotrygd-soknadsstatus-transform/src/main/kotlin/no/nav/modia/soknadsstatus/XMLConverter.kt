@@ -24,13 +24,7 @@ object XMLConverter {
     fun fromXml(message: String): Hendelse {
         val behandlingStatus = validateAndConvertFromXML(message)
 
-        val primaerBehandlingRef = if (behandlingStatus.primaerBehandlingREF != null) {
-            toPrimaerBehandlingREF(
-                behandlingStatus,
-            )
-        } else {
-            null
-        }
+        val primaerBehandlingRef = toPrimaerBehandlingREF(behandlingStatus)
 
         return when (behandlingStatus) {
             is BehandlingOpprettet -> SoknadBehandlingOpprettet(
@@ -195,14 +189,17 @@ object XMLConverter {
         value = behandlingStatus.hendelsesprodusentREF.value,
     )
 
-    private fun toPrimaerBehandlingREF(behandlingStatus: BehandlingStatus) = PrimaerBehandlingREF(
-        behandlingsREF = behandlingStatus.primaerBehandlingREF?.behandlingsREF,
-        type = Type(
-            kodeRef = behandlingStatus.primaerBehandlingREF.type?.kodeRef,
-            kodeverksRef = behandlingStatus.primaerBehandlingREF.type?.kodeverksRef,
-            value = behandlingStatus.primaerBehandlingREF.type.value,
-        ),
-    )
+    private fun toPrimaerBehandlingREF(behandlingStatus: BehandlingStatus) =
+        behandlingStatus.primaerBehandlingREF?.let {
+            PrimaerBehandlingREF(
+                behandlingsREF = it.behandlingsREF,
+                type = Type(
+                    kodeRef = it.type?.kodeRef,
+                    kodeverksRef = it.type?.kodeverksRef,
+                    value = it.type.value,
+                ),
+            )
+        }
 
     private fun toSakstema(behandlingStatus: BehandlingStatus) = Sakstema(
         kodeRef = behandlingStatus.sakstema.kodeRef,
