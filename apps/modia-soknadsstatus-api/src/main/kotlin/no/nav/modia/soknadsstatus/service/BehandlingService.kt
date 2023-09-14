@@ -66,7 +66,7 @@ class BehandlingServiceImpl(
 
     override suspend fun getAllForIdentWithHendelser(
         userToken: String,
-        ident: String
+        ident: String,
     ): List<SoknadsstatusDomain.Behandling> {
         val idents = pdlOppslagService.hentAktiveIdenter(userToken, ident)
         return getAllForIdentsWithHendelser(idents)

@@ -18,5 +18,5 @@ data class InnkommendeHendelse(
     val hendelsesProdusent: String,
     val sakstema: String,
     val status: SoknadsstatusDomain.Status,
-    val primaerBehandling: String? = null,
+    val primaerBehandling: SoknadsstatusDomain.PrimaerBehandling? = null,
 )

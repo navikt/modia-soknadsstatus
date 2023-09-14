@@ -36,7 +36,7 @@ object Transformer {
             status = behandlingsStatus(hendelse, statusMapper),
             sakstema = hendelse.sakstema.value,
             ansvarligEnhet = hendelse.ansvarligEnhetREF,
-            primaerBehandling = hendelse.primaerBehandlingREF?.type?.value,
+            primaerBehandling = hendelse.primaerBehandlingREF?.let { SoknadsstatusDomain.PrimaerBehandling(it.behandlingsREF, it.type.value) },
         )
     }
 }

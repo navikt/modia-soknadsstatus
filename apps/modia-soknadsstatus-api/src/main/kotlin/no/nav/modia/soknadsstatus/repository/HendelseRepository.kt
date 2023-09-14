@@ -79,7 +79,7 @@ class HendelseRepositoryImpl(dataSource: DataSource) : HendelseRepository, Trans
             LEFT JOIN $HendelseEierTabell ON $HendelseEierTabell.${HendelseEierTabell.hendelseId} = $Tabell.${Tabell.id}
             WHERE $HendelseEierTabell.${HendelseEierTabell.ident} IN ($preparedVariables)
             """.trimIndent(),
-            *idents
+            *idents,
         ) {
             convertResultSetToHendelseDAO(it)
         }

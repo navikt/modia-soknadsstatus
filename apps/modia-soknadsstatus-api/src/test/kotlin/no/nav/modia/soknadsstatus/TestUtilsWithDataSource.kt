@@ -21,6 +21,7 @@ open class TestUtilsWithDataSource {
     lateinit var behandlingsRepository: BehandlingRepository
     lateinit var hendelseService: HendelseService
     lateinit var behandlingService: BehandlingService
+
     @Container
     protected val container = PostgreSQLContainer("postgres:14-alpine")
 
@@ -45,7 +46,7 @@ open class TestUtilsWithDataSource {
             pdlOppslagService,
             hendelseRepository,
             behandlingEierService,
-            hendelseEierService
+            hendelseEierService,
         )
 
         hendelseService.init(behandlingService)
