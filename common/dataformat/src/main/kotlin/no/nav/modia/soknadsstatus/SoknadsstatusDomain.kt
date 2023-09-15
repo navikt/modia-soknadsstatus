@@ -40,6 +40,8 @@ object SoknadsstatusDomain {
         val ansvarligEnhet: String? = null,
         val primaerBehandlingId: String? = null,
         val primaerBehandlingType: String? = null,
+        val applikasjonSak: String? = null,
+        val applikasjonBehandling: String? = null,
         val hendelser: List<Hendelse>? = null,
     )
 
