@@ -40,6 +40,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         const val ansvarligEnhet = "ansvarlig_enhet"
         const val primaerBehandlingId = "primaer_behandling_id"
         const val primaerBehandlingType = "primaer_behandling_type"
+        const val applikasjonSak = "applikasjon_sak"
+        const val applikasjonBehandling = "applikasjon_behandling"
     }
 
     override suspend fun upsert(
@@ -48,8 +50,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
     ): SoknadsstatusDomain.Behandling? {
         return connection.executeWithResult(
             """
-                   INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType})
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?)
+                   INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling})
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?)
                    ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
                    RETURNING *;
             """.trimIndent(),
@@ -65,6 +67,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             behandling.ansvarligEnhet,
             behandling.primaerBehandlingId,
             behandling.primaerBehandlingType,
+            behandling.applikasjonSak,
+            behandling.applikasjonBehandling,
             behandling.status.name,
             Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
             Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
@@ -122,6 +126,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             ansvarligEnhet = resultSet.getString(Tabell.ansvarligEnhet),
             primaerBehandlingId = resultSet.getString(Tabell.primaerBehandlingId),
             primaerBehandlingType = resultSet.getString(Tabell.primaerBehandlingType),
+            applikasjonSak = resultSet.getString(Tabell.applikasjonSak),
+            applikasjonBehandling = resultSet.getString(Tabell.applikasjonBehandling),
         )
     }
 }

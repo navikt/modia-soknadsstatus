@@ -125,6 +125,8 @@ class HendelseServiceImpl(
             sistOppdatert = hendelse.hendelsesTidspunkt,
             primaerBehandlingId = hendelse.primaerBehandling?.behandlingId,
             primaerBehandlingType = hendelse.primaerBehandling?.type,
+            applikasjonSak = hendelse.applikasjonSak,
+            applikasjonBehandling = hendelse.applikasjonBehandling,
             status = hendelse.status,
             behandlingsTema = hendelse.behandlingsTema,
             ansvarligEnhet = hendelse.ansvarligEnhet,

@@ -16,6 +16,8 @@ data class InnkommendeHendelse(
     val hendelsesTidspunkt: LocalDateTime,
     val opprettelsesTidspunkt: LocalDateTime? = null,
     val hendelsesProdusent: String,
+    val applikasjonSak: String? = null,
+    val applikasjonBehandling: String? = null,
     val sakstema: String,
     val status: SoknadsstatusDomain.Status,
     val primaerBehandling: SoknadsstatusDomain.PrimaerBehandling? = null,
