@@ -58,7 +58,7 @@ spec:
               "valueDeserializerType": "STRING"
             },
             {
-              "name": "personoversikt.modia-soknadsstatus-arena-infotrygd",
+              "name": "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering",
               "location": "AIVEN",
               "keyDeserializerType": "STRING",
               "valueDeserializerType": "STRING"
