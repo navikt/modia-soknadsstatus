@@ -7,12 +7,12 @@
   },
   "servers": [
     {
-      "url": "https://intern.nav.no/modia-soknadsstatus-api/api",
+      "url": "https://intern.nav.no/modia-soknadsstatus-api",
       "description": "Generated server url"
     }
   ],
   "paths": {
-    "/behandling/{ident}": {
+    "/api/soknadsstatus/behandling/{ident}": {
       "get": {
         "summary": "Henter en liste av brukers behandlinger",
         "operationId": "hentAlleBehandlinger",
@@ -70,7 +70,7 @@
         ]
       }
     },
-    "/hendelse/{ident}": {
+    "/api/soknadsstatus/hendelse/{ident}": {
       "get": {
         "summary": "Henter en liste av brukers hendelser",
         "operationId": "hentAlleHendelser",
@@ -150,7 +150,13 @@
       "Behandling": {
         "type": "object",
         "required": [
-          "behandlingId", "startTidspunkt", "sistOppdatert", "sakstema", "behandlingsTema", "behandlingsType", "status"
+          "behandlingId",
+          "startTidspunkt",
+          "sistOppdatert",
+          "sakstema",
+          "behandlingsTema",
+          "behandlingsType",
+          "status"
         ],
         "properties": {
           "behandlingId": {
@@ -182,15 +188,16 @@
           },
           "status": {
             "type": "string",
-            "enum": ["UNDER_BEHANDLING","FERDIG_BEHANDLET","AVBRUTT"]
+            "enum": [
+              "UNDER_BEHANDLING",
+              "FERDIG_BEHANDLET",
+              "AVBRUTT"
+            ]
           },
           "ansvarligEnhet": {
             "type": "string"
           },
-          "primaerBehandlingId": {
-            "type": "string"
-          },
-          "primaerBehandlingType": {
+          "primaerBehandling": {
             "type": "string"
           },
           "hendelser": {
@@ -205,7 +212,10 @@
       "Hendelse": {
         "type": "object",
         "required": [
-          "hendelseId", "behandlingId", "hendelseType", "status"
+          "hendelseId",
+          "behandlingId",
+          "hendelseType",
+          "status"
         ],
         "properties": {
           "hendelseId": {
@@ -218,11 +228,20 @@
             "type": "string"
           },
           "hendelseType": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "BEHANDLING_OPPRETTET",
+              "BEHANDLING_AVSLUTTET",
+              "BEHANDLING_OPPRETTET_OG_AVSLUTTET"
+            ]
           },
           "status": {
             "type": "string",
-            "enum": ["UNDER_BEHANDLING","FERDIG_BEHANDLET","AVBRUTT"]
+            "enum": [
+              "UNDER_BEHANDLING",
+              "FERDIG_BEHANDLET",
+              "AVBRUTT"
+            ]
           },
           "ansvarligEnhet": {
             "type": "string"
