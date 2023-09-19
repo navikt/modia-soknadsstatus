@@ -13,6 +13,7 @@ fun main() {
 }
 
 fun runApp(port: Int = 8080) {
+    var runConsumer = false
     val config = AppEnv()
     val dlqMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(config.deadLetterQueueMetricsGaugeName))
     val deadLetterProducer = DeadLetterQueueProducerImpl(config, dlqMetricsGauge)
@@ -24,35 +25,37 @@ fun runApp(port: Int = 8080) {
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
-                appEnv = config
-                deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
-                    dlqProducer = deadLetterProducer,
-                    topic = requireNotNull(config.deadLetterQueueTopic),
-                )
-                sourceTopic = requireNotNull(config.sourceTopic)
-                targetTopic = requireNotNull(config.targetTopic)
-                deserializer = ::deserialize
-                serializer = ::serialize
-                onSerializationException = { record, exception ->
-                    TjenestekallLogg.error(
-                        "Klarte ikke å serialisere melding",
-                        fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
-                        throwable = exception,
+            if (runConsumer) {
+                install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
+                    appEnv = config
+                    deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
+                        dlqProducer = deadLetterProducer,
+                        topic = requireNotNull(config.deadLetterQueueTopic),
                     )
+                    sourceTopic = requireNotNull(config.sourceTopic)
+                    targetTopic = requireNotNull(config.targetTopic)
+                    deserializer = ::deserialize
+                    serializer = ::serialize
+                    onSerializationException = { record, exception ->
+                        TjenestekallLogg.error(
+                            "Klarte ikke å serialisere melding",
+                            fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
+                            throwable = exception,
+                        )
+                    }
+                    configure { stream ->
+                        stream
+                            .mapValues(::transform)
+                    }
                 }
-                configure { stream ->
-                    stream
-                        .mapValues(::transform)
+                install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
+                    appEnv = config
+                    transformer = ::transform
+                    skipTableDataSource = datasourceConfiguration.datasource
+                    deadLetterQueueMetricsGauge = dlqMetricsGauge
+                    deserializer = ::deserialize
+                    serializer = ::serialize
                 }
-            }
-            install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
-                appEnv = config
-                transformer = ::transform
-                skipTableDataSource = datasourceConfiguration.datasource
-                deadLetterQueueMetricsGauge = dlqMetricsGauge
-                deserializer = ::deserialize
-                serializer = ::serialize
             }
         },
     ).start(wait = true)
