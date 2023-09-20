@@ -13,7 +13,7 @@ fun main() {
 }
 
 fun runApp(port: Int = 8080) {
-    var runConsumer = false
+    var runConsumer = true
     val config = AppEnv()
     val dlqMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(config.deadLetterQueueMetricsGaugeName))
     val deadLetterProducer = DeadLetterQueueProducerImpl(config, dlqMetricsGauge)

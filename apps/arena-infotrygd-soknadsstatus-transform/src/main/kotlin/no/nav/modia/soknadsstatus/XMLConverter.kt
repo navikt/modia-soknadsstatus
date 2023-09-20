@@ -167,17 +167,23 @@ object XMLConverter {
             .replace(".+:{1}".toRegex(), "")
     }
 
-    private fun toBehandlingstema(behandlingStatus: BehandlingStatus) = Behandlingstema(
-        kodeRef = behandlingStatus.sakstema.kodeRef,
-        kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
-        value = behandlingStatus.sakstema.value,
-    )
+    private fun toBehandlingstema(behandlingStatus: BehandlingStatus): Behandlingstema {
+        val value = ArenaInfotrygdTemaTypeMapper.getMappedBehandlingTema(behandlingStatus.sakstema.value)
+        return Behandlingstema(
+            kodeRef = behandlingStatus.sakstema.kodeRef,
+            kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
+            value = value,
+        )
+    }
 
-    private fun toBehandlingstype(behandlingStatus: BehandlingStatus) = Behandlingstype(
-        kodeRef = behandlingStatus.behandlingstype.kodeRef,
-        kodeverksRef = behandlingStatus.behandlingstype.kodeverksRef,
-        value = behandlingStatus.behandlingstype.value,
-    )
+    private fun toBehandlingstype(behandlingStatus: BehandlingStatus): Behandlingstype {
+        val value = ArenaInfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.behandlingstype.value)
+        return Behandlingstype(
+            kodeRef = behandlingStatus.behandlingstype.kodeRef,
+            kodeverksRef = behandlingStatus.behandlingstype.kodeverksRef,
+            value = value,
+        )
+    }
 
     private fun toZonedDateTime(xmlGregorianCalendar: XMLGregorianCalendar) =
         xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime()
@@ -201,11 +207,14 @@ object XMLConverter {
             )
         }
 
-    private fun toSakstema(behandlingStatus: BehandlingStatus) = Sakstema(
-        kodeRef = behandlingStatus.sakstema.kodeRef,
-        kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
-        value = behandlingStatus.sakstema.value,
-    )
+    private fun toSakstema(behandlingStatus: BehandlingStatus): Sakstema {
+        val value = ArenaInfotrygdTemaTypeMapper.getMappedArkivTema(behandlingStatus.sakstema.value)
+        return Sakstema(
+            kodeRef = behandlingStatus.sakstema.kodeRef,
+            kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
+            value = value,
+        )
+    }
 
     private fun toSekundaerBehandlingREF(behandlingStatus: BehandlingStatus) =
         behandlingStatus.getSekundaerBehandlingREF().map {
