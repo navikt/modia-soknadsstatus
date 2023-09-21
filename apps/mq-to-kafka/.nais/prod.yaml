@@ -40,7 +40,7 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: "mqls03.preprod.local"
+        - host: "mqls03.prod.local"
           ports:
             - name: MQ
               port: 1413
@@ -61,7 +61,7 @@ spec:
     - name: KAFKA_TARGET_TOPIC
       value: "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering"
     - name: JMS_HOST
-      value: "mqls03.preprod.local"
+      value: "mqls03.prod.local"
     - name: JMS_PORT
       value: "1413"
     - name: JMS_QUEUE_MANAGER
