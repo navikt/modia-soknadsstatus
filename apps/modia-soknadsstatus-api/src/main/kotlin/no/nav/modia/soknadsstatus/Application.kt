@@ -1,32 +1,35 @@
 package no.nav.modia.soknadsstatus
 
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.runBlocking
+import no.nav.common.types.identer.Fnr
+import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
+import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
+import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
+import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
+import no.nav.modia.soknadsstatus.kafka.*
+import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.slf4j.event.Level
 
 fun Application.soknadsstatusModule(
     env: Env = Env(),
-    configuration: Configuration = ConfigurationImpl(env),
-    services: Services = ServicesImpl(configuration),
-    useMock: Boolean
+    configuration: Configuration = Configuration.factory(env),
+    services: Services = Services.factory(env, configuration),
 ) {
     val security = Security(
         listOfNotNull(
-            configuration.azureAd
-        )
+            configuration.authProviderConfig,
+        ),
     )
 
     install(CORS) {
@@ -37,10 +40,10 @@ fun Application.soknadsstatusModule(
     install(BaseNaisApp)
 
     install(Authentication) {
-        if (useMock) {
-            security.setupMock(this, "Z999999")
-        } else {
+        if (env.kafkaApp.appMode == AppMode.NAIS) {
             security.setupJWT(this)
+        } else {
+            security.setupMock(this, "Z999999", "f24261ea-60ed-4894-a2d6-29e55214df08")
         }
     }
 
@@ -55,46 +58,135 @@ fun Application.soknadsstatusModule(
         mdc("userId") { security.getSubject(it).joinToString(";") }
     }
 
-    install(KafkaStreamPlugin) {
-        appname = env.appName
-        brokerUrl = env.brokerUrl
-        topology {
-            stream<String, String>(env.sourceTopic)
-                .mapValues(::deserialize)
-                .foreach { key, value ->
-                    services.soknadsstatusService.fetchIdentsAndPersist(value, "TODO")
-                }
+    install(HendelseConsumerPlugin()) {
+        hendelseConsumer = HendelseConsumer(
+            sendToDeadLetterQueueExceptionHandler = SendToDeadLetterQueueExceptionHandler(
+                requireNotNull(env.kafkaApp.deadLetterQueueTopic),
+                services.dlqProducer,
+            ),
+            topic = requireNotNull(env.kafkaApp.sourceTopic),
+            kafkaConsumer = KafkaUtils.createConsumer(
+                env.kafkaApp,
+                consumerGroup = "${env.kafkaApp.appName}-hendelse-consumer",
+                autoCommit = true,
+                pollRecords = 10,
+            ),
+            pollDurationMs = env.hendelseConsumerEnv.pollDurationMs,
+            exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
+        ) { _, _, value ->
+            runCatching {
+                val decodedValue =
+                    Encoding.decode(InnkommendeHendelse.serializer(), value)
+                services.hendelseService.onNewHendelse(decodedValue)
+            }
         }
     }
 
-    routing {
-        route("api") {
-            route("soknadsstatus") {
-                get("oppdateringer/{ident}") {
-                    val ident = call.parameters["ident"] ?: throw HttpStatusException(
-                        HttpStatusCode.BadRequest,
-                        "ident missing in request"
-                    )
-                    call.respondWithResult(services.soknadsstatusService.fetchDataForIdent(ident))
+    install(DeadLetterQueueConsumerPlugin()) {
+        deadLetterQueueConsumer =
+            DeadLetterQueueConsumer(
+                topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
+                kafkaConsumer = KafkaUtils.createConsumer(
+                    env.kafkaApp,
+                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
+                ),
+                pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
+                exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
+                deadLetterMessageSkipService = services.dlSkipService,
+                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName)),
+            ) { _, key, value ->
+                runCatching {
+                    try {
+                        val decodedValue =
+                            Encoding.decode(InnkommendeHendelse.serializer(), value)
+                        services.hendelseService.onNewHendelse(decodedValue)
+                    } catch (e: Exception) {
+                        TjenestekallLogg.error(
+                            "Klarte ikke å håndtere DL",
+                            fields = mapOf("key" to key, "value" to value),
+                            throwable = e,
+                        )
+                        throw e
+                    }
                 }
+            }
+    }
 
-                get("{ident}") {
-                    val ident = call.parameters["ident"] ?: throw HttpStatusException(
-                        HttpStatusCode.BadRequest,
-                        "ident missing in request"
-                    )
-                    call.respondWithResult(services.soknadsstatusService.fetchAggregatedDataForIdent(ident))
+    routing {
+        authenticate(*security.authproviders) {
+            route("api") {
+                route("soknadsstatus") {
+                    route("behandling") {
+                        get("{ident}") {
+                            val kabac = services.accessControl.buildKabac(call.authentication)
+                            val ident = call.getIdent()
+                            call.respondWithResult(
+                                kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
+                                    Audit.describe(
+                                        call.authentication,
+                                        Audit.Action.READ,
+                                        AuditResources.Person.SakOgBehandling.Les,
+                                        AuditIdentifier.FNR to ident,
+                                    ),
+                                ) {
+                                    runCatching {
+                                        runBlocking {
+                                            if (call.request.queryParameters["inkluderHendelser"].toBoolean()) {
+                                                services.behandlingService.getAllForIdentWithHendelser(
+                                                    userToken = call.getUserToken(),
+                                                    ident,
+                                                )
+                                            } else {
+                                                services.behandlingService.getAllForIdent(
+                                                    userToken = call.getUserToken(),
+                                                    ident,
+                                                )
+                                            }
+                                        }
+                                    }
+                                },
+                            )
+                        }
+                    }
+                    route("hendelse") {
+                        get("{ident}") {
+                            val kabac = services.accessControl.buildKabac(call.authentication)
+                            val ident = call.getIdent()
+                            call.respondWithResult(
+                                kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
+                                    Audit.describe(
+                                        call.authentication,
+                                        Audit.Action.READ,
+                                        AuditResources.Person.SakOgBehandling.Les,
+                                        AuditIdentifier.FNR to ident,
+                                    ),
+                                ) {
+                                    runCatching {
+                                        runBlocking {
+                                            services.hendelseService.getAllForIdent(
+                                                userToken = call.getUserToken(),
+                                                ident,
+                                            )
+                                        }
+                                    }
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-fun deserialize(key: String?, value: String): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering? {
-    return try {
-        Json.decodeFromString(value)
-    } catch (e: Exception) {
-        secureLog.error("Failed to decode message", e)
-        null
-    }
+private fun ApplicationCall.getIdent(): String {
+    return this.parameters["ident"] ?: throw HttpStatusException(
+        HttpStatusCode.BadRequest,
+        "ident missing in request",
+    )
+}
+
+private fun ApplicationCall.getUserToken(): String {
+    return this.principal<Security.SubjectPrincipal>()?.token?.removeBearerFromToken()
+        ?: throw IllegalStateException("Ingen gyldig token funnet")
 }

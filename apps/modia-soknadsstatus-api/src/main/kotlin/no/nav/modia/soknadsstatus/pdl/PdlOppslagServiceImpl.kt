@@ -1,7 +1,50 @@
 package no.nav.modia.soknadsstatus.pdl
 
-class PdlOppslagServiceImpl(private val pdlClient: PdlClient) : PdlOppslagService {
-    override fun hentFnr(aktorId: String, token: String): String? {
-        TODO()
+import no.nav.api.generated.pdl.enums.IdentGruppe
+import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
+import no.nav.modia.soknadsstatus.SuspendCache
+import no.nav.modia.soknadsstatus.SuspendCacheImpl
+import kotlin.time.Duration.Companion.minutes
+
+class PdlOppslagServiceImpl(
+    private val pdlClient: PdlClientImpl,
+    private val fnrCache: SuspendCache<String, String?> = getCache(),
+    private val aktorIdCache: SuspendCache<String, String?> = getCache(),
+    private val geografiskTilknytningCache: SuspendCache<String, String?> = getCache(),
+    private val adresseBeskyttelseCache: SuspendCache<String, List<Adressebeskyttelse>> = getCache(),
+    private val identerCache: SuspendCache<String, List<String>> = getCache(),
+) : PdlOppslagService {
+    companion object {
+        fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(expiresAfterWrite = 1.minutes)
     }
+
+    override suspend fun hentFnr(userToken: String, aktorId: String): String? {
+        return fnrCache.get(aktorId) {
+            pdlClient.hentAktivIdent(
+                userToken,
+                aktorId,
+                IdentGruppe.FOLKEREGISTERIDENT,
+            )
+        }
+    }
+
+    override suspend fun hentFnrMedSystemToken(aktorId: String): String? =
+        fnrCache.get(aktorId) {
+            pdlClient.hentAktivIdentMedSystemToken(
+                aktorId,
+                IdentGruppe.FOLKEREGISTERIDENT,
+            )
+        }
+
+    override suspend fun hentAktorId(userToken: String, fnr: String): String? =
+        aktorIdCache.get(fnr) { pdlClient.hentAktivIdent(userToken, fnr, IdentGruppe.AKTORID) }
+
+    override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
+        geografiskTilknytningCache.get(fnr) { pdlClient.hentGeografiskTilknytning(userToken, fnr) }
+
+    override suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse> =
+        adresseBeskyttelseCache.get(fnr) { pdlClient.hentAdresseBeskyttelse(userToken, fnr) }
+
+    override suspend fun hentAktiveIdenter(userToken: String, fnr: String): List<String> =
+        identerCache.get(fnr) { pdlClient.hentAktiveIdenter(userToken, fnr) }
 }

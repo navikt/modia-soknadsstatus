@@ -1,21 +1,14 @@
 name: ..build.yaml
 
-on:
-  workflow_call:
-    outputs:
-      image:
-        description: "Docker image url"
-        value: ${{ jobs.build-and-publish.outputs.image }}
+on: [workflow_call]
+
+env:
+  image: ghcr.io/${{ github.repository }}/${{ github.workflow }}:${{ github.sha }}
 
 jobs:
   build-and-publish:
     name: Build & publish
     runs-on: ubuntu-latest
-    env:
-      image: ghcr.io/${{ github.repository }}/${{ github.workflow }}:${{ github.sha }}
-      branch-image: ghcr.io/${{ github.repository }}/${{ github.workflow }}
-    outputs:
-      image: ${{ env.image }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,19 +18,60 @@ jobs:
           distribution: temurin
           java-version: 17.x
           cache: gradle
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v4
+      - name: Setup ktlint
+        uses: nbadal/action-ktlint-setup@v1
+        with:
+          ktlint_version: '0.47.1'
+      - name: Ktlint
+        run: bash ./linting.sh
       - name: Gradle test and build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew :apps:${{ github.workflow }}:build
-      - name: Build and publish docker image
+      - name: Publish Dev Image
+        if: github.ref == 'refs/heads/dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker build --tag ${{ env.image }} --tag ${{ env.branch-image }}:${{ env.GITHUB_REF_SLUG }} -f docker/Dockerfile apps/${{ github.workflow }}
+          docker build --tag ${{ env.image }} -f docker/Dockerfile apps/${{ github.workflow }}
           docker push ${{ env.image }}
-          docker push ${{ env.branch-image }}:${{ env.GITHUB_REF_SLUG }}
-      - name: Print docker tag
-        run: echo 'Docker-tag er ${{ env.image }} ' >> $GITHUB_STEP_SUMMARY
+      - name: Publish Prod image
+        if: github.ref == 'refs/heads/master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker build --tag ${{ env.image }} -f docker/Dockerfile apps/${{ github.workflow }}
+          docker push ${{ env.image }}
+  deploy-qa:
+    name: Deploy to preprod
+    needs: build-and-publish
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          PRINT_PAYLOAD: true
+          CLUSTER: dev-gcp
+          RESOURCE: apps/${{github.workflow}}/.nais/dev.yaml
+          VAR: version=${{ github.sha }}
+          IMAGE: ${{ env.image }}
+
+  deploy-prod:
+    name: Deploy to prod
+    needs: build-and-publish
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          PRINT_PAYLOAD: true
+          CLUSTER: prod-gcp
+          RESOURCE: apps/${{github.workflow}}/.nais/prod.yaml
+          VAR: version=${{ github.sha }}
+          IMAGE: ${{ env.image }}

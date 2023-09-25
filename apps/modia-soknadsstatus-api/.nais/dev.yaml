@@ -7,8 +7,21 @@ metadata:
     team: personoversikt
 spec:
   image: {{image}}
-  port: 9015
+  port: 8080
   team: personoversikt
+  ingresses:
+    - https://modia-soknadsstatus-api.intern.dev.nav.no
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 90
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
@@ -19,3 +32,84 @@ spec:
     path: /internal/isReady
     initialDelay: 20
     timeout: 1
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: modia-soknadsstatus-api-db
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+      claims:
+        extra:
+          - "NAVident"
+  accessPolicy:
+    inbound:
+      rules:
+        - application: ida
+          cluster: prod-fss
+          namespace: traktor
+        - application: modiapersonoversikt-api-q1
+          cluster: dev-fss
+          namespace: personoversikt
+        - application: modiapersonoversikt-api-q0
+          cluster: dev-fss
+          namespace: personoversikt
+    outbound:
+      external:
+        - host: graph.microsoft.com
+        - host: pdl-api.dev-fss-pub.nais.io
+        - host: axsys.dev-fss-pub.nais.io
+        - host: skjermede-personer-pip.intern.dev.nav.no
+        - host: unleash.nais.io
+        - host: norg2.dev-fss-pub.nais.io
+  env:
+    - name: APP_NAME
+      value: "modia-soknadsstatus-api"
+    - name: APP_MODE
+      value: "NAIS"
+    - name: APP_VERSION
+      value: "dev"
+    - name: DB_NAME
+      value: "modia-soknadsstatus-api-db"
+    - name: KAFKA_SOURCE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-oppdatering"
+    - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
+    - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
+      value: "60000"
+    - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
+      value: "soknadsstatus_api_dlq_event_skip"
+    - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
+      value: "modia_soknadsstatus_api_dlq_gauge"
+    - name: HENDELSE_CONSUMER_POLL_DURATION_MS
+      value: "1000"
+    - name: HENDELSE_CONSUMER_RESTART_DELAY_MS
+      value: "2000"
+    - name: NORG2_URL
+      value: "https://norg2.dev-fss-pub.nais.io/norg2"
+    - name: PDL_API_URL
+      value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
+    - name: PDL_SCOPE
+      value: "dev-fss:pdl:pdl-api"
+    - name: AXSYS_URL
+      value: "https://axsys.dev-fss-pub.nais.io"
+    - name: AXSYS_SCOPE
+      value: "dev-fss:org:axsys"
+    - name: SKJERMEDE_PERSONER_PIP_URL
+      value: "https://skjermede-personer-pip.intern.dev.nav.no"
+    - name: SKJERMEDE_PERSONER_SCOPE
+      value: "dev-gcp:nom:skjermede-personer-pip"
+    - name: MS_GRAPH_URL
+      value: "https://graph.microsoft.com/"
+    - name: MS_GRAPH_SCOPE
+      value: "https://graph.microsoft.com/.default"
+

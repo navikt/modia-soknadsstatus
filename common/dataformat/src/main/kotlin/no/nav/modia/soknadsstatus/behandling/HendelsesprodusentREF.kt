@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HendelsesprodusentREF(
-    val kodeRef: String,
-    val kodeverksRef: String,
-    val value: String
+    val kodeverksRef: String? = null,
+    val kodeRef: String? = null,
+    val value: String,
 )

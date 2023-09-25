@@ -7,8 +7,19 @@ metadata:
     team: personoversikt
 spec:
   image: {{image}}
-  port: 9000
+  port: 8080
   team: personoversikt
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 90
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
@@ -19,3 +30,47 @@ spec:
     path: /internal/isReady
     initialDelay: 20
     timeout: 1
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+  accessPolicy:
+    outbound:
+      external:
+        - host: "mqls03.preprod.local"
+          ports:
+            - name: MQ
+              port: 1413
+              protocol: TCP
+  filesFrom:
+    - secret: mq-tls-keystore
+      mountPath: /var/run/keystore
+  envFrom:
+    - secret: mq-to-kafka
+    - secret: mq-tls-keystore-password
+  env:
+    - name: APP_NAME
+      value: "mq-to-kafka"
+    - name: APP_MODE
+      value: "NAIS"
+    - name: APP_VERSION
+      value: "dev"
+    - name: KAFKA_TARGET_TOPIC
+      value: "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering"
+    - name: JMS_HOST
+      value: "mqls03.preprod.local"
+    - name: JMS_PORT
+      value: "1413"
+    - name: JMS_QUEUE_MANAGER
+      value: "MQLS03"
+    - name: JMS_CHANNEL
+      value: "Q1_MODIA_SS"
+    - name: JMS_QUEUE_NAME
+      value: "QA.Q1_MODIA_SS.HENDELSER_FRA_INFOTRYGD_OG_ARENA"
+    - name: JMS_USERNAME
+      value: "srvmodia-ss-mq"
+    - name: JMS_KEYSTORE_PATH
+      value: "/var/run/keystore/secret"

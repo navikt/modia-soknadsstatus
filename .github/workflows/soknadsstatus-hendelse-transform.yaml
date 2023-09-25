@@ -1,0 +1,17 @@
+name: soknadsstatus-hendelse-transform
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/.build.yaml
+      - .github/workflows/soknadsstatus-hendelse-transform.yaml
+      - common/**
+      - apps/soknadsstatus-hendelse-transform/**
+
+jobs:
+  build:
+    uses: ./.github/workflows/.build.yaml
+    secrets: inherit
+    permissions:
+      packages: write

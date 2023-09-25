@@ -1,0 +1,15 @@
+name: modia-soknadsstatus-oppdatering-dlq
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .nais/topics/**
+      - .github/workflows/.topic.yml
+
+jobs:
+  build:
+    uses: ./.github/workflows/.topic.yaml
+    secrets: inherit
+    with:
+      topic-file-name: modia-soknadsstatus-oppdatering-dlq.yml

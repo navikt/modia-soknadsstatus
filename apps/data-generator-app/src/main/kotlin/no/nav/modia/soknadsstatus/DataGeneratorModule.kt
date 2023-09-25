@@ -12,15 +12,28 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
+import no.nav.modia.soknadsstatus.kafka.AppEnv
 
 fun Application.dataGeneratorModule() {
-    val config = Configuration()
     val isLocal = true
     val wsConnections = mutableListOf<DefaultWebSocketSession>()
 
-    install(KafkaStreamPlugin) {
-        appname = "data-generator"
-        brokerUrl = config.brokerUrl
+    val env = AppEnv(
+        appName = "data-generator",
+        appMode = AppMode.LOCALLY_WITHIN_DOCKER,
+        appVersion = "test",
+        deadLetterQueueTopic = null,
+        deadLetterQueueConsumerPollIntervalMs = 10000.0,
+        deadLetterQueueSkipTableName = null,
+        deadLetterQueueMetricsGaugeName = null,
+    )
+
+    val config = Configuration(env)
+    val handlers = Handlers(env).handlers
+
+    install(KafkaStreamPlugin()) {
+        appEnv = env
+
         topology {
             stream<String, String>(config.soknadsstatusTopic)
                 .foreach { _, value ->
@@ -54,7 +67,7 @@ fun Application.dataGeneratorModule() {
                         return@post
                     }
                     val content = call.receive<String>()
-                    requireNotNull(config.handlers[kilde.type])(kilde, content)
+                    requireNotNull(handlers[kilde.type])(kilde, content)
 
                     call.respond(HttpStatusCode.OK)
                 }

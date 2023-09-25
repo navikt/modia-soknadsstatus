@@ -2,30 +2,47 @@ package no.nav.modia.soknadsstatus
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import no.nav.modia.soknadsstatus.jms.Jms
 import no.nav.modia.soknadsstatus.jms.JmsConsumer
+import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.kafka.KafkaUtils
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
 import org.apache.kafka.clients.producer.ProducerRecord
+import java.util.*
 import javax.jms.TextMessage
 
 fun Application.mqToKafkaModule() {
-    val config = Configuration()
-    val jmsConsumer = JmsConsumer(config.mqConfiguration)
+    val config = AppEnv()
+    val mqConfig = MqConfig()
+
+    Jms.SSLConfig(
+        appMode = config.appMode,
+        jmsKeyStorePath = mqConfig.config.jmsKeyStorePath,
+        jmsPassword = mqConfig.config.jmsKeystorePassword,
+    ).injectSSLConfigIfProd()
+
+    val jmsConsumer = JmsConsumer(mqConfig.config, config.appMode)
+
     val kafkaProducer = KafkaUtils.createProducer(
-        applicationId = config.appname,
-        brokerUrl = config.kafkaConfiguration.brokerUrl
+        config,
     )
 
-    val transferJob = launch {
+    val transferJob = GlobalScope.launch(Dispatchers.Unbounded) {
         jmsConsumer
-            .subscribe(config.mqQueue)
-            .collect { message ->
+            .subscribe(mqConfig.mqQueue) { message ->
                 when (message) {
                     is TextMessage -> {
-                        log.info("Got MQMessage: ${message.text}")
-                        kafkaProducer.send(ProducerRecord(config.kafkaTopic, message.text))
+                        kafkaProducer.send(
+                            ProducerRecord(
+                                requireNotNull(config.targetTopic),
+                                UUID.randomUUID().toString(),
+                                message.text,
+                            ),
+                        )
                     }
 
                     else -> {
@@ -38,8 +55,8 @@ fun Application.mqToKafkaModule() {
 
     install(Metrics.Plugin)
     install(Selftest.Plugin) {
-        appname = config.appname
-        version = config.appversion
+        appname = config.appName
+        version = config.appVersion
     }
 
     install(ShutDownUrl.ApplicationCallPlugin) {

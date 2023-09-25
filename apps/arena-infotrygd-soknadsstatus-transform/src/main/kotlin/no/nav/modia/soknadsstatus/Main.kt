@@ -1,92 +1,86 @@
 package no.nav.modia.soknadsstatus
 
-import Filter
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
-import kotlinx.datetime.toKotlinInstant
-import no.nav.melding.virksomhet.behandlingsstatus.hendelsehandterer.v1.hendelseshandtererbehandlingsstatus.*
-import no.nav.modia.soknadsstatus.behandling.Behandling
+import kotlinx.serialization.json.Json
+import no.nav.modia.soknadsstatus.behandling.Hendelse
+import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.personoversikt.common.ktor.utils.KtorServer
-import no.nav.personoversikt.common.logging.Logging.secureLog
-import no.nav.personoversikt.common.utils.EnvUtils
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 fun main() {
     runApp()
 }
 
-data class Configuration(
-    val appname: String = EnvUtils.getRequiredConfig("APP_NAME"),
-    val appversion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
-    val brokerUrl: String = EnvUtils.getRequiredConfig("KAFKA_BROKER_URL"),
-    val sourceTopic: String = EnvUtils.getRequiredConfig("KAFKA_SOURCE_TOPIC"),
-    val targetTopic: String = EnvUtils.getRequiredConfig("KAFKA_TARGET_TOPIC"),
-)
-
 fun runApp(port: Int = 8080) {
-    val config = Configuration()
+    var runConsumer = true
+    val config = AppEnv()
+    val dlqMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(config.deadLetterQueueMetricsGaugeName))
+    val deadLetterProducer = DeadLetterQueueProducerImpl(config, dlqMetricsGauge)
+    val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv((config.appName)))
+    datasourceConfiguration.runFlyway()
+
     KtorServer.create(
         factory = CIO,
         port = port,
         application = {
             install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin) {
-                appname = config.appname
-                brokerUrl = config.brokerUrl
-                sourceTopic = config.sourceTopic
-                targetTopic = config.targetTopic
-                configure { stream ->
-                    stream
-                        .mapValues(::mapXmlMessageToHendelse)
-                        .filter(::filter)
-                        .mapValues(::transform)
+            if (runConsumer) {
+                install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
+                    appEnv = config
+                    deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
+                        dlqProducer = deadLetterProducer,
+                        topic = requireNotNull(config.deadLetterQueueTopic),
+                    )
+                    sourceTopic = requireNotNull(config.sourceTopic)
+                    targetTopic = requireNotNull(config.targetTopic)
+                    deserializer = ::deserialize
+                    serializer = ::serialize
+                    onSerializationException = { record, exception ->
+                        TjenestekallLogg.error(
+                            "Klarte ikke å serialisere melding",
+                            fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
+                            throwable = exception,
+                        )
+                    }
+                    configure { stream ->
+                        stream
+                            .mapValues(::transform)
+                    }
+                }
+                install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
+                    appEnv = config
+                    transformer = ::transform
+                    skipTableDataSource = datasourceConfiguration.datasource
+                    deadLetterQueueMetricsGauge = dlqMetricsGauge
+                    deserializer = ::deserialize
+                    serializer = ::serialize
                 }
             }
-        }
+        },
     ).start(wait = true)
 }
 
-fun mapXmlMessageToHendelse(key: String?, value: String): Hendelse {
-    return XMLConverter.fromXml(value)
-}
+fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
+    InnkommendeHendelse.serializer(),
+    value,
+)
 
-fun filter(key: String?, value: Hendelse): Boolean {
-    behandlingsStatus(value) ?: return false
-
-    return Filter.filtrerBehandling(value as Behandling)
-}
-
-fun transform(key: String?, value: Hendelse?): SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering {
-    checkNotNull(value)
-    val behandlingStatus = value as BehandlingStatus
-    return SoknadsstatusDomain.SoknadsstatusInnkommendeOppdatering(
-        aktorIder = behandlingStatus.aktoerREF.map { it.aktoerId },
-        tema = behandlingStatus.sakstema.value,
-        behandlingsId = behandlingStatus.behandlingsID,
-        systemRef = behandlingStatus.hendelsesprodusentREF.value,
-        status = behandlingsStatus(behandlingStatus)!!,
-        tidspunkt = behandlingStatus.hendelsesTidspunkt.toGregorianCalendar().toInstant().toKotlinInstant()
-    )
-}
-
-private fun behandlingsStatus(hendelse: Hendelse): SoknadsstatusDomain.Status? {
-    return when (hendelse) {
-        is BehandlingOpprettet -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
-        is BehandlingOpprettetOgAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
-        is BehandlingAvsluttet -> behandlingAvsluttetStatus(hendelse.avslutningsstatus)
-        else -> {
-            secureLog.error("Ukjent Hendelse mottatt: $hendelse")
-            null
-        }
+fun deserialize(key: String?, value: String): Hendelse {
+    return try {
+        BehandlingDeserializer.deserialize(value)
+    } catch (e: Exception) {
+        TjenestekallLogg.error(
+            "Klarte ikke å håndtere DL",
+            fields = mapOf("key" to key, "value" to value),
+            throwable = e,
+        )
+        throw e
     }
 }
 
-private fun behandlingAvsluttetStatus(avslutningsstatus: Avslutningsstatuser): SoknadsstatusDomain.Status? {
-    return when (avslutningsstatus.value.lowercase()) {
-        "avsluttet", "ok" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
-        "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
-        else -> {
-            secureLog.error("Ukjent behandlingsstatus mottatt: ${avslutningsstatus.value}")
-            null
-        }
-    }
-}
+fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+    hendelse = hendelse,
+    identer = hendelse.aktoerREF.map { it.aktoerId },
+    statusMapper = InfotrygdAvslutningsstatusMapper,
+)

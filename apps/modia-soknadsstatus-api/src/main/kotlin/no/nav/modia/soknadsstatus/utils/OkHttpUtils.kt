@@ -1,6 +1,6 @@
 package no.nav.utils
 
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import okhttp3.*
 import okio.Buffer
 import org.slf4j.LoggerFactory
@@ -46,25 +46,25 @@ class LoggingInterceptor(
         val requestId = UUID.randomUUID().toString()
         val requestBody = request.peekContent(config)
 
-        secureLog.info(
+        TjenestekallLogg.info(
             "$name-request: $callId ($requestId)",
             mapOf(
                 "url" to request.url.toString(),
                 "headers" to request.headers.names().joinToString(", "),
-                "body" to requestBody
-            )
+                "body" to requestBody,
+            ),
         )
 
         val timer: Long = System.currentTimeMillis()
         val response: Response = runCatching { chain.proceed(request) }
             .onFailure { exception ->
                 log.error("$name-response-error (ID: $callId / $requestId)", exception)
-                secureLog.error(
+                TjenestekallLogg.error(
                     "$name-response-error: $callId ($requestId))",
                     mapOf(
                         "exception" to exception,
-                        "time" to timer.measure()
-                    )
+                        "time" to timer.measure(),
+                    ),
                 )
             }
             .getOrThrow()
@@ -72,22 +72,22 @@ class LoggingInterceptor(
         val responseBody = response.peekContent(config)
 
         if (response.code in 200..299) {
-            secureLog.info(
+            TjenestekallLogg.info(
                 "$name-response: $callId ($requestId)",
                 mapOf(
                     "status" to "${response.code} ${response.message}",
                     "time" to timer.measure(),
-                    "body" to responseBody
-                )
+                    "body" to responseBody,
+                ),
             )
         } else {
-            secureLog.error(
+            TjenestekallLogg.error(
                 "$name-response-error: $callId ($requestId)",
                 mapOf(
                     "status" to "${response.code} ${response.message}",
                     "time" to timer.measure(),
-                    "body" to responseBody
-                )
+                    "body" to responseBody,
+                ),
             )
         }
         return response

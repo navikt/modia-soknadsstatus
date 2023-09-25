@@ -7,8 +7,19 @@ metadata:
     team: personoversikt
 spec:
   image: {{image}}
-  port: 9010
+  port: 8080
   team: personoversikt
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 90
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
@@ -19,3 +30,36 @@ spec:
     path: /internal/isReady
     initialDelay: 20
     timeout: 1
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: arena-infotrygd-soknadsstatus-db
+  env:
+    - name: APP_NAME
+      value: "arena-infotrygd-soknadsstatus-transform"
+    - name: APP_MODE
+      value: "NAIS"
+    - name: APP_VERSION
+      value: "dev"
+    - name: DB_NAME
+      value: "arena-infotrygd-soknadsstatus-db"
+    - name: KAFKA_SOURCE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering"
+    - name: KAFKA_TARGET_TOPIC
+      value: "personoversikt.modia-soknadsstatus-oppdatering"
+    - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-arena-infotrygd-dlq"
+    - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
+      value: "60000"
+    - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
+      value: "arena_infotrygd_dlq_event_skip"
+    - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
+      value: "modia_soknadsstatus_arena_infotrygd_dlq_gauge"

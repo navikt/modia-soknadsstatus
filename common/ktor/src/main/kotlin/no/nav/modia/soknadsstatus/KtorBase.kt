@@ -3,7 +3,6 @@ package no.nav.modia.soknadsstatus
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
@@ -18,11 +17,7 @@ val BaseNaisApp = createApplicationPlugin("base-nais-app") {
         install(Metrics.Plugin)
         install(Selftest.Plugin)
 
-        install(StatusPages) {
-            exception<HttpStatusException> { call, exception ->
-                call.respond(exception.status, exception.message ?: "Ukjent feil")
-            }
-        }
+        configureExceptionHandling()
 
         install(ShutDownUrl.ApplicationCallPlugin) {
             shutDownUrl = "/shutdown"
@@ -34,7 +29,7 @@ val BaseNaisApp = createApplicationPlugin("base-nais-app") {
 class HttpStatusException(
     val status: HttpStatusCode,
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : IllegalStateException(message, cause)
 
 suspend inline fun <reified T : Any> ApplicationCall.respondWithResult(result: Result<T>) {

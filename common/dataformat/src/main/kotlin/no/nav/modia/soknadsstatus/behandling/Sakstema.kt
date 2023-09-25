@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Sakstema(
-    val kodeRef: String,
-    val kodeverksRef: String,
-    val value: String
+    val kodeRef: String? = null,
+    val kodeverksRef: String? = null,
+    val value: String,
 )

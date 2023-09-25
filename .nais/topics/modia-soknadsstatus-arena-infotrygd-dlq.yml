@@ -1,0 +1,26 @@
+apiVersion: kafka.nais.io/v1
+kind: Topic
+metadata:
+  name: modia-soknadsstatus-arena-infotrygd-dlq
+  namespace: personoversikt
+  labels:
+    team: personoversikt
+  annotations:
+    dcat.data.nav.no/title: "personoversikt.modia-soknadsstatus-arena-infotrygd-dlq"
+    dcat.data.nav.no/description: "Topic for modia søknadsstatus for oppdateringer som kommer fra mq-to-kafka som ikke klarer å parses av arena-infotrygd"
+spec:
+  pool: {{kafkaPool}}
+  config:
+    cleanupPolicy: delete
+    minimumInSyncReplicas: 1
+    partitions: 3
+    replication: 2
+    retentionBytes: -1    # Messages will never get deleted because of disk space
+    retentionHours: 730  # Messages are stored for 1 month
+  acl:
+    - team: personoversikt
+      application: arena-infotrygd-soknadsstatus-transform
+      access: readwrite
+    - team: personoversikt
+      application: modia-soknadsstatus-kafka-manager
+      access: read

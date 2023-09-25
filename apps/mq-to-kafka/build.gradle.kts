@@ -7,6 +7,7 @@ val logback_version: String by project
 val kafka_version: String by project
 val jms_api_version: String by project
 val junit_version: String by project
+val logstash_version: String by project
 
 plugins {
     application
@@ -18,14 +19,15 @@ plugins {
 dependencies {
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("org.apache.kafka:kafka-clients:$kafka_version")
-    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
-    implementation("no.nav.personoversikt:kotlin-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
     implementation("javax.jms:javax.jms-api:$jms_api_version")
     implementation(project(":common:kafka"))
     implementation(project(":common:jms"))
-
+    implementation(project(":common:ktor"))
+    implementation(project(":common:utils"))
     implementation("ch.qos.logback:logback-classic:$logback_version")
-
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
 
@@ -59,7 +61,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     exclude(
         "META-INF/*.SF",
         "META-INF/*.DSA",
-        "META-INF/*.RSA"
+        "META-INF/*.RSA",
     )
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)

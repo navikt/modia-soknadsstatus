@@ -20,11 +20,12 @@ dependencies {
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("org.apache.kafka:kafka-streams:3.3.1")
-    implementation("no.nav.personoversikt:ktor-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation(project(":common:kafka"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:jms"))
     implementation(project(":common:kafka-stream-transformer"))
+    implementation(project(":common:ktor"))
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 

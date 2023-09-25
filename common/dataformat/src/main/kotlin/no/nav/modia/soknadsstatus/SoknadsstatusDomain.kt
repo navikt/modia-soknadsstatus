@@ -1,7 +1,8 @@
 package no.nav.modia.soknadsstatus
 
-import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+
 object SoknadsstatusDomain {
     @Serializable
     enum class Status {
@@ -11,38 +12,57 @@ object SoknadsstatusDomain {
     }
 
     @Serializable
-    data class SoknadsstatusOppdatering(
-        val ident: String,
-        val behandlingsId: String,
-        val systemRef: String,
-        val tema: String,
-        val status: Status,
-        val tidspunkt: Instant,
-    ) {
-        private val systemUrl = mapOf<String, String>()
-        fun url() = "https://${systemUrl[systemRef]}/$behandlingsId"
+    enum class HendelseType {
+        BEHANDLING_OPPRETTET,
+        BEHANDLING_AVSLUTTET,
+        BEHANDLING_OPPRETTET_OG_AVSLUTTET,
+        ;
+
+        companion object {
+            fun convertFromString(type: String): HendelseType {
+                return HendelseType.values().first { it.name.lowercase() == type.lowercase() }
+            }
+        }
     }
 
     @Serializable
-    data class SoknadsstatusInnkommendeOppdatering(
-        val aktorIder: List<String>,
-        val behandlingsId: String,
-        val systemRef: String,
-        val tema: String,
+    data class Behandling(
+        val id: String? = null,
+        val behandlingId: String,
+        val produsentSystem: String? = null,
+        val startTidspunkt: LocalDateTime? = null,
+        val sluttTidspunkt: LocalDateTime? = null,
+        val sistOppdatert: LocalDateTime,
+        val sakstema: String? = null,
+        val behandlingsTema: String? = null,
+        val behandlingsType: String? = null,
         val status: Status,
-        val tidspunkt: Instant,
+        val ansvarligEnhet: String? = null,
+        val primaerBehandlingId: String? = null,
+        val primaerBehandlingType: String? = null,
+        val applikasjonSak: String? = null,
+        val applikasjonBehandling: String? = null,
+        val hendelser: List<Hendelse>? = null,
     )
 
     @Serializable
-    data class Soknadsstatuser(
-        val ident: String,
-        val tema: Map<String, Soknadsstatus>
+    data class Hendelse(
+        val id: String? = null,
+        val hendelseId: String,
+        val behandlingId: String,
+        val modiaBehandlingId: String,
+        val hendelseProdusent: String? = null,
+        val hendelseTidspunkt: LocalDateTime,
+        val behandlingsTema: String? = null,
+        val behandlingsType: String? = null,
+        val hendelseType: HendelseType,
+        val status: Status,
+        val ansvarligEnhet: String? = null,
     )
 
     @Serializable
-    data class Soknadsstatus(
-        var underBehandling: Int = 0,
-        var ferdigBehandlet: Int = 0,
-        var avbrutt: Int = 0,
+    data class PrimaerBehandling(
+        val behandlingId: String,
+        val type: String,
     )
 }

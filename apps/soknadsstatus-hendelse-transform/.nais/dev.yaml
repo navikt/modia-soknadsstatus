@@ -1,0 +1,66 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: soknadsstatus-hendelse-transform
+  namespace: personoversikt
+  labels:
+    team: personoversikt
+spec:
+  image: {{image}}
+  port: 8080
+  team: personoversikt
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 90
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 20
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
+  readiness:
+    path: /internal/isReady
+    initialDelay: 20
+    timeout: 1
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+    streams: true
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: soknadsstatus-hendelse-transform-db
+  env:
+    - name: APP_NAME
+      value: "soknadsstatus-hendelse-transform"
+    - name: APP_MODE
+      value: "NAIS"
+    - name: APP_VERSION
+      value: "dev"
+    - name: DB_NAME
+      value: "soknadsstatus-hendelse-transform-db"
+    - name: KAFKA_SOURCE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-hendelse"
+    - name: KAFKA_TARGET_TOPIC
+      value: "personoversikt.modia-soknadsstatus-oppdatering"
+    - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
+      value: "personoversikt.modia-soknadsstatus-hendelse-dlq"
+    - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
+      value: "60000"
+    - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
+      value: "hendelse_dlq_event_skip"
+    - name: KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME
+      value: "modia_soknadsstatus_hendelse_dlq_gauge"

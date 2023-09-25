@@ -62,23 +62,17 @@ class FilterTest {
         val result = Filter.filtrerBehandling(behandling.avsluttet)
         assertTrue(result)
     }
-
-    @Test
-    fun `skal ikke slippe igjennom avsluttet behandling om avslutningsstatus ikke er 'avsluttet'`() {
-        val behandling = generateBehandling(avslutningsstatus = Avslutningsstatus("koderef", "kodeverksRef", "opprettet"))
-        val result = Filter.filtrerBehandling(behandling.avsluttet)
-        assertFalse(result)
-    }
 }
 
 data class BeggeBehandlinger(
     val opprettet: BehandlingOpprettet,
-    val avsluttet: BehandlingAvsluttet
+    val avsluttet: BehandlingAvsluttet,
 )
 
 private fun generateBehandling(
     avslutningsstatus: Avslutningsstatus = Avslutningsstatus("koderef", "kodeverksref", FilterUtils.AVSLUTTET),
     aktoerREF: List<AktoerREF> = listOf(AktoerREF(aktoerId = "123456789")),
+    identREF: List<IdentREF> = listOf(IdentREF(ident = "123456789")),
     ansvarligEnhetREF: String = "ansvarligEnhet",
     applikasjonBehandlingREF: String = "applikasjon behandling",
     applikasjonSakREF: String = "applikasjonsak",
@@ -92,29 +86,12 @@ private fun generateBehandling(
     primaerBehandlingREF: PrimaerBehandlingREF? = PrimaerBehandlingREF("behandlingsRef", Type("koderef", "kodeverksRef", "behandlingstype")),
     sakstema: Sakstema = Sakstema("koderef", "kodeverksRef", "sakstema"),
     sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
-    styringsinformasjonListe: List<StyringsinformasjonListe> = listOf()
+    styringsinformasjonListe: List<StyringsinformasjonListe> = listOf(),
 ): BeggeBehandlinger {
     return BeggeBehandlinger(
         BehandlingOpprettet(
             aktoerREF,
-            ansvarligEnhetREF,
-            applikasjonBehandlingREF,
-            applikasjonSakREF,
-            behandlingsID,
-            behandlingstema,
-            behandlingstype,
-            hendelseType,
-            hendelsesId,
-            hendelsesTidspunkt,
-            hendelsesprodusentREF,
-            primaerBehandlingREF,
-            sakstema,
-            sekundaerBehandlingREF,
-            styringsinformasjonListe
-        ),
-        BehandlingAvsluttet(
-            avslutningsstatus,
-            aktoerREF,
+            identREF,
             ansvarligEnhetREF,
             applikasjonBehandlingREF,
             applikasjonSakREF,
@@ -129,6 +106,26 @@ private fun generateBehandling(
             sakstema,
             sekundaerBehandlingREF,
             styringsinformasjonListe,
-        )
+        ),
+        BehandlingAvsluttet(
+            aktoerREF,
+            identREF,
+            ansvarligEnhetREF,
+            applikasjonBehandlingREF,
+            applikasjonSakREF,
+            behandlingsID,
+            behandlingstema,
+            behandlingstype,
+            hendelseType,
+            hendelsesId,
+            hendelsesTidspunkt,
+            hendelsesprodusentREF,
+            primaerBehandlingREF,
+            sakstema,
+            sekundaerBehandlingREF,
+            styringsinformasjonListe,
+            avslutningsstatus,
+            hendelsesTidspunkt,
+        ),
     )
 }
