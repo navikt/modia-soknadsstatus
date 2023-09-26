@@ -40,10 +40,10 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: "mqls03.prod.local"
+        - host: "mpls03.adeo.no"
           ports:
             - name: MQ
-              port: 1413
+              port: 1414
               protocol: TCP
   filesFrom:
     - secret: mq-tls-keystore
