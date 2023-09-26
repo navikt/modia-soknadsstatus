@@ -80,4 +80,6 @@ fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
     hendelse = hendelse,
     identer = hendelse.identREF.map { it.ident },
     statusMapper = HendelseAvslutningsstatusMapper,
+    hendelseType = SoknadsstatusDomain.HendelseType.convertFromCamelCase(hendelse.hendelseType)
 )
+

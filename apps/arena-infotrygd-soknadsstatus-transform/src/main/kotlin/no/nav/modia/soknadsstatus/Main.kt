@@ -83,4 +83,5 @@ fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
     hendelse = hendelse,
     identer = hendelse.aktoerREF.map { it.aktoerId },
     statusMapper = InfotrygdAvslutningsstatusMapper,
+    hendelseType = SoknadsstatusDomain.HendelseType.convertFromString(hendelse.hendelseType),
 )

@@ -21,6 +21,7 @@ object Transformer {
         hendelse: Hendelse,
         statusMapper: AvslutningsStatusMapper,
         identer: List<String>,
+        hendelseType: SoknadsstatusDomain.HendelseType,
     ): InnkommendeHendelse {
         return InnkommendeHendelse(
             aktoerer = hendelse.aktoerREF.map { it.aktoerId },
@@ -32,7 +33,7 @@ object Transformer {
             hendelsesProdusent = hendelse.hendelsesprodusentREF.value,
             hendelsesTidspunkt = hendelse.hendelsesTidspunkt,
             opprettelsesTidspunkt = hendelse.opprettelsesTidspunkt,
-            hendelsesType = SoknadsstatusDomain.HendelseType.convertFromString(hendelse.hendelseType),
+            hendelsesType = hendelseType,
             status = behandlingsStatus(hendelse, statusMapper),
             sakstema = hendelse.sakstema.value,
             ansvarligEnhet = hendelse.ansvarligEnhetREF,
