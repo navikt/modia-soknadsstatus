@@ -22,6 +22,13 @@ object SoknadsstatusDomain {
             fun convertFromString(type: String): HendelseType {
                 return HendelseType.values().first { it.name.lowercase() == type.lowercase() }
             }
+
+            private val pattern = "(?<=.)[A-Z]".toRegex()
+
+            fun convertFromCamelCase(type: String): HendelseType {
+                val snakeCaseType = type.replace(pattern, "_$0").uppercase()
+                return HendelseType.values().first { it.name == snakeCaseType }
+            }
         }
     }
 

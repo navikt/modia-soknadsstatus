@@ -30,3 +30,6 @@ spec:
     - team: personoversikt
       application: modia-soknadsstatus-kafka-manager
       access: read
+    - team: k9saksbehandling
+      application: k9-los-api
+      access: write
