@@ -61,15 +61,15 @@ spec:
     - name: KAFKA_TARGET_TOPIC
       value: "personoversikt.modia-soknadsstatus-arena-infotrygd-oppdatering"
     - name: JMS_HOST
-      value: "mqls03.prod.local"
+      value: "mpls03.adeo.no"
     - name: JMS_PORT
-      value: "1413"
+      value: "1414"
     - name: JMS_QUEUE_MANAGER
-      value: "MQLS03"
+      value: "MPLS03"
     - name: JMS_CHANNEL
-      value: "Q1_MODIA_SS"
+      value: "P_MODIA_SS"
     - name: JMS_QUEUE_NAME
-      value: "QA.Q1_MODIA_SS.HENDELSER_FRA_INFOTRYGD_OG_ARENA"
+      value: "QA.P_MODIA_SS.HENDELSER_FRA_INFOTRYGD_OG_ARENA"
     - name: JMS_USERNAME
       value: "srvmodia-ss-mq"
     - name: JMS_KEYSTORE_PATH
