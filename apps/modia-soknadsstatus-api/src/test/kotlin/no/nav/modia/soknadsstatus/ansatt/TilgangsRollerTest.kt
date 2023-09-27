@@ -14,7 +14,7 @@ private const val KODE7_PREPROD = "ea930b6b-9397-44d9-b9e6-f4cf527a632a"
 private const val SKJERMEDE_PERSONER_PROD = "e750ceb5-b70b-4d94-b4fa-9d22467b786b"
 private const val SKJERMEDE_PERSONER_PREPROD = "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d"
 private val NASJONALE_TILGANGER_PROD = listOf(
-    "3063daf5-24c6-409c-9139-2d843cb4327",
+    "3063daf5-24c6-409c-9139-2d843cb4327b",
     "ad3ee064-44b7-4c58-a618-5df1e1cb05db",
     "f8ceac75-30fe-4f0f-aec6-db706986caf0",
     "baf0a4b6-71ca-45dd-9731-9f3469627c38",
