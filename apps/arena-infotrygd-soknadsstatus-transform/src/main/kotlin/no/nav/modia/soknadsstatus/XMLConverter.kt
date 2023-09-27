@@ -18,6 +18,9 @@ import javax.xml.validation.Validator
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet as SoknadBehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet as SoknadBehandlingOpprettet
 
+private const val ARENA = "AO01"
+private const val INFOTRYGD = "IT01"
+
 object XMLConverter {
     private const val SCHEMA_FIL_STATUS = "schema/behandlingsstatus.xsd"
 
@@ -64,7 +67,7 @@ object XMLConverter {
                 avslutningsstatus = toAvslutningsstatus(behandlingStatus),
                 opprettelsesTidspunkt = toZonedDateTime(behandlingStatus.opprettelsesTidspunkt),
 
-            )
+                )
 
             is BehandlingAvsluttet -> SoknadBehandlingAvsluttet(
                 aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
@@ -168,7 +171,17 @@ object XMLConverter {
     }
 
     private fun toBehandlingstema(behandlingStatus: BehandlingStatus): Behandlingstema {
-        val value = ArenaInfotrygdTemaTypeMapper.getMappedBehandlingTema(behandlingStatus.sakstema.value)
+        val value = getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
+            ArenaTemaTypeMapper.getMappedBehandlingTema(
+                behandlingStatus.sakstema.value,
+                behandlingStatus.behandlingstype.value
+            )
+        }, getInfoTrygdValue = {
+            InfotrygdTemaTypeMapper.getMappedBehandlingTema(
+                behandlingStatus.sakstema.value,
+            )
+        })
+
         return Behandlingstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
             kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
@@ -177,7 +190,18 @@ object XMLConverter {
     }
 
     private fun toBehandlingstype(behandlingStatus: BehandlingStatus): Behandlingstype {
-        val value = ArenaInfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.behandlingstype.value)
+        val value = getArenaOrInfotrygdValue(
+            behandlingStatus = behandlingStatus,
+            getArenaValue = {
+                ArenaTemaTypeMapper.getMappedBehandlingsType(
+                    behandlingStatus.sakstema.value,
+                    behandlingStatus.behandlingstype.value
+                )
+            },
+            getInfoTrygdValue = {
+                InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.behandlingstype.value)
+            })
+
         return Behandlingstype(
             kodeRef = behandlingStatus.behandlingstype.kodeRef,
             kodeverksRef = behandlingStatus.behandlingstype.kodeverksRef,
@@ -208,7 +232,14 @@ object XMLConverter {
         }
 
     private fun toSakstema(behandlingStatus: BehandlingStatus): Sakstema {
-        val value = ArenaInfotrygdTemaTypeMapper.getMappedArkivTema(behandlingStatus.sakstema.value)
+        val value = getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
+            ArenaTemaTypeMapper.getMappedArkivTema(
+                behandlingStatus.sakstema.value,
+                behandlingStatus.behandlingstype.value
+            )
+        }, getInfoTrygdValue = {
+            InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
+        })
         return Sakstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
             kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
@@ -238,6 +269,21 @@ object XMLConverter {
         kodeverksRef = behandlingStatus.avslutningsstatus.kodeverksRef,
         value = behandlingStatus.avslutningsstatus.value,
     )
+
+    private fun getArenaOrInfotrygdValue(
+        behandlingStatus: BehandlingStatus,
+        getArenaValue: () -> String,
+        getInfoTrygdValue: () -> String
+    ): String {
+        return if (behandlingStatus.hendelsesprodusentREF.isInfoTrygd()) {
+            getInfoTrygdValue()
+        } else if (behandlingStatus.hendelsesprodusentREF.isArena()) {
+            getArenaValue()
+        } else {
+            throw IllegalArgumentException("Mottok ukjent produsentsystem: ${behandlingStatus.hendelsesprodusentREF.value}")
+        }
+    }
+
 }
 
 object BehandlingDeserializer {
@@ -245,3 +291,7 @@ object BehandlingDeserializer {
         return XMLConverter.fromXml(data)
     }
 }
+
+private fun Applikasjoner.isInfoTrygd() = this.value == INFOTRYGD
+private fun Applikasjoner.isArena() = this.value == ARENA
+
