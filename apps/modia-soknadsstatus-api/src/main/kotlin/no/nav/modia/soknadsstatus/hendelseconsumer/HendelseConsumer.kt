@@ -11,7 +11,7 @@ class HendelseConsumer(
     kafkaConsumer: Consumer<String, String>,
     pollDurationMs: Double,
     exceptionRestartDelayMs: Double,
-    private val block: suspend (topic: String, key: String, value: String) -> Result<Unit>,
+    private val block: suspend (topic: String, key: String?, value: String) -> Result<Unit>,
 ) : SoknadsstatusConsumerImpl(topic, kafkaConsumer, pollDurationMs, exceptionRestartDelayMs) {
 
     override suspend fun handleRecords(records: ConsumerRecords<String, String>, commitSync: () -> Unit) {
