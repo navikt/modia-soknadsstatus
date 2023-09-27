@@ -71,8 +71,8 @@ class KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> :
     }
 }
 
-private class SerDesHandler<KEY_TYPE : String, VALUE_IN_TYPE, VALUE_OUT_TYPE>(
-    private val block: (key: KEY_TYPE, value: VALUE_IN_TYPE) -> VALUE_OUT_TYPE?,
+private class SerDesHandler<KEY_TYPE : String?, VALUE_IN_TYPE, VALUE_OUT_TYPE>(
+    private val block: (key: KEY_TYPE?, value: VALUE_IN_TYPE) -> VALUE_OUT_TYPE?,
     private val onException: (record: FixedKeyRecord<KEY_TYPE, VALUE_IN_TYPE>, exception: Exception) -> Unit,
 ) : FixedKeyProcessor<KEY_TYPE, VALUE_IN_TYPE, VALUE_OUT_TYPE> {
     private var context: FixedKeyProcessorContext<KEY_TYPE, VALUE_OUT_TYPE>? = null
