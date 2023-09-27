@@ -6,7 +6,7 @@ import no.nav.modia.soknadsstatus.kafka.AppCluster
 private val NASJONAL_ROLLER = listOf(
     GeografiskTilgangsRolle(
         groupName = "0000-ga-gosys_nasjonal",
-        productionId = "3063daf5-24c6-409c-9139-2d843cb4327",
+        productionId = "3063daf5-24c6-409c-9139-2d843cb4327b",
         preprodId = "924badcd-b936-44f4-b7bf-97c03de0893a",
     ),
     GeografiskTilgangsRolle(
