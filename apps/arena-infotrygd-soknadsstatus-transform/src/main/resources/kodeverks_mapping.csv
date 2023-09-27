@@ -1,4 +1,5 @@
 Arkivtema,Arkivtema,AA,AAR
+Arkivtema,Arkivtema,AA;AA;AAP,AAP
 Arkivtema,Arkivtema,AA;AG,AAR
 Arkivtema,Arkivtema,AA;AO,AAR
 Arkivtema,Arkivtema,AT,YRA
@@ -882,6 +883,7 @@ Arkivtema,Arkivtema,YS;YS;IS,YRK
 Arkivtema,Arkivtema,YS;YS;MP,YRK
 Arkivtema,Arkivtema,YS;YS;SF,YRK
 Arkivtema,Behandlingstema,AA,ab0267
+Arkivtema,Behandlingstema,AA;AA;AAP,ab0014
 Arkivtema,Behandlingstema,AA;AG,ab0262
 Arkivtema,Behandlingstema,AA;AO,ab0263
 Arkivtema,Behandlingstema,AT,ab0114
