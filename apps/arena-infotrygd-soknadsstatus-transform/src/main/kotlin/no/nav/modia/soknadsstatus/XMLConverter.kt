@@ -67,7 +67,7 @@ object XMLConverter {
                 avslutningsstatus = toAvslutningsstatus(behandlingStatus),
                 opprettelsesTidspunkt = toZonedDateTime(behandlingStatus.opprettelsesTidspunkt),
 
-                )
+            )
 
             is BehandlingAvsluttet -> SoknadBehandlingAvsluttet(
                 aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
@@ -174,7 +174,7 @@ object XMLConverter {
         val value = getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
             ArenaTemaTypeMapper.getMappedBehandlingTema(
                 behandlingStatus.sakstema.value,
-                behandlingStatus.behandlingstype.value
+                behandlingStatus.behandlingstype.value,
             )
         }, getInfoTrygdValue = {
             InfotrygdTemaTypeMapper.getMappedBehandlingTema(
@@ -195,12 +195,13 @@ object XMLConverter {
             getArenaValue = {
                 ArenaTemaTypeMapper.getMappedBehandlingsType(
                     behandlingStatus.sakstema.value,
-                    behandlingStatus.behandlingstype.value
+                    behandlingStatus.behandlingstype.value,
                 )
             },
             getInfoTrygdValue = {
                 InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.behandlingstype.value)
-            })
+            },
+        )
 
         return Behandlingstype(
             kodeRef = behandlingStatus.behandlingstype.kodeRef,
@@ -235,7 +236,7 @@ object XMLConverter {
         val value = getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
             ArenaTemaTypeMapper.getMappedArkivTema(
                 behandlingStatus.sakstema.value,
-                behandlingStatus.behandlingstype.value
+                behandlingStatus.behandlingstype.value,
             )
         }, getInfoTrygdValue = {
             InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
@@ -273,7 +274,7 @@ object XMLConverter {
     private fun getArenaOrInfotrygdValue(
         behandlingStatus: BehandlingStatus,
         getArenaValue: () -> String,
-        getInfoTrygdValue: () -> String
+        getInfoTrygdValue: () -> String,
     ): String {
         return if (behandlingStatus.hendelsesprodusentREF.isInfoTrygd()) {
             getInfoTrygdValue()
@@ -283,7 +284,6 @@ object XMLConverter {
             throw IllegalArgumentException("Mottok ukjent produsentsystem: ${behandlingStatus.hendelsesprodusentREF.value}")
         }
     }
-
 }
 
 object BehandlingDeserializer {
@@ -294,4 +294,3 @@ object BehandlingDeserializer {
 
 private fun Applikasjoner.isInfoTrygd() = this.value == INFOTRYGD
 private fun Applikasjoner.isArena() = this.value == ARENA
-
