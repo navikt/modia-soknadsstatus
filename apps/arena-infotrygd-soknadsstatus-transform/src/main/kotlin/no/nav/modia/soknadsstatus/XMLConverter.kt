@@ -66,7 +66,6 @@ object XMLConverter {
                 styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
                 avslutningsstatus = toAvslutningsstatus(behandlingStatus),
                 opprettelsesTidspunkt = toZonedDateTime(behandlingStatus.opprettelsesTidspunkt),
-
             )
 
             is BehandlingAvsluttet -> SoknadBehandlingAvsluttet(
