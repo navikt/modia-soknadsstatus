@@ -19,7 +19,7 @@ import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet as SoknadBehand
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet as SoknadBehandlingOpprettet
 
 const val ARENA = "AO01"
-const val INFOTRYGD = "IT01"
+const val INFOTRYGD = "IT00"
 
 object XMLConverter {
     private const val SCHEMA_FIL_STATUS = "schema/behandlingsstatus.xsd"
