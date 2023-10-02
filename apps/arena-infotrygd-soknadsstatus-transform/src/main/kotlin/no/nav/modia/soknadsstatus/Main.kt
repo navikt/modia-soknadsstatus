@@ -28,10 +28,11 @@ fun runApp(port: Int = 8080) {
             if (runConsumer) {
                 install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
                     appEnv = config
-                    deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
-                        dlqProducer = deadLetterProducer,
-                        topic = requireNotNull(config.deadLetterQueueTopic),
-                    )
+                    deserializationExceptionHandler =
+                        SendToDeadLetterQueueExceptionHandler(
+                            dlqProducer = deadLetterProducer,
+                            topic = requireNotNull(config.deadLetterQueueTopic),
+                        )
                     sourceTopic = requireNotNull(config.sourceTopic)
                     targetTopic = requireNotNull(config.targetTopic)
                     deserializer = ::deserialize
@@ -61,12 +62,18 @@ fun runApp(port: Int = 8080) {
     ).start(wait = true)
 }
 
-fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
+fun serialize(
+    key: String?,
+    value: InnkommendeHendelse,
+) = Json.encodeToString(
     InnkommendeHendelse.serializer(),
     value,
 )
 
-fun deserialize(key: String?, value: String): Hendelse {
+fun deserialize(
+    key: String?,
+    value: String,
+): Hendelse {
     return try {
         BehandlingDeserializer.deserialize(value)
     } catch (e: Exception) {
@@ -79,7 +86,10 @@ fun deserialize(key: String?, value: String): Hendelse {
     }
 }
 
-fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+fun transform(
+    key: String?,
+    hendelse: Hendelse,
+) = Transformer.transform(
     hendelse = hendelse,
     identer = hendelse.aktoerREF.map { it.aktoerId },
     statusMapper = InfotrygdAvslutningsstatusMapper,

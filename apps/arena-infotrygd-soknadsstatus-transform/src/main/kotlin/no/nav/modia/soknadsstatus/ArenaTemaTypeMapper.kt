@@ -3,11 +3,20 @@ package no.nav.modia.soknadsstatus
 object ArenaTemaTypeMapper {
     private val mapper = ArenaMapper()
 
-    fun getMappedArkivTema(tema: String, type: String): String = mapper.getMappedArkivTema(tema, type)
+    fun getMappedArkivTema(
+        tema: String,
+        type: String,
+    ): String = mapper.getMappedArkivTema(tema, type)
 
-    fun getMappedBehandlingTema(tema: String, type: String): String = mapper.getMappedBehandlingTema(tema, type)
+    fun getMappedBehandlingTema(
+        tema: String,
+        type: String,
+    ): String = mapper.getMappedBehandlingTema(tema, type)
 
-    fun getMappedBehandlingsType(tema: String, type: String): String = mapper.getMappedBehandlingsType(tema, type)
+    fun getMappedBehandlingsType(
+        tema: String,
+        type: String,
+    ): String = mapper.getMappedBehandlingsType(tema, type)
 }
 
 private class ArenaMapper : CSVLoader(FILE_NAME) {
@@ -42,7 +51,10 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
         this.behandlingsTypeMap = behandlingsTypeMap
     }
 
-    fun getMappedArkivTema(arkivTema: String, behandlingsType: String): String {
+    fun getMappedArkivTema(
+        arkivTema: String,
+        behandlingsType: String,
+    ): String {
         if (arkivTemaMap == null) {
             throw IllegalStateException("ArkivTemaMap er ikke initialisert")
         }
@@ -52,7 +64,10 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
             ?: throw IllegalArgumentException("Hadde ikke mapping for arkivtema: $concatString")
     }
 
-    fun getMappedBehandlingTema(arkivTema: String, behandlingsType: String): String {
+    fun getMappedBehandlingTema(
+        arkivTema: String,
+        behandlingsType: String,
+    ): String {
         if (behandlingTemaMap == null) {
             throw IllegalStateException("BehandlingTemaMap er ikke initialisert")
         }
@@ -62,7 +77,10 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
             ?: throw IllegalArgumentException("Hadde ikke mapping for behandlingstema: $concatString")
     }
 
-    fun getMappedBehandlingsType(arkivTema: String, behandlingsType: String): String {
+    fun getMappedBehandlingsType(
+        arkivTema: String,
+        behandlingsType: String,
+    ): String {
         if (behandlingsTypeMap == null) {
             throw IllegalStateException("BehandlingsTypeMap er ikke initialisert")
         }
@@ -72,5 +90,8 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
             ?: throw IllegalArgumentException("Hadde ikke mapping for behandlingstype: $concatString")
     }
 
-    private fun getArkivtemaBehandlingstype(tema: String, type: String) = "$tema-$type"
+    private fun getArkivtemaBehandlingstype(
+        tema: String,
+        type: String,
+    ) = "$tema-$type"
 }

@@ -30,62 +30,65 @@ object XMLConverter {
         val primaerBehandlingRef = toPrimaerBehandlingREF(behandlingStatus)
 
         return when (behandlingStatus) {
-            is BehandlingOpprettet -> SoknadBehandlingOpprettet(
-                aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
-                ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
-                applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
-                applikasjonSakREF = behandlingStatus.applikasjonSakREF,
-                behandlingsID = behandlingStatus.behandlingsID,
-                behandlingstema = toBehandlingstema(behandlingStatus),
-                behandlingstype = toBehandlingstype(behandlingStatus),
-                hendelseType = "BEHANDLING_OPPRETTET",
-                hendelsesId = behandlingStatus.hendelsesId,
-                hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
-                hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
-                primaerBehandlingREF = primaerBehandlingRef,
-                sakstema = toSakstema(behandlingStatus),
-                sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
-                styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
-            )
+            is BehandlingOpprettet ->
+                SoknadBehandlingOpprettet(
+                    aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
+                    ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
+                    applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
+                    applikasjonSakREF = behandlingStatus.applikasjonSakREF,
+                    behandlingsID = behandlingStatus.behandlingsID,
+                    behandlingstema = toBehandlingstema(behandlingStatus),
+                    behandlingstype = toBehandlingstype(behandlingStatus),
+                    hendelseType = "BEHANDLING_OPPRETTET",
+                    hendelsesId = behandlingStatus.hendelsesId,
+                    hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
+                    hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
+                    primaerBehandlingREF = primaerBehandlingRef,
+                    sakstema = toSakstema(behandlingStatus),
+                    sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
+                    styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
+                )
 
-            is BehandlingOpprettetOgAvsluttet -> SoknadBehandlingAvsluttet(
-                aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
-                ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
-                applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
-                applikasjonSakREF = behandlingStatus.applikasjonSakREF,
-                behandlingsID = behandlingStatus.behandlingsID,
-                behandlingstema = toBehandlingstema(behandlingStatus),
-                behandlingstype = toBehandlingstype(behandlingStatus),
-                hendelseType = "BEHANDLING_OPPRETTET_OG_AVSLUTTET",
-                hendelsesId = behandlingStatus.hendelsesId,
-                hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
-                hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
-                primaerBehandlingREF = primaerBehandlingRef,
-                sakstema = toSakstema(behandlingStatus),
-                sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
-                styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
-                avslutningsstatus = toAvslutningsstatus(behandlingStatus),
-                opprettelsesTidspunkt = toZonedDateTime(behandlingStatus.opprettelsesTidspunkt),
-            )
+            is BehandlingOpprettetOgAvsluttet ->
+                SoknadBehandlingAvsluttet(
+                    aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
+                    ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
+                    applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
+                    applikasjonSakREF = behandlingStatus.applikasjonSakREF,
+                    behandlingsID = behandlingStatus.behandlingsID,
+                    behandlingstema = toBehandlingstema(behandlingStatus),
+                    behandlingstype = toBehandlingstype(behandlingStatus),
+                    hendelseType = "BEHANDLING_OPPRETTET_OG_AVSLUTTET",
+                    hendelsesId = behandlingStatus.hendelsesId,
+                    hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
+                    hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
+                    primaerBehandlingREF = primaerBehandlingRef,
+                    sakstema = toSakstema(behandlingStatus),
+                    sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
+                    styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
+                    avslutningsstatus = toAvslutningsstatus(behandlingStatus),
+                    opprettelsesTidspunkt = toZonedDateTime(behandlingStatus.opprettelsesTidspunkt),
+                )
 
-            is BehandlingAvsluttet -> SoknadBehandlingAvsluttet(
-                aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
-                ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
-                applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
-                applikasjonSakREF = behandlingStatus.applikasjonSakREF,
-                behandlingsID = behandlingStatus.behandlingsID,
-                behandlingstema = toBehandlingstema(behandlingStatus),
-                behandlingstype = toBehandlingstype(behandlingStatus),
-                hendelseType = "BEHANDLING_AVSLUTTET",
-                hendelsesId = behandlingStatus.hendelsesId,
-                hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
-                hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
-                primaerBehandlingREF = primaerBehandlingRef,
-                sakstema = toSakstema(behandlingStatus),
-                sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
-                styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
-                avslutningsstatus = toAvslutningsstatus(behandlingStatus),
-            )
+            is BehandlingAvsluttet ->
+                SoknadBehandlingAvsluttet(
+                    aktoerREF = behandlingStatus.getAktoerREF().map { AktoerREF(it.brukerIdent) },
+                    ansvarligEnhetREF = behandlingStatus.ansvarligEnhetREF,
+                    applikasjonBehandlingREF = behandlingStatus.applikasjonBehandlingREF,
+                    applikasjonSakREF = behandlingStatus.applikasjonSakREF,
+                    behandlingsID = behandlingStatus.behandlingsID,
+                    behandlingstema = toBehandlingstema(behandlingStatus),
+                    behandlingstype = toBehandlingstype(behandlingStatus),
+                    hendelseType = "BEHANDLING_AVSLUTTET",
+                    hendelsesId = behandlingStatus.hendelsesId,
+                    hendelsesTidspunkt = toZonedDateTime(behandlingStatus.hendelsesTidspunkt),
+                    hendelsesprodusentREF = toHendelsesprodusentREF(behandlingStatus),
+                    primaerBehandlingREF = primaerBehandlingRef,
+                    sakstema = toSakstema(behandlingStatus),
+                    sekundaerBehandlingREF = toSekundaerBehandlingREF(behandlingStatus),
+                    styringsinformasjonListe = toStyringsinformasjonListe(behandlingStatus),
+                    avslutningsstatus = toAvslutningsstatus(behandlingStatus),
+                )
 
             else -> {
                 throw RuntimeException("Meldingen inneholder ikke XML som er gyldig i henhold til XSD-en")
@@ -103,20 +106,23 @@ object XMLConverter {
             StringReader(message).use { reader ->
                 val rootElementName = extractRootElementName(message)
                 return when (rootElementName) {
-                    "behandlingOpprettet" -> JAXB.unmarshal(
-                        reader,
-                        BehandlingOpprettet::class.java,
-                    )
+                    "behandlingOpprettet" ->
+                        JAXB.unmarshal(
+                            reader,
+                            BehandlingOpprettet::class.java,
+                        )
 
-                    "behandlingAvsluttet" -> JAXB.unmarshal(
-                        reader,
-                        BehandlingAvsluttet::class.java,
-                    )
+                    "behandlingAvsluttet" ->
+                        JAXB.unmarshal(
+                            reader,
+                            BehandlingAvsluttet::class.java,
+                        )
 
-                    "behandlingOpprettetOgAvsluttet" -> JAXB.unmarshal(
-                        reader,
-                        BehandlingOpprettetOgAvsluttet::class.java,
-                    )
+                    "behandlingOpprettetOgAvsluttet" ->
+                        JAXB.unmarshal(
+                            reader,
+                            BehandlingOpprettetOgAvsluttet::class.java,
+                        )
 
                     else -> {
                         throw RuntimeException("Meldingen inneholder en ukjent meldingstype: $rootElementName")
@@ -170,16 +176,17 @@ object XMLConverter {
     }
 
     private fun toBehandlingstema(behandlingStatus: BehandlingStatus): Behandlingstema {
-        val value = getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
-            ArenaTemaTypeMapper.getMappedBehandlingTema(
-                behandlingStatus.sakstema.value,
-                behandlingStatus.behandlingstype.value,
-            )
-        }, getInfoTrygdValue = {
-            InfotrygdTemaTypeMapper.getMappedBehandlingTema(
-                behandlingStatus.sakstema.value,
-            )
-        })
+        val value =
+            getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
+                ArenaTemaTypeMapper.getMappedBehandlingTema(
+                    behandlingStatus.sakstema.value,
+                    behandlingStatus.behandlingstype.value,
+                )
+            }, getInfoTrygdValue = {
+                    InfotrygdTemaTypeMapper.getMappedBehandlingTema(
+                        behandlingStatus.sakstema.value,
+                    )
+                })
 
         return Behandlingstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
@@ -189,18 +196,19 @@ object XMLConverter {
     }
 
     private fun toBehandlingstype(behandlingStatus: BehandlingStatus): Behandlingstype {
-        val value = getArenaOrInfotrygdValue(
-            behandlingStatus = behandlingStatus,
-            getArenaValue = {
-                ArenaTemaTypeMapper.getMappedBehandlingsType(
-                    behandlingStatus.sakstema.value,
-                    behandlingStatus.behandlingstype.value,
-                )
-            },
-            getInfoTrygdValue = {
-                InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.behandlingstype.value)
-            },
-        )
+        val value =
+            getArenaOrInfotrygdValue(
+                behandlingStatus = behandlingStatus,
+                getArenaValue = {
+                    ArenaTemaTypeMapper.getMappedBehandlingsType(
+                        behandlingStatus.sakstema.value,
+                        behandlingStatus.behandlingstype.value,
+                    )
+                },
+                getInfoTrygdValue = {
+                    InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.behandlingstype.value)
+                },
+            )
 
         return Behandlingstype(
             kodeRef = behandlingStatus.behandlingstype.kodeRef,
@@ -213,17 +221,19 @@ object XMLConverter {
         xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime()
             .toLocalDateTime().toKotlinLocalDateTime()
 
-    private fun toHendelsesprodusentREF(behandlingStatus: BehandlingStatus) = HendelsesprodusentREF(
-        kodeRef = behandlingStatus.hendelsesprodusentREF.kodeRef,
-        kodeverksRef = behandlingStatus.hendelsesprodusentREF.kodeverksRef,
-        value = behandlingStatus.hendelsesprodusentREF.value,
-    )
+    private fun toHendelsesprodusentREF(behandlingStatus: BehandlingStatus) =
+        HendelsesprodusentREF(
+            kodeRef = behandlingStatus.hendelsesprodusentREF.kodeRef,
+            kodeverksRef = behandlingStatus.hendelsesprodusentREF.kodeverksRef,
+            value = behandlingStatus.hendelsesprodusentREF.value,
+        )
 
     private fun toPrimaerBehandlingREF(behandlingStatus: BehandlingStatus) =
         behandlingStatus.primaerBehandlingREF?.let {
             PrimaerBehandlingREF(
                 behandlingsREF = it.behandlingsREF,
-                type = Type(
+                type =
+                Type(
                     kodeRef = it.type?.kodeRef,
                     kodeverksRef = it.type?.kodeverksRef,
                     value = it.type.value,
@@ -232,14 +242,15 @@ object XMLConverter {
         }
 
     private fun toSakstema(behandlingStatus: BehandlingStatus): Sakstema {
-        val value = getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
-            ArenaTemaTypeMapper.getMappedArkivTema(
-                behandlingStatus.sakstema.value,
-                behandlingStatus.behandlingstype.value,
-            )
-        }, getInfoTrygdValue = {
-            InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
-        })
+        val value =
+            getArenaOrInfotrygdValue(behandlingStatus = behandlingStatus, getArenaValue = {
+                ArenaTemaTypeMapper.getMappedArkivTema(
+                    behandlingStatus.sakstema.value,
+                    behandlingStatus.behandlingstype.value,
+                )
+            }, getInfoTrygdValue = {
+                    InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
+                })
         return Sakstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
             kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
@@ -264,11 +275,12 @@ object XMLConverter {
             )
         }
 
-    private fun toAvslutningsstatus(behandlingStatus: BehandlingAvsluttet) = Avslutningsstatus(
-        kodeRef = behandlingStatus.avslutningsstatus.kodeRef,
-        kodeverksRef = behandlingStatus.avslutningsstatus.kodeverksRef,
-        value = behandlingStatus.avslutningsstatus.value,
-    )
+    private fun toAvslutningsstatus(behandlingStatus: BehandlingAvsluttet) =
+        Avslutningsstatus(
+            kodeRef = behandlingStatus.avslutningsstatus.kodeRef,
+            kodeverksRef = behandlingStatus.avslutningsstatus.kodeverksRef,
+            value = behandlingStatus.avslutningsstatus.value,
+        )
 
     private fun getArenaOrInfotrygdValue(
         behandlingStatus: BehandlingStatus,
@@ -292,4 +304,5 @@ object BehandlingDeserializer {
 }
 
 private fun Applikasjoner.isInfoTrygd() = this.value == INFOTRYGD
+
 private fun Applikasjoner.isArena() = this.value == ARENA

@@ -45,8 +45,9 @@ private class AvslutningsMapper : CSVLoader(FILE_NAME) {
         if (statusMap == null) {
             throw IllegalStateException("StatusMap var null da status: $status skulle konverteres")
         }
-        val mappedStatus = statusMap!![status.lowercase()]
-            ?: throw IllegalArgumentException("StatusMap inneholdt ikke følgende status: $status")
+        val mappedStatus =
+            statusMap!![status.lowercase()]
+                ?: throw IllegalArgumentException("StatusMap inneholdt ikke følgende status: $status")
         return mappedStatus.status
     }
 }
