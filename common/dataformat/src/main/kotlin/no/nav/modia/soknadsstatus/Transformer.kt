@@ -10,7 +10,7 @@ object Transformer {
         if (hendelse is BehandlingOpprettet) {
             return SoknadsstatusDomain.Status.UNDER_BEHANDLING
         } else if (hendelse is BehandlingAvsluttet) {
-            return hendelse.avslutningsstatus?.let { mapper.getAvslutningsstatus(it.value.lowercase()) } ?: SoknadsstatusDomain.Status.FERDIG_BEHANDLET
+            return hendelse.avslutningsstatus?.let { mapper.getAvslutningsstatus(hendelse.hendelsesprodusentREF.value, it.value.lowercase()) } ?: SoknadsstatusDomain.Status.FERDIG_BEHANDLET
         } else {
             throw IllegalArgumentException("Mottok ukjent behandlingstype $hendelse")
         }
