@@ -3,10 +3,10 @@ package no.nav.modia.soknadsstatus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class InfotrygdAvslutningsstatusMapperTest {
+class ArenaInfotrygdAvslutningsstatusMapperTest {
     @Test
     fun `test at infotrygd mapping status filen blir lest`() {
-        val status = InfotrygdAvslutningsstatusMapper.getAvslutningsstatus("T")
+        val status = ArenaInfotrygdAvslutningsstatusMapper.getAvslutningsstatus(INFOTRYGD,"T")
         assertEquals(status, SoknadsstatusDomain.Status.FERDIG_BEHANDLET)
     }
 }

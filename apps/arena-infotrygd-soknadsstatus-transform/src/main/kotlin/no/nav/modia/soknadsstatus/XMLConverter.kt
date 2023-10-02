@@ -18,8 +18,8 @@ import javax.xml.validation.Validator
 import no.nav.modia.soknadsstatus.behandling.BehandlingAvsluttet as SoknadBehandlingAvsluttet
 import no.nav.modia.soknadsstatus.behandling.BehandlingOpprettet as SoknadBehandlingOpprettet
 
-private const val ARENA = "AO01"
-private const val INFOTRYGD = "IT01"
+const val ARENA = "AO01"
+const val INFOTRYGD = "IT01"
 
 object XMLConverter {
     private const val SCHEMA_FIL_STATUS = "schema/behandlingsstatus.xsd"

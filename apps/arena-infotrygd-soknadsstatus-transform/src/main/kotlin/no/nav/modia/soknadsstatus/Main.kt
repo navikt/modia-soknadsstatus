@@ -92,6 +92,6 @@ fun transform(
 ) = Transformer.transform(
     hendelse = hendelse,
     identer = hendelse.aktoerREF.map { it.aktoerId },
-    statusMapper = InfotrygdAvslutningsstatusMapper,
+    statusMapper = ArenaInfotrygdAvslutningsstatusMapper,
     hendelseType = SoknadsstatusDomain.HendelseType.convertFromString(hendelse.hendelseType),
 )
