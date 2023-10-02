@@ -47,8 +47,9 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
             throw IllegalStateException("ArkivTemaMap er ikke initialisert")
         }
 
-        return arkivTemaMap!![getArkivtemaBehandlingstype(arkivTema, behandlingsType)]
-            ?: throw IllegalArgumentException("Hadde ikke mapping for origintaltTema: ${getArkivtemaBehandlingstype(arkivTema, behandlingsType)}")
+        val concatString = getArkivtemaBehandlingstype(arkivTema, behandlingsType)
+        return arkivTemaMap!![concatString]
+            ?: throw IllegalArgumentException("Hadde ikke mapping for arkivtema: $concatString")
     }
 
     fun getMappedBehandlingTema(arkivTema: String, behandlingsType: String): String {
@@ -56,8 +57,9 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
             throw IllegalStateException("BehandlingTemaMap er ikke initialisert")
         }
 
-        return behandlingTemaMap!![getArkivtemaBehandlingstype(arkivTema, behandlingsType)]
-            ?: throw IllegalArgumentException("Hadde ikke mapping for originaltTema: ${getArkivtemaBehandlingstype(arkivTema, behandlingsType)}")
+        val concatString = getArkivtemaBehandlingstype(arkivTema, behandlingsType)
+        return behandlingTemaMap!![concatString]
+            ?: throw IllegalArgumentException("Hadde ikke mapping for behandlingstema: $concatString")
     }
 
     fun getMappedBehandlingsType(arkivTema: String, behandlingsType: String): String {
@@ -65,8 +67,9 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
             throw IllegalStateException("BehandlingsTypeMap er ikke initialisert")
         }
 
-        return behandlingsTypeMap!![getArkivtemaBehandlingstype(arkivTema, behandlingsType)]
-            ?: throw IllegalArgumentException("Hadde ikke mapping for originalType: ${getArkivtemaBehandlingstype(arkivTema, behandlingsType)}")
+        val concatString = getArkivtemaBehandlingstype(arkivTema, behandlingsType)
+        return behandlingsTypeMap!![concatString]
+            ?: throw IllegalArgumentException("Hadde ikke mapping for behandlingstype: $concatString")
     }
 
     private fun getArkivtemaBehandlingstype(tema: String, type: String) = "$tema-$type"
