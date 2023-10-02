@@ -1,7 +1,7 @@
 package no.nav.modia.soknadsstatus
 
-object ArenaInfotrygdTemaTypeMapper {
-    private val mapper = AremaInfotrygdMapper()
+object InfotrygdTemaTypeMapper {
+    private val mapper = InfotrygdMapper()
 
     fun getMappedArkivTema(tema: String): String = mapper.getMappedArkivTema(tema)
 
@@ -10,13 +10,13 @@ object ArenaInfotrygdTemaTypeMapper {
     fun getMappedBehandlingsType(behandlingsType: String): String = mapper.getMappedBehandlingsType(behandlingsType)
 }
 
-private class AremaInfotrygdMapper : CSVLoader(FILE_NAME) {
+private class InfotrygdMapper : CSVLoader(FILE_NAME) {
     private var arkivTemaMap: Map<String, String>? = null
     private var behandlingTemaMap: Map<String, String>? = null
     private var behandlingsTypeMap: Map<String, String>? = null
 
     companion object {
-        private const val FILE_NAME = "/kodeverks_mapping.csv"
+        private const val FILE_NAME = "/kodeverks_mapping_infotrygd.csv"
     }
 
     init {
