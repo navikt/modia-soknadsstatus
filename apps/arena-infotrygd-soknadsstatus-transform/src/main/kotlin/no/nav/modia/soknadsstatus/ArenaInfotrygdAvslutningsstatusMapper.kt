@@ -47,6 +47,7 @@ private class AvslutningsMapper : CSVLoader(FILE_NAME) {
         return when (status) {
             "avsluttet" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
             "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
+            "under_behandling" -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
             else -> throw IllegalArgumentException("Mottok ukjent status i mapping av infotrygd arena statuser")
         }
     }
