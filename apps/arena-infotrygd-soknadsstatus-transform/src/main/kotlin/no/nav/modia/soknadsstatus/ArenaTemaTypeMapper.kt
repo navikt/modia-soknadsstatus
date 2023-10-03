@@ -20,9 +20,7 @@ object ArenaTemaTypeMapper {
 }
 
 private class ArenaMapper : CSVLoader(FILE_NAME) {
-    private var arkivTemaMap: Map<String, String>? = null
-    private var behandlingTemaMap: Map<String, String>? = null
-    private var behandlingsTypeMap: Map<String, String>? = null
+    private lateinit var temaTypeMap: Map<String, TemaType>
 
     companion object {
         private const val FILE_NAME = "/kodeverks_mapping_arena.csv"
@@ -33,34 +31,25 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
     }
 
     private fun loadTema() {
-        val arkivTemaMap = mutableMapOf<String, String>()
-        val behandlingTemaMap = mutableMapOf<String, String>()
-        val behandlingsTypeMap = mutableMapOf<String, String>()
-        loadResult {
-            val (_, _, orginalVerdi, kodeverkTil, nyVerdi) = it.split(",", limit = 6)
-            when (kodeverkTil) {
-                "Arkivtema" -> arkivTemaMap[orginalVerdi] = nyVerdi
-                "Behandlingstema" -> behandlingTemaMap[orginalVerdi] = nyVerdi
-                "Behandlingstype" -> behandlingsTypeMap[orginalVerdi] = nyVerdi
-                "Avslutningsstatus" -> null
-                else -> throw IllegalArgumentException("Mottok ukjent mapping: $kodeverkTil")
-            }
+        val temaTypeMap = mutableMapOf<String, TemaType>()
+        loadResult(skipFirstLine = true) {
+            val (arkivTemaBehandlingstype, arkivTema, behandlingsTema, behandlingsType) = it.split(",", limit = 4)
+
+            temaTypeMap[arkivTemaBehandlingstype] = TemaType(
+                arkivTema = arkivTema,
+                behandlingsTema = behandlingsTema,
+                behandlingsType = behandlingsType
+            )
         }
-        this.arkivTemaMap = arkivTemaMap
-        this.behandlingTemaMap = behandlingTemaMap
-        this.behandlingsTypeMap = behandlingsTypeMap
+        this.temaTypeMap = temaTypeMap
     }
 
     fun getMappedArkivTema(
         arkivTema: String,
         behandlingsType: String,
     ): String {
-        if (arkivTemaMap == null) {
-            throw IllegalStateException("ArkivTemaMap er ikke initialisert")
-        }
-
         val concatString = getArkivtemaBehandlingstype(arkivTema, behandlingsType)
-        return arkivTemaMap!![concatString]
+        return temaTypeMap[concatString]?.arkivTema
             ?: throw IllegalArgumentException("Hadde ikke mapping for arkivtema: $concatString")
     }
 
@@ -68,12 +57,8 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
         arkivTema: String,
         behandlingsType: String,
     ): String {
-        if (behandlingTemaMap == null) {
-            throw IllegalStateException("BehandlingTemaMap er ikke initialisert")
-        }
-
         val concatString = getArkivtemaBehandlingstype(arkivTema, behandlingsType)
-        return behandlingTemaMap!![concatString]
+        return temaTypeMap[concatString]?.behandlingsTema
             ?: throw IllegalArgumentException("Hadde ikke mapping for behandlingstema: $concatString")
     }
 
@@ -81,12 +66,8 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
         arkivTema: String,
         behandlingsType: String,
     ): String {
-        if (behandlingsTypeMap == null) {
-            throw IllegalStateException("BehandlingsTypeMap er ikke initialisert")
-        }
-
         val concatString = getArkivtemaBehandlingstype(arkivTema, behandlingsType)
-        return behandlingsTypeMap!![concatString]
+        return temaTypeMap[concatString]?.behandlingsType
             ?: throw IllegalArgumentException("Hadde ikke mapping for behandlingstype: $concatString")
     }
 
@@ -95,3 +76,9 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
         type: String,
     ) = "$tema-$type"
 }
+
+private data class TemaType(
+    val arkivTema: String,
+    val behandlingsTema: String,
+    val behandlingsType: String
+)
