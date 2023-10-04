@@ -50,7 +50,6 @@ private class AvslutningsMapper : CSVLoader(FILE_NAME) {
         when (status) {
             "avsluttet" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
             "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
-            "under_behandling" -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
             else -> throw IllegalArgumentException("Mottok ukjent status i mapping av infotrygd arena statuser")
         }
 
@@ -74,6 +73,11 @@ private class AvslutningsMapper : CSVLoader(FILE_NAME) {
         if (infotrygdStatusMap == null) {
             throw IllegalStateException("StatusMap var null da status: $status skulle konverteres")
         }
+
+        if (status == "blank") {
+            return SoknadsstatusDomain.Status.AVBRUTT
+        }
+
         val mappedStatus =
             infotrygdStatusMap!![status.lowercase()]
                 ?: throw IllegalArgumentException("StatusMap inneholdt ikke følgende status: $status")

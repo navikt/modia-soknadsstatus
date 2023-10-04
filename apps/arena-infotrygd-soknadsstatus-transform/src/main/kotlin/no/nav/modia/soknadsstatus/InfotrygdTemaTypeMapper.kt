@@ -65,6 +65,10 @@ private class InfotrygdMapper : CSVLoader(FILE_NAME) {
             throw IllegalStateException("BehandlingsTypeMap er ikke initialisert")
         }
 
+        if (originalType == "") {
+            return ""
+        }
+
         return behandlingsTypeMap!![originalType]
             ?: throw IllegalArgumentException("Hadde ikke mapping for originalType: $originalType")
     }

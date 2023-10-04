@@ -11,8 +11,8 @@ class ArenaInfotrygdAvslutningsstatusMapperTest {
     }
 
     @Test
-    fun `test at blank mapping gir under behandling`() {
+    fun `test at blank mapping gir avbrutt`() {
         val status = ArenaInfotrygdAvslutningsstatusMapper.getAvslutningsstatus(INFOTRYGD, "blank")
-        assertEquals(status, SoknadsstatusDomain.Status.UNDER_BEHANDLING)
+        assertEquals(status, SoknadsstatusDomain.Status.AVBRUTT)
     }
 }
