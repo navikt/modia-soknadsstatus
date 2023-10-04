@@ -47,12 +47,14 @@ fun runApp(port: Int = 8080) {
                         }
                         configure { stream ->
                             stream
+                                .filter(::checkIfLegalInfotrygdHendelse)
                                 .mapValues(::transform)
                         }
                     }
                     install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
                         appEnv = config
                         transformer = ::transform
+                        filter = ::checkIfLegalInfotrygdHendelse
                         skipTableDataSource = datasourceConfiguration.datasource
                         deadLetterQueueMetricsGauge = dlqMetricsGauge
                         deserializer = ::deserialize
@@ -94,4 +96,13 @@ fun transform(
     identer = hendelse.aktoerREF.map { it.aktoerId },
     statusMapper = ArenaInfotrygdAvslutningsstatusMapper,
     hendelseType = SoknadsstatusDomain.HendelseType.convertFromString(hendelse.hendelseType),
+)
+
+// Infotrygd sender hendelser av typen BehandlingOpprettetOgAvsluttet med behandlingstype = "" og avslutningstatus = "blank" om det er en feilregistrering
+fun checkIfLegalInfotrygdHendelse(
+    key: String?,
+    hendelse: Hendelse,
+) = !(
+    hendelse.hendelseType == "BEHANDLING_OPPRETTET_OG_AVSLUTTET" && hendelse.hendelsesprodusentREF.value == INFOTRYGD &&
+        hendelse.behandlingstype?.value == "" && hendelse.avslutningsstatus?.value == "blank"
 )
