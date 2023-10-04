@@ -7,19 +7,25 @@ import no.nav.utils.XCorrelationIdInterceptor
 import okhttp3.OkHttpClient
 
 object NorgConfig {
-    fun factory(appMode: AppMode, env: NorgEnv, consumerId: String): NorgApi {
+    fun factory(
+        appMode: AppMode,
+        env: NorgEnv,
+        consumerId: String,
+    ): NorgApi {
         if (appMode == AppMode.NAIS) {
             val url = env.url
-            val httpClient: OkHttpClient = RestClient.baseClient().newBuilder()
-                .addInterceptor(XCorrelationIdInterceptor())
-                .addInterceptor(
-                    LoggingInterceptor("Norg2") { request ->
-                        requireNotNull(request.header("X-Correlation-ID")) {
-                            "Kall uten \"X-Correlation-ID\" er ikke lov"
-                        }
-                    },
-                )
-                .build()
+            val httpClient: OkHttpClient =
+                RestClient
+                    .baseClient()
+                    .newBuilder()
+                    .addInterceptor(XCorrelationIdInterceptor())
+                    .addInterceptor(
+                        LoggingInterceptor("Norg2") { request ->
+                            requireNotNull(request.header("X-Correlation-ID")) {
+                                "Kall uten \"X-Correlation-ID\" er ikke lov"
+                            }
+                        },
+                    ).build()
 
             return NorgApiImpl(url, consumerId, httpClient)
         }

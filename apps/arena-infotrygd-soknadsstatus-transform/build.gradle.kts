@@ -17,7 +17,6 @@ val xjcOutputDir = "$buildDir/generated/source/xjc/main"
 plugins {
     application
     id("setup.repository")
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.serialization") version "1.9.0"
 }
@@ -65,15 +64,16 @@ val xjc by tasks.registering(JavaExec::class) {
     dependsOn(createXjcOutputDir)
     classpath = jaxb
     mainClass.set("com.sun.tools.xjc.XJCFacade")
-    args = listOf(
-        "-d",
-        xjcOutputDir,
-        "-p",
-        project.group.toString(),
-        "-no-header",
-        "-quiet",
-        schemaDir
-    )
+    args =
+        listOf(
+            "-d",
+            xjcOutputDir,
+            "-p",
+            project.group.toString(),
+            "-no-header",
+            "-quiet",
+            schemaDir,
+        )
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -86,7 +86,7 @@ sourceSets {
             srcDirs(
                 files(xjcOutputDir) {
                     builtBy(xjc)
-                }
+                },
             )
         }
     }
@@ -99,17 +99,18 @@ tasks.test {
     }
 }
 
-val fatJar = task("fatJar", type = Jar::class) {
-    archiveBaseName.set("app")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    manifest {
-        attributes["Implementation-Title"] = "Arena og Infotrygd Søknadstatus Transformer"
-        attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
+val fatJar =
+    task("fatJar", type = Jar::class) {
+        archiveBaseName.set("app")
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        manifest {
+            attributes["Implementation-Title"] = "Arena og Infotrygd Søknadstatus Transformer"
+            attributes["Implementation-Version"] = archiveVersion
+            attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
+        }
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        with(tasks.jar.get() as CopySpec)
     }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks.jar.get() as CopySpec)
-}
 
 tasks {
     "build" {

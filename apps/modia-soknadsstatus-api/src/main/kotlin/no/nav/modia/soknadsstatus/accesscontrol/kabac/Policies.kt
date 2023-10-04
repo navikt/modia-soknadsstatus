@@ -14,18 +14,17 @@ class Policies(
     private val sensitiveTilgangsRoller: SensitiveTilgangsRoller,
     private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) {
-    fun tilgangTilBruker(
-        eksternBrukerId: EksternBrukerId,
-    ) = TilgangTilBrukerPolicy(sensitiveTilgangsRoller, geografiskeTilgangsRoller).withAttributes(
-        eksternBrukerId.toAttributeValue(),
-    )
+    fun tilgangTilBruker(eksternBrukerId: EksternBrukerId) =
+        TilgangTilBrukerPolicy(sensitiveTilgangsRoller, geografiskeTilgangsRoller).withAttributes(
+            eksternBrukerId.toAttributeValue(),
+        )
 
-    private fun Kabac.Policy.withAttributes(vararg attributes: AttributeValue<*>) =
-        PolicyWithAttributes(this, attributes.toList())
+    private fun Kabac.Policy.withAttributes(vararg attributes: AttributeValue<*>) = PolicyWithAttributes(this, attributes.toList())
 
-    private fun EksternBrukerId.toAttributeValue() = when (this) {
-        is Fnr -> CommonAttributes.FNR.withValue(this)
-        is AktorId -> CommonAttributes.AKTOR_ID.withValue(this)
-        else -> throw IllegalArgumentException("Unsupported EksternBrukerID")
-    }
+    private fun EksternBrukerId.toAttributeValue() =
+        when (this) {
+            is Fnr -> CommonAttributes.FNR.withValue(this)
+            is AktorId -> CommonAttributes.AKTOR_ID.withValue(this)
+            else -> throw IllegalArgumentException("Unsupported EksternBrukerID")
+        }
 }

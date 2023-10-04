@@ -19,9 +19,7 @@ object SoknadsstatusDomain {
         ;
 
         companion object {
-            fun convertFromString(type: String): HendelseType {
-                return HendelseType.values().first { it.name.lowercase() == type.lowercase() }
-            }
+            fun convertFromString(type: String): HendelseType = HendelseType.values().first { it.name.lowercase() == type.lowercase() }
 
             private val pattern = "(?<=.)[A-Z]".toRegex()
 

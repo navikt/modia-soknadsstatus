@@ -42,17 +42,23 @@ open class TestUtilsWithDataSource {
         val hendelseEierService = HendelseEierServiceImpl(hendelseEierRepository)
         val behanRepository = BehandlingRepositoryImpl(dataSource)
         behandlingService = BehandlingServiceImpl(behanRepository, pdlOppslagService)
-        hendelseService = HendelseServiceImpl(
-            pdlOppslagService,
-            hendelseRepository,
-            behandlingEierService,
-            hendelseEierService,
-        )
+        hendelseService =
+            HendelseServiceImpl(
+                pdlOppslagService,
+                hendelseRepository,
+                behandlingEierService,
+                hendelseEierService,
+            )
 
         hendelseService.init(behandlingService)
         behandlingService.init(hendelseService)
         val resourceDirectory = Paths.get("src", "main", "resources", "db", "migration")
         val location = Location("filesystem:${resourceDirectory.absolutePathString()}")
-        Flyway.configure().dataSource(dataSource).locations(location).load().migrate()
+        Flyway
+            .configure()
+            .dataSource(dataSource)
+            .locations(location)
+            .load()
+            .migrate()
     }
 }

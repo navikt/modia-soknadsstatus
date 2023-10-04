@@ -7,7 +7,9 @@ import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 
-class BrukersFnrPip(private val pdl: PdlOppslagService) : Kabac.PolicyInformationPoint<Fnr> {
+class BrukersFnrPip(
+    private val pdl: PdlOppslagService,
+) : Kabac.PolicyInformationPoint<Fnr> {
     override val key = Companion.key
 
     companion object : Kabac.AttributeKey<Fnr> {
@@ -17,9 +19,10 @@ class BrukersFnrPip(private val pdl: PdlOppslagService) : Kabac.PolicyInformatio
     override fun provide(ctx: EvaluationContext): Fnr {
         val aktorId = ctx.getValue(CommonAttributes.AKTOR_ID)
         val prinicipal = ctx.getValue(AuthContextPip)
-        val fnr = requireNotNull(runBlocking { pdl.hentFnr(prinicipal.token, aktorId.get()) }) {
-            "Fant ikke fnr for $aktorId"
-        }
+        val fnr =
+            requireNotNull(runBlocking { pdl.hentFnr(prinicipal.token, aktorId.get()) }) {
+                "Fant ikke fnr for $aktorId"
+            }
         return Fnr(fnr)
     }
 }

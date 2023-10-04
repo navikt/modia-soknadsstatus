@@ -52,17 +52,18 @@ tasks.test {
     }
 }
 
-val fatJar = task("fatJar", type = Jar::class) {
-    archiveBaseName.set("app")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    manifest {
-        attributes["Implementation-Title"] = "Foreldrepenger Pleiepenger Søknadstatus Transformer"
-        attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
+val fatJar =
+    task("fatJar", type = Jar::class) {
+        archiveBaseName.set("app")
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        manifest {
+            attributes["Implementation-Title"] = "Foreldrepenger Pleiepenger Søknadstatus Transformer"
+            attributes["Implementation-Version"] = archiveVersion
+            attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
+        }
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        with(tasks.jar.get() as CopySpec)
     }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks.jar.get() as CopySpec)
-}
 
 tasks {
     "build" {

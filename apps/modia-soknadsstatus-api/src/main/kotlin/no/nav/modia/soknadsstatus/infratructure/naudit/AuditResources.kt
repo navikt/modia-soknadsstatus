@@ -9,6 +9,7 @@ class AuditResources {
             val Pdlsok = AuditResource("introspection.pdlsok")
         }
     }
+
     class Person {
         class SakOgBehandling {
             companion object {

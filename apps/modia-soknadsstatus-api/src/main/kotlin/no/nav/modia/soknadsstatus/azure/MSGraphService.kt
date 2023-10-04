@@ -35,11 +35,13 @@ class AzureADServiceImpl(
         veilederIdent: NavIdent,
         groups: RolleListe,
     ): RolleListe {
-        val url = URLBuilder(graphUrl).apply {
-            path("v1.0/me/memberOf/microsoft.graph.group")
-            parameters.append("\$filter", "id in (${groups.joinToString(separator = ", ") { "'${it.gruppeId.get()}'" }})")
-            parameters.append("\$count", "true")
-        }.buildString()
+        val url =
+            URLBuilder(graphUrl)
+                .apply {
+                    path("v1.0/me/memberOf/microsoft.graph.group")
+                    parameters.append("\$filter", "id in (${groups.joinToString(separator = ", ") { "'${it.gruppeId.get()}'" }})")
+                    parameters.append("\$count", "true")
+                }.buildString()
 
         try {
             val response = handleRequest(url, userToken, veilederIdent)
@@ -64,12 +66,18 @@ class AzureADServiceImpl(
     ): AzureCountResponse<List<AzureGroupResponse>> {
         val token = tokenClient.exchangeOnBehalfOfToken(userToken)
 
-        val request = Request.Builder().url(url).addHeader("Authorization", "Bearer $token")
-            .addHeader("ConsistencyLevel", "eventual").build()
+        val request =
+            Request
+                .Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer $token")
+                .addHeader("ConsistencyLevel", "eventual")
+                .build()
         val response = httpClient.newCall(request).execute()
 
-        val body = response.body
-            ?: throw IllegalArgumentException("Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent. Body var null")
+        val body =
+            response.body
+                ?: throw IllegalArgumentException("Mottok ingen grupper fra MS Graph for veileder:  $veilederIdent. Body var null")
 
         if (!response.isSuccessful) {
             throw IllegalArgumentException(

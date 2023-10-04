@@ -17,8 +17,8 @@ object SqlDsl {
         sql: String,
         vararg variables: Any,
         block: (resultSet: ResultSet) -> T,
-    ): List<T> {
-        return useConnection { connection ->
+    ): List<T> =
+        useConnection { connection ->
             var rows = mutableListOf<T>()
             val rs = preparedStatement(connection, sql, variables).executeQuery()
             while (rs.next()) {
@@ -26,13 +26,14 @@ object SqlDsl {
             }
             Collections.unmodifiableList(rows)
         }
-    }
 
-    fun DataSource.execute(sql: String, vararg variables: Any?): Boolean {
-        return useConnection { connection ->
+    fun DataSource.execute(
+        sql: String,
+        vararg variables: Any?,
+    ): Boolean =
+        useConnection { connection ->
             preparedStatement(connection, sql, variables).execute()
         }
-    }
 
     fun <T> Connection.executeQuery(
         sql: String,
@@ -47,9 +48,10 @@ object SqlDsl {
         return Collections.unmodifiableList(rows)
     }
 
-    fun Connection.execute(sql: String, vararg variables: Any?): Boolean {
-        return preparedStatement(this, sql, variables).execute()
-    }
+    fun Connection.execute(
+        sql: String,
+        vararg variables: Any?,
+    ): Boolean = preparedStatement(this, sql, variables).execute()
 
     fun <T> Connection.executeWithResult(
         sql: String,
@@ -79,7 +81,10 @@ object SqlDsl {
         return stmt
     }
 
-    private fun PreparedStatement.setAny(index: Int, value: Any?) {
+    private fun PreparedStatement.setAny(
+        index: Int,
+        value: Any?,
+    ) {
         when (value) {
             is Boolean -> setBoolean(index, value)
             is Byte -> setByte(index, value)

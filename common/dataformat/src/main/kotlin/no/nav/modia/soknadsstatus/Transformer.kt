@@ -6,11 +6,16 @@ import no.nav.modia.soknadsstatus.behandling.Hendelse
 
 object Transformer {
     @JvmStatic
-    fun behandlingsStatus(hendelse: Hendelse, mapper: AvslutningsStatusMapper): SoknadsstatusDomain.Status {
+    fun behandlingsStatus(
+        hendelse: Hendelse,
+        mapper: AvslutningsStatusMapper,
+    ): SoknadsstatusDomain.Status {
         if (hendelse is BehandlingOpprettet) {
             return SoknadsstatusDomain.Status.UNDER_BEHANDLING
         } else if (hendelse is BehandlingAvsluttet) {
-            return hendelse.avslutningsstatus?.let { mapper.getAvslutningsstatus(hendelse.hendelsesprodusentREF.value, it.value.lowercase()) } ?: SoknadsstatusDomain.Status.FERDIG_BEHANDLET
+            return hendelse.avslutningsstatus?.let {
+                mapper.getAvslutningsstatus(hendelse.hendelsesprodusentREF.value, it.value.lowercase())
+            } ?: SoknadsstatusDomain.Status.FERDIG_BEHANDLET
         } else {
             throw IllegalArgumentException("Mottok ukjent behandlingstype $hendelse")
         }
@@ -22,8 +27,8 @@ object Transformer {
         statusMapper: AvslutningsStatusMapper,
         identer: List<String>,
         hendelseType: SoknadsstatusDomain.HendelseType,
-    ): InnkommendeHendelse {
-        return InnkommendeHendelse(
+    ): InnkommendeHendelse =
+        InnkommendeHendelse(
             aktoerer = hendelse.aktoerREF.map { it.aktoerId },
             identer = identer,
             behandlingsId = hendelse.behandlingsID,
@@ -39,7 +44,12 @@ object Transformer {
             ansvarligEnhet = hendelse.ansvarligEnhetREF,
             applikasjonSak = hendelse.applikasjonSakREF,
             applikasjonBehandling = hendelse.applikasjonBehandlingREF,
-            primaerBehandling = hendelse.primaerBehandlingREF?.let { SoknadsstatusDomain.PrimaerBehandling(it.behandlingsREF, it.type.value) },
+            primaerBehandling =
+                hendelse.primaerBehandlingREF?.let {
+                    SoknadsstatusDomain.PrimaerBehandling(
+                        it.behandlingsREF,
+                        it.type.value,
+                    )
+                },
         )
-    }
 }

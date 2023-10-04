@@ -9,7 +9,9 @@ import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
 
-class TilgangTilBrukerMedSkjermingPolicy(private val ansattRolle: AnsattRolle) : Kabac.Policy {
+class TilgangTilBrukerMedSkjermingPolicy(
+    private val ansattRolle: AnsattRolle,
+) : Kabac.Policy {
     override val key = Companion.key
 
     companion object {

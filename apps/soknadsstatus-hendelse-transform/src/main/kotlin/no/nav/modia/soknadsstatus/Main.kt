@@ -20,46 +20,51 @@ fun runApp(port: Int = 8080) {
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv(appName = config.appName))
     datasourceConfiguration.runFlyway()
 
-    KtorServer.create(
-        factory = CIO,
-        port = port,
-        application = {
-            install(BaseNaisApp)
-            install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
-                appEnv = config
-                deserializationExceptionHandler = SendToDeadLetterQueueExceptionHandler(
-                    topic = requireNotNull(config.deadLetterQueueTopic),
-                    dlqProducer = deadLetterProducer,
-                )
-                sourceTopic = requireNotNull(config.sourceTopic)
-                targetTopic = requireNotNull(config.targetTopic)
-                deserializer = ::deserialize
-                serializer = ::serialize
-                onSerializationException = { record, exception ->
-                    TjenestekallLogg.error(
-                        "Klarte ikke å serialisere melding",
-                        fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
-                        throwable = exception,
-                    )
+    KtorServer
+        .create(
+            factory = CIO,
+            port = port,
+            application = {
+                install(BaseNaisApp)
+                install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
+                    appEnv = config
+                    deserializationExceptionHandler =
+                        SendToDeadLetterQueueExceptionHandler(
+                            topic = requireNotNull(config.deadLetterQueueTopic),
+                            dlqProducer = deadLetterProducer,
+                        )
+                    sourceTopic = requireNotNull(config.sourceTopic)
+                    targetTopic = requireNotNull(config.targetTopic)
+                    deserializer = ::deserialize
+                    serializer = ::serialize
+                    onSerializationException = { record, exception ->
+                        TjenestekallLogg.error(
+                            "Klarte ikke å serialisere melding",
+                            fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
+                            throwable = exception,
+                        )
+                    }
+                    configure { stream ->
+                        stream.mapValues(::transform)
+                    }
                 }
-                configure { stream ->
-                    stream.mapValues(::transform)
+                install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
+                    appEnv = config
+                    transformer = ::transform
+                    skipTableDataSource = datasourceConfiguration.datasource
+                    deadLetterQueueMetricsGauge = dlqMetricsGauge
+                    deserializer = ::deserialize
+                    serializer = ::serialize
                 }
-            }
-            install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
-                appEnv = config
-                transformer = ::transform
-                skipTableDataSource = datasourceConfiguration.datasource
-                deadLetterQueueMetricsGauge = dlqMetricsGauge
-                deserializer = ::deserialize
-                serializer = ::serialize
-            }
-        },
-    ).start(wait = true)
+            },
+        ).start(wait = true)
 }
 
-fun deserialize(key: String?, value: String): Hendelse {
-    return try {
+fun deserialize(
+    key: String?,
+    value: String,
+): Hendelse =
+    try {
         Json.decodeFromString(BehandlingSerializer, value)
     } catch (e: Exception) {
         TjenestekallLogg.error(
@@ -69,14 +74,19 @@ fun deserialize(key: String?, value: String): Hendelse {
         )
         throw e
     }
-}
 
-fun serialize(key: String?, value: InnkommendeHendelse) = Json.encodeToString(
+fun serialize(
+    key: String?,
+    value: InnkommendeHendelse,
+) = Json.encodeToString(
     InnkommendeHendelse.serializer(),
     value,
 )
 
-fun transform(key: String?, hendelse: Hendelse) = Transformer.transform(
+fun transform(
+    key: String?,
+    hendelse: Hendelse,
+) = Transformer.transform(
     hendelse = hendelse,
     identer = hendelse.identREF.map { it.ident },
     statusMapper = HendelseAvslutningsstatusMapper,

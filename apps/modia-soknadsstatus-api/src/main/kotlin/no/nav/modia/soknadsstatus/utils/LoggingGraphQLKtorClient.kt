@@ -18,8 +18,10 @@ open class LoggingGraphQLKtorClient(
     url: URL,
     httpClient: HttpClient,
 ) : GraphQLKtorClient(url, httpClient) {
-    private val selftestReporter = SelftestGenerator.Reporter(name, critical)
-        .also { it.reportOk() }
+    private val selftestReporter =
+        SelftestGenerator
+            .Reporter(name, critical)
+            .also { it.reportOk() }
 
     override suspend fun <T : Any> execute(
         request: GraphQLClientRequest<T>,
@@ -35,11 +37,12 @@ open class LoggingGraphQLKtorClient(
                 ),
             )
             val response = super.execute(request, requestCustomizer)
-            val logMessage = mapOf(
-                "data" to response.data,
-                "errors" to response.errors,
-                "extensions" to response.extensions,
-            )
+            val logMessage =
+                mapOf(
+                    "data" to response.data,
+                    "errors" to response.errors,
+                    "extensions" to response.extensions,
+                )
 
             if (response.errors?.isNotEmpty() == true) {
                 TjenestekallLogg.error(

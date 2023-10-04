@@ -14,17 +14,23 @@ import no.nav.utils.getCallId
 import okhttp3.OkHttpClient
 
 object AxsysConfig {
-    fun factory(appMode: AppMode, env: AxsysEnv, tokenProvider: MachineToMachineTokenClient): AxsysClient {
+    fun factory(
+        appMode: AppMode,
+        env: AxsysEnv,
+        tokenProvider: MachineToMachineTokenClient,
+    ): AxsysClient {
         if (appMode == AppMode.NAIS) {
             val url: String = env.url
-            val httpClient: OkHttpClient = RestClient.baseClient().newBuilder()
-                .addInterceptor(
-                    LoggingInterceptor("Axsys") {
-                        // Optimalt sett burde denne hentes fra requesten, men det sendes ikke noe tilsvarende callId til axsys
-                        getCallId()
-                    },
-                )
-                .build()
+            val httpClient: OkHttpClient =
+                RestClient
+                    .baseClient()
+                    .newBuilder()
+                    .addInterceptor(
+                        LoggingInterceptor("Axsys") {
+                            // Optimalt sett burde denne hentes fra requesten, men det sendes ikke noe tilsvarende callId til axsys
+                            getCallId()
+                        },
+                    ).build()
             val downstreamApi = DownstreamApi.parse(env.scope)
             val tokenSupplier = {
                 tokenProvider.createMachineToMachineToken(downstreamApi)

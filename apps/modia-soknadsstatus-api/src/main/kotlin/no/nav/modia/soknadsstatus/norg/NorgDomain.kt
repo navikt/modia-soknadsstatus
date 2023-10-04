@@ -4,16 +4,27 @@ import no.nav.common.types.identer.EnhetId
 
 object NorgDomain {
     enum class EnhetStatus {
-        UNDER_ETABLERING, AKTIV, UNDER_AVVIKLING, NEDLAGT;
+        UNDER_ETABLERING,
+        AKTIV,
+        UNDER_AVVIKLING,
+        NEDLAGT,
+        ;
+
         companion object {
             fun safeValueOf(status: String?) = valueOf(safeEnumValue(status))
         }
     }
+
     enum class OppgaveBehandlerFilter {
-        UFILTRERT, KUN_OPPGAVEBEHANDLERE, INGEN_OPPGAVEBEHANDLERE
+        UFILTRERT,
+        KUN_OPPGAVEBEHANDLERE,
+        INGEN_OPPGAVEBEHANDLERE,
     }
+
     enum class DiskresjonsKode {
-        SPFO, SPSF, ANY
+        SPFO,
+        SPSF,
+        ANY,
     }
 
     data class EnhetGeografiskTilknyttning(
@@ -29,11 +40,13 @@ object NorgDomain {
         val status: EnhetStatus,
         val oppgavebehandler: Boolean,
     )
+
     data class EnhetKontaktinformasjon(
         val enhet: Enhet,
         val publikumsmottak: List<Publikumsmottak>,
         val overordnetEnhet: EnhetId?,
     )
+
     data class Publikumsmottak(
         val besoksadresse: Gateadresse?,
         val apningstider: List<Apningstid>,
@@ -48,7 +61,15 @@ object NorgDomain {
     )
 
     enum class Ukedag {
-        MANDAG, TIRSDAG, ONSDAG, TORSDAG, FREDAG, LORDAG, SONDAG;
+        MANDAG,
+        TIRSDAG,
+        ONSDAG,
+        TORSDAG,
+        FREDAG,
+        LORDAG,
+        SONDAG,
+        ;
+
         companion object {
             fun safeValueOf(status: String?) = valueOf(safeEnumValue(status))
         }

@@ -18,19 +18,20 @@ interface TransactionRepository {
     }
 }
 
-open class TransactionRepositoryImpl(protected val dataSource: DataSource) : TransactionRepository {
+open class TransactionRepositoryImpl(
+    protected val dataSource: DataSource,
+) : TransactionRepository {
     override suspend fun <T> useTransactionConnection(
         existingConnection: Connection?,
         block: suspend (Connection) -> T,
-    ): T {
-        return if (existingConnection == null) {
+    ): T =
+        if (existingConnection == null) {
             dataSource.connection.useTransactionConnection {
                 block(it)
             }
         } else {
             block(existingConnection)
         }
-    }
 
     override fun createPreparedVariables(length: Int): String {
         val res = mutableListOf<String>()
@@ -41,16 +42,17 @@ open class TransactionRepositoryImpl(protected val dataSource: DataSource) : Tra
     }
 }
 
-private suspend fun <T> Connection.useTransactionConnection(block: suspend (Connection) -> T): T = this.use {
-    this.autoCommit = false
-    try {
-        val result = block(this)
-        this.commit()
-        this.autoCommit = true
-        result
-    } catch (e: Exception) {
-        this.rollback()
-        this.autoCommit = true
-        throw e
+private suspend fun <T> Connection.useTransactionConnection(block: suspend (Connection) -> T): T =
+    this.use {
+        this.autoCommit = false
+        try {
+            val result = block(this)
+            this.commit()
+            this.autoCommit = true
+            result
+        } catch (e: Exception) {
+            this.rollback()
+            this.autoCommit = true
+            throw e
+        }
     }
-}

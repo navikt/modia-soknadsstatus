@@ -7,7 +7,8 @@ import no.nav.common.types.identer.Fnr
 class SkjermedePersonerApiMock : SkjermedePersonerApi {
     override fun erSkjermetPerson(fnr: Fnr): Boolean = false
 
-    override fun ping(): SelfTestCheck = SelfTestCheck("Mock skjermedepersoner", false) {
-        HealthCheckResult.healthy()
-    }
+    override fun ping(): SelfTestCheck =
+        SelfTestCheck("Mock skjermedepersoner", false) {
+            HealthCheckResult.healthy()
+        }
 }

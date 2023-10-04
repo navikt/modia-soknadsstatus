@@ -24,9 +24,7 @@ fun DownstreamApi.Companion.parse(value: String): DownstreamApi {
     return DownstreamApi(cluster = cluster, namespace = namespace, application = application)
 }
 
-fun MachineToMachineTokenClient.createMachineToMachineToken(api: DownstreamApi): String {
-    return this.createMachineToMachineToken(api.tokenscope())
-}
+fun MachineToMachineTokenClient.createMachineToMachineToken(api: DownstreamApi): String = this.createMachineToMachineToken(api.tokenscope())
 
 interface BoundedOnBehalfOfTokenClient {
     fun exchangeOnBehalfOfToken(accesstoken: String): String
@@ -36,18 +34,22 @@ interface BoundedMachineToMachineTokenClient {
     fun createMachineToMachineToken(): String
 }
 
-fun OnBehalfOfTokenClient.bindTo(api: DownstreamApi) = object : BoundedOnBehalfOfTokenClient {
-    override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api.tokenscope(), accesstoken)
-}
+fun OnBehalfOfTokenClient.bindTo(api: DownstreamApi) =
+    object : BoundedOnBehalfOfTokenClient {
+        override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api.tokenscope(), accesstoken)
+    }
 
-fun OnBehalfOfTokenClient.bindTo(api: String) = object : BoundedOnBehalfOfTokenClient {
-    override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api, accesstoken)
-}
+fun OnBehalfOfTokenClient.bindTo(api: String) =
+    object : BoundedOnBehalfOfTokenClient {
+        override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api, accesstoken)
+    }
 
-fun MachineToMachineTokenClient.bindTo(api: DownstreamApi) = object : BoundedMachineToMachineTokenClient {
-    override fun createMachineToMachineToken() = createMachineToMachineToken(api.tokenscope())
-}
+fun MachineToMachineTokenClient.bindTo(api: DownstreamApi) =
+    object : BoundedMachineToMachineTokenClient {
+        override fun createMachineToMachineToken() = createMachineToMachineToken(api.tokenscope())
+    }
 
-fun MachineToMachineTokenClient.bindTo(api: String) = object : BoundedMachineToMachineTokenClient {
-    override fun createMachineToMachineToken(): String = api
-}
+fun MachineToMachineTokenClient.bindTo(api: String) =
+    object : BoundedMachineToMachineTokenClient {
+        override fun createMachineToMachineToken(): String = api
+    }

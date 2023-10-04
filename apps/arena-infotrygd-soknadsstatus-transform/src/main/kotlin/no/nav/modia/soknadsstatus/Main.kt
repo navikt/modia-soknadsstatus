@@ -20,46 +20,47 @@ fun runApp(port: Int = 8080) {
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv((config.appName)))
     datasourceConfiguration.runFlyway()
 
-    KtorServer.create(
-        factory = CIO,
-        port = port,
-        application = {
-            install(BaseNaisApp)
-            if (runConsumer) {
-                install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
-                    appEnv = config
-                    deserializationExceptionHandler =
-                        SendToDeadLetterQueueExceptionHandler(
-                            dlqProducer = deadLetterProducer,
-                            topic = requireNotNull(config.deadLetterQueueTopic),
-                        )
-                    sourceTopic = requireNotNull(config.sourceTopic)
-                    targetTopic = requireNotNull(config.targetTopic)
-                    deserializer = ::deserialize
-                    serializer = ::serialize
-                    onSerializationException = { record, exception ->
-                        TjenestekallLogg.error(
-                            "Klarte ikke å serialisere melding",
-                            fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
-                            throwable = exception,
-                        )
+    KtorServer
+        .create(
+            factory = CIO,
+            port = port,
+            application = {
+                install(BaseNaisApp)
+                if (runConsumer) {
+                    install(KafkaStreamTransformPlugin<Hendelse, InnkommendeHendelse>()) {
+                        appEnv = config
+                        deserializationExceptionHandler =
+                            SendToDeadLetterQueueExceptionHandler(
+                                dlqProducer = deadLetterProducer,
+                                topic = requireNotNull(config.deadLetterQueueTopic),
+                            )
+                        sourceTopic = requireNotNull(config.sourceTopic)
+                        targetTopic = requireNotNull(config.targetTopic)
+                        deserializer = ::deserialize
+                        serializer = ::serialize
+                        onSerializationException = { record, exception ->
+                            TjenestekallLogg.error(
+                                "Klarte ikke å serialisere melding",
+                                fields = mapOf("key" to record.key(), "behandlingsId" to record.value()?.behandlingsId),
+                                throwable = exception,
+                            )
+                        }
+                        configure { stream ->
+                            stream
+                                .mapValues(::transform)
+                        }
                     }
-                    configure { stream ->
-                        stream
-                            .mapValues(::transform)
+                    install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
+                        appEnv = config
+                        transformer = ::transform
+                        skipTableDataSource = datasourceConfiguration.datasource
+                        deadLetterQueueMetricsGauge = dlqMetricsGauge
+                        deserializer = ::deserialize
+                        serializer = ::serialize
                     }
                 }
-                install(DeadLetterQueueTransformerPlugin<Hendelse, InnkommendeHendelse>()) {
-                    appEnv = config
-                    transformer = ::transform
-                    skipTableDataSource = datasourceConfiguration.datasource
-                    deadLetterQueueMetricsGauge = dlqMetricsGauge
-                    deserializer = ::deserialize
-                    serializer = ::serialize
-                }
-            }
-        },
-    ).start(wait = true)
+            },
+        ).start(wait = true)
 }
 
 fun serialize(
@@ -73,8 +74,8 @@ fun serialize(
 fun deserialize(
     key: String?,
     value: String,
-): Hendelse {
-    return try {
+): Hendelse =
+    try {
         BehandlingDeserializer.deserialize(value)
     } catch (e: Exception) {
         TjenestekallLogg.error(
@@ -84,7 +85,6 @@ fun deserialize(
         )
         throw e
     }
-}
 
 fun transform(
     key: String?,

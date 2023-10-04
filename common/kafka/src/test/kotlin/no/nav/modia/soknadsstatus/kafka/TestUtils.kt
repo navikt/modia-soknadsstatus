@@ -18,7 +18,10 @@ object TestUtils {
     ) {
         private var partitionCounter = AtomicInteger(0)
 
-        fun getExtendedMockConsumer(topic: String, numberOfRecords: Long): ExtendedMockConsumer<KEY_TYPE, VALUE_TYPE> {
+        fun getExtendedMockConsumer(
+            topic: String,
+            numberOfRecords: Long,
+        ): ExtendedMockConsumer<KEY_TYPE, VALUE_TYPE> {
             val partition = partitionCounter.getAndIncrement()
 
             return ExtendedMockConsumer(topic, partition, numberOfRecords)
@@ -28,15 +31,12 @@ object TestUtils {
             private val topic: String,
             private val partition: Int,
             private val numberOfRecords: Long,
-        ) :
-            MockConsumer<KEY_TYPE, VALUE_TYPE>(OffsetResetStrategy.EARLIEST) {
+        ) : MockConsumer<KEY_TYPE, VALUE_TYPE>(OffsetResetStrategy.EARLIEST) {
             private val topicPartition = TopicPartition(topic, partition)
             private var offsetCounter = 0L
             val messages = mutableListOf<Pair<KEY_TYPE, VALUE_TYPE>>()
 
-            fun startSubscribingToTopic(
-                startSubscribing: () -> Unit,
-            ) {
+            fun startSubscribingToTopic(startSubscribing: () -> Unit) {
                 val partitions: MutableCollection<TopicPartition> = ArrayList()
                 val partitionsBeginningMap: MutableMap<TopicPartition, Long> = HashMap()
                 val partitionsEndMap: MutableMap<TopicPartition, Long> = HashMap()
@@ -52,14 +52,18 @@ object TestUtils {
                 this.updateEndOffsets(partitionsEndMap)
             }
 
-            fun addRecord(key: KEY_TYPE?, value: VALUE_TYPE) {
-                val record = ConsumerRecord(
-                    topic,
-                    partition,
-                    getAndIncrementOffset(),
-                    key,
-                    value,
-                )
+            fun addRecord(
+                key: KEY_TYPE?,
+                value: VALUE_TYPE,
+            ) {
+                val record =
+                    ConsumerRecord(
+                        topic,
+                        partition,
+                        getAndIncrementOffset(),
+                        key,
+                        value,
+                    )
 
                 this.addRecord(record)
             }

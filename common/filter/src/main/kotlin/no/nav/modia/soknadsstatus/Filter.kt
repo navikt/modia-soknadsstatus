@@ -26,18 +26,18 @@ object Filter {
 
     private fun harPrimaerBehandling(hendelse: Hendelse) = hendelse.primaerBehandlingREF != null
 
-    private fun harLovligBehandlingstype(hendelse: Hendelse) =
-        hendelse.behandlingstype?.value in lovligeBehandlingstyper
+    private fun harLovligBehandlingstype(hendelse: Hendelse) = hendelse.behandlingstype?.value in lovligeBehandlingstyper
 
     @JvmStatic
     fun filtrerBehandling(hendelse: Hendelse): Boolean {
-        val checks = listOf<(hendelse: Hendelse) -> Boolean>(
-            ::harLovligSaksTema,
-            ::harPrimaerBehandling,
-            ::harLovligPrefix,
-            ::harLovligBehandlingstype,
-            ::harLovligKvitteringsType,
-        )
+        val checks =
+            listOf<(hendelse: Hendelse) -> Boolean>(
+                ::harLovligSaksTema,
+                ::harPrimaerBehandling,
+                ::harLovligPrefix,
+                ::harLovligBehandlingstype,
+                ::harLovligKvitteringsType,
+            )
 
         for (check in checks) {
             if (!check(hendelse)) {
