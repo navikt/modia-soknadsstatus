@@ -54,7 +54,10 @@ private fun AzureAdTokenClientBuilder.oboClientFactory(env: Env): OnBehalfOfToke
             println("Bruker OnBehalfOfTokenClientMock")
         }
 
-        override fun exchangeOnBehalfOfToken(tokenScope: String?, accessToken: String?): String {
+        override fun exchangeOnBehalfOfToken(
+            tokenScope: String?,
+            accessToken: String?,
+        ): String {
             println("Bytter token for scope: $tokenScope, med token: $accessToken")
             if (accessToken == null) {
                 throw IllegalStateException("Mangler accessToken ved bytte i mock")
@@ -89,20 +92,23 @@ private fun authProviderConfigFactory(env: Env): AuthProviderConfig {
         return AuthProviderConfig(
             name = AzureAD,
             jwksConfig = JwksConfig.OidcWellKnownUrl(env.azureAdConfiguration.wellKnownUrl),
-            tokenLocations = listOf(
-                TokenLocation.Header(HttpHeaders.Authorization),
-            ),
+            tokenLocations =
+                listOf(
+                    TokenLocation.Header(HttpHeaders.Authorization),
+                ),
         )
     }
 
     return AuthProviderConfig(
         name = AzureAD,
-        jwksConfig = JwksConfig.JwksUrl(
-            env.azureAdConfiguration.openidConfigJWKSUri,
-            env.azureAdConfiguration.openidConfigIssuer,
-        ),
-        tokenLocations = listOf(
-            TokenLocation.Header(HttpHeaders.Authorization),
-        ),
+        jwksConfig =
+            JwksConfig.JwksUrl(
+                env.azureAdConfiguration.openidConfigJWKSUri,
+                env.azureAdConfiguration.openidConfigIssuer,
+            ),
+        tokenLocations =
+            listOf(
+                TokenLocation.Header(HttpHeaders.Authorization),
+            ),
     )
 }

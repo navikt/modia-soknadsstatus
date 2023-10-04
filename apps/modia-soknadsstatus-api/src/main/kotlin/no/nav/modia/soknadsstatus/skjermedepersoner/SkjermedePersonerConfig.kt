@@ -20,21 +20,22 @@ object SkjermedePersonerConfig {
             val scope = env.scope
             val url = env.url
 
-            val httpClient: OkHttpClient = RestClient.baseClient().newBuilder()
-                .addInterceptor(XCorrelationIdInterceptor())
-                .addInterceptor(
-                    LoggingInterceptor("SkjermedePersoner") { request ->
-                        requireNotNull(request.header("X-Correlation-ID")) {
-                            "Kall uten \"X-Correlation-ID\" er ikke lov"
-                        }
-                    },
-                )
-                .addInterceptor(
-                    AuthorizationInterceptor {
-                        tokenProvider.createMachineToMachineToken(scope)
-                    },
-                )
-                .build()
+            val httpClient: OkHttpClient =
+                RestClient
+                    .baseClient()
+                    .newBuilder()
+                    .addInterceptor(XCorrelationIdInterceptor())
+                    .addInterceptor(
+                        LoggingInterceptor("SkjermedePersoner") { request ->
+                            requireNotNull(request.header("X-Correlation-ID")) {
+                                "Kall uten \"X-Correlation-ID\" er ikke lov"
+                            }
+                        },
+                    ).addInterceptor(
+                        AuthorizationInterceptor {
+                            tokenProvider.createMachineToMachineToken(scope)
+                        },
+                    ).build()
             return SkjermedePersonerApiImpl(url, httpClient)
         }
 

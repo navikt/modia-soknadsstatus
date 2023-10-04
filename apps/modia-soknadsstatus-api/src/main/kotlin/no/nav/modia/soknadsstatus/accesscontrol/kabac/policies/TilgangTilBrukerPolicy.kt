@@ -9,10 +9,10 @@ class TilgangTilBrukerPolicy(
     sensitiveTilgangsRoller: SensitiveTilgangsRoller,
     geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) : Kabac.Policy by CombiningAlgorithm.denyOverride.combine(
-    listOf(
-        GeografiskTilgangPolicy(geografiskeTilgangsRoller),
-        TilgangTilBrukerMedSkjermingPolicy(sensitiveTilgangsRoller.skjermedePersoner),
-        TilgangTilBrukerMedKode6Policy(sensitiveTilgangsRoller.kode6),
-        TilgangTilBrukerMedKode7Policy(sensitiveTilgangsRoller.kode7),
-    ),
-)
+        listOf(
+            GeografiskTilgangPolicy(geografiskeTilgangsRoller),
+            TilgangTilBrukerMedSkjermingPolicy(sensitiveTilgangsRoller.skjermedePersoner),
+            TilgangTilBrukerMedKode6Policy(sensitiveTilgangsRoller.kode6),
+            TilgangTilBrukerMedKode7Policy(sensitiveTilgangsRoller.kode7),
+        ),
+    )

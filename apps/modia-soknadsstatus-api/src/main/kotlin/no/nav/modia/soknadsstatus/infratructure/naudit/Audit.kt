@@ -8,25 +8,34 @@ import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier.FAIL_REA
 import no.nav.personoversikt.common.ktor.utils.Security
 import no.nav.personoversikt.common.logging.Logging
 
-val cefLogger = ArchSightCEFLogger(
-    CEFLoggerConfig(
-        applicationName = "modia",
-        logName = "soknadsstatus",
-        filter = { (action: Audit.Action) ->
-            action != Audit.Action.READ
-        },
-    ),
-)
+val cefLogger =
+    ArchSightCEFLogger(
+        CEFLoggerConfig(
+            applicationName = "modia",
+            logName = "soknadsstatus",
+            filter = { (action: Audit.Action) ->
+                action != Audit.Action.READ
+            },
+        ),
+    )
 
 class Audit {
-    open class AuditResource(val resource: String)
+    open class AuditResource(
+        val resource: String,
+    )
+
     enum class Action {
-        CREATE, READ, UPDATE, DELETE
+        CREATE,
+        READ,
+        UPDATE,
+        DELETE,
     }
 
     interface AuditDescriptor<T> {
         fun log(resource: T)
+
         fun denied(reason: String)
+
         fun failed(exception: Throwable)
 
         fun Throwable.getFailureReason(): String = this.message ?: this.toString()
@@ -56,7 +65,9 @@ class Audit {
 
     internal class NoopDescriptor<T> : AuditDescriptor<T> {
         override fun log(resource: T) {}
+
         override fun denied(reason: String) {}
+
         override fun failed(exception: Throwable) {}
     }
 
@@ -86,27 +97,39 @@ class Audit {
         fun <T> skipAuditLog(): AuditDescriptor<T> = NoopDescriptor()
 
         @JvmStatic
-        fun describe(authContext: AuthenticationContext, action: Action, resourceType: AuditResource, vararg identifiers: Pair<AuditIdentifier, String?>): AuditDescriptor<Any> {
-            return NothingDescriptor(action, resourceType, authContext, identifiers as Array<Pair<AuditIdentifier, String?>>)
-        }
+        fun describe(
+            authContext: AuthenticationContext,
+            action: Action,
+            resourceType: AuditResource,
+            vararg identifiers: Pair<AuditIdentifier, String?>,
+        ): AuditDescriptor<Any> = NothingDescriptor(action, resourceType, authContext, identifiers as Array<Pair<AuditIdentifier, String?>>)
 
         @JvmStatic
-        fun <T> describe(authContext: AuthenticationContext, action: Action, resourceType: AuditResource, extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>): AuditDescriptor<T> {
-            return WithDataDescriptor(action, resourceType, authContext, extractIdentifiers)
-        }
+        fun <T> describe(
+            authContext: AuthenticationContext,
+            action: Action,
+            resourceType: AuditResource,
+            extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>,
+        ): AuditDescriptor<T> = WithDataDescriptor(action, resourceType, authContext, extractIdentifiers)
 
         private val auditMarker = Markers.appendEntries(mapOf(Logging.LOGTYPE_KEY to "audit"))
-        private fun logInternal(action: Action, resourceType: AuditResource, identifiers: Array<Pair<AuditIdentifier, String?>>, authContext: AuthenticationContext) {
+
+        private fun logInternal(
+            action: Action,
+            resourceType: AuditResource,
+            identifiers: Array<Pair<AuditIdentifier, String?>>,
+            authContext: AuthenticationContext,
+        ) {
             val subject = authContext.principal<Security.SubjectPrincipal>()?.subject
-            val logline = listOfNotNull(
-                "action='$action'",
-                subject?.let { "subject='$it'" },
-                "resource='${resourceType.resource}'",
-                *identifiers
-                    .map { "${it.first}='${it.second ?: "-"}'" }
-                    .toTypedArray(),
-            )
-                .joinToString(" ")
+            val logline =
+                listOfNotNull(
+                    "action='$action'",
+                    subject?.let { "subject='$it'" },
+                    "resource='${resourceType.resource}'",
+                    *identifiers
+                        .map { "${it.first}='${it.second ?: "-"}'" }
+                        .toTypedArray(),
+                ).joinToString(" ")
 
             Logging.secureLog.info(auditMarker, logline)
             cefLogger.log(CEFEvent(action, resourceType, subject ?: "-", identifiers))

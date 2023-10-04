@@ -8,23 +8,25 @@ import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
 
 private val shutdownhooks: MutableList<() -> Unit> = mutableListOf()
+
 fun registerShutdownhook(hook: () -> Unit) {
     shutdownhooks += hook
 }
 
-val BaseNaisApp = createApplicationPlugin("base-nais-app") {
-    with(application) {
-        install(Metrics.Plugin)
-        install(Selftest.Plugin)
+val BaseNaisApp =
+    createApplicationPlugin("base-nais-app") {
+        with(application) {
+            install(Metrics.Plugin)
+            install(Selftest.Plugin)
 
-        configureExceptionHandling()
+            configureExceptionHandling()
 
-        install(ShutDownUrl.ApplicationCallPlugin) {
-            shutDownUrl = "/shutdown"
-            shutdownhooks.forEach { it.invoke() }
+            install(ShutDownUrl.ApplicationCallPlugin) {
+                shutDownUrl = "/shutdown"
+                shutdownhooks.forEach { it.invoke() }
+            }
         }
     }
-}
 
 class HttpStatusException(
     val status: HttpStatusCode,

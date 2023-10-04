@@ -19,9 +19,10 @@ fun main() {
     System.setProperty("JMS_PASSWORD", "")
     System.setProperty("JMS_QUEUE_NAME", "mq-ss")
 
-    KtorServer.create(
-        factory = CIO,
-        port = 9001,
-        application = Application::mqToKafkaModule,
-    ).start(wait = true)
+    KtorServer
+        .create(
+            factory = CIO,
+            port = 9001,
+            application = Application::mqToKafkaModule,
+        ).start(wait = true)
 }

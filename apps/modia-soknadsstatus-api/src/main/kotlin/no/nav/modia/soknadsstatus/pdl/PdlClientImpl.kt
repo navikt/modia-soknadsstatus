@@ -18,11 +18,31 @@ import java.net.URL
 typealias HeadersBuilder = HttpRequestBuilder.() -> Unit
 
 interface PdlClient {
-    suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String?
-    suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse>
-    suspend fun hentAktivIdent(userToken: String, aktoerId: String, gruppe: IdentGruppe): String?
-    suspend fun hentAktivIdentMedSystemToken(aktoerId: String, gruppe: IdentGruppe): String?
-    suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String>
+    suspend fun hentGeografiskTilknytning(
+        userToken: String,
+        fnr: String,
+    ): String?
+
+    suspend fun hentAdresseBeskyttelse(
+        userToken: String,
+        fnr: String,
+    ): List<Adressebeskyttelse>
+
+    suspend fun hentAktivIdent(
+        userToken: String,
+        aktoerId: String,
+        gruppe: IdentGruppe,
+    ): String?
+
+    suspend fun hentAktivIdentMedSystemToken(
+        aktoerId: String,
+        gruppe: IdentGruppe,
+    ): String?
+
+    suspend fun hentAktiveIdenter(
+        userToken: String,
+        ident: String,
+    ): List<String>
 }
 
 class PdlClientImpl(
@@ -31,34 +51,43 @@ class PdlClientImpl(
     url: URL,
     private val httpClient: HttpClient = HttpClient(OkHttp.create()),
 ) : LoggingGraphQLKtorClient(
-    name = "PDL",
-    critical = false,
-    url = url,
-    httpClient = httpClient,
-),
+        name = "PDL",
+        critical = false,
+        url = url,
+        httpClient = httpClient,
+    ),
     PdlClient,
     Closeable {
-
-    override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
+    override suspend fun hentGeografiskTilknytning(
+        userToken: String,
+        fnr: String,
+    ): String? =
         execute(
             HentGeografiskTilknyttning(HentGeografiskTilknyttning.Variables(fnr)),
             userTokenAuthorizationHeaders(userToken),
-        )
-            .data
+        ).data
             ?.hentGeografiskTilknytning
             ?.run {
                 gtBydel ?: gtKommune ?: gtLand
             }
 
-    override suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse> =
+    override suspend fun hentAdresseBeskyttelse(
+        userToken: String,
+        fnr: String,
+    ): List<Adressebeskyttelse> =
         execute(
             HentAdressebeskyttelse(HentAdressebeskyttelse.Variables(fnr)),
             userTokenAuthorizationHeaders(userToken),
-        )
-            .data?.hentPerson?.adressebeskyttelse
+        ).data
+            ?.hentPerson
+            ?.adressebeskyttelse
             ?: emptyList()
 
-    override suspend fun hentAktivIdent(userToken: String, aktoerId: String, gruppe: IdentGruppe): String? =
+    override suspend fun hentAktivIdent(
+        userToken: String,
+        aktoerId: String,
+        gruppe: IdentGruppe,
+    ): String? =
         execute(HentIdenter(HentIdenter.Variables(aktoerId, listOf(gruppe))), userTokenAuthorizationHeaders(userToken))
             .data
             ?.hentIdenter
@@ -66,7 +95,10 @@ class PdlClientImpl(
             ?.firstOrNull()
             ?.ident
 
-    override suspend fun hentAktivIdentMedSystemToken(aktoerId: String, gruppe: IdentGruppe): String? =
+    override suspend fun hentAktivIdentMedSystemToken(
+        aktoerId: String,
+        gruppe: IdentGruppe,
+    ): String? =
         execute(HentIdenter(HentIdenter.Variables(aktoerId, listOf(gruppe))), systemTokenAuthorizationHeaders)
             .data
             ?.hentIdenter
@@ -74,7 +106,10 @@ class PdlClientImpl(
             ?.firstOrNull()
             ?.ident
 
-    override suspend fun hentAktiveIdenter(userToken: String, ident: String): List<String> =
+    override suspend fun hentAktiveIdenter(
+        userToken: String,
+        ident: String,
+    ): List<String> =
         execute(
             HentIdenter(HentIdenter.Variables(ident)),
             userTokenAuthorizationHeaders(userToken),
@@ -84,15 +119,16 @@ class PdlClientImpl(
         httpClient.close()
     }
 
-    private fun userTokenAuthorizationHeaders(userToken: String): HeadersBuilder = {
-        val exchangedToken = oboTokenProvider.exchangeOnBehalfOfToken(userToken.removeBearerFromToken())
-        header(
-            RestConstants.AUTHORIZATION,
-            RestConstants.AUTH_METHOD_BEARER + RestConstants.AUTH_SEPERATOR + exchangedToken,
-        )
-        header(RestConstants.TEMA_HEADER, RestConstants.ALLE_TEMA_HEADERVERDI)
-        header("X-Correlation-ID", getCallId())
-    }
+    private fun userTokenAuthorizationHeaders(userToken: String): HeadersBuilder =
+        {
+            val exchangedToken = oboTokenProvider.exchangeOnBehalfOfToken(userToken.removeBearerFromToken())
+            header(
+                RestConstants.AUTHORIZATION,
+                RestConstants.AUTH_METHOD_BEARER + RestConstants.AUTH_SEPERATOR + exchangedToken,
+            )
+            header(RestConstants.TEMA_HEADER, RestConstants.ALLE_TEMA_HEADERVERDI)
+            header("X-Correlation-ID", getCallId())
+        }
 
     private val systemTokenAuthorizationHeaders: HeadersBuilder = {
         val systemuserToken: String = machineToMachineTokenClient.createMachineToMachineToken()

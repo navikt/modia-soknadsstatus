@@ -154,13 +154,9 @@ object XMLConverter {
         return schema.newValidator()
     }
 
-    private fun toUrl(schemaFile: String): URL? {
-        return javaClass.classLoader.getResource(schemaFile)
-    }
+    private fun toUrl(schemaFile: String): URL? = javaClass.classLoader.getResource(schemaFile)
 
-    private fun toSource(inputXml: StringReader): Source {
-        return StreamSource(inputXml)
-    }
+    private fun toSource(inputXml: StringReader): Source = StreamSource(inputXml)
 
     private fun extractRootElementName(receivedMessageText: String): String {
         val closingTagStart = receivedMessageText.lastIndexOf("</")
@@ -171,7 +167,9 @@ object XMLConverter {
         if (closingTagEnd < 0) {
             throw RuntimeException("Meldingen inneholder ikke velformet XML.")
         }
-        return receivedMessageText.substring(closingTagStart + 2, closingTagEnd).trim { it <= ' ' }
+        return receivedMessageText
+            .substring(closingTagStart + 2, closingTagEnd)
+            .trim { it <= ' ' }
             .replace(".+:{1}".toRegex(), "")
     }
 
@@ -183,10 +181,10 @@ object XMLConverter {
                     behandlingStatus.behandlingstype.value,
                 )
             }, getInfoTrygdValue = {
-                    InfotrygdTemaTypeMapper.getMappedBehandlingTema(
-                        behandlingStatus.sakstema.value,
-                    )
-                })
+                InfotrygdTemaTypeMapper.getMappedBehandlingTema(
+                    behandlingStatus.sakstema.value,
+                )
+            })
 
         return Behandlingstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
@@ -218,8 +216,11 @@ object XMLConverter {
     }
 
     private fun toZonedDateTime(xmlGregorianCalendar: XMLGregorianCalendar) =
-        xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime()
-            .toLocalDateTime().toKotlinLocalDateTime()
+        xmlGregorianCalendar
+            .toGregorianCalendar()
+            .toZonedDateTime()
+            .toLocalDateTime()
+            .toKotlinLocalDateTime()
 
     private fun toHendelsesprodusentREF(behandlingStatus: BehandlingStatus) =
         HendelsesprodusentREF(
@@ -233,11 +234,11 @@ object XMLConverter {
             PrimaerBehandlingREF(
                 behandlingsREF = it.behandlingsREF,
                 type =
-                Type(
-                    kodeRef = it.type?.kodeRef,
-                    kodeverksRef = it.type?.kodeverksRef,
-                    value = it.type.value,
-                ),
+                    Type(
+                        kodeRef = it.type?.kodeRef,
+                        kodeverksRef = it.type?.kodeverksRef,
+                        value = it.type.value,
+                    ),
             )
         }
 
@@ -249,8 +250,8 @@ object XMLConverter {
                     behandlingStatus.behandlingstype.value,
                 )
             }, getInfoTrygdValue = {
-                    InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
-                })
+                InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
+            })
         return Sakstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
             kodeverksRef = behandlingStatus.sakstema.kodeverksRef,
@@ -286,21 +287,18 @@ object XMLConverter {
         behandlingStatus: BehandlingStatus,
         getArenaValue: () -> String,
         getInfoTrygdValue: () -> String,
-    ): String {
-        return if (behandlingStatus.hendelsesprodusentREF.isInfoTrygd()) {
+    ): String =
+        if (behandlingStatus.hendelsesprodusentREF.isInfoTrygd()) {
             getInfoTrygdValue()
         } else if (behandlingStatus.hendelsesprodusentREF.isArena()) {
             getArenaValue()
         } else {
             throw IllegalArgumentException("Mottok ukjent produsentsystem: ${behandlingStatus.hendelsesprodusentREF.value}")
         }
-    }
 }
 
 object BehandlingDeserializer {
-    fun deserialize(data: String): Hendelse {
-        return XMLConverter.fromXml(data)
-    }
+    fun deserialize(data: String): Hendelse = XMLConverter.fromXml(data)
 }
 
 private fun Applikasjoner.isInfoTrygd() = this.value == INFOTRYGD

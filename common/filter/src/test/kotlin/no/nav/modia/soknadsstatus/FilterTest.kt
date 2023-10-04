@@ -16,7 +16,10 @@ class FilterTest {
 
     @Test
     fun `skal ikke slippe igjennom behandlinger som begynner med ulovlig prefix`() {
-        val behandling = generateBehandling(primaerBehandlingREF = PrimaerBehandlingREF("17UlovligPrefix", Type("koderef", "kodeverksref", "type"))).opprettet
+        val behandling =
+            generateBehandling(
+                primaerBehandlingREF = PrimaerBehandlingREF("17UlovligPrefix", Type("koderef", "kodeverksref", "type")),
+            ).opprettet
         val result = Filter.filtrerBehandling(behandling)
         assertFalse(result)
     }
@@ -81,14 +84,20 @@ private fun generateBehandling(
     behandlingstype: Behandlingstype = Behandlingstype("koderef", "kodeverksref", "ae0047"),
     hendelseType: String = "hendelsestype",
     hendelsesId: String = "hendelsesId",
-    hendelsesTidspunkt: LocalDateTime = java.time.LocalDateTime.now().toKotlinLocalDateTime(),
+    hendelsesTidspunkt: LocalDateTime =
+        java
+            .time
+            .LocalDateTime
+            .now()
+            .toKotlinLocalDateTime(),
     hendelsesprodusentREF: HendelsesprodusentREF = HendelsesprodusentREF("koderef", "kodeverksRef", "hendelsesprodusentREF"),
-    primaerBehandlingREF: PrimaerBehandlingREF? = PrimaerBehandlingREF("behandlingsRef", Type("koderef", "kodeverksRef", "behandlingstype")),
+    primaerBehandlingREF: PrimaerBehandlingREF? =
+        PrimaerBehandlingREF("behandlingsRef", Type("koderef", "kodeverksRef", "behandlingstype")),
     sakstema: Sakstema = Sakstema("koderef", "kodeverksRef", "sakstema"),
     sekundaerBehandlingREF: List<SekundaerBehandlingREF> = listOf(),
     styringsinformasjonListe: List<StyringsinformasjonListe> = listOf(),
-): BeggeBehandlinger {
-    return BeggeBehandlinger(
+): BeggeBehandlinger =
+    BeggeBehandlinger(
         BehandlingOpprettet(
             aktoerREF,
             identREF,
@@ -128,4 +137,3 @@ private fun generateBehandling(
             hendelsesTidspunkt,
         ),
     )
-}

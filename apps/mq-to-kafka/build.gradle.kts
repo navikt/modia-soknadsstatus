@@ -50,22 +50,23 @@ tasks.test {
     }
 }
 
-val fatJar = task("fatJar", type = Jar::class) {
-    archiveBaseName.set("app")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    manifest {
-        attributes["Implementation-Title"] = "MQ to Kafka"
-        attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
+val fatJar =
+    task("fatJar", type = Jar::class) {
+        archiveBaseName.set("app")
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        manifest {
+            attributes["Implementation-Title"] = "MQ to Kafka"
+            attributes["Implementation-Version"] = archiveVersion
+            attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
+        }
+        exclude(
+            "META-INF/*.SF",
+            "META-INF/*.DSA",
+            "META-INF/*.RSA",
+        )
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        with(tasks.jar.get() as CopySpec)
     }
-    exclude(
-        "META-INF/*.SF",
-        "META-INF/*.DSA",
-        "META-INF/*.RSA",
-    )
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks.jar.get() as CopySpec)
-}
 
 tasks {
     "build" {

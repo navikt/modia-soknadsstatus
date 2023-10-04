@@ -6,7 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger
 
 interface DeadLetterQueueMetricsGauge {
     fun increment()
+
     fun decrement()
+
     fun set(newValue: Int)
 }
 

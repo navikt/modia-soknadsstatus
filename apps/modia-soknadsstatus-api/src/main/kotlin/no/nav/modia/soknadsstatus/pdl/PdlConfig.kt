@@ -15,14 +15,19 @@ object PdlConfig {
         machineTokenClient: MachineToMachineTokenClient,
     ): PdlOppslagService {
         if (appMode == AppMode.NAIS) {
-            Logging.secureLog.info("PDL scope: ${DownstreamApi.parse(pdlEnv.scope).application}, ${DownstreamApi.parse(pdlEnv.scope).cluster}, ${DownstreamApi.parse(pdlEnv.scope).namespace} ")
+            Logging.secureLog.info(
+                "PDL scope: ${DownstreamApi.parse(
+                    pdlEnv.scope,
+                ).application}, ${DownstreamApi.parse(pdlEnv.scope).cluster}, ${DownstreamApi.parse(pdlEnv.scope).namespace} ",
+            )
             val scope = pdlEnv.scope
             val url = pdlEnv.url
-            val pdlClient = PdlClientImpl(
-                oboTokenProvider.bindTo(DownstreamApi.parse(scope)),
-                machineTokenClient.bindTo((DownstreamApi.parse(scope))),
-                URL(url),
-            )
+            val pdlClient =
+                PdlClientImpl(
+                    oboTokenProvider.bindTo(DownstreamApi.parse(scope)),
+                    machineTokenClient.bindTo((DownstreamApi.parse(scope))),
+                    URL(url),
+                )
 
             return PdlOppslagServiceImpl(
                 pdlClient,

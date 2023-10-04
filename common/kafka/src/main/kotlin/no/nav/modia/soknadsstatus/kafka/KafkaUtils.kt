@@ -11,9 +11,8 @@ import java.util.*
 
 object KafkaUtils {
     private val log = LoggerFactory.getLogger("KafkaUtils")
-    fun createProducer(
-        appConfig: AppEnv,
-    ): KafkaProducer<String, String> {
+
+    fun createProducer(appConfig: AppEnv): KafkaProducer<String, String> {
         val props = Properties()
         commonProducerConfig(props, appConfig)
 

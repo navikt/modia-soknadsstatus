@@ -4,7 +4,10 @@ import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
 
 interface DeadLetterQueueProducer {
-    fun sendMessage(key: String, message: String): Result<Unit>
+    fun sendMessage(
+        key: String,
+        message: String,
+    ): Result<Unit>
 }
 
 class DeadLetterQueueProducerImpl(
@@ -13,8 +16,11 @@ class DeadLetterQueueProducerImpl(
 ) : DeadLetterQueueProducer {
     private val producer = KafkaUtils.createProducer(appEnv)
 
-    override fun sendMessage(key: String, message: String): Result<Unit> {
-        return try {
+    override fun sendMessage(
+        key: String,
+        message: String,
+    ): Result<Unit> =
+        try {
             val producerRecord =
                 ProducerRecord(
                     appEnv.deadLetterQueueTopic,
@@ -33,5 +39,4 @@ class DeadLetterQueueProducerImpl(
             )
             Result.failure(e)
         }
-    }
 }

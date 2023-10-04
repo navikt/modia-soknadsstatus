@@ -8,8 +8,16 @@ import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 interface AnsattService {
     fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet>
-    fun hentAnsattFagomrader(ident: String, enhet: String): Set<String>
-    suspend fun hentVeiledersGeografiskeOgSensitiveRoller(userToken: String, ident: NavIdent): RolleListe
+
+    fun hentAnsattFagomrader(
+        ident: String,
+        enhet: String,
+    ): Set<String>
+
+    suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
+        userToken: String,
+        ident: NavIdent,
+    ): RolleListe
 }
 
 class AnsattServiceImpl(
@@ -18,7 +26,6 @@ class AnsattServiceImpl(
     private val sensitiveTilgangsRoller: SensitiveTilgangsRoller,
     private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) : AnsattService {
-
     private val sensitiveOgGeografiskeTilgangsRoller: RolleListe
         get() {
             return RolleListe(
@@ -31,23 +38,23 @@ class AnsattServiceImpl(
             }
         }
 
-    override fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet> {
-        return (axsys.hentTilganger(ident) ?: emptyList())
+    override fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet> =
+        (axsys.hentTilganger(ident) ?: emptyList())
             .map { AnsattEnhet(it.enhetId.get(), it.navn) }
-    }
 
-    override fun hentAnsattFagomrader(ident: String, enhet: String): Set<String> {
-        return axsys
+    override fun hentAnsattFagomrader(
+        ident: String,
+        enhet: String,
+    ): Set<String> =
+        axsys
             .runCatching {
                 hentTilganger(NavIdent(ident))
                     .find {
                         it.enhetId.get() == enhet
-                    }
-                    ?.temaer
+                    }?.temaer
                     ?.toSet()
                     ?: emptySet()
-            }
-            .getOrElse {
+            }.getOrElse {
                 TjenestekallLogg.error(
                     "Klarte ikke å hente ansatt fagområder for $ident $enhet",
                     throwable = it,
@@ -55,12 +62,9 @@ class AnsattServiceImpl(
                 )
                 emptySet()
             }
-    }
 
     override suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
         userToken: String,
         ident: NavIdent,
-    ): RolleListe {
-        return azureADService.fetchMultipleGroupsIfUserIsMember(userToken, ident, sensitiveOgGeografiskeTilgangsRoller)
-    }
+    ): RolleListe = azureADService.fetchMultipleGroupsIfUserIsMember(userToken, ident, sensitiveOgGeografiskeTilgangsRoller)
 }

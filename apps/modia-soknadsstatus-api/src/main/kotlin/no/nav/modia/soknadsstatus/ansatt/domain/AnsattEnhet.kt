@@ -9,9 +9,7 @@ data class AnsattEnhet(
     val enhetNavn: String,
     val status: String? = null,
 ) {
-    fun erAktiv(): Boolean {
-        return "AKTIV" == status?.uppercase()
-    }
+    fun erAktiv(): Boolean = "AKTIV" == status?.uppercase()
 
     companion object {
         val TIL_ENHET_ID =

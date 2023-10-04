@@ -7,14 +7,13 @@ enum class AppCluster {
     ;
 
     companion object {
-        operator fun invoke(cluster: String?): AppCluster {
-            return when (cluster) {
+        operator fun invoke(cluster: String?): AppCluster =
+            when (cluster) {
                 null -> PROD
                 "prod-gcp" -> PROD
                 "dev-gcp" -> PREPROD
                 "locally" -> LOCALLY
                 else -> PROD
             }
-        }
     }
 }

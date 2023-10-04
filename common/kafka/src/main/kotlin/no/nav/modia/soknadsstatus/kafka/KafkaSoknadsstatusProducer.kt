@@ -4,18 +4,22 @@ import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
 
 interface SoknadsstatusProducer {
-    fun sendMessage(key: String, message: String): Result<Unit>
+    fun sendMessage(
+        key: String,
+        message: String,
+    ): Result<Unit>
 }
 
 class KafkaSoknadsstatusProducer(
     private val appEnv: AppEnv,
-) :
-
-    SoknadsstatusProducer {
+) : SoknadsstatusProducer {
     private val producer = KafkaUtils.createProducer(appEnv)
 
-    override fun sendMessage(key: String, message: String): Result<Unit> {
-        return try {
+    override fun sendMessage(
+        key: String,
+        message: String,
+    ): Result<Unit> =
+        try {
             val producerRecord = ProducerRecord(appEnv.targetTopic, key, message)
             producer.send(producerRecord)
             Result.success(Unit)
@@ -27,5 +31,4 @@ class KafkaSoknadsstatusProducer(
             )
             Result.failure(e)
         }
-    }
 }

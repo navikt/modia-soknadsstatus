@@ -8,20 +8,36 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import java.util.UUID
 
 fun interface PostHandler {
-    operator fun invoke(source: Source, data: String)
+    operator fun invoke(
+        source: Source,
+        data: String,
+    )
 }
 
-class JmsHandler(config: Jms.Config, appMode: AppMode) : PostHandler {
+class JmsHandler(
+    config: Jms.Config,
+    appMode: AppMode,
+) : PostHandler {
     private val producer = JmsProducer(config, appMode)
-    override fun invoke(source: Source, data: String) {
+
+    override fun invoke(
+        source: Source,
+        data: String,
+    ) {
         check(source.type == Source.Type.JMS)
         producer.send(source.resourceId, data)
     }
 }
 
-class KafkaHandler(appEnv: AppEnv) : PostHandler {
+class KafkaHandler(
+    appEnv: AppEnv,
+) : PostHandler {
     private val producer = KafkaUtils.createProducer(appEnv)
-    override fun invoke(source: Source, data: String) {
+
+    override fun invoke(
+        source: Source,
+        data: String,
+    ) {
         check(source.type == Source.Type.KAFKA)
         producer.send(ProducerRecord(source.resourceId, UUID.randomUUID().toString(), data))
     }

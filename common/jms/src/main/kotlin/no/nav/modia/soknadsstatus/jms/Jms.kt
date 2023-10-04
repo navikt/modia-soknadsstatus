@@ -24,7 +24,11 @@ object Jms {
         val jmsKeystorePassword: String? = "",
     )
 
-    class SSLConfig(private val appMode: AppMode, private val jmsKeyStorePath: String?, private val jmsPassword: String?) {
+    class SSLConfig(
+        private val appMode: AppMode,
+        private val jmsKeyStorePath: String?,
+        private val jmsPassword: String?,
+    ) {
         fun injectSSLConfigIfProd() {
             if (appMode.locally) {
                 return
@@ -42,35 +46,44 @@ object Jms {
             }
         }
 
-        private fun injectKeyValuePair(key: String, value: String) = System.setProperty(key, value)
+        private fun injectKeyValuePair(
+            key: String,
+            value: String,
+        ) = System.setProperty(key, value)
     }
 
     private var connectionFactory: QueueConnectionFactory? = null
 
-    fun createConnectionFactory(config: Config, appMode: AppMode): QueueConnectionFactory {
+    fun createConnectionFactory(
+        config: Config,
+        appMode: AppMode,
+    ): QueueConnectionFactory {
         if (connectionFactory == null) {
-            connectionFactory = PooledConnectionFactory().apply {
-                maxConnections = 10
-                maximumActiveSessionPerConnection = 10
-                connectionFactory = UserCredentialsConnectionFactoryAdapter(
-                    username = config.username,
-                    password = config.password,
-                    connectionFactory = if (appMode == AppMode.NAIS) {
-                        createIBMConnectionFactory(config)
-                    } else {
-                        createActiveMQConnectionFactory(
-                            config,
+            connectionFactory =
+                PooledConnectionFactory().apply {
+                    maxConnections = 10
+                    maximumActiveSessionPerConnection = 10
+                    connectionFactory =
+                        UserCredentialsConnectionFactoryAdapter(
+                            username = config.username,
+                            password = config.password,
+                            connectionFactory =
+                                if (appMode == AppMode.NAIS) {
+                                    createIBMConnectionFactory(config)
+                                } else {
+                                    createActiveMQConnectionFactory(
+                                        config,
+                                    )
+                                },
                         )
-                    },
-                )
-            }
+                }
         }
 
         return checkNotNull(connectionFactory)
     }
 
-    private fun createIBMConnectionFactory(config: Config): QueueConnectionFactory {
-        return MQQueueConnectionFactory().apply {
+    private fun createIBMConnectionFactory(config: Config): QueueConnectionFactory =
+        MQQueueConnectionFactory().apply {
             hostName = config.host
             port = config.port
             queueManager = config.queueManager
@@ -83,13 +96,11 @@ object Jms {
             sslSocketFactory = SSLSocketFactory.getDefault()
             sslCipherSuite = "*TLS13ORHIGHER"
         }
-    }
 
-    private fun createActiveMQConnectionFactory(config: Config): QueueConnectionFactory {
-        return ActiveMQConnectionFactory(
+    private fun createActiveMQConnectionFactory(config: Config): QueueConnectionFactory =
+        ActiveMQConnectionFactory(
             config.username,
             config.password,
             "nio://${config.host}:${config.port}",
         )
-    }
 }

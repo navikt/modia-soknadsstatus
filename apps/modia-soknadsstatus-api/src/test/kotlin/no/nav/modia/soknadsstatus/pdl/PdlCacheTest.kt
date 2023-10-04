@@ -32,6 +32,7 @@ internal class PdlCacheTest {
 
     companion object {
         private val ticker = FakeTicker()
+
         fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(ticker = ticker::read)
     }
 
@@ -51,23 +52,24 @@ internal class PdlCacheTest {
     }
 
     @Test
-    internal fun `Skal kalle pdl hvis fnr ikke finnes i cache`() = runBlocking {
-        ticker.advance(30, TimeUnit.MINUTES)
-        coEvery {
-            pdlClient.hentAktivIdent(token, aktorId.toString(), IdentGruppe.FOLKEREGISTERIDENT)
-        } answers {
-            fnr.toString()
-        }
+    internal fun `Skal kalle pdl hvis fnr ikke finnes i cache`() =
+        runBlocking {
+            ticker.advance(30, TimeUnit.MINUTES)
+            coEvery {
+                pdlClient.hentAktivIdent(token, aktorId.toString(), IdentGruppe.FOLKEREGISTERIDENT)
+            } answers {
+                fnr.toString()
+            }
 
-        val answer = pdlClient.hentAktivIdent(token, aktorId.toString(), IdentGruppe.FOLKEREGISTERIDENT)
+            val answer = pdlClient.hentAktivIdent(token, aktorId.toString(), IdentGruppe.FOLKEREGISTERIDENT)
 
-        coVerify(exactly = 1) {
-            pdlClient.hentAktivIdent(
-                token,
-                aktorId.toString(),
-                IdentGruppe.FOLKEREGISTERIDENT,
-            )
+            coVerify(exactly = 1) {
+                pdlClient.hentAktivIdent(
+                    token,
+                    aktorId.toString(),
+                    IdentGruppe.FOLKEREGISTERIDENT,
+                )
+            }
+            assertEquals(fnr.toString(), answer)
         }
-        assertEquals(fnr.toString(), answer)
-    }
 }

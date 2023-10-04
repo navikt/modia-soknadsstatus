@@ -13,8 +13,10 @@ class HendelseConsumer(
     exceptionRestartDelayMs: Double,
     private val block: suspend (topic: String, key: String?, value: String) -> Result<Unit>,
 ) : SoknadsstatusConsumerImpl(topic, kafkaConsumer, pollDurationMs, exceptionRestartDelayMs) {
-
-    override suspend fun handleRecords(records: ConsumerRecords<String, String>, commitSync: () -> Unit) {
+    override suspend fun handleRecords(
+        records: ConsumerRecords<String, String>,
+        commitSync: () -> Unit,
+    ) {
         if (records.count() > 0) {
             logger.info("Mottok nye oppdatering på topic: $topic: ${records.count()}")
             for (record in records) {

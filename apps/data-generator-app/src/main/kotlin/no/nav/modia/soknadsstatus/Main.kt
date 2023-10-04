@@ -9,9 +9,10 @@ fun main() {
 }
 
 fun runApp(port: Int = 8080) {
-    KtorServer.create(
-        factory = CIO,
-        port = port,
-        application = Application::dataGeneratorModule,
-    ).start(wait = true)
+    KtorServer
+        .create(
+            factory = CIO,
+            port = port,
+            application = Application::dataGeneratorModule,
+        ).start(wait = true)
 }

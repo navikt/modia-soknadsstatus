@@ -15,7 +15,8 @@ data class Source(
 ) {
     @Serializable
     enum class Type {
-        JMS, KAFKA
+        JMS,
+        KAFKA,
     }
 
     val content = Path(exampleFile).readText()

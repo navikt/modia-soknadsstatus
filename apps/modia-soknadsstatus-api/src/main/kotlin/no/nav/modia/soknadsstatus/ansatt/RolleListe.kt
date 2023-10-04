@@ -1,6 +1,8 @@
 package no.nav.modia.soknadsstatus.ansatt
 
-class RolleListe(roller: Set<AnsattRolle>) : LinkedHashSet<AnsattRolle>(roller.map { it }) {
+class RolleListe(
+    roller: Set<AnsattRolle>,
+) : LinkedHashSet<AnsattRolle>(roller.map { it }) {
     constructor(roller: List<AnsattRolle>) : this(roller.toSet())
     constructor(vararg roller: AnsattRolle) : this(roller.toSet())
 

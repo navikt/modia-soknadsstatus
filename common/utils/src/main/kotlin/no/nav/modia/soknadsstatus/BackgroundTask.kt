@@ -7,13 +7,14 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 
 object BackgroundTask {
-    fun launch(block: suspend CoroutineScope.() -> Unit): Job = GlobalScope.launch(Dispatchers.Unbounded) {
-        try {
-            block()
-        } catch (e: Exception) {
-            Logging.secureLog.error("Background task exited with: ", e)
+    fun launch(block: suspend CoroutineScope.() -> Unit): Job =
+        GlobalScope.launch(Dispatchers.Unbounded) {
+            try {
+                block()
+            } catch (e: Exception) {
+                Logging.secureLog.error("Background task exited with: ", e)
+            }
         }
-    }
 }
 
 /*
@@ -30,7 +31,11 @@ class UnboundedDispatcher private constructor() : CoroutineDispatcher() {
 
     private val threadPool = Executors.newCachedThreadPool()
     private val dispatcher = threadPool.asCoroutineDispatcher()
-    override fun dispatch(context: CoroutineContext, block: Runnable) {
+
+    override fun dispatch(
+        context: CoroutineContext,
+        block: Runnable,
+    ) {
         dispatcher.dispatch(context, block)
     }
 }

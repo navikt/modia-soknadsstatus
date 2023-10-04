@@ -19,39 +19,42 @@ fun Application.mqToKafkaModule() {
     val config = AppEnv()
     val mqConfig = MqConfig()
 
-    Jms.SSLConfig(
-        appMode = config.appMode,
-        jmsKeyStorePath = mqConfig.config.jmsKeyStorePath,
-        jmsPassword = mqConfig.config.jmsKeystorePassword,
-    ).injectSSLConfigIfProd()
+    Jms
+        .SSLConfig(
+            appMode = config.appMode,
+            jmsKeyStorePath = mqConfig.config.jmsKeyStorePath,
+            jmsPassword = mqConfig.config.jmsKeystorePassword,
+        ).injectSSLConfigIfProd()
 
     val jmsConsumer = JmsConsumer(mqConfig.config, config.appMode)
 
-    val kafkaProducer = KafkaUtils.createProducer(
-        config,
-    )
+    val kafkaProducer =
+        KafkaUtils.createProducer(
+            config,
+        )
 
-    val transferJob = GlobalScope.launch(Dispatchers.Unbounded) {
-        jmsConsumer
-            .subscribe(mqConfig.mqQueue) { message ->
-                when (message) {
-                    is TextMessage -> {
-                        kafkaProducer.send(
-                            ProducerRecord(
-                                requireNotNull(config.targetTopic),
-                                UUID.randomUUID().toString(),
-                                message.text,
-                            ),
-                        )
-                    }
+    val transferJob =
+        GlobalScope.launch(Dispatchers.Unbounded) {
+            jmsConsumer
+                .subscribe(mqConfig.mqQueue) { message ->
+                    when (message) {
+                        is TextMessage -> {
+                            kafkaProducer.send(
+                                ProducerRecord(
+                                    requireNotNull(config.targetTopic),
+                                    UUID.randomUUID().toString(),
+                                    message.text,
+                                ),
+                            )
+                        }
 
-                    else -> {
-                        log.error("Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
+                        else -> {
+                            log.error("Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
+                        }
                     }
+                    message.acknowledge()
                 }
-                message.acknowledge()
-            }
-    }
+        }
 
     install(Metrics.Plugin)
     install(Selftest.Plugin) {

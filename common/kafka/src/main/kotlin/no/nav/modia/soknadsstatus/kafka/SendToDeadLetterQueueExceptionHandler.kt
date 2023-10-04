@@ -4,14 +4,22 @@ import no.nav.personoversikt.common.logging.TjenestekallLogg
 import java.util.UUID
 
 interface ExceptionHandler {
-    fun handle(key: String?, value: String?, exception: Throwable)
+    fun handle(
+        key: String?,
+        value: String?,
+        exception: Throwable,
+    )
 }
 
 class SendToDeadLetterQueueExceptionHandler(
     private val topic: String,
     private val dlqProducer: DeadLetterQueueProducer,
 ) : ExceptionHandler {
-    override fun handle(key: String?, value: String?, exception: Throwable) {
+    override fun handle(
+        key: String?,
+        value: String?,
+        exception: Throwable,
+    ) {
         TjenestekallLogg.error(
             "Producing dead letter $key: $value",
             mapOf("key" to key, "message" to value),
