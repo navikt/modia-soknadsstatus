@@ -15,9 +15,13 @@ import kotlin.time.toJavaDuration
 
 interface SoknadsstatusConsumer {
     fun start()
+
     fun waitForStart()
+
     fun waitForShutdown()
+
     fun shutDownAndWait()
+
     fun startAndWait()
 }
 
@@ -34,8 +38,10 @@ open class SoknadsstatusConsumerImpl(
 
     private var job: Job? = null
 
-    open suspend fun handleRecords(records: ConsumerRecords<String, String>, commitSync: () -> Unit): Unit =
-        throw NotImplementedError("handleRecords må implementeres av arvende klasse")
+    open suspend fun handleRecords(
+        records: ConsumerRecords<String, String>,
+        commitSync: () -> Unit,
+    ): Unit = throw NotImplementedError("handleRecords må implementeres av arvende klasse")
 
     // Used to avoid infinite WakeupException loop. WakeUp exception is thrown by the Consumer the next time calling poll, if wakeUp has been called, but the consumer did not poll when calling wakeup.
     private val hasWakedUpConsumer = AtomicBoolean(false)
@@ -53,9 +59,10 @@ open class SoknadsstatusConsumerImpl(
     }
 
     override fun start() {
-        job = BackgroundTask.launch {
-            startConsumer()
-        }
+        job =
+            BackgroundTask.launch {
+                startConsumer()
+            }
     }
 
     private suspend fun startConsumer() {
@@ -117,7 +124,9 @@ open class SoknadsstatusConsumerImpl(
         delayDuration: Duration,
     ): Boolean {
         if (delayDuration <= pollDuration) {
-            throw IllegalArgumentException("Delay duration must be larger than the poll duration. Otherwise the commit will commit wrong offset.")
+            throw IllegalArgumentException(
+                "Delay duration must be larger than the poll duration. Otherwise the commit will commit wrong offset.",
+            )
         }
         return true
     }

@@ -14,13 +14,13 @@ import kotlin.time.Duration.Companion.seconds
 class KafkaStreamConfig {
     var appEnv: AppEnv? = null
     var topology: (StreamsBuilder.() -> Unit)? = null
+
     fun topology(fn: StreamsBuilder.() -> Unit) {
         this.topology = fn
     }
 }
 
-class KafkaStreamPlugin :
-    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig, KafkaStreamPlugin> {
+class KafkaStreamPlugin : Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig, KafkaStreamPlugin> {
     private var stream: KafkaStreams? = null
 
     override val key: AttributeKey<KafkaStreamPlugin> = AttributeKey("kafka-stream")
@@ -32,10 +32,11 @@ class KafkaStreamPlugin :
         val configuration = KafkaStreamConfig()
         configuration.configure()
 
-        stream = KafkaUtils.createStream(
-            appConfig = requireNotNull(configuration.appEnv),
-            configure = requireNotNull(configuration.topology),
-        )
+        stream =
+            KafkaUtils.createStream(
+                appConfig = requireNotNull(configuration.appEnv),
+                configure = requireNotNull(configuration.topology),
+            )
 
         stream?.start()
         registerShutdownhook { stream?.close() }
@@ -43,7 +44,10 @@ class KafkaStreamPlugin :
         return this
     }
 
-    private fun registerReporter(name: String, stream: KafkaStreams?) {
+    private fun registerReporter(
+        name: String,
+        stream: KafkaStreams?,
+    ) {
         val kafkaReporter = SelftestGenerator.Reporter(name, true)
         fixedRateTimer(name, daemon = true, initialDelay = 0L, period = 10.seconds.inWholeMilliseconds) {
             when (stream?.state()) {

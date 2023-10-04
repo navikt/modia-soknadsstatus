@@ -43,25 +43,29 @@ data class EnvImpl(
     override val hendelseConsumerEnv: HendelseConsumerEnv = HendelseConsumerEnv(),
     override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(DatasourceEnv(kafkaApp.appName)),
     override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(appMode = kafkaApp.appMode),
-    override val pdlEnv: PdlEnv = PdlEnv(
-        url = EnvUtils.getRequiredConfig("PDL_API_URL"),
-        scope = EnvUtils.getRequiredConfig("PDL_SCOPE"),
-    ),
-    override val axsysEnv: AxsysEnv = AxsysEnv(
-        scope = EnvUtils.getRequiredConfig("AXSYS_SCOPE"),
-        url = EnvUtils.getRequiredConfig("AXSYS_URL"),
-    ),
+    override val pdlEnv: PdlEnv =
+        PdlEnv(
+            url = EnvUtils.getRequiredConfig("PDL_API_URL"),
+            scope = EnvUtils.getRequiredConfig("PDL_SCOPE"),
+        ),
+    override val axsysEnv: AxsysEnv =
+        AxsysEnv(
+            scope = EnvUtils.getRequiredConfig("AXSYS_SCOPE"),
+            url = EnvUtils.getRequiredConfig("AXSYS_URL"),
+        ),
     override val norgEnv: NorgEnv = NorgEnv(url = EnvUtils.getRequiredConfig("NORG2_URL")),
-    override val skjermedePersonerEnv: SkjermedePersonerEnv = SkjermedePersonerEnv(
-        url = EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_PIP_URL"),
-        scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_SCOPE")),
-    ),
+    override val skjermedePersonerEnv: SkjermedePersonerEnv =
+        SkjermedePersonerEnv(
+            url = EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_PIP_URL"),
+            scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_SCOPE")),
+        ),
     override val sensitiveTilgangsRoller: SensitiveTilgangsRoller = SensitiveTilgangsRoller(kafkaApp.appCluster),
     override val geografiskeTilgangsRoller: GeografiskeTilgangsRoller = GeografiskeTilgangsRoller(kafkaApp.appCluster),
-    override val msGraphEnv: MsGraphEnv = MsGraphEnv(
-        url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
-        scope = EnvUtils.getRequiredConfig("MS_GRAPH_SCOPE"),
-    ),
+    override val msGraphEnv: MsGraphEnv =
+        MsGraphEnv(
+            url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
+            scope = EnvUtils.getRequiredConfig("MS_GRAPH_SCOPE"),
+        ),
 ) : Env
 
 data class HendelseConsumerEnv(

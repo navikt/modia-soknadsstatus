@@ -47,7 +47,10 @@ fun commonStreamsConfig(
     }
 }
 
-fun commonProducerConfig(props: Properties, appConfig: AppEnv) {
+fun commonProducerConfig(
+    props: Properties,
+    appConfig: AppEnv,
+) {
     props[ProducerConfig.ACKS_CONFIG] = "all"
     props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = appConfig.brokerUrls
     props[ProducerConfig.CLIENT_ID_CONFIG] = "${appConfig.appName}-producer"

@@ -19,14 +19,21 @@ interface BehandlingRepository : TransactionRepository {
     ): SoknadsstatusDomain.Behandling?
 
     suspend fun getForId(id: String): SoknadsstatusDomain.Behandling?
+
     suspend fun getByBehandlingId(behandlingId: String): SoknadsstatusDomain.Behandling?
+
     suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Behandling>
+
     suspend fun delete(id: String)
 }
 
-class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, TransactionRepositoryImpl(dataSource) {
+class BehandlingRepositoryImpl(
+    dataSource: DataSource,
+) : TransactionRepositoryImpl(dataSource),
+    BehandlingRepository {
     object Tabell {
         override fun toString(): String = "behandlinger"
+
         const val id = "id"
         const val behandlingId = "behandling_id"
         const val produsentSystem = "produsent_system"
@@ -47,50 +54,48 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
     override suspend fun upsert(
         connection: Connection,
         behandling: SoknadsstatusDomain.Behandling,
-    ): SoknadsstatusDomain.Behandling? {
-        return connection.executeWithResult(
-            """
-                   INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling})
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?)
-                   ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
-                   RETURNING *;
-            """.trimIndent(),
-            behandling.behandlingId,
-            behandling.produsentSystem,
-            Timestamp.valueOf(behandling.startTidspunkt?.toJavaLocalDateTime()),
-            Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
-            Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
-            behandling.sakstema,
-            behandling.behandlingsTema,
-            behandling.behandlingsType,
-            behandling.status.name,
-            behandling.ansvarligEnhet,
-            behandling.primaerBehandlingId,
-            behandling.primaerBehandlingType,
-            behandling.applikasjonSak,
-            behandling.applikasjonBehandling,
-            behandling.status.name,
-            Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
-            Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
-            Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
-        ) {
-            convertResultSetToBehandlingDao(it)
-        }.firstOrNull()
-    }
+    ): SoknadsstatusDomain.Behandling? =
+        connection
+            .executeWithResult(
+                """
+                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling})
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?)
+                ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
+                RETURNING *;
+                """.trimIndent(),
+                behandling.behandlingId,
+                behandling.produsentSystem,
+                Timestamp.valueOf(behandling.startTidspunkt?.toJavaLocalDateTime()),
+                Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
+                Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
+                behandling.sakstema,
+                behandling.behandlingsTema,
+                behandling.behandlingsType,
+                behandling.status.name,
+                behandling.ansvarligEnhet,
+                behandling.primaerBehandlingId,
+                behandling.primaerBehandlingType,
+                behandling.applikasjonSak,
+                behandling.applikasjonBehandling,
+                behandling.status.name,
+                Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
+                Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
+                Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
+            ) {
+                convertResultSetToBehandlingDao(it)
+            }.firstOrNull()
 
-    override suspend fun getForId(id: String): SoknadsstatusDomain.Behandling? {
-        return dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.id} = ?", id) {
-            convertResultSetToBehandlingDao(it)
-        }.firstOrNull()
-    }
+    override suspend fun getForId(id: String): SoknadsstatusDomain.Behandling? =
+        dataSource
+            .executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.id} = ?", id) {
+                convertResultSetToBehandlingDao(it)
+            }.firstOrNull()
 
-    override suspend fun getByBehandlingId(
-        behandlingId: String,
-    ): SoknadsstatusDomain.Behandling? {
-        return dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.behandlingId} = ?", behandlingId) {
-            convertResultSetToBehandlingDao(it)
-        }.firstOrNull()
-    }
+    override suspend fun getByBehandlingId(behandlingId: String): SoknadsstatusDomain.Behandling? =
+        dataSource
+            .executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.behandlingId} = ?", behandlingId) {
+                convertResultSetToBehandlingDao(it)
+            }.firstOrNull()
 
     override suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Behandling> {
         val preparedVariables = createPreparedVariables(idents.size)
@@ -111,8 +116,8 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
         dataSource.execute("DELETE FROM $Tabell WHERE ${Tabell.id} = $id")
     }
 
-    private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.Behandling {
-        return SoknadsstatusDomain.Behandling(
+    private fun convertResultSetToBehandlingDao(resultSet: ResultSet): SoknadsstatusDomain.Behandling =
+        SoknadsstatusDomain.Behandling(
             id = resultSet.getString(Tabell.id),
             behandlingId = resultSet.getString(Tabell.behandlingId),
             produsentSystem = resultSet.getString(Tabell.produsentSystem),
@@ -129,5 +134,4 @@ class BehandlingRepositoryImpl(dataSource: DataSource) : BehandlingRepository, T
             applikasjonSak = resultSet.getString(Tabell.applikasjonSak),
             applikasjonBehandling = resultSet.getString(Tabell.applikasjonBehandling),
         )
-    }
 }

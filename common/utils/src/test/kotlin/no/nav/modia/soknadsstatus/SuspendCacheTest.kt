@@ -27,15 +27,17 @@ class SuspendCacheTest {
     }
 
     @Test
-    fun `skal hente data fra annen kilde og lagre om key ikke finnes i cache`() = runBlocking {
-        assertEquals(0, cache.size)
-        val value = cache.get("test") {
-            provideValue("test_value")
+    fun `skal hente data fra annen kilde og lagre om key ikke finnes i cache`() =
+        runBlocking {
+            assertEquals(0, cache.size)
+            val value =
+                cache.get("test") {
+                    provideValue("test_value")
+                }
+            assertEquals("test_value", value)
+            val valueFromCache = cache.getIfPresent("test")
+            assertEquals("test_value", valueFromCache)
         }
-        assertEquals("test_value", value)
-        val valueFromCache = cache.getIfPresent("test")
-        assertEquals("test_value", valueFromCache)
-    }
 }
 
 private suspend fun provideValue(value: String): String {

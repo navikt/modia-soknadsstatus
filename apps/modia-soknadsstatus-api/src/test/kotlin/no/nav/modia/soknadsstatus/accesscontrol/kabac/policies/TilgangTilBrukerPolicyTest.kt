@@ -29,12 +29,13 @@ import java.util.*
 internal class TilgangTilBrukerPolicyTest {
     private val sensitiveTilgangsRoller = SensitiveTilgangsRoller(appCluster = AppCluster.PROD)
     private val geografiskeTilgangsRoller = GeografiskeTilgangsRoller(appCluster = AppCluster.PROD)
-    private val policy = KabacTestUtils.PolicyTester(
-        TilgangTilBrukerPolicy(
-            sensitiveTilgangsRoller,
-            geografiskeTilgangsRoller,
-        ),
-    )
+    private val policy =
+        KabacTestUtils.PolicyTester(
+            TilgangTilBrukerPolicy(
+                sensitiveTilgangsRoller,
+                geografiskeTilgangsRoller,
+            ),
+        )
     private val pdl = mockk<PdlOppslagService>()
     private val norg = mockk<NorgApi>()
     private val skjermedePersoner = mockk<SkjermedePersonerApi>()
@@ -171,11 +172,12 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerIkkeHarAdressebeskyttelse() {
-        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
-            Adressebeskyttelse(
-                gradering = AdressebeskyttelseGradering.UGRADERT,
-            ),
-        )
+        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns
+            listOf(
+                Adressebeskyttelse(
+                    gradering = AdressebeskyttelseGradering.UGRADERT,
+                ),
+            )
     }
 
     private fun gittAtBrukerIkkeErSkjermet() {
@@ -187,19 +189,21 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerHarKode6() {
-        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
-            Adressebeskyttelse(
-                AdressebeskyttelseGradering.STRENGT_FORTROLIG,
-            ),
-        )
+        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns
+            listOf(
+                Adressebeskyttelse(
+                    AdressebeskyttelseGradering.STRENGT_FORTROLIG,
+                ),
+            )
     }
 
     private fun gittAtBrukerHarKode7() {
-        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns listOf(
-            Adressebeskyttelse(
-                AdressebeskyttelseGradering.FORTROLIG,
-            ),
-        )
+        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns
+            listOf(
+                Adressebeskyttelse(
+                    AdressebeskyttelseGradering.FORTROLIG,
+                ),
+            )
     }
 
     private fun gittAtBrukerHarEnhet(enhetId: EnhetId?) {
@@ -209,12 +213,13 @@ internal class TilgangTilBrukerPolicyTest {
         if (enhetId == null) {
             every { norg.finnNavKontor(geografiskTilknyttning, null) } returns null
         } else {
-            every { norg.finnNavKontor(geografiskTilknyttning, null) } returns NorgDomain.Enhet(
-                enhetId = enhetId.get(),
-                enhetNavn = "Navn",
-                status = NorgDomain.EnhetStatus.AKTIV,
-                oppgavebehandler = false,
-            )
+            every { norg.finnNavKontor(geografiskTilknyttning, null) } returns
+                NorgDomain.Enhet(
+                    enhetId = enhetId.get(),
+                    enhetNavn = "Navn",
+                    status = NorgDomain.EnhetStatus.AKTIV,
+                    oppgavebehandler = false,
+                )
         }
     }
 
@@ -222,33 +227,21 @@ internal class TilgangTilBrukerPolicyTest {
         coEvery { ansattService.hentVeiledersGeografiskeOgSensitiveRoller(token, ident) } returns roller
     }
 
-    private fun gittAtVeilederHarNasjonalTilgang() {
-        return gittAtVeilederHarRoller(RolleListe(geografiskeTilgangsRoller.nasjonaleTilgangsRoller))
-    }
+    private fun gittAtVeilederHarNasjonalTilgang() = gittAtVeilederHarRoller(RolleListe(geografiskeTilgangsRoller.nasjonaleTilgangsRoller))
 
-    private fun gittAtVeilederHarRegionalTilgang() {
-        return gittAtVeilederHarRoller(RolleListe(geografiskeTilgangsRoller.regionaleTilgangsRoller))
-    }
+    private fun gittAtVeilederHarRegionalTilgang() = gittAtVeilederHarRoller(RolleListe(geografiskeTilgangsRoller.regionaleTilgangsRoller))
 
-    private fun gittAtVeilederHarTilgangTilKode6() {
-        return gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.kode6))
-    }
+    private fun gittAtVeilederHarTilgangTilKode6() = gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.kode6))
 
-    private fun gittAtVeilederHarTilgangTilKode7() {
-        return gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.kode7))
-    }
+    private fun gittAtVeilederHarTilgangTilKode7() = gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.kode7))
 
-    private fun gittAtVeilederHarTilgangTilSkjermetPerson() {
-        return gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.skjermedePersoner))
-    }
+    private fun gittAtVeilederHarTilgangTilSkjermetPerson() = gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.skjermedePersoner))
 
     private fun gittAtVeilederHarTilgangTilEnhet(enhetId: EnhetId) {
         every { ansattService.hentEnhetsliste(ident) } returns listOf(AnsattEnhet(enhetId.get(), "navn"))
     }
 
-    private fun gittAtVeilederIkkeHarNoenSpesielleRoller() {
-        return gittAtVeilederHarRoller(RolleListe(AnsattRolle("test", AzureObjectId("test"))))
-    }
+    private fun gittAtVeilederIkkeHarNoenSpesielleRoller() = gittAtVeilederHarRoller(RolleListe(AnsattRolle("test", AzureObjectId("test"))))
 
     private fun gittFnrAktorIdMapping(vararg fnraktoridMapping: Pair<Fnr, AktorId>) {
         val fnrmap = fnraktoridMapping.toMap()
@@ -273,8 +266,8 @@ internal class TilgangTilBrukerPolicyTest {
         }
     }
 
-    private fun fellesPipTjenester(): Array<Kabac.PolicyInformationPoint<*>> {
-        return arrayOf(
+    private fun fellesPipTjenester(): Array<Kabac.PolicyInformationPoint<*>> =
+        arrayOf(
             AuthContextPip.key.withValue(Security.SubjectPrincipal(token)),
             BrukersFnrPip.key.withValue(fnr),
             NavIdentPip.key.withValue(ident),
@@ -288,5 +281,4 @@ internal class TilgangTilBrukerPolicyTest {
             VeiledersEnheterPip(ansattService),
             VeiledersRegionEnheterPip(norg),
         )
-    }
 }

@@ -18,15 +18,16 @@ fun Application.dataGeneratorModule() {
     val isLocal = true
     val wsConnections = mutableListOf<DefaultWebSocketSession>()
 
-    val env = AppEnv(
-        appName = "data-generator",
-        appMode = AppMode.LOCALLY_WITHIN_DOCKER,
-        appVersion = "test",
-        deadLetterQueueTopic = null,
-        deadLetterQueueConsumerPollIntervalMs = 10000.0,
-        deadLetterQueueSkipTableName = null,
-        deadLetterQueueMetricsGaugeName = null,
-    )
+    val env =
+        AppEnv(
+            appName = "data-generator",
+            appMode = AppMode.LOCALLY_WITHIN_DOCKER,
+            appVersion = "test",
+            deadLetterQueueTopic = null,
+            deadLetterQueueConsumerPollIntervalMs = 10000.0,
+            deadLetterQueueSkipTableName = null,
+            deadLetterQueueMetricsGaugeName = null,
+        )
 
     val config = Configuration(env)
     val handlers = Handlers(env).handlers

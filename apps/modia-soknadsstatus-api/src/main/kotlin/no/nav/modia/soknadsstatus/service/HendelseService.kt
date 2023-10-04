@@ -9,9 +9,15 @@ import no.nav.modia.soknadsstatus.repository.HendelseRepository
 
 interface HendelseService {
     fun init(behandlingService: BehandlingService)
+
     suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse)
+
     suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse>
-    suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.Hendelse>
+
+    suspend fun getAllForIdent(
+        userToken: String,
+        ident: String,
+    ): List<SoknadsstatusDomain.Hendelse>
 }
 
 class HendelseServiceImpl(
@@ -55,21 +61,26 @@ class HendelseServiceImpl(
         }
     }
 
-    override suspend fun getAllForIdent(userToken: String, ident: String): List<SoknadsstatusDomain.Hendelse> {
+    override suspend fun getAllForIdent(
+        userToken: String,
+        ident: String,
+    ): List<SoknadsstatusDomain.Hendelse> {
         val idents = pdlOppslagService.hentAktiveIdenter(userToken, ident)
         return getAllForIdents(idents)
     }
 
-    override suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse> {
-        return hendelseRepository.getByIdents(idents.toTypedArray())
-    }
+    override suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse> =
+        hendelseRepository.getByIdents(
+            idents.toTypedArray(),
+        )
 
     private suspend fun fetchIdents(aktoerer: List<String>): List<String> {
         val result = mutableListOf<String>()
         for (aktoer in aktoerer) {
             if (isAktoerId(aktoer)) {
-                val ident = pdlOppslagService.hentFnrMedSystemToken(aktoer)
-                    ?: throw IllegalArgumentException("Fant ikke ident for aktoer: $aktoer")
+                val ident =
+                    pdlOppslagService.hentFnrMedSystemToken(aktoer)
+                        ?: throw IllegalArgumentException("Fant ikke ident for aktoer: $aktoer")
                 result.add(ident)
             } else {
                 result.add(aktoer)
@@ -87,8 +98,8 @@ class HendelseServiceImpl(
     private fun hendelseToHendelseDAO(
         modiaBehandlingId: String,
         hendelse: InnkommendeHendelse,
-    ): SoknadsstatusDomain.Hendelse {
-        return SoknadsstatusDomain.Hendelse(
+    ): SoknadsstatusDomain.Hendelse =
+        SoknadsstatusDomain.Hendelse(
             modiaBehandlingId = modiaBehandlingId,
             hendelseId = hendelse.hendelsesId,
             behandlingId = hendelse.behandlingsId,
@@ -100,22 +111,23 @@ class HendelseServiceImpl(
             status = hendelse.status,
             ansvarligEnhet = hendelse.ansvarligEnhet,
         )
-    }
 
     private fun hendelseToBehandlingDAO(hendelse: InnkommendeHendelse): SoknadsstatusDomain.Behandling {
-        val sluttTidspunkt = if (hendelse.hendelsesType != SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET) {
-            hendelse.hendelsesTidspunkt
-        } else {
-            hendelse.hendelsesTidspunkt
-        }
+        val sluttTidspunkt =
+            if (hendelse.hendelsesType != SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET) {
+                hendelse.hendelsesTidspunkt
+            } else {
+                hendelse.hendelsesTidspunkt
+            }
 
-        val startTidspunkt = if (hendelse.hendelsesType == SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET) {
-            hendelse.hendelsesTidspunkt
-        } else if (hendelse.hendelsesType == SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET_OG_AVSLUTTET) {
-            hendelse.opprettelsesTidspunkt
-        } else {
-            hendelse.hendelsesTidspunkt
-        }
+        val startTidspunkt =
+            if (hendelse.hendelsesType == SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET) {
+                hendelse.hendelsesTidspunkt
+            } else if (hendelse.hendelsesType == SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET_OG_AVSLUTTET) {
+                hendelse.opprettelsesTidspunkt
+            } else {
+                hendelse.hendelsesTidspunkt
+            }
 
         return SoknadsstatusDomain.Behandling(
             behandlingId = hendelse.behandlingsId,

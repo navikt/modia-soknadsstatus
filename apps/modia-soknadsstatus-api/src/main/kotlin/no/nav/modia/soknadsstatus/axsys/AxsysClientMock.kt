@@ -10,12 +10,10 @@ import no.nav.modia.soknadsstatus.MockData
 class AxsysClientMock : AxsysClient {
     override fun checkHealth(): HealthCheckResult = HealthCheckResult.healthy()
 
-    override fun hentAnsatte(enhetId: EnhetId?): MutableList<NavIdent> {
-        return mutableListOf(NavIdent(MockData.veileder.navIdent))
-    }
+    override fun hentAnsatte(enhetId: EnhetId?): MutableList<NavIdent> = mutableListOf(NavIdent(MockData.Veileder.navIdent))
 
     override fun hentTilganger(navIdent: NavIdent?): MutableList<AxsysEnhet> {
-        val enhet = AxsysEnhet().setEnhetId(MockData.veileder.axsysEnhet)
+        val enhet = AxsysEnhet().setEnhetId(MockData.Veileder.axsysEnhet)
         return mutableListOf(enhet)
     }
 }

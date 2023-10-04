@@ -8,21 +8,24 @@ data class MappedStatusEntry(
 object ArenaInfotrygdAvslutningsstatusMapper : AvslutningsStatusMapper {
     private val mapper = AvslutningsMapper()
 
-    override fun getAvslutningsstatus(produsentSystem: String, status: String): SoknadsstatusDomain.Status =
-        mapper.getMappedStatus(produsentSystem, status)
+    override fun getAvslutningsstatus(
+        produsentSystem: String,
+        status: String,
+    ): SoknadsstatusDomain.Status = mapper.getMappedStatus(produsentSystem, status)
 }
 
 private class AvslutningsMapper : CSVLoader(FILE_NAME) {
     private var infotrygdStatusMap: Map<String, MappedStatusEntry>? = null
-    private var arenaStatusMap = mapOf<String, SoknadsstatusDomain.Status>(
-        "avbrutt" to SoknadsstatusDomain.Status.AVBRUTT,
-        "avvist" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-        "delvis" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-        "ja" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-        "nei" to SoknadsstatusDomain.Status.AVBRUTT,
-        "opphevet" to SoknadsstatusDomain.Status.AVBRUTT,
-        "trukk" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
-    )
+    private var arenaStatusMap =
+        mapOf<String, SoknadsstatusDomain.Status>(
+            "avbrutt" to SoknadsstatusDomain.Status.AVBRUTT,
+            "avvist" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
+            "delvis" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
+            "ja" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
+            "nei" to SoknadsstatusDomain.Status.AVBRUTT,
+            "opphevet" to SoknadsstatusDomain.Status.AVBRUTT,
+            "trukk" to SoknadsstatusDomain.Status.FERDIG_BEHANDLET,
+        )
 
     init {
         loadStatuses()
@@ -43,27 +46,29 @@ private class AvslutningsMapper : CSVLoader(FILE_NAME) {
         infotrygdStatusMap = res
     }
 
-    private fun mapStatus(status: String): SoknadsstatusDomain.Status {
-        return when (status) {
+    private fun mapStatus(status: String): SoknadsstatusDomain.Status =
+        when (status) {
             "avsluttet" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
             "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
             "under_behandling" -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
             else -> throw IllegalArgumentException("Mottok ukjent status i mapping av infotrygd arena statuser")
         }
-    }
 
-    fun getMappedStatus(produsentSystem: String, status: String): SoknadsstatusDomain.Status {
-        return if (produsentSystem == ARENA) {
+    fun getMappedStatus(
+        produsentSystem: String,
+        status: String,
+    ): SoknadsstatusDomain.Status =
+        if (produsentSystem == ARENA) {
             getMappedArenaStatus(status)
         } else if (produsentSystem == INFOTRYGD) {
             getMappedInfotrygdStatus(status)
         } else {
             throw IllegalArgumentException("Mottok ukjent produsent system: $produsentSystem")
         }
-    }
 
-    fun getMappedArenaStatus(status: String) = arenaStatusMap[status.lowercase()]
-        ?: throw IllegalArgumentException("Fant ikke mapping for følgende arena status: $status")
+    fun getMappedArenaStatus(status: String) =
+        arenaStatusMap[status.lowercase()]
+            ?: throw IllegalArgumentException("Fant ikke mapping for følgende arena status: $status")
 
     fun getMappedInfotrygdStatus(status: String): SoknadsstatusDomain.Status {
         if (infotrygdStatusMap == null) {

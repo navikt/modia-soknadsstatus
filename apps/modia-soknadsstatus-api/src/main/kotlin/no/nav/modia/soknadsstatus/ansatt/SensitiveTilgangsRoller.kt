@@ -32,16 +32,20 @@ private enum class SensitiveRoller(
     ),
 }
 
-class SensitiveTilgangsRoller(appCluster: AppCluster) {
+class SensitiveTilgangsRoller(
+    appCluster: AppCluster,
+) {
     val kode6 = getRoleForCluster(appCluster, SensitiveRoller.KODE6)
     val kode7 = getRoleForCluster(appCluster, SensitiveRoller.KODE7)
     val skjermedePersoner = getRoleForCluster(appCluster, SensitiveRoller.SKJERMEDE_PERSONER)
 
-    private fun getRoleForCluster(appCluster: AppCluster, role: SensitiveRoller): AnsattRolle {
-        return when (appCluster) {
+    private fun getRoleForCluster(
+        appCluster: AppCluster,
+        role: SensitiveRoller,
+    ): AnsattRolle =
+        when (appCluster) {
             AppCluster.PROD -> AnsattRolle(role.groupName, role.productionRole)
             AppCluster.PREPROD -> AnsattRolle(role.groupName, role.preprodRole)
             AppCluster.LOCALLY -> AnsattRolle(role.groupName, AzureObjectId(role.groupName))
         }
-    }
 }

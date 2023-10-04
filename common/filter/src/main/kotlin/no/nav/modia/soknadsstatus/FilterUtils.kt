@@ -9,7 +9,5 @@ object FilterUtils {
     private const val BEHANDLINGSTATUS_AVSLUTTET = "avsluttet"
 
     @JvmStatic
-    fun erKvitteringstype(type: String): Boolean {
-        return type == SEND_SOKNAD_KVITTERINGSTYPE || type == DOKUMENTINNSENDING_KVITTERINGSTYPE
-    }
+    fun erKvitteringstype(type: String): Boolean = type == SEND_SOKNAD_KVITTERINGSTYPE || type == DOKUMENTINNSENDING_KVITTERINGSTYPE
 }

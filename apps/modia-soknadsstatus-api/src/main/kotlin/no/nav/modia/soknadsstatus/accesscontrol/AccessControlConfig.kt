@@ -21,24 +21,26 @@ class AccessControlConfig(
     private val ansattService: AnsattService,
 ) {
     fun buildKabac(authenticationContext: AuthenticationContext): AccessControlKabac {
-        val decisionPoint = PolicyDecisionPointImpl().apply {
-            install(AuthContextPip(authenticationContext))
-            install(BrukersFnrPip(pdl))
-            install(NavIdentPip)
-            install(BrukersAktorIdPip(pdl))
-            install(BrukersDiskresjonskodePip(pdl))
-            install(BrukersSkjermingPip(skjermingApi))
-            install(BrukersEnhetPip(norg))
-            install(BrukersGeografiskeTilknyttningPip(pdl))
-            install(BrukersRegionEnhetPip(norg))
-            install(VeiledersEnheterPip(ansattService))
-            install(VeiledersRegionEnheterPip(norg))
-            install(VeiledersRollerPip(ansattService))
-        }
-        val enforcementPoint = PolicyEnforcementPointImpl(
-            bias = Decision.Type.DENY,
-            policyDecisionPoint = decisionPoint,
-        )
+        val decisionPoint =
+            PolicyDecisionPointImpl().apply {
+                install(AuthContextPip(authenticationContext))
+                install(BrukersFnrPip(pdl))
+                install(NavIdentPip)
+                install(BrukersAktorIdPip(pdl))
+                install(BrukersDiskresjonskodePip(pdl))
+                install(BrukersSkjermingPip(skjermingApi))
+                install(BrukersEnhetPip(norg))
+                install(BrukersGeografiskeTilknyttningPip(pdl))
+                install(BrukersRegionEnhetPip(norg))
+                install(VeiledersEnheterPip(ansattService))
+                install(VeiledersRegionEnheterPip(norg))
+                install(VeiledersRollerPip(ansattService))
+            }
+        val enforcementPoint =
+            PolicyEnforcementPointImpl(
+                bias = Decision.Type.DENY,
+                policyDecisionPoint = decisionPoint,
+            )
 
         return AccessControlKabac(enforcementPoint) {
             TjenestekallLogg.info("KABAC exception: $it", fields = mapOf("error" to it))

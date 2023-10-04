@@ -42,24 +42,26 @@ class KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> :
             appEnv = requireNotNull(configuration.appEnv)
             topology {
                 val stream = stream<String, String>(requireNotNull(configuration.sourceTopic))
-                val deserializedStream: KStream<String, IN_TYPE> = stream.processValues({
-                    SerDesHandler<String, String, IN_TYPE>(
-                        requireNotNull(configuration.deserializer),
-                    ) { record, exception ->
-                        requireNotNull(configuration.deserializationExceptionHandler).handle(
-                            record.key(),
-                            record.value(),
-                            exception,
-                        )
-                    }
-                })
+                val deserializedStream: KStream<String, IN_TYPE> =
+                    stream.processValues({
+                        SerDesHandler<String, String, IN_TYPE>(
+                            requireNotNull(configuration.deserializer),
+                        ) { record, exception ->
+                            requireNotNull(configuration.deserializationExceptionHandler).handle(
+                                record.key(),
+                                record.value(),
+                                exception,
+                            )
+                        }
+                    })
                 val transformedStream = deserializedStream.let(requireNotNull(configuration.configure))
-                val serializedStream: KStream<String, String> = transformedStream.processValues({
-                    SerDesHandler<String, OUT_TYPE, String>(
-                        requireNotNull(configuration.serializer),
-                        requireNotNull(configuration.onSerializationException),
-                    )
-                })
+                val serializedStream: KStream<String, String> =
+                    transformedStream.processValues({
+                        SerDesHandler<String, OUT_TYPE, String>(
+                            requireNotNull(configuration.serializer),
+                            requireNotNull(configuration.onSerializationException),
+                        )
+                    })
 
                 if (configuration.targetTopic != null) {
                     serializedStream.to(configuration.targetTopic)

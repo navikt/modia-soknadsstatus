@@ -6,7 +6,9 @@ import no.nav.personoversikt.common.utils.EnvUtils.getRequiredConfig
 import org.flywaydb.core.Flyway
 import javax.sql.DataSource
 
-class DatasourceConfiguration(datasourceEnv: DatasourceEnv) {
+class DatasourceConfiguration(
+    datasourceEnv: DatasourceEnv,
+) {
     val datasource: DataSource by lazy {
         val config = HikariConfig()
 
@@ -30,7 +32,10 @@ class DatasourceConfiguration(datasourceEnv: DatasourceEnv) {
     }
 }
 
-class DatasourceEnv(appName: String, appDB: String = getRequiredConfig("DB_NAME")) {
+class DatasourceEnv(
+    appName: String,
+    appDB: String = getRequiredConfig("DB_NAME"),
+) {
     private val appDbString = "NAIS_DATABASE_${convertVariableToUpperCaseAndUnderscore(appName)}_${
         convertVariableToUpperCaseAndUnderscore(appDB.uppercase())
     }"
@@ -40,12 +45,11 @@ class DatasourceEnv(appName: String, appDB: String = getRequiredConfig("DB_NAME"
     val jdbcUrl = "jdbc:postgresql://$host:$port/$appDB"
     val userName = getEnvVariable("USERNAME")
     val password = getEnvVariable("PASSWORD")
+
     private fun getEnvVariable(suffix: String): String {
         val completeString = "${appDbString}_$suffix"
         return getRequiredConfig(completeString)
     }
 
-    private fun convertVariableToUpperCaseAndUnderscore(variable: String): String {
-        return variable.replace("-", "_").uppercase()
-    }
+    private fun convertVariableToUpperCaseAndUnderscore(variable: String): String = variable.replace("-", "_").uppercase()
 }

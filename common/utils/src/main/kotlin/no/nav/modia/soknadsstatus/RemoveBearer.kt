@@ -1,5 +1,3 @@
 package no.nav.modia.soknadsstatus
 
-fun String.removeBearerFromToken(): String {
-    return this.substringAfter("Bearer ")
-}
+fun String.removeBearerFromToken(): String = this.substringAfter("Bearer ")

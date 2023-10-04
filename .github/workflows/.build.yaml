@@ -21,7 +21,7 @@ jobs:
       - name: Setup ktlint
         uses: nbadal/action-ktlint-setup@v1
         with:
-          ktlint_version: '0.47.1'
+          ktlint_version: '1.0.0'
       - name: Ktlint
         run: bash ./linting.sh
       - name: Gradle test and build

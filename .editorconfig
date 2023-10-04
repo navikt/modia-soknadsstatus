@@ -1,2 +1,9 @@
 [*.kt]
-ktlint_disabled_rules=no-wildcard-imports,trailing-comma-on-call-site,trailing-comma-on-declaration-site
+ktlint_standard_no-wildcard-imports=disabled
+ktlint_standard_filename=disabled
+ktlint_standard_property-naming=disabled
+ij_kotlin_allow_trailing_comma=true
+
+
+[*.kts]
+ktlint_standard_property-naming=disabled

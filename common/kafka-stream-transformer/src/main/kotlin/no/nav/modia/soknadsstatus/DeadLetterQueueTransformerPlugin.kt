@@ -17,7 +17,11 @@ class DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE> {
 }
 
 class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
-    Plugin<Pipeline<*, ApplicationCall>, DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>, DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE>> {
+    Plugin<
+        Pipeline<*, ApplicationCall>,
+        DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>,
+        DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE>,
+        > {
     private lateinit var producer: KafkaSoknadsstatusProducer
     private var filter: ((key: String, message: INTERNAL_TYPE) -> Boolean)? = null
     private lateinit var transformer: ((key: String, message: INTERNAL_TYPE) -> OUT_TYPE)
@@ -36,7 +40,10 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
             }
         }
 
-    private fun transformAndSendMessage(key: String, value: INTERNAL_TYPE): Result<Unit> {
+    private fun transformAndSendMessage(
+        key: String,
+        value: INTERNAL_TYPE,
+    ): Result<Unit> {
         val transformedValue = transformer.invoke(key, value)
         val serializedValue = serializer(key, transformedValue)
         return producer.sendMessage(key, serializedValue)
@@ -59,27 +66,30 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
         filter = configuration.filter
         serializer = requireNotNull(configuration.serializer)
 
-        producer = KafkaSoknadsstatusProducer(
-            appEnv,
-        )
+        producer =
+            KafkaSoknadsstatusProducer(
+                appEnv,
+            )
 
         DeadLetterQueueConsumerPlugin().install(pipeline) {
             deadLetterQueueConsumer =
                 DeadLetterQueueConsumer(
                     topic = requireNotNull(appEnv.deadLetterQueueTopic),
-                    kafkaConsumer = KafkaUtils.createConsumer(
-                        appEnv,
-                        consumerGroup = "${appEnv.appName}-dlq",
-                    ),
+                    kafkaConsumer =
+                        KafkaUtils.createConsumer(
+                            appEnv,
+                            consumerGroup = "${appEnv.appName}-dlq",
+                        ),
                     block = block,
                     pollDurationMs = appEnv.deadLetterQueueConsumerPollIntervalMs,
                     exceptionRestartDelayMs = appEnv.deadLetterQueueExceptionRestartDelayMs,
-                    deadLetterMessageSkipService = DeadLetterMessageSkipServiceImpl(
-                        DeadLetterMessageRepository(
-                            requireNotNull(appEnv.deadLetterQueueSkipTableName),
-                            requireNotNull(configuration.skipTableDataSource),
+                    deadLetterMessageSkipService =
+                        DeadLetterMessageSkipServiceImpl(
+                            DeadLetterMessageRepository(
+                                requireNotNull(appEnv.deadLetterQueueSkipTableName),
+                                requireNotNull(configuration.skipTableDataSource),
+                            ),
                         ),
-                    ),
                     deadLetterQueueMetricsGauge = requireNotNull(configuration.deadLetterQueueMetricsGauge),
                 )
         }

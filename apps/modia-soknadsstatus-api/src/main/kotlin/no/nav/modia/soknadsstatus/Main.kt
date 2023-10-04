@@ -13,10 +13,11 @@ fun runApp(port: Int = 8080) {
     val services = Services.factory(env, configuration)
     env.datasourceConfiguration.runFlyway()
 
-    KtorServer.create(
-        factory = CIO,
-        port = port,
-    ) {
-        soknadsstatusModule(env, configuration, services)
-    }.start(wait = true)
+    KtorServer
+        .create(
+            factory = CIO,
+            port = port,
+        ) {
+            soknadsstatusModule(env, configuration, services)
+        }.start(wait = true)
 }

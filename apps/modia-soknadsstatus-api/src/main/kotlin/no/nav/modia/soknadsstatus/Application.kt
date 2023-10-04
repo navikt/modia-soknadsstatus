@@ -26,11 +26,12 @@ fun Application.soknadsstatusModule(
     configuration: Configuration = Configuration.factory(env),
     services: Services = Services.factory(env, configuration),
 ) {
-    val security = Security(
-        listOfNotNull(
-            configuration.authProviderConfig,
-        ),
-    )
+    val security =
+        Security(
+            listOfNotNull(
+                configuration.authProviderConfig,
+            ),
+        )
 
     install(CORS) {
         anyHost() // TODO kanskje kun whiteliste personoversikt domenene i første omgang?
@@ -59,37 +60,41 @@ fun Application.soknadsstatusModule(
     }
 
     install(HendelseConsumerPlugin()) {
-        hendelseConsumer = HendelseConsumer(
-            sendToDeadLetterQueueExceptionHandler = SendToDeadLetterQueueExceptionHandler(
-                requireNotNull(env.kafkaApp.deadLetterQueueTopic),
-                services.dlqProducer,
-            ),
-            topic = requireNotNull(env.kafkaApp.sourceTopic),
-            kafkaConsumer = KafkaUtils.createConsumer(
-                env.kafkaApp,
-                consumerGroup = "${env.kafkaApp.appName}-hendelse-consumer",
-                autoCommit = true,
-                pollRecords = 10,
-            ),
-            pollDurationMs = env.hendelseConsumerEnv.pollDurationMs,
-            exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
-        ) { _, _, value ->
-            runCatching {
-                val decodedValue =
-                    Encoding.decode(InnkommendeHendelse.serializer(), value)
-                services.hendelseService.onNewHendelse(decodedValue)
+        hendelseConsumer =
+            HendelseConsumer(
+                sendToDeadLetterQueueExceptionHandler =
+                    SendToDeadLetterQueueExceptionHandler(
+                        requireNotNull(env.kafkaApp.deadLetterQueueTopic),
+                        services.dlqProducer,
+                    ),
+                topic = requireNotNull(env.kafkaApp.sourceTopic),
+                kafkaConsumer =
+                    KafkaUtils.createConsumer(
+                        env.kafkaApp,
+                        consumerGroup = "${env.kafkaApp.appName}-hendelse-consumer",
+                        autoCommit = true,
+                        pollRecords = 10,
+                    ),
+                pollDurationMs = env.hendelseConsumerEnv.pollDurationMs,
+                exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
+            ) { _, _, value ->
+                runCatching {
+                    val decodedValue =
+                        Encoding.decode(InnkommendeHendelse.serializer(), value)
+                    services.hendelseService.onNewHendelse(decodedValue)
+                }
             }
-        }
     }
 
     install(DeadLetterQueueConsumerPlugin()) {
         deadLetterQueueConsumer =
             DeadLetterQueueConsumer(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueTopic),
-                kafkaConsumer = KafkaUtils.createConsumer(
-                    env.kafkaApp,
-                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
-                ),
+                kafkaConsumer =
+                    KafkaUtils.createConsumer(
+                        env.kafkaApp,
+                        consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
+                    ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
                 deadLetterMessageSkipService = services.dlSkipService,
@@ -179,14 +184,12 @@ fun Application.soknadsstatusModule(
     }
 }
 
-private fun ApplicationCall.getIdent(): String {
-    return this.parameters["ident"] ?: throw HttpStatusException(
+private fun ApplicationCall.getIdent(): String =
+    this.parameters["ident"] ?: throw HttpStatusException(
         HttpStatusCode.BadRequest,
         "ident missing in request",
     )
-}
 
-private fun ApplicationCall.getUserToken(): String {
-    return this.principal<Security.SubjectPrincipal>()?.token?.removeBearerFromToken()
+private fun ApplicationCall.getUserToken(): String =
+    this.principal<Security.SubjectPrincipal>()?.token?.removeBearerFromToken()
         ?: throw IllegalStateException("Ingen gyldig token funnet")
-}

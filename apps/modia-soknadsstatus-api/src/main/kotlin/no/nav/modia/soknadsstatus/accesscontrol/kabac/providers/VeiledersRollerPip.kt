@@ -7,7 +7,9 @@ import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.utils.Key
 
-class VeiledersRollerPip(private val ansattService: AnsattService) : Kabac.PolicyInformationPoint<RolleListe> {
+class VeiledersRollerPip(
+    private val ansattService: AnsattService,
+) : Kabac.PolicyInformationPoint<RolleListe> {
     override val key: Key<RolleListe> = Companion.key
 
     companion object {

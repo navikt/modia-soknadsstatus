@@ -18,15 +18,17 @@ class PdlOppslagServiceImpl(
         fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(expiresAfterWrite = 1.minutes)
     }
 
-    override suspend fun hentFnr(userToken: String, aktorId: String): String? {
-        return fnrCache.get(aktorId) {
+    override suspend fun hentFnr(
+        userToken: String,
+        aktorId: String,
+    ): String? =
+        fnrCache.get(aktorId) {
             pdlClient.hentAktivIdent(
                 userToken,
                 aktorId,
                 IdentGruppe.FOLKEREGISTERIDENT,
             )
         }
-    }
 
     override suspend fun hentFnrMedSystemToken(aktorId: String): String? =
         fnrCache.get(aktorId) {
@@ -36,15 +38,23 @@ class PdlOppslagServiceImpl(
             )
         }
 
-    override suspend fun hentAktorId(userToken: String, fnr: String): String? =
-        aktorIdCache.get(fnr) { pdlClient.hentAktivIdent(userToken, fnr, IdentGruppe.AKTORID) }
+    override suspend fun hentAktorId(
+        userToken: String,
+        fnr: String,
+    ): String? = aktorIdCache.get(fnr) { pdlClient.hentAktivIdent(userToken, fnr, IdentGruppe.AKTORID) }
 
-    override suspend fun hentGeografiskTilknytning(userToken: String, fnr: String): String? =
-        geografiskTilknytningCache.get(fnr) { pdlClient.hentGeografiskTilknytning(userToken, fnr) }
+    override suspend fun hentGeografiskTilknytning(
+        userToken: String,
+        fnr: String,
+    ): String? = geografiskTilknytningCache.get(fnr) { pdlClient.hentGeografiskTilknytning(userToken, fnr) }
 
-    override suspend fun hentAdresseBeskyttelse(userToken: String, fnr: String): List<Adressebeskyttelse> =
-        adresseBeskyttelseCache.get(fnr) { pdlClient.hentAdresseBeskyttelse(userToken, fnr) }
+    override suspend fun hentAdresseBeskyttelse(
+        userToken: String,
+        fnr: String,
+    ): List<Adressebeskyttelse> = adresseBeskyttelseCache.get(fnr) { pdlClient.hentAdresseBeskyttelse(userToken, fnr) }
 
-    override suspend fun hentAktiveIdenter(userToken: String, fnr: String): List<String> =
-        identerCache.get(fnr) { pdlClient.hentAktiveIdenter(userToken, fnr) }
+    override suspend fun hentAktiveIdenter(
+        userToken: String,
+        fnr: String,
+    ): List<String> = identerCache.get(fnr) { pdlClient.hentAktiveIdenter(userToken, fnr) }
 }

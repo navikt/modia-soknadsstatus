@@ -7,5 +7,6 @@ data class AnsattRolle(
     val gruppeId: AzureObjectId,
 ) {
     override fun hashCode() = gruppeId.hashCode()
+
     override fun equals(other: Any?) = other?.let { gruppeId == (it as AnsattRolle).gruppeId } ?: false
 }

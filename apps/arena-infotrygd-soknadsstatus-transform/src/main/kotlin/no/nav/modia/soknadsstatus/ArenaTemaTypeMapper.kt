@@ -35,11 +35,12 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
         loadResult(skipFirstLine = true) {
             val (arkivTemaBehandlingstype, arkivTema, behandlingsTema, behandlingsType) = it.split(",", limit = 4)
 
-            temaTypeMap[arkivTemaBehandlingstype] = TemaType(
-                arkivTema = arkivTema,
-                behandlingsTema = behandlingsTema,
-                behandlingsType = behandlingsType
-            )
+            temaTypeMap[arkivTemaBehandlingstype] =
+                TemaType(
+                    arkivTema = arkivTema,
+                    behandlingsTema = behandlingsTema,
+                    behandlingsType = behandlingsType,
+                )
         }
         this.temaTypeMap = temaTypeMap
     }
@@ -80,5 +81,5 @@ private class ArenaMapper : CSVLoader(FILE_NAME) {
 private data class TemaType(
     val arkivTema: String,
     val behandlingsTema: String,
-    val behandlingsType: String
+    val behandlingsType: String,
 )
