@@ -250,7 +250,7 @@ object XMLConverter {
                     behandlingStatus.behandlingstype.value,
                 )
             }, getInfoTrygdValue = {
-                InfotrygdTemaTypeMapper.getMappedBehandlingsType(behandlingStatus.sakstema.value)
+                InfotrygdTemaTypeMapper.getMappedArkivTema(behandlingStatus.sakstema.value)
             })
         return Sakstema(
             kodeRef = behandlingStatus.sakstema.kodeRef,
