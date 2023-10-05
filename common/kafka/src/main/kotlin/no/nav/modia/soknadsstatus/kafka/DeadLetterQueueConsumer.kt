@@ -27,6 +27,10 @@ class DeadLetterQueueConsumer(
 
                 val result = block(record.topic(), record.key(), record.value())
                 if (result.isFailure) {
+                    TjenestekallLogg.error(
+                        "Klarte ikke å håndtere DL",
+                        fields = mapOf("key" to record.key(), "value" to record.value())
+                    )
                     throw result.exceptionOrNull() ?: Exception().fillInStackTrace()
                 } else {
                     deadLetterQueueMetricsGauge.decrement()
