@@ -39,7 +39,7 @@ sourceSets {
 
 val downloadPDLSchema by tasks.creating(GraphQLDownloadSDLTask::class) {
     endpoint.set("https://navikt.github.io/pdl/pdl-api-sdl.graphqls")
-    outputFile.set(file("${project.projectDir}/src/main/resources/pdl/schema.graphql"))
+    outputFile.set(file("${project.projectDir}/src/main/resources/pdl/schema.graphqls"))
 }
 
 val generatePDLClient by tasks.creating(GraphQLGenerateClientTask::class) {
