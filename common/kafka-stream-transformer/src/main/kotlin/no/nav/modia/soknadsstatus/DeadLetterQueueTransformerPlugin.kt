@@ -13,7 +13,6 @@ class DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE> {
     var transformer: ((key: String, message: INTERNAL_TYPE) -> OUT_TYPE)? = null
     var serializer: ((key: String?, value: OUT_TYPE) -> String)? = null
     var skipTableDataSource: DataSource? = null
-    var deadLetterQueueMetricsGauge: DeadLetterQueueMetricsGauge? = null
 }
 
 class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
@@ -90,7 +89,6 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
                                 requireNotNull(configuration.skipTableDataSource),
                             ),
                         ),
-                    deadLetterQueueMetricsGauge = requireNotNull(configuration.deadLetterQueueMetricsGauge),
                 )
         }
 
