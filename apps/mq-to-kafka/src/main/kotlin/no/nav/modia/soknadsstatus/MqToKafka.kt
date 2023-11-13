@@ -40,31 +40,23 @@ fun Application.mqToKafkaModule() {
                 .subscribe(mqConfig.mqQueue) { message ->
                     when (message) {
                         is TextMessage -> {
-                            kafkaProducer.send(
-                                ProducerRecord(
-                                    requireNotNull(config.targetTopic),
-                                    UUID.randomUUID().toString(),
-                                    message.text,
-                                ),
-                            ) { _, e ->
-                                if (e != null) {
-                                    TjenestekallLogg.error(
-                                        header = "Klarte ikke å sende melding på kafka",
-                                        fields = mapOf("message" to message),
-                                        throwable = e,
-                                    )
-                                } else {
-                                    try {
-                                        message.acknowledge()
-                                    } catch (e: Exception) {
-                                        TjenestekallLogg.error(
-                                            header = "Klarte ikke å acknowlegde MQ melding",
-                                            fields = mapOf("message" to message),
-                                            throwable = e,
-                                        )
-                                        throw e
-                                    }
-                                }
+                            try {
+                                kafkaProducer
+                                    .send(
+                                        ProducerRecord(
+                                            requireNotNull(config.targetTopic),
+                                            UUID.randomUUID().toString(),
+                                            message.text,
+                                        ),
+                                    ).get()
+                                message.acknowledge()
+                            } catch (e: Exception) {
+                                TjenestekallLogg.error(
+                                    header = "Klarte ikke å sende melding på kafka",
+                                    fields = mapOf("message" to message),
+                                    throwable = e,
+                                )
+                                throw e
                             }
                         }
 
