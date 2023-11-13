@@ -11,6 +11,7 @@ import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.kafka.KafkaUtils
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.util.*
 import javax.jms.TextMessage
@@ -45,14 +46,24 @@ fun Application.mqToKafkaModule() {
                                     UUID.randomUUID().toString(),
                                     message.text,
                                 ),
-                            )
+                            ) { _, e ->
+                                if (e != null) {
+                                    TjenestekallLogg.error(
+                                        header = "Klarte ikke å sende melding på kafka",
+                                        fields = mapOf("message" to message),
+                                        throwable = e,
+                                    )
+                                } else {
+                                    message.acknowledge()
+                                }
+                            }
                         }
 
                         else -> {
                             log.error("Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
+                            message.acknowledge()
                         }
                     }
-                    message.acknowledge()
                 }
         }
 
