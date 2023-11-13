@@ -54,7 +54,16 @@ fun Application.mqToKafkaModule() {
                                         throwable = e,
                                     )
                                 } else {
-                                    message.acknowledge()
+                                    try {
+                                        message.acknowledge()
+                                    } catch (e: Exception) {
+                                        TjenestekallLogg.error(
+                                            header = "Klarte ikke å acknowlegde MQ melding",
+                                            fields = mapOf("message" to message),
+                                            throwable = e,
+                                        )
+                                        throw e
+                                    }
                                 }
                             }
                         }
