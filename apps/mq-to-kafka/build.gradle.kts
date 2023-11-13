@@ -21,6 +21,7 @@ dependencies {
     implementation("org.apache.kafka:kafka-clients:$kafka_version")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
+    implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("javax.jms:javax.jms-api:$jms_api_version")
     implementation(project(":common:kafka"))
     implementation(project(":common:jms"))
