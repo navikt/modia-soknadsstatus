@@ -8,15 +8,11 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.runBlocking
-import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
-import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
-import no.nav.modia.soknadsstatus.infratructure.naudit.AuditResources
 import no.nav.modia.soknadsstatus.kafka.*
-import no.nav.modiapersonoversikt.infrastructure.naudit.AuditIdentifier
 import no.nav.personoversikt.common.ktor.utils.Security
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.slf4j.event.Level
@@ -116,80 +112,5 @@ fun Application.soknadsstatusModule(
                 }
             }
     }
-
-    routing {
-        authenticate(*security.authproviders) {
-            route("api") {
-                route("soknadsstatus") {
-                    route("behandling") {
-                        get("{ident}") {
-                            val kabac = services.accessControl.buildKabac(call.authentication)
-                            val ident = call.getIdent()
-                            call.respondWithResult(
-                                kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
-                                    Audit.describe(
-                                        call.authentication,
-                                        Audit.Action.READ,
-                                        AuditResources.Person.SakOgBehandling.Les,
-                                        AuditIdentifier.FNR to ident,
-                                    ),
-                                ) {
-                                    runCatching {
-                                        runBlocking {
-                                            if (call.request.queryParameters["inkluderHendelser"].toBoolean()) {
-                                                services.behandlingService.getAllForIdentWithHendelser(
-                                                    userToken = call.getUserToken(),
-                                                    ident,
-                                                )
-                                            } else {
-                                                services.behandlingService.getAllForIdent(
-                                                    userToken = call.getUserToken(),
-                                                    ident,
-                                                )
-                                            }
-                                        }
-                                    }
-                                },
-                            )
-                        }
-                    }
-                    route("hendelse") {
-                        get("{ident}") {
-                            val kabac = services.accessControl.buildKabac(call.authentication)
-                            val ident = call.getIdent()
-                            call.respondWithResult(
-                                kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
-                                    Audit.describe(
-                                        call.authentication,
-                                        Audit.Action.READ,
-                                        AuditResources.Person.SakOgBehandling.Les,
-                                        AuditIdentifier.FNR to ident,
-                                    ),
-                                ) {
-                                    runCatching {
-                                        runBlocking {
-                                            services.hendelseService.getAllForIdent(
-                                                userToken = call.getUserToken(),
-                                                ident,
-                                            )
-                                        }
-                                    }
-                                },
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    installRouting(security, services)
 }
-
-private fun ApplicationCall.getIdent(): String =
-    this.parameters["ident"] ?: throw HttpStatusException(
-        HttpStatusCode.BadRequest,
-        "ident missing in request",
-    )
-
-private fun ApplicationCall.getUserToken(): String =
-    this.principal<Security.SubjectPrincipal>()?.token?.removeBearerFromToken()
-        ?: throw IllegalStateException("Ingen gyldig token funnet")
