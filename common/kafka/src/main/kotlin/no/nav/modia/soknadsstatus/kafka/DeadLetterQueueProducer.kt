@@ -12,7 +12,6 @@ interface DeadLetterQueueProducer {
 
 class DeadLetterQueueProducerImpl(
     private val appEnv: AppEnv,
-    private val deadLetterQueueMetricsGauge: DeadLetterQueueMetricsGauge,
 ) : DeadLetterQueueProducer {
     private val producer = KafkaUtils.createProducer(appEnv)
 
@@ -29,7 +28,6 @@ class DeadLetterQueueProducerImpl(
                 )
             producer.send(producerRecord)
             TjenestekallLogg.info("Produced dead letter $key: $message", mapOf("key" to key, "message" to message))
-            deadLetterQueueMetricsGauge.increment()
             Result.success(Unit)
         } catch (e: Exception) {
             TjenestekallLogg.error(

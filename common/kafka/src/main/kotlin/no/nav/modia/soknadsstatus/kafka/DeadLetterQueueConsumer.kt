@@ -9,7 +9,6 @@ class DeadLetterQueueConsumer(
     topic: String,
     private val deadLetterMessageSkipService: DeadLetterMessageSkipService,
     private val kafkaConsumer: Consumer<String, String>,
-    private val deadLetterQueueMetricsGauge: DeadLetterQueueMetricsGauge,
     pollDurationMs: Double,
     exceptionRestartDelayMs: Double,
     private val block: suspend (topic: String, key: String, value: String) -> Result<Unit>,
@@ -32,8 +31,6 @@ class DeadLetterQueueConsumer(
                         fields = mapOf("key" to record.key(), "value" to record.value())
                     )
                     throw result.exceptionOrNull() ?: Exception().fillInStackTrace()
-                } else {
-                    deadLetterQueueMetricsGauge.decrement()
                 }
             }
             logger.info("Committing offset ${kafkaConsumer.metrics()}")
@@ -47,7 +44,6 @@ class DeadLetterQueueConsumer(
                 "Skipping a dead letter with no key: ${record.value()}",
                 fields = mapOf("record" to record.value()),
             )
-            deadLetterQueueMetricsGauge.decrement()
             return true
         }
         if (deadLetterMessageSkipService.shouldSkip(record.key())) {
@@ -55,7 +51,6 @@ class DeadLetterQueueConsumer(
                 "Skipping a dead letter due to key found in skip table: ${record.key()}",
                 fields = mapOf("key" to record.key(), "value" to record.value()),
             )
-            deadLetterQueueMetricsGauge.decrement()
             return true
         }
         return false

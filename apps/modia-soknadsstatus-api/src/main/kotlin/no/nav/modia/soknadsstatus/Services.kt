@@ -20,7 +20,6 @@ interface Services {
     val accessControl: AccessControlConfig
     val dlqProducer: DeadLetterQueueProducer
     val dlSkipService: DeadLetterMessageSkipService
-    val dlqMetricsGauge: DeadLetterQueueMetricsGauge
     val behandlingEierService: BehandlingEierService
     val behandlingService: BehandlingService
     val hendelseService: HendelseService
@@ -70,10 +69,8 @@ interface Services {
                     norg = norgApi,
                     ansattService = ansattService,
                 )
-            val dlqMetricsGauge =
-                DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName))
             val dlqProducer =
-                DeadLetterQueueProducerImpl(env.kafkaApp, dlqMetricsGauge)
+                DeadLetterQueueProducerImpl(env.kafkaApp)
             val dlSkipService =
                 DeadLetterMessageSkipServiceImpl(
                     DeadLetterMessageRepository(
@@ -101,7 +98,6 @@ interface Services {
                 override val accessControl = accessControl
                 override val dlSkipService = dlSkipService
                 override val dlqProducer = dlqProducer
-                override val dlqMetricsGauge = dlqMetricsGauge
                 override val behandlingEierService = behandlingEierService
                 override val behandlingService = behandlingService
                 override val hendelseService = hendelseService
