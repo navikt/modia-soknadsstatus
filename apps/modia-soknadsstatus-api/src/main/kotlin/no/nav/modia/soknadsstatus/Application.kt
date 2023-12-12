@@ -94,7 +94,6 @@ fun Application.soknadsstatusModule(
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
                 deadLetterMessageSkipService = services.dlSkipService,
-                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl(requireNotNull(env.kafkaApp.deadLetterQueueMetricsGaugeName)),
             ) { _, key, value ->
                 runCatching {
                     try {

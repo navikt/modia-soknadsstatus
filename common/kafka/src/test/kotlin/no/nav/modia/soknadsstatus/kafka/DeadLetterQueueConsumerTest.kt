@@ -33,7 +33,6 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
                 kafkaConsumer = consumer,
                 pollDurationMs = 100.0,
                 exceptionRestartDelayMs = 1000.0,
-                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge"),
             ) { _, key, value ->
                 consumer.acknowledgeMessage(Pair(key, value))
                 Result.success(Unit)
@@ -66,7 +65,6 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
                 kafkaConsumer = consumer,
                 pollDurationMs = 100.0,
                 exceptionRestartDelayMs = 1000.0,
-                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge"),
             ) { _, key, value ->
                 consumer.acknowledgeMessage(Pair(key, value))
                 Result.success(Unit)
@@ -105,7 +103,6 @@ class DeadLetterQueueConsumerTest : TestUtils.WithKafka<String, String>(StringSe
                 kafkaConsumer = consumer,
                 pollDurationMs = 100.0,
                 exceptionRestartDelayMs = 1000.0,
-                deadLetterQueueMetricsGauge = DeadLetterQueueMetricsGaugeImpl("TestGauge"),
             ) { _, key, value ->
                 consumer.acknowledgeMessage(Pair(key, value))
                 Result.success(Unit)
