@@ -2,13 +2,16 @@ name: ..build.yaml
 
 on: [workflow_call]
 
-env:
-  image: ghcr.io/${{ github.repository }}/${{ github.workflow }}:${{ github.sha }}
-
 jobs:
-  build-and-publish:
+  build:
     name: Build & publish
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,50 +31,45 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew :apps:${{ github.workflow }}:build
-      - name: Publish Dev Image
-        if: github.ref == 'refs/heads/dev'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker build --tag ${{ env.image }} -f docker/Dockerfile apps/${{ github.workflow }}
-          docker push ${{ env.image }}
-      - name: Publish Prod image
-        if: github.ref == 'refs/heads/master'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker build --tag ${{ env.image }} -f docker/Dockerfile apps/${{ github.workflow }}
-          docker push ${{ env.image }}
+      - name: Publish Docker image
+        if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: personoversikt
+          image_suffix: ${{ github.workflow }}
+          tag: ${{ github.sha }}
+          docker_context: apps/${{ github.workflow }}
+          dockerfile: 'docker/Dockerfile'
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
   deploy-qa:
     name: Deploy to preprod
-    needs: build-and-publish
+    needs: build
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-gcp
           RESOURCE: apps/${{github.workflow}}/.nais/dev.yaml
-          VAR: version=${{ github.sha }}
-          IMAGE: ${{ env.image }}
+          VAR: version=${{ github.sha }},image=${{ needs.build.outputs.image }}
 
   deploy-prod:
     name: Deploy to prod
-    needs: build-and-publish
+    needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: prod-gcp
           RESOURCE: apps/${{github.workflow}}/.nais/prod.yaml
-          VAR: version=${{ github.sha }}
-          IMAGE: ${{ env.image }}
+          VAR: version=${{ github.sha }},image=${{ needs.build.outputs.image }}
