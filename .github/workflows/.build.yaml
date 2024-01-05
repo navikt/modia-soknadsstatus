@@ -49,11 +49,13 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-gcp
           RESOURCE: apps/${{github.workflow}}/.nais/dev.yaml
@@ -64,11 +66,13 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: prod-gcp
           RESOURCE: apps/${{github.workflow}}/.nais/prod.yaml
