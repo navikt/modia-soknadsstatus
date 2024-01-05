@@ -179,6 +179,7 @@ Arkivtema,Arkivtema,HJ;AR;SU,HJE
 Arkivtema,Arkivtema,HJ;AR;TH,HJE
 Arkivtema,Arkivtema,HJ;AU,HJE
 Arkivtema,Arkivtema,HJ;AU;AR,HJE
+Arkivtema,Arkivtema,HJ;AU;MB,HJE
 Arkivtema,Arkivtema,HJ;AU;UT,HJE
 Arkivtema,Arkivtema,HJ;BD,HJE
 Arkivtema,Arkivtema,HJ;DA,HJE
@@ -1065,6 +1066,7 @@ Arkivtema,Behandlingstema,HJ;AR;SU,ab0240
 Arkivtema,Behandlingstema,HJ;AR;TH,ab0240
 Arkivtema,Behandlingstema,HJ;AU,ab0179
 Arkivtema,Behandlingstema,HJ;AU;AR,ab0179
+Arkivtema,Behandlingstema,HJ;AU;MB,ab0179
 Arkivtema,Behandlingstema,HJ;AU;UT,ab0179
 Arkivtema,Behandlingstema,HJ;BD,ab0179
 Arkivtema,Behandlingstema,HJ;DA,ab0241
