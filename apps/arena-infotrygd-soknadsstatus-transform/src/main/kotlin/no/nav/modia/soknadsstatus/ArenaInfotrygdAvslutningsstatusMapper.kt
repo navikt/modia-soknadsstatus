@@ -11,10 +11,7 @@ object ArenaInfotrygdAvslutningsstatusMapper : AvslutningsStatusMapper {
     override fun getAvslutningsstatus(
         produsentSystem: String,
         status: String,
-    ): SoknadsstatusDomain.Status {
-        if (status.lowercase() == "bt" && produsentSystem == INFOTRYGD) return SoknadsstatusDomain.Status.AVBRUTT
-        return mapper.getMappedStatus(produsentSystem, status)
-    }
+    ): SoknadsstatusDomain.Status = mapper.getMappedStatus(produsentSystem, status)
 }
 
 private class AvslutningsMapper : CSVLoader(FILE_NAME) {
