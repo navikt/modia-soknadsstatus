@@ -12,7 +12,7 @@ object ArenaInfotrygdAvslutningsstatusMapper : AvslutningsStatusMapper {
         produsentSystem: String,
         status: String,
     ): SoknadsstatusDomain.Status {
-        if (status == "BT") return SoknadsstatusDomain.Status.AVBRUTT
+        if (status.lowercase() == "bt" && produsentSystem == INFOTRYGD) return SoknadsstatusDomain.Status.AVBRUTT
         return mapper.getMappedStatus(produsentSystem, status)
     }
 }
