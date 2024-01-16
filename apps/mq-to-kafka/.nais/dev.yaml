@@ -8,7 +8,6 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
-  team: personoversikt
   replicas:
     min: 1
     max: 1
@@ -42,9 +41,7 @@ spec:
       external:
         - host: "mqls03.preprod.local"
           ports:
-            - name: MQ
-              port: 1413
-              protocol: TCP
+            - port: 1413
   filesFrom:
     - secret: mq-tls-keystore
       mountPath: /var/run/keystore

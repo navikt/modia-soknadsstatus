@@ -8,7 +8,6 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
-  team: personoversikt
   replicas:
     min: 1
     max: 2
@@ -42,9 +41,7 @@ spec:
       external:
         - host: "mpls03.adeo.no"
           ports:
-            - name: MQ
-              port: 1414
-              protocol: TCP
+            - port: 1414
   filesFrom:
     - secret: mq-tls-keystore
       mountPath: /var/run/keystore
