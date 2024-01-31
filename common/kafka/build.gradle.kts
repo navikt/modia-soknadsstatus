@@ -7,6 +7,7 @@ val junit_version: String by project
 val mockk_version: String by project
 val test_containers_version: String by project
 val postgres_version: String by project
+val slack_client_version: String by project
 
 plugins {
     application
@@ -33,6 +34,10 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockk_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
     testImplementation("org.testcontainers:postgresql:$test_containers_version")
+
+    implementation("com.slack.api:slack-api-client:$slack_client_version")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:$slack_client_version")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:$slack_client_version")
 }
 
 group = "no.nav.modia.soknadsstatus"

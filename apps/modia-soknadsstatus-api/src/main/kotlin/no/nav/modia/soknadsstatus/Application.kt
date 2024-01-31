@@ -62,6 +62,7 @@ fun Application.soknadsstatusModule(
                     SendToDeadLetterQueueExceptionHandler(
                         requireNotNull(env.kafkaApp.deadLetterQueueTopic),
                         services.dlqProducer,
+                        configuration.slackClient,
                     ),
                 topic = requireNotNull(env.kafkaApp.sourceTopic),
                 kafkaConsumer =

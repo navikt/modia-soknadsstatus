@@ -28,7 +28,7 @@ class DeadLetterQueueConsumer(
                 if (result.isFailure) {
                     TjenestekallLogg.error(
                         "Klarte ikke å håndtere DL",
-                        fields = mapOf("key" to record.key(), "value" to record.value())
+                        fields = mapOf("key" to record.key(), "value" to record.value()),
                     )
                     throw result.exceptionOrNull() ?: Exception().fillInStackTrace()
                 }
