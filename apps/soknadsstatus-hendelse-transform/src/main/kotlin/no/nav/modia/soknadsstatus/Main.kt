@@ -15,6 +15,7 @@ fun main() {
 fun runApp(port: Int = 8080) {
     val config = AppEnv()
     val deadLetterProducer = DeadLetterQueueProducerImpl(config)
+    val slackClient = config.slackWebHookUrl?.let { SlackClient(it) }
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv(appName = config.appName))
     datasourceConfiguration.runFlyway()
 
@@ -30,6 +31,7 @@ fun runApp(port: Int = 8080) {
                         SendToDeadLetterQueueExceptionHandler(
                             topic = requireNotNull(config.deadLetterQueueTopic),
                             dlqProducer = deadLetterProducer,
+                            slackClient,
                         )
                     sourceTopic = requireNotNull(config.sourceTopic)
                     targetTopic = requireNotNull(config.targetTopic)

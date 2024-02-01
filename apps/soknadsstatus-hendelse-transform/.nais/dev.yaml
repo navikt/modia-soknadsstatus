@@ -6,6 +6,8 @@ metadata:
   labels:
     team: personoversikt
 spec:
+  envFrom:
+    - secret: modia-soknadstatus-slackhook
   image: {{image}}
   port: 8080
   team: personoversikt

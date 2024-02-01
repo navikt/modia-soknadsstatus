@@ -30,4 +30,5 @@ data class AppEnv(
             ?.toDouble() ?: 10.minutes.toDouble(DurationUnit.MILLISECONDS),
     val deadLetterQueueSkipTableName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME"),
     val deadLetterQueueMetricsGaugeName: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME"),
+    val slackWebHookUrl: String? = EnvUtils.getConfig("SLACK_WEBHOOK_URL"),
 )
