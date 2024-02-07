@@ -9,6 +9,7 @@ import no.nav.modia.soknadsstatus.jms.Jms
 import no.nav.modia.soknadsstatus.jms.JmsConsumer
 import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.kafka.KafkaUtils
+import no.nav.modia.soknadsstatus.kafka.SlackClient
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
 import no.nav.personoversikt.common.logging.TjenestekallLogg
@@ -19,6 +20,7 @@ import javax.jms.TextMessage
 fun Application.mqToKafkaModule() {
     val config = AppEnv()
     val mqConfig = MqConfig()
+    val slackClient = config.slackWebHookUrl?.let { SlackClient(it) }
 
     Jms
         .SSLConfig(
@@ -36,36 +38,45 @@ fun Application.mqToKafkaModule() {
 
     val transferJob =
         GlobalScope.launch(Dispatchers.Unbounded) {
-            jmsConsumer
-                .subscribe(mqConfig.mqQueue) { message ->
-                    when (message) {
-                        is TextMessage -> {
-                            try {
-                                kafkaProducer
-                                    .send(
-                                        ProducerRecord(
-                                            requireNotNull(config.targetTopic),
-                                            UUID.randomUUID().toString(),
-                                            message.text,
-                                        ),
-                                    ).get()
-                                message.acknowledge()
-                            } catch (e: Exception) {
-                                TjenestekallLogg.error(
-                                    header = "Klarte ikke å sende melding på kafka",
-                                    fields = mapOf("message" to message),
-                                    throwable = e,
+            try {
+                jmsConsumer
+                    .subscribe(mqConfig.mqQueue) { message ->
+                        when (message) {
+                            is TextMessage -> {
+                                try {
+                                    kafkaProducer
+                                        .send(
+                                            ProducerRecord(
+                                                requireNotNull(config.targetTopic),
+                                                UUID.randomUUID().toString(),
+                                                message.text,
+                                            ),
+                                        ).get()
+                                    message.acknowledge()
+                                } catch (e: Exception) {
+                                    TjenestekallLogg.error(
+                                        header = "Klarte ikke å sende melding på kafka",
+                                        fields = mapOf("message" to message),
+                                        throwable = e,
+                                    )
+                                    slackClient?.postMessage("MqToKafkaModule: Klarte ikke å sende melding på kafka")
+                                    throw e
+                                }
+                            }
+
+                            else -> {
+                                log.error("MqToKafkaModule: Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
+                                slackClient?.postMessage(
+                                    "MqToKafkaModule: Message from MQ was not TextMessage, but: ${message::class.java.simpleName}",
                                 )
-                                throw e
+                                message.acknowledge()
                             }
                         }
-
-                        else -> {
-                            log.error("Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
-                            message.acknowledge()
-                        }
                     }
-                }
+            } catch (e: Exception) {
+                slackClient?.postMessage("MqToKafkaModule: Klarte ikke å koble til MQ: ${mqConfig.mqQueue}")
+                log.error("error e", e)
+            }
         }
 
     install(Metrics.Plugin)
