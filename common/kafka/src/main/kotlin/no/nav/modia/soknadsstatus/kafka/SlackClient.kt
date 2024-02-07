@@ -4,7 +4,9 @@ import com.slack.api.Slack
 import com.slack.api.webhook.WebhookResponse
 import org.slf4j.LoggerFactory
 
-class SlackClient(private val webhookUrl: String) {
+class SlackClient(
+    private val webhookUrl: String,
+) {
     private val log = LoggerFactory.getLogger(SlackClient::class.java)
     private var slack = Slack.getInstance()
 

@@ -66,7 +66,9 @@ fun Application.mqToKafkaModule() {
 
                             else -> {
                                 log.error("MqToKafkaModule: Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
-                                slackClient?.postMessage("MqToKafkaModule: Message from MQ was not TextMessage, but: ${message::class.java.simpleName}")
+                                slackClient?.postMessage(
+                                    "MqToKafkaModule: Message from MQ was not TextMessage, but: ${message::class.java.simpleName}",
+                                )
                                 message.acknowledge()
                             }
                         }
