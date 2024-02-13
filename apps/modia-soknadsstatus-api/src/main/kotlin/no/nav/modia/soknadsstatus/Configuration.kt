@@ -4,6 +4,7 @@ import io.ktor.http.*
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
+import no.nav.modia.soknadsstatus.kafka.SlackClient
 import no.nav.modia.soknadsstatus.repository.*
 import no.nav.personoversikt.common.ktor.utils.Security.AuthProviderConfig
 import no.nav.personoversikt.common.ktor.utils.Security.JwksConfig
@@ -17,6 +18,7 @@ interface Configuration {
     val behandlingRepository: BehandlingRepository
     val hendelseRepository: HendelseRepository
     val hendelseEierRepository: HendelseEierRepository
+    val slackClient: SlackClient?
 
     companion object {
         fun factory(env: Env): Configuration {
@@ -27,6 +29,7 @@ interface Configuration {
             val behandlingRepository = BehandlingRepositoryImpl(env.datasourceConfiguration.datasource)
             val hendelseRepository = HendelseRepositoryImpl(env.datasourceConfiguration.datasource)
             val hendelseEierRepository = HendelseEierRepositoryImpl(env.datasourceConfiguration.datasource)
+            val slackClient = env.kafkaApp.slackWebHookUrl?.let { SlackClient(it) }
 
             return object : Configuration {
                 override val oboTokenClient = oboTokenClient
@@ -36,6 +39,7 @@ interface Configuration {
                 override val behandlingRepository = behandlingRepository
                 override val hendelseRepository = hendelseRepository
                 override val hendelseEierRepository = hendelseEierRepository
+                override val slackClient = slackClient
             }
         }
     }

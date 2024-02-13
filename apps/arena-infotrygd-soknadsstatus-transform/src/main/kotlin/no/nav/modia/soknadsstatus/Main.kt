@@ -17,6 +17,7 @@ fun runApp(port: Int = 8080) {
     val config = AppEnv()
     val deadLetterProducer = DeadLetterQueueProducerImpl(config)
     val datasourceConfiguration = DatasourceConfiguration(DatasourceEnv((config.appName)))
+    val slackClient = config.slackWebHookUrl?.let { SlackClient(it) }
     datasourceConfiguration.runFlyway()
 
     KtorServer
@@ -32,6 +33,7 @@ fun runApp(port: Int = 8080) {
                             SendToDeadLetterQueueExceptionHandler(
                                 dlqProducer = deadLetterProducer,
                                 topic = requireNotNull(config.deadLetterQueueTopic),
+                                slackClient = slackClient,
                             )
                         sourceTopic = requireNotNull(config.sourceTopic)
                         targetTopic = requireNotNull(config.targetTopic)

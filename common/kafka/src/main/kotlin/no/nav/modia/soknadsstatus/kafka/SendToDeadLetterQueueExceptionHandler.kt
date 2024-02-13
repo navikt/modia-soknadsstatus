@@ -14,6 +14,7 @@ interface ExceptionHandler {
 class SendToDeadLetterQueueExceptionHandler(
     private val topic: String,
     private val dlqProducer: DeadLetterQueueProducer,
+    private val slackClient: SlackClient?,
 ) : ExceptionHandler {
     override fun handle(
         key: String?,
@@ -25,6 +26,7 @@ class SendToDeadLetterQueueExceptionHandler(
             mapOf("key" to key, "message" to value),
             throwable = exception,
         )
+        slackClient?.postMessage("Received DLQ on topic: $topic")
         try {
             if (value == null) {
                 return

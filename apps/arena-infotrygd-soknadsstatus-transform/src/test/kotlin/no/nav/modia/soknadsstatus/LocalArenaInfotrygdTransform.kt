@@ -18,6 +18,7 @@ fun main() {
     System.setProperty("NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_USERNAME", "admin")
     System.setProperty("NAIS_DATABASE_ARENA_INFOTRYGD_SOKNADSSTATUS_TRANSFORM_MODIA_SOKNADSSTATUS_PASSWORD", "admin")
     System.setProperty("DB_NAME", "modia-soknadsstatus")
+    System.setProperty("SLACK_WEBHOOK_URL", "")
 
     runApp(port = 9010)
 }

@@ -8,6 +8,7 @@ val kafka_version: String by project
 val jms_api_version: String by project
 val junit_version: String by project
 val logstash_version: String by project
+val slack_client_version: String by project
 
 plugins {
     application
@@ -30,6 +31,10 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+
+    implementation("com.slack.api:slack-api-client:$slack_client_version")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:$slack_client_version")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:$slack_client_version")
 }
 
 group = "no.nav.modia.soknadsstatus"
