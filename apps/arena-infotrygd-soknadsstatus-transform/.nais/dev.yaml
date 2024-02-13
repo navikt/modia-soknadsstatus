@@ -8,7 +8,6 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
-  team: personoversikt
   replicas:
     min: 1
     max: 1

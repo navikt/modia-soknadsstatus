@@ -8,7 +8,6 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
-  team: personoversikt
   ingresses:
     - https://modia-soknadsstatus-api.intern.dev.nav.no
   replicas:
