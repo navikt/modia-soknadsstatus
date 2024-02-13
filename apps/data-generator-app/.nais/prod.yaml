@@ -8,7 +8,6 @@ metadata:
 spec:
   image: {{image}}
   port: 9010
-  team: personoversikt
   liveness:
     path: /internal/isAlive
     initialDelay: 20
