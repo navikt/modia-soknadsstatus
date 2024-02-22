@@ -7,6 +7,7 @@ import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.repository.BehandlingEierDAO
 import no.nav.modia.soknadsstatus.repository.HendelseEierDAO
 import no.nav.modia.soknadsstatus.repository.HendelseRepository
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 
 interface HendelseService {
     fun init(behandlingService: BehandlingService)
@@ -60,6 +61,11 @@ class HendelseServiceImpl(
                         HendelseEierDAO(ident = ident, hendelseId = requireNotNull(hendelse?.id)),
                     )
                 }
+            } else {
+                TjenestekallLogg.error(
+                    header = "Klarte ikke å lagre behandling i databasen",
+                    fields = mapOf("behandlingsId" to innkommendeHendelse.behandlingsId, "hendelsesId" to innkommendeHendelse.hendelsesId),
+                )
             }
         }
     }
@@ -86,6 +92,11 @@ class HendelseServiceImpl(
                         HendelseEierDAO(ident = ident.first(), hendelseId = requireNotNull(hendelse?.id)),
                     )
                 }
+            } else {
+                TjenestekallLogg.error(
+                    header = "Klarte ikke å lagre behandling",
+                    fields = mapOf("behandlingsId" to innkommendeBehandling.behandlingId),
+                )
             }
         }
     }
