@@ -222,6 +222,7 @@ class HendelseServiceImpl(
             ansvarligEnhet = behandling.ansvarligEnhet,
             sakstema = behandling.sakstema,
             behandlingsType = behandling.behandlingsType,
+            sobFlag = true,
         )
 
     private fun mapStatus(status: String?): SoknadsstatusDomain.Status =

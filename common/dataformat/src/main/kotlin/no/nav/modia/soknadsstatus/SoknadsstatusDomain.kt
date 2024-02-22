@@ -48,6 +48,7 @@ object SoknadsstatusDomain {
         val applikasjonSak: String? = null,
         val applikasjonBehandling: String? = null,
         val hendelser: List<Hendelse>? = null,
+        val sobFlag: Boolean? = false,
     )
 
     @Serializable
