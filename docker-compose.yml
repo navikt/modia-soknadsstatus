@@ -173,7 +173,7 @@ services:
       APP_MODE: "LOCALLY_WITHIN_IDEA"
 
       KAFKA_SOURCE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering"
-      KAFKA_SOURCE_BEHANDLING_TOPIC: "personoversikt.modia-soknadsstatus-behandling-oppdatering"
+      KAFKA_SOURCE_BEHANDLING_TOPIC: "org.sobhist-v4"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKERS: "redpanda:29092"
       KAFKA_DEAD_LETTER_QUEUE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering-dlq"

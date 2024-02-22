@@ -82,7 +82,7 @@ spec:
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
     - name: KAFKA_SOURCE_BEHANDLING_TOPIC
-      value: "personoversikt.modia-soknadsstatus-behandling-oppdatering"
+      value: "org.sobhist-v4"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_BEHANDLING_TOPIC
