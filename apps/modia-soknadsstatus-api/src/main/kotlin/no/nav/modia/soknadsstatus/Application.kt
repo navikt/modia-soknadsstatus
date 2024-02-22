@@ -146,10 +146,10 @@ fun Application.soknadsstatusModule(
             DeadLetterQueueConsumer(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
                 kafkaConsumer =
-                KafkaUtils.createConsumer(
-                    env.kafkaApp,
-                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
-                ),
+                    KafkaUtils.createConsumer(
+                        env.kafkaApp,
+                        consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
+                    ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
                 deadLetterMessageSkipService = services.dlSkipService,
