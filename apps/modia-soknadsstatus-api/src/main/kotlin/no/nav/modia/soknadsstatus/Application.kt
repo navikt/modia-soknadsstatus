@@ -140,5 +140,36 @@ fun Application.soknadsstatusModule(
                 }
             }
     }
+
+    install(DeadLetterQueueConsumerPlugin()) {
+        deadLetterQueueConsumer =
+            DeadLetterQueueConsumer(
+                topic = requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
+                kafkaConsumer =
+                KafkaUtils.createConsumer(
+                    env.kafkaApp,
+                    consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
+                ),
+                pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
+                exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
+                deadLetterMessageSkipService = services.dlSkipService,
+            ) { _, key, value ->
+                runCatching {
+                    try {
+                        val decodedValue =
+                            Encoding.decode(InnkommendeBehandling.serializer(), value)
+                        services.hendelseService.onNewBehandling(decodedValue)
+                    } catch (e: Exception) {
+                        TjenestekallLogg.error(
+                            "Klarte ikke å håndtere DL",
+                            fields = mapOf("key" to key, "value" to value),
+                            throwable = e,
+                        )
+                        throw e
+                    }
+                }
+            }
+    }
+
     installRouting(security, services)
 }
