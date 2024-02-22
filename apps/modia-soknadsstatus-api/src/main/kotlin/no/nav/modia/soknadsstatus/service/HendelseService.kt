@@ -222,8 +222,7 @@ class HendelseServiceImpl(
     private fun mapToHendelseType(status: String?): SoknadsstatusDomain.HendelseType =
         when (status) {
             "opprettet" -> SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET
-            "avsluttet" -> SoknadsstatusDomain.HendelseType.BEHANDLING_AVSLUTTET
-            "avbrutt" -> SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET_OG_AVSLUTTET
+            "avsluttet", "avbrutt" -> SoknadsstatusDomain.HendelseType.BEHANDLING_AVSLUTTET
             else -> throw IllegalArgumentException("Mottok ukjent status i mapping av statuser")
         }
 }
