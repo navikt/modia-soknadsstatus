@@ -66,6 +66,7 @@ class HendelseServiceImpl(
                     header = "Klarte ikke å lagre behandling i databasen",
                     fields = mapOf("behandlingsId" to innkommendeHendelse.behandlingsId, "hendelsesId" to innkommendeHendelse.hendelsesId),
                 )
+                throw RuntimeException("Klarte ikke å lagre behandling i databasen.")
             }
         }
     }
@@ -97,6 +98,7 @@ class HendelseServiceImpl(
                     header = "Klarte ikke å lagre behandling",
                     fields = mapOf("behandlingsId" to innkommendeBehandling.behandlingId),
                 )
+                throw RuntimeException("Klarte ikke å lagre behandling i databasen.")
             }
         }
     }
