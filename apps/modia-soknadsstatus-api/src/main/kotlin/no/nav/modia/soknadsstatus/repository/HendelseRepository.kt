@@ -17,6 +17,11 @@ interface HendelseRepository : TransactionRepository {
         hendelse: SoknadsstatusDomain.Hendelse,
     ): SoknadsstatusDomain.Hendelse?
 
+    suspend fun upsert(
+        connection: Connection,
+        hendelse: SoknadsstatusDomain.Hendelse,
+    ): SoknadsstatusDomain.Hendelse?
+
     suspend fun getById(id: String): SoknadsstatusDomain.Hendelse?
 
     suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Hendelse>
@@ -65,6 +70,35 @@ class HendelseRepositoryImpl(
                 hendelse.hendelseType.name,
                 hendelse.status.name,
                 hendelse.ansvarligEnhet,
+            ) {
+                convertResultSetToHendelseDAO(it)
+            }.firstOrNull()
+
+    override suspend fun upsert(
+        connection: Connection,
+        hendelse: SoknadsstatusDomain.Hendelse,
+    ): SoknadsstatusDomain.Hendelse? =
+        connection
+            .executeWithResult(
+                """
+                INSERT INTO $Tabell(${Tabell.modia_behandlingId}, ${Tabell.behandlingId}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
+                VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?::hendelseTypeEnum, ?::statusEnum, ?)
+                ON CONFLICT (${Tabell.hendelseId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.hendelseTidspunkt} = ? WHERE $Tabell.${Tabell.hendelseTidspunkt} <= ?
+                RETURNING *;
+                """.trimIndent(),
+                hendelse.modiaBehandlingId,
+                hendelse.behandlingId,
+                hendelse.behandlingsTema,
+                hendelse.behandlingsType,
+                hendelse.hendelseId,
+                hendelse.hendelseProdusent,
+                Timestamp.valueOf(hendelse.hendelseTidspunkt.toJavaLocalDateTime()),
+                hendelse.hendelseType.name,
+                hendelse.status.name,
+                hendelse.ansvarligEnhet,
+                hendelse.status.name,
+                Timestamp.valueOf(hendelse.hendelseTidspunkt.toJavaLocalDateTime()),
+                Timestamp.valueOf(hendelse.hendelseTidspunkt.toJavaLocalDateTime()),
             ) {
                 convertResultSetToHendelseDAO(it)
             }.firstOrNull()

@@ -173,9 +173,11 @@ services:
       APP_MODE: "LOCALLY_WITHIN_IDEA"
 
       KAFKA_SOURCE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering"
+      KAFKA_SOURCE_BEHANDLING_TOPIC: "personoversikt.modia-soknadsstatus-behandling-oppdatering"
       KAFKA_TARGET_TOPIC: "N/A"
       KAFKA_BROKERS: "redpanda:29092"
       KAFKA_DEAD_LETTER_QUEUE_TOPIC: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
+      KAFKA_DEAD_LETTER_QUEUE_BEHANDLING_TOPIC: "personoversikt.modia-soknadsstatus-behadling-oppdatering-dlq"
       KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS: "10000"
       KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME: "modia_soknadsstatus_dlq_event_skip"
       KAFKA_DEAD_LETTER_QUEUE_METRICS_GAUGE_NAME: "modia_soknadsstatus_api_dlq_gauge"

@@ -8,8 +8,8 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import no.nav.modia.soknadsstatus.behandlingconsumer.BehandlingConsumer
+import no.nav.modia.soknadsstatus.behandlingconsumer.BehandlingConsumerPlugin
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
 import no.nav.modia.soknadsstatus.kafka.*
@@ -79,6 +79,34 @@ fun Application.soknadsstatusModule(
                     val decodedValue =
                         Encoding.decode(InnkommendeHendelse.serializer(), value)
                     services.hendelseService.onNewHendelse(decodedValue)
+                }
+            }
+    }
+
+    install(BehandlingConsumerPlugin()) {
+        behandlingConsumer =
+            BehandlingConsumer(
+                sendToDeadLetterQueueExceptionHandler =
+                    SendToDeadLetterQueueExceptionHandler(
+                        requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
+                        services.dlqProducer,
+                        configuration.slackClient,
+                    ),
+                topic = requireNotNull(env.kafkaApp.sourceBehandlingTopic),
+                kafkaConsumer =
+                    KafkaUtils.createConsumer(
+                        env.kafkaApp,
+                        consumerGroup = "${env.kafkaApp.appName}-behandling-consumer",
+                        autoCommit = true,
+                        pollRecords = 10,
+                    ),
+                pollDurationMs = env.behandlingConsumerEnv.pollDurationMs,
+                exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
+            ) { _, _, value ->
+                runCatching {
+                    val decodedValue =
+                        Encoding.decode(InnkommendeBehandling.serializer(), value)
+                    services.hendelseService.onNewBehandling(decodedValue)
                 }
             }
     }
