@@ -1,0 +1,1 @@
+ALTER TABLE behandlinger ADD COLUMN "sob_flag" BOOLEAN DEFAULT FALSE;
