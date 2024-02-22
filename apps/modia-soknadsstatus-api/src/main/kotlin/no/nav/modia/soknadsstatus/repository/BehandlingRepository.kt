@@ -78,6 +78,7 @@ class BehandlingRepositoryImpl(
                 behandling.primaerBehandlingType,
                 behandling.applikasjonSak,
                 behandling.applikasjonBehandling,
+                behandling.sobFlag,
                 behandling.status.name,
                 Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
                 Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),

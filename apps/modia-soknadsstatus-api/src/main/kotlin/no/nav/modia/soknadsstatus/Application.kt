@@ -141,14 +141,14 @@ fun Application.soknadsstatusModule(
             }
     }
 
-    install(DeadLetterQueueConsumerPlugin()) {
+    install(DeadLetterQueueBehandlingConsumerPlugin()) {
         deadLetterQueueConsumer =
             DeadLetterQueueConsumer(
                 topic = requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
                 kafkaConsumer =
                     KafkaUtils.createConsumer(
                         env.kafkaApp,
-                        consumerGroup = "${env.kafkaApp.appName}-dlq-consumer",
+                        consumerGroup = "${env.kafkaApp.appName}-dlq-behandling-consumer",
                     ),
                 pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
                 exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
