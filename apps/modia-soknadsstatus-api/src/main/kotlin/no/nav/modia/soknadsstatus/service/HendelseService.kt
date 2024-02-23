@@ -165,7 +165,7 @@ class HendelseServiceImpl(
             behandlingsTema = behandling.behandlingsTema,
             behandlingsType = behandling.behandlingsType,
             hendelseProdusent = behandling.produsentSystem,
-            hendelseType = mapToHendelseType(behandling.behandlingsType),
+            hendelseType = mapToHendelseType(behandling.status),
             hendelseTidspunkt = behandling.startTidspunkt,
             status = mapStatus(behandling.status),
             ansvarligEnhet = behandling.ansvarligEnhet,
