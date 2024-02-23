@@ -28,10 +28,6 @@ interface HendelseRepository : TransactionRepository {
 
     suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.Hendelse>
 
-    suspend fun getFirstHendelse(
-        behandlingId: String,
-        hendelseId: String,
-    ): SoknadsstatusDomain.Hendelse?
 }
 
 class HendelseRepositoryImpl(
