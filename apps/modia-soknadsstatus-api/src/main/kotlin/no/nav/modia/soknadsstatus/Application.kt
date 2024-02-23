@@ -88,7 +88,7 @@ fun Application.soknadsstatusModule(
             BehandlingConsumer(
                 sendToDeadLetterQueueExceptionHandler =
                     SendToDeadLetterQueueExceptionHandler(
-                        requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
+                        requireNotNull("personoversikt.modia-soknadsstatus-arena-infotrygd-dlq"),
                         services.dlqProducer,
                         configuration.slackClient,
                     ),

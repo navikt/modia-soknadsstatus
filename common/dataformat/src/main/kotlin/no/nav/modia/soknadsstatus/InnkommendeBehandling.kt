@@ -1,15 +1,15 @@
 package no.nav.modia.soknadsstatus
 
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.IntArraySerializer
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Serializable
 data class InnkommendeBehandling(
@@ -33,22 +33,33 @@ data class InnkommendeBehandling(
 class DateIntArraySerializer : KSerializer<LocalDateTime> {
     private val delegateSerializer = IntArraySerializer()
     override val descriptor = SerialDescriptor("ArrayDateTime", delegateSerializer.descriptor)
-    override fun serialize(encoder: Encoder, value: LocalDateTime) {
-        val data = intArrayOf(
-            value.year,
-            value.monthNumber,
-            value.dayOfMonth,
-            value.hour,
-            value.minute,
-            value.second
-        )
+
+    override fun serialize(
+        encoder: Encoder,
+        value: LocalDateTime,
+    ) {
+        val data =
+            intArrayOf(
+                value.year,
+                value.monthNumber,
+                value.dayOfMonth,
+                value.hour,
+                value.minute,
+                value.second,
+            )
         encoder.encodeSerializableValue(delegateSerializer, data)
     }
 
     override fun deserialize(decoder: Decoder): LocalDateTime {
         val array = decoder.decodeSerializableValue(delegateSerializer)
         val date = LocalDate(array[0], array[1], array[2])
-        val time = LocalTime(array.getOrNull(3) ?: 0,  array.getOrNull(4 )?: 0, array.getOrNull(5 ) ?: 0, array.getOrNull(6) ?: 0)
+        val time =
+            LocalTime(
+                array.getOrNull(3) ?: 0,
+                array.getOrNull(4) ?: 0,
+                array.getOrNull(5) ?: 0,
+                array.getOrNull(6) ?: 0,
+            )
         return LocalDateTime(date, time)
     }
 }
