@@ -41,7 +41,7 @@ class SendToDeadLetterQueueExceptionHandler(
                 )
             }
 
-            dlqProducer.sendMessage(dlqKey!!, value)
+            dlqProducer.sendMessage(topic, dlqKey!!, value)
         } catch (e: Exception) {
             TjenestekallLogg.error(
                 "Failed to parse message when sending to DLQ on topic $topic",
