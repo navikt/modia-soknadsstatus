@@ -134,19 +134,6 @@ class HendelseRepositoryImpl(
             convertResultSetToHendelseDAO(it)
         }
 
-    override suspend fun getFirstHendelse(
-        behandlingId: String,
-        hendelseId: String,
-    ): SoknadsstatusDomain.Hendelse? =
-        dataSource
-            .executeQuery(
-                "SELECT * FROM $Tabell WHERE $Tabell.${Tabell.modia_behandlingId} = ? AND $Tabell.${Tabell.hendelseId} = ?",
-                behandlingId,
-                hendelseId,
-            ) {
-                convertResultSetToHendelseDAO(it)
-            }.firstOrNull()
-
     private fun convertResultSetToHendelseDAO(resultSet: ResultSet): SoknadsstatusDomain.Hendelse =
         SoknadsstatusDomain.Hendelse(
             id = resultSet.getString(Tabell.id),
