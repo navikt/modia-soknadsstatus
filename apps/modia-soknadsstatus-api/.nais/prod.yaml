@@ -116,4 +116,8 @@ spec:
       value: "https://graph.microsoft.com/"
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
+    - name: BEHANDLING_CONSUMER_POLL_DURATION_MS
+      value: "2000"
+    - name: BEHANDLING_CONSUMER_RESTART_DELAY_MS
+      value: "4000"
 
