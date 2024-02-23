@@ -27,7 +27,6 @@ interface HendelseRepository : TransactionRepository {
     suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Hendelse>
 
     suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.Hendelse>
-
 }
 
 class HendelseRepositoryImpl(
