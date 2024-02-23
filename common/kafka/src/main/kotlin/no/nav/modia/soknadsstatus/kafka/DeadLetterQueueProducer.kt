@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 
 interface DeadLetterQueueProducer {
     fun sendMessage(
+        topic: String,
         key: String,
         message: String,
     ): Result<Unit>
@@ -16,13 +17,14 @@ class DeadLetterQueueProducerImpl(
     private val producer = KafkaUtils.createProducer(appEnv)
 
     override fun sendMessage(
+        topic: String,
         key: String,
         message: String,
     ): Result<Unit> =
         try {
             val producerRecord =
                 ProducerRecord(
-                    appEnv.deadLetterQueueTopic,
+                    topic,
                     key,
                     message,
                 )

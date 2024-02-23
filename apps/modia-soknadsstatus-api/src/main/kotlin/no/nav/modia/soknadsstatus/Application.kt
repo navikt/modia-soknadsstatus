@@ -144,7 +144,8 @@ fun Application.soknadsstatusModule(
     install(DeadLetterQueueBehandlingConsumerPlugin()) {
         deadLetterQueueConsumer =
             DeadLetterQueueConsumer(
-                topic = requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
+                // TODO FIXME Temporary DLQ to read messages sent to the wrong DLQ by mistake
+                topic = requireNotNull("personoversikt.modia-soknadsstatus-oppdatering-dlq"),
                 kafkaConsumer =
                     KafkaUtils.createConsumer(
                         env.kafkaApp,
