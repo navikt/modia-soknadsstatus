@@ -12,6 +12,7 @@ fun main() {
     System.setProperty("JMS_PASSWORD", "")
 
     System.setProperty("KAFKA_SOURCE_TOPIC", "personoversikt.modia-soknadsstatus-oppdatering")
+    System.setProperty("KAFKA_SOURCE_TOPIC", "org.sobhist-v4")
     System.setProperty("KAFKA_TARGET_TOPIC", "personoversikt.modia-soknadsstatus-hendelse")
     System.setProperty("KAFKA_BROKERS", "localhost:9092")
 

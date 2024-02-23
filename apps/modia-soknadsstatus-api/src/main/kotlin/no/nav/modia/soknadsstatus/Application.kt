@@ -8,8 +8,8 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import no.nav.modia.soknadsstatus.behandlingconsumer.BehandlingConsumer
+import no.nav.modia.soknadsstatus.behandlingconsumer.BehandlingConsumerPlugin
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumer
 import no.nav.modia.soknadsstatus.hendelseconsumer.HendelseConsumerPlugin
 import no.nav.modia.soknadsstatus.kafka.*
@@ -83,6 +83,34 @@ fun Application.soknadsstatusModule(
             }
     }
 
+    install(BehandlingConsumerPlugin()) {
+        behandlingConsumer =
+            BehandlingConsumer(
+                sendToDeadLetterQueueExceptionHandler =
+                    SendToDeadLetterQueueExceptionHandler(
+                        requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
+                        services.dlqProducer,
+                        configuration.slackClient,
+                    ),
+                topic = requireNotNull(env.kafkaApp.sourceBehandlingTopic),
+                kafkaConsumer =
+                    KafkaUtils.createConsumer(
+                        env.kafkaApp,
+                        consumerGroup = "${env.kafkaApp.appName}-behandling-consumer",
+                        autoCommit = true,
+                        pollRecords = 10,
+                    ),
+                pollDurationMs = env.behandlingConsumerEnv.pollDurationMs,
+                exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,
+            ) { _, _, value ->
+                runCatching {
+                    val decodedValue =
+                        Encoding.decode(InnkommendeBehandling.serializer(), value)
+                    services.hendelseService.onNewBehandling(decodedValue)
+                }
+            }
+    }
+
     install(DeadLetterQueueConsumerPlugin()) {
         deadLetterQueueConsumer =
             DeadLetterQueueConsumer(
@@ -112,5 +140,36 @@ fun Application.soknadsstatusModule(
                 }
             }
     }
+
+    install(DeadLetterQueueBehandlingConsumerPlugin()) {
+        deadLetterQueueConsumer =
+            DeadLetterQueueConsumer(
+                topic = requireNotNull(env.kafkaApp.deadLetterQueueBehandlingTopic),
+                kafkaConsumer =
+                    KafkaUtils.createConsumer(
+                        env.kafkaApp,
+                        consumerGroup = "${env.kafkaApp.appName}-dlq-behandling-consumer",
+                    ),
+                pollDurationMs = env.kafkaApp.deadLetterQueueConsumerPollIntervalMs,
+                exceptionRestartDelayMs = env.kafkaApp.deadLetterQueueExceptionRestartDelayMs,
+                deadLetterMessageSkipService = services.dlSkipService,
+            ) { _, key, value ->
+                runCatching {
+                    try {
+                        val decodedValue =
+                            Encoding.decode(InnkommendeBehandling.serializer(), value)
+                        services.hendelseService.onNewBehandling(decodedValue)
+                    } catch (e: Exception) {
+                        TjenestekallLogg.error(
+                            "Klarte ikke å håndtere DL",
+                            fields = mapOf("key" to key, "value" to value),
+                            throwable = e,
+                        )
+                        throw e
+                    }
+                }
+            }
+    }
+
     installRouting(security, services)
 }

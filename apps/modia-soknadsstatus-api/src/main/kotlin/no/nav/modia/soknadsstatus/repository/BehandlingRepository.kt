@@ -49,6 +49,7 @@ class BehandlingRepositoryImpl(
         const val primaerBehandlingType = "primaer_behandling_type"
         const val applikasjonSak = "applikasjon_sak"
         const val applikasjonBehandling = "applikasjon_behandling"
+        const val sobFlag = "sob_flag"
     }
 
     override suspend fun upsert(
@@ -58,8 +59,8 @@ class BehandlingRepositoryImpl(
         connection
             .executeWithResult(
                 """
-                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling})
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?)
+                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling}, ${Tabell.sobFlag})
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
                 RETURNING *;
                 """.trimIndent(),
@@ -77,6 +78,7 @@ class BehandlingRepositoryImpl(
                 behandling.primaerBehandlingType,
                 behandling.applikasjonSak,
                 behandling.applikasjonBehandling,
+                behandling.sobFlag,
                 behandling.status.name,
                 Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
                 Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
