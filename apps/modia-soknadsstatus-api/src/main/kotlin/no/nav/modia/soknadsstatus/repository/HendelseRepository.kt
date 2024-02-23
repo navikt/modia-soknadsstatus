@@ -88,7 +88,7 @@ class HendelseRepositoryImpl(
                 """
                 INSERT INTO $Tabell(${Tabell.modia_behandlingId}, ${Tabell.behandlingId}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.hendelseId}, ${Tabell.hendelseProdusent}, ${Tabell.hendelseTidspunkt}, ${Tabell.hendelseType}, ${Tabell.status}, ${Tabell.ansvarligEnhet})
                 VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?::hendelseTypeEnum, ?::statusEnum, ?)
-                ON CONFLICT (${Tabell.hendelseId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.hendelseTidspunkt} = ? WHERE $Tabell.${Tabell.hendelseTidspunkt} <= ?
+                ON CONFLICT (${Tabell.hendelseId}, ${Tabell.status}, ${Tabell.modia_behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.hendelseTidspunkt} = ? WHERE $Tabell.${Tabell.hendelseTidspunkt} <= ?
                 RETURNING *;
                 """.trimIndent(),
                 hendelse.modiaBehandlingId,

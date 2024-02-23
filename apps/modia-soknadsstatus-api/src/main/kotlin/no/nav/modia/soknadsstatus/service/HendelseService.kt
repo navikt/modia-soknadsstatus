@@ -76,7 +76,7 @@ class HendelseServiceImpl(
             val behandling = behandlingService.upsert(it, toBehandlingDAO(innkommendeBehandling))
             if (behandling != null) {
                 val hendelse =
-                    hendelseRepository.getFirstHendelse(requireNotNull(behandling.id), innkommendeBehandling.behandlingId) ?: hendelseRepository.create(
+                    hendelseRepository.upsert(
                         it,
                         behandlingToHendelseDAO(requireNotNull(behandling.id), innkommendeBehandling),
                     )
