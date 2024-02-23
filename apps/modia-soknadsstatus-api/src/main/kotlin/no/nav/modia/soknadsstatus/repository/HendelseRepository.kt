@@ -27,6 +27,11 @@ interface HendelseRepository : TransactionRepository {
     suspend fun getByIdents(idents: Array<String>): List<SoknadsstatusDomain.Hendelse>
 
     suspend fun getForBehandlingId(behandlingId: String): List<SoknadsstatusDomain.Hendelse>
+
+    suspend fun getFirstHendelse(
+        behandlingId: String,
+        hendelseId: String,
+    ): SoknadsstatusDomain.Hendelse?
 }
 
 class HendelseRepositoryImpl(
@@ -128,6 +133,19 @@ class HendelseRepositoryImpl(
         dataSource.executeQuery("SELECT * FROM $Tabell WHERE $Tabell.${Tabell.behandlingId} = ?", behandlingId) {
             convertResultSetToHendelseDAO(it)
         }
+
+    override suspend fun getFirstHendelse(
+        behandlingId: String,
+        hendelseId: String,
+    ): SoknadsstatusDomain.Hendelse? =
+        dataSource
+            .executeQuery(
+                "SELECT * FROM $Tabell WHERE $Tabell.${Tabell.modia_behandlingId} = ? AND $Tabell.${Tabell.hendelseId} = ?",
+                behandlingId,
+                hendelseId,
+            ) {
+                convertResultSetToHendelseDAO(it)
+            }.firstOrNull()
 
     private fun convertResultSetToHendelseDAO(resultSet: ResultSet): SoknadsstatusDomain.Hendelse =
         SoknadsstatusDomain.Hendelse(
