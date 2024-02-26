@@ -10,3 +10,6 @@ FROM hendelser;
 ALTER TABLE hendelser RENAME TO hendelser_old;
 ALTER TABLE hendelser_temp RENAME TO hendelser;
 
+-- step 4
+ALTER TABLE hendelser ADD UNIQUE (modia_behandling_id, hendelses_id, status);
+
