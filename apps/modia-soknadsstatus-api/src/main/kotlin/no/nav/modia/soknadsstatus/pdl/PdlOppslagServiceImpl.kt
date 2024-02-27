@@ -14,6 +14,8 @@ class PdlOppslagServiceImpl(
     private val adresseBeskyttelseCache: SuspendCache<String, List<Adressebeskyttelse>> = getCache(),
     private val identerCache: SuspendCache<String, List<String>> = getCache(),
 ) : PdlOppslagService {
+    private val nonExistingSet = mutableSetOf<String>()
+
     companion object {
         fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(expiresAfterWrite = 1.minutes)
     }
@@ -30,13 +32,26 @@ class PdlOppslagServiceImpl(
             )
         }
 
-    override suspend fun hentFnrMedSystemToken(aktorId: String): String? =
-        fnrCache.get(aktorId) {
-            pdlClient.hentAktivIdentMedSystemToken(
-                aktorId,
-                IdentGruppe.FOLKEREGISTERIDENT,
-            )
+    override suspend fun hentFnrMedSystemToken(aktorId: String): String? {
+        if (nonExistingSet.contains(aktorId)) {
+            return null
         }
+        return fnrCache.get(aktorId) {
+            try {
+                val result = pdlClient.hentAktivIdentMedSystemToken(
+                    aktorId,
+                    IdentGruppe.FOLKEREGISTERIDENT,
+                )
+                if (result == null) {
+                    nonExistingSet.add(aktorId)
+                }
+                result
+            } catch (e: IllegalArgumentException) {
+                nonExistingSet.add(aktorId)
+                null
+            }
+        }
+    }
 
     override suspend fun hentAktorId(
         userToken: String,
