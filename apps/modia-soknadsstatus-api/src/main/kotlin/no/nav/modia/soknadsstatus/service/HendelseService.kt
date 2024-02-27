@@ -64,7 +64,10 @@ class HendelseServiceImpl(
                         HendelseEierDAO(ident = ident, hendelseId = requireNotNull(hendelse?.id)),
                     )
                 }
-                TjenestekallLogg.info("Klarte å lagre et element i databasen!!!", fields = mapOf("behandlingId" to behandling.behandlingId))
+                TjenestekallLogg.info(
+                    "Klarte å lagre et element i databasen!!!",
+                    fields = mapOf("behandlingId" to behandling.behandlingId),
+                )
             } else {
                 TjenestekallLogg.error(
                     header = "Klarte ikke å lagre behandling i databasen",
@@ -128,15 +131,24 @@ class HendelseServiceImpl(
         val result = mutableListOf<String>()
         for (aktoer in aktoerer) {
             if (isAktoerId(aktoer)) {
-                val ident =
-                    pdlOppslagService.hentFnrMedSystemToken(aktoer)
-                if (ident == null) {
+                try {
+                    val ident =
+                        pdlOppslagService.hentFnrMedSystemToken(aktoer)
+                    if (ident == null) {
+                        TjenestekallLogg.warn(
+                            "Ignorerer at PDL ikke returnerte ident for aktoer: $aktoer",
+                            fields = mapOf("aktoer" to aktoer),
+                        )
+                        return result
+                    } else {
+                        result.add(ident)
+                    }
+                } catch (e: IllegalArgumentException) {
                     TjenestekallLogg.warn(
                         "Ignorerer at PDL ikke returnerte ident for aktoer: $aktoer",
                         fields = mapOf("aktoer" to aktoer),
                     )
-                } else {
-                    result.add(ident)
+                    return result
                 }
             } else {
                 result.add(aktoer)
