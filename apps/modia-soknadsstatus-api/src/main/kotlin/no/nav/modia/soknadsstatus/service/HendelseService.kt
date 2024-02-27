@@ -64,7 +64,11 @@ class HendelseServiceImpl(
             } else {
                 TjenestekallLogg.error(
                     header = "Klarte ikke å lagre behandling i databasen",
-                    fields = mapOf("behandlingsId" to innkommendeHendelse.behandlingsId, "hendelsesId" to innkommendeHendelse.hendelsesId),
+                    fields =
+                        mapOf(
+                            "behandlingsId" to innkommendeHendelse.behandlingsId,
+                            "hendelsesId" to innkommendeHendelse.hendelsesId,
+                        ),
                 )
                 throw RuntimeException("Klarte ikke å lagre behandling i databasen.")
             }
@@ -122,8 +126,14 @@ class HendelseServiceImpl(
             if (isAktoerId(aktoer)) {
                 val ident =
                     pdlOppslagService.hentFnrMedSystemToken(aktoer)
-                        ?: throw IllegalArgumentException("Fant ikke ident for aktoer: $aktoer")
-                result.add(ident)
+                if (ident == null) {
+                    TjenestekallLogg.warn(
+                        "Ignorerer at PDL ikke returnerte ident for aktoer: $aktoer",
+                        fields = mapOf("aktoer" to aktoer),
+                    )
+                } else {
+                    result.add(ident)
+                }
             } else {
                 result.add(aktoer)
             }
