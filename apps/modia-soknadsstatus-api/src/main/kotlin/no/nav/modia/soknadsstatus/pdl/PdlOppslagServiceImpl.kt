@@ -4,6 +4,7 @@ import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.SuspendCache
 import no.nav.modia.soknadsstatus.SuspendCacheImpl
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import kotlin.time.Duration.Companion.minutes
 
 class PdlOppslagServiceImpl(
@@ -38,15 +39,20 @@ class PdlOppslagServiceImpl(
         }
         return fnrCache.get(aktorId) {
             try {
-                val result = pdlClient.hentAktivIdentMedSystemToken(
-                    aktorId,
-                    IdentGruppe.FOLKEREGISTERIDENT,
-                )
+                val result =
+                    pdlClient.hentAktivIdentMedSystemToken(
+                        aktorId,
+                        IdentGruppe.FOLKEREGISTERIDENT,
+                    )
                 if (result == null) {
                     nonExistingSet.add(aktorId)
                 }
                 result
             } catch (e: IllegalArgumentException) {
+                TjenestekallLogg.warn(
+                    "Ignorerer at PDL ikke returnerte ident for aktoer: $aktorId",
+                    fields = mapOf("aktoer" to aktorId),
+                )
                 nonExistingSet.add(aktorId)
                 null
             }
