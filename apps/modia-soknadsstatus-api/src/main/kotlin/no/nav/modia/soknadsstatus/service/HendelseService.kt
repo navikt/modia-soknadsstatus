@@ -26,6 +26,7 @@ interface HendelseService {
 
 class HendelseServiceImpl(
     private val pdlOppslagService: PdlOppslagService,
+    private val pdlOppslagServiceQ1: PdlOppslagService,
     private val hendelseRepository: HendelseRepository,
     private val behandlingEierService: BehandlingEierService,
     private val hendelseEierService: HendelseEierService,

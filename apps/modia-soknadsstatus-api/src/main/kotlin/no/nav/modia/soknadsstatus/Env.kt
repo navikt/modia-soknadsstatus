@@ -33,6 +33,7 @@ interface Env {
     val norgEnv: NorgEnv
     val skjermedePersonerEnv: SkjermedePersonerEnv
     val pdlEnv: PdlEnv
+    val pdlEnvQ1: PdlEnv
     val sensitiveTilgangsRoller: SensitiveTilgangsRoller
     val geografiskeTilgangsRoller: GeografiskeTilgangsRoller
     val msGraphEnv: MsGraphEnv
@@ -49,6 +50,11 @@ data class EnvImpl(
         PdlEnv(
             url = EnvUtils.getRequiredConfig("PDL_API_URL"),
             scope = EnvUtils.getRequiredConfig("PDL_SCOPE"),
+        ),
+    override val pdlEnvQ1: PdlEnv =
+        PdlEnv(
+            url = EnvUtils.getRequiredConfig("PDL_API_URL_Q1"),
+            scope = EnvUtils.getRequiredConfig("PDL_SCOPE_Q1"),
         ),
     override val axsysEnv: AxsysEnv =
         AxsysEnv(

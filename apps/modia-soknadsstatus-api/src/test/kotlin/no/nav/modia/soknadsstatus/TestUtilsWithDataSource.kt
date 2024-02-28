@@ -17,6 +17,7 @@ import kotlin.io.path.absolutePathString
 @Testcontainers
 open class TestUtilsWithDataSource {
     val pdlOppslagService = mockk<PdlOppslagService>()
+    val pdlOppslagServiceQ1 = mockk<PdlOppslagService>()
     lateinit var hendelseRepository: HendelseRepository
     lateinit var behandlingsRepository: BehandlingRepository
     lateinit var hendelseService: HendelseService
@@ -45,6 +46,7 @@ open class TestUtilsWithDataSource {
         hendelseService =
             HendelseServiceImpl(
                 pdlOppslagService,
+                pdlOppslagServiceQ1,
                 hendelseRepository,
                 behandlingEierService,
                 hendelseEierService,
