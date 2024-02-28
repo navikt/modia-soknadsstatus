@@ -37,6 +37,13 @@ interface Services {
                     configuration.oboTokenClient,
                     configuration.machineToMachineTokenClient,
                 )
+            val pdlQ1 =
+                PdlConfig.factory(
+                    env.kafkaApp.appMode,
+                    env.pdlEnvQ1,
+                    configuration.oboTokenClient,
+                    configuration.machineToMachineTokenClient,
+                )
             val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv, env.kafkaApp.appName)
             val skjermedePersonerApi =
                 SkjermedePersonerConfig.factory(
@@ -84,6 +91,7 @@ interface Services {
             val hendelseService =
                 HendelseServiceImpl(
                     pdlOppslagService = pdl,
+                    pdlOppslagServiceQ1 = pdlQ1,
                     hendelseRepository = configuration.hendelseRepository,
                     behandlingEierService = behandlingEierService,
                     hendelseEierService = hendelseEierService,

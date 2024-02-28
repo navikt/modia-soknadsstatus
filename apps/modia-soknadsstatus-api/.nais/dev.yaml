@@ -67,6 +67,7 @@ spec:
       external:
         - host: graph.microsoft.com
         - host: pdl-api.dev-fss-pub.nais.io
+        - host: pdl-api-q1.dev-fss-pub.nais.io
         - host: axsys.dev-fss-pub.nais.io
         - host: skjermede-personer-pip.intern.dev.nav.no
         - host: unleash.nais.io
@@ -103,6 +104,10 @@ spec:
     - name: PDL_API_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE
+      value: "dev-fss:pdl:pdl-api"
+    - name: PDL_API_URL_Q1
+      value: "https://pdl-api-q1.dev.intern.nav.no/graphql"
+    - name: PDL_SCOPE_Q1
       value: "dev-fss:pdl:pdl-api"
     - name: AXSYS_URL
       value: "https://axsys.dev-fss-pub.nais.io"
