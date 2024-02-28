@@ -16,6 +16,7 @@ interface HendelseEierRepository : TransactionRepository {
 data class HendelseEierDAO(
     val id: String? = null,
     val ident: String? = null,
+    val aktorId: String? = null,
     val hendelseId: String? = null,
 )
 
@@ -28,6 +29,7 @@ class HendelseEierRepositoryImpl(
 
         val id = "id"
         val ident = "ident"
+        val aktorId = "aktor_id"
         val hendelseId = "hendelse_id"
     }
 
@@ -38,12 +40,13 @@ class HendelseEierRepositoryImpl(
         connection
             .executeWithResult(
                 """
-                INSERT INTO $Tabell(${Tabell.hendelseId}, ${Tabell.ident}) VALUES(?::uuid, ?)
+                INSERT INTO $Tabell(${Tabell.hendelseId}, ${Tabell.ident}, ${Tabell.aktorId}) VALUES(?::uuid, ?, ?)
                  ON CONFLICT DO NOTHING
                  RETURNING *;
                 """.trimIndent(),
                 hendelseEier.hendelseId,
                 hendelseEier.ident,
+                hendelseEier.aktorId,
             ) {
                 HendelseEierDAO(
                     id = it.getString(Tabell.id),

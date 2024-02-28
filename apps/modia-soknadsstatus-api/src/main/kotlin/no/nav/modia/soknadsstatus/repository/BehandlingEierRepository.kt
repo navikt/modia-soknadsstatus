@@ -16,6 +16,7 @@ interface BehandlingEiereRepository : TransactionRepository {
 data class BehandlingEierDAO(
     val id: String? = null,
     val ident: String? = null,
+    val aktorId: String? = null,
     val behandlingId: String? = null,
 )
 
@@ -28,6 +29,7 @@ class BehandlingEierRepositoryImpl(
 
         val id = "id"
         const val ident = "ident"
+        const val aktorId = "aktor_id"
         const val behandlingId = "behandling_id"
     }
 
@@ -38,12 +40,13 @@ class BehandlingEierRepositoryImpl(
         connection
             .executeWithResult(
                 """
-                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.ident}) VALUES(?::uuid, ?)
+                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.ident}, ${Tabell.aktorId}) VALUES(?::uuid, ?, ?)
                  ON CONFLICT DO NOTHING
                  RETURNING *;
                 """.trimIndent(),
                 behandlingEier.behandlingId,
                 behandlingEier.ident,
+                behandlingEier.aktorId,
             ) {
                 BehandlingEierDAO(
                     id = it.getString(Tabell.id),

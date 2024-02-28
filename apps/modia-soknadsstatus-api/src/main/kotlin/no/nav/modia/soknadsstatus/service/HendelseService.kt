@@ -37,14 +37,6 @@ class HendelseServiceImpl(
     }
 
     override suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse) {
-        var identer = innkommendeHendelse.identer
-        if (identer.isEmpty()) {
-            identer = fetchIdents(innkommendeHendelse.aktoerer)
-        }
-        if (identer.isEmpty()) {
-            return
-        }
-
         hendelseRepository.useTransactionConnection {
             val behandling = behandlingService.upsert(it, hendelseToBehandlingDAO(innkommendeHendelse))
             if (behandling != null) {
@@ -53,6 +45,11 @@ class HendelseServiceImpl(
                         it,
                         hendelseToHendelseDAO(requireNotNull(behandling.id), innkommendeHendelse),
                     )
+
+                var identer = innkommendeHendelse.identer
+                if (identer.isEmpty()) {
+                    identer = fetchIdents(innkommendeHendelse.aktoerer)
+                }
 
                 for (ident in identer) {
                     behandlingEierService.upsert(
@@ -64,10 +61,6 @@ class HendelseServiceImpl(
                         HendelseEierDAO(ident = ident, hendelseId = requireNotNull(hendelse?.id)),
                     )
                 }
-                TjenestekallLogg.info(
-                    "Klarte å lagre et element i databasen!!!",
-                    fields = mapOf("behandlingId" to behandling.behandlingId),
-                )
             } else {
                 TjenestekallLogg.error(
                     header = "Klarte ikke å lagre behandling i databasen",
@@ -92,18 +85,19 @@ class HendelseServiceImpl(
                         behandlingToHendelseDAO(requireNotNull(behandling.id), innkommendeBehandling),
                     )
 
-                val ident = fetchIdents(listOf(innkommendeBehandling.aktoerId))
+                behandlingEierService.upsert(
+                    it,
+                    BehandlingEierDAO(aktorId = innkommendeBehandling.aktoerId, behandlingId = requireNotNull(behandling.id)),
+                )
+                hendelseEierService.upsert(
+                    it,
+                    HendelseEierDAO(aktorId = innkommendeBehandling.aktoerId, hendelseId = requireNotNull(hendelse?.id)),
+                )
 
-                if (ident.isNotEmpty()) {
-                    behandlingEierService.upsert(
-                        it,
-                        BehandlingEierDAO(ident = ident.first(), behandlingId = requireNotNull(behandling.id)),
-                    )
-                    hendelseEierService.upsert(
-                        it,
-                        HendelseEierDAO(ident = ident.first(), hendelseId = requireNotNull(hendelse?.id)),
-                    )
-                }
+                TjenestekallLogg.info(
+                    "Lagret ny behandling i databasen",
+                    fields = mapOf("behandlingId" to behandling.behandlingId),
+                )
             } else {
                 TjenestekallLogg.error(
                     header = "Klarte ikke å lagre behandling",
