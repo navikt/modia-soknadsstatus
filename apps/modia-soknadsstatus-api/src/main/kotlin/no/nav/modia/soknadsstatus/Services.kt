@@ -12,11 +12,14 @@ import no.nav.modia.soknadsstatus.pdl.PdlConfig
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.service.*
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerConfig
+import no.nav.modia.soknadsstatus.utils.LeaderElectionService
+import no.nav.modia.soknadsstatus.utils.LeaderElectionServiceImpl
 import no.nav.modia.soknadsstatus.utils.bindTo
 
 interface Services {
     val policies: Policies
     val pdl: PdlOppslagService
+    val pdlQ1: PdlOppslagService
     val accessControl: AccessControlConfig
     val dlqProducer: DeadLetterQueueProducer
     val dlSkipService: DeadLetterMessageSkipService
@@ -24,6 +27,7 @@ interface Services {
     val behandlingService: BehandlingService
     val hendelseService: HendelseService
     val hendelseEierService: HendelseEierService
+    val leaderElectionService: LeaderElectionService
 
     companion object {
         fun factory(
@@ -96,6 +100,10 @@ interface Services {
                     behandlingEierService = behandlingEierService,
                     hendelseEierService = hendelseEierService,
                 )
+            val leaderElectionService =
+                LeaderElectionServiceImpl(
+                    env.electorPath,
+                )
 
             behandlingService.init(hendelseService)
             hendelseService.init(behandlingService)
@@ -103,6 +111,7 @@ interface Services {
             return object : Services {
                 override val policies: Policies = Policies(env.sensitiveTilgangsRoller, env.geografiskeTilgangsRoller)
                 override val pdl = pdl
+                override val pdlQ1 = pdlQ1
                 override val accessControl = accessControl
                 override val dlSkipService = dlSkipService
                 override val dlqProducer = dlqProducer
@@ -110,6 +119,7 @@ interface Services {
                 override val behandlingService = behandlingService
                 override val hendelseService = hendelseService
                 override val hendelseEierService = hendelseEierService
+                override val leaderElectionService = leaderElectionService
             }
         }
     }

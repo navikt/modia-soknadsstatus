@@ -1,6 +1,9 @@
 package no.nav.modia.soknadsstatus.repository
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import no.nav.modia.soknadsstatus.SqlDsl.execute
 import no.nav.modia.soknadsstatus.SqlDsl.executeWithResult
 import java.sql.Connection
 import javax.sql.DataSource
@@ -10,6 +13,11 @@ interface HendelseEierRepository : TransactionRepository {
         connection: Connection,
         hendelseEier: HendelseEierDAO,
     ): HendelseEierDAO?
+
+    suspend fun updateAktorToFnr(
+        connection: Connection,
+        mappings: List<Pair<String, String>>,
+    )
 }
 
 @Serializable
@@ -54,4 +62,19 @@ class HendelseEierRepositoryImpl(
                     hendelseId = it.getString(Tabell.hendelseId),
                 )
             }.firstOrNull()
+
+    override suspend fun updateAktorToFnr(
+        connection: Connection,
+        mappings: List<Pair<String, String>>,
+    ) {
+        connection.execute(
+            """
+            UPDATE ${BehandlingEierRepositoryImpl.Tabell}
+                SET ${BehandlingEierRepositoryImpl.Tabell.ident} = Q.ident
+                    FROM (select (value->>0) AS aktor_id, (value->>1) AS ident FROM json_array_elements(?)) Q
+                WHERE ${BehandlingEierRepositoryImpl.Tabell}.${BehandlingEierRepositoryImpl.Tabell.aktorId} = Q.aktor_id AND ${BehandlingEierRepositoryImpl.Tabell}.${BehandlingEierRepositoryImpl.Tabell.ident} IS NULL;
+            """.trimIndent(),
+            Json.encodeToString(mappings),
+        )
+    }
 }

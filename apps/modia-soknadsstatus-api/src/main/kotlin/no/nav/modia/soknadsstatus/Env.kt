@@ -37,6 +37,8 @@ interface Env {
     val sensitiveTilgangsRoller: SensitiveTilgangsRoller
     val geografiskeTilgangsRoller: GeografiskeTilgangsRoller
     val msGraphEnv: MsGraphEnv
+
+    val electorPath: String?
 }
 
 data class EnvImpl(
@@ -74,6 +76,7 @@ data class EnvImpl(
             url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
             scope = EnvUtils.getRequiredConfig("MS_GRAPH_SCOPE"),
         ),
+    override val electorPath: String? = EnvUtils.getConfig("ELECTOR_PATH"),
 ) : Env
 
 data class HendelseConsumerEnv(
