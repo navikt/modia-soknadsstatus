@@ -23,6 +23,8 @@ fun main() {
 
     System.setProperty("HENDELSE_CONSUMER_POLL_DURATION_MS", "1000")
     System.setProperty("HENDELSE_CONSUMER_RESTART_DELAY_MS", "2000")
+    System.setProperty("BEHANDLING_CONSUMER_POLL_DURATION_MS", "1000")
+    System.setProperty("BEHANDLING_CONSUMER_RESTART_DELAY_MS", "2000")
 
     System.setProperty("NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_HOST", "localhost")
     System.setProperty("NAIS_DATABASE_MODIA_SOKNADSSTATUS_API_MODIA_SOKNADSSTATUS_PORT", "5432")
@@ -74,6 +76,7 @@ private fun setUpMocks() {
     val mockEnvs =
         listOf(
             MockEnv("PDL_API_URL", "https://pdl-api-url.no"),
+            MockEnv("PDL_API_URL_Q1", "https://pdl-api-url.no"),
             MockEnv("PDL_SCOPE", "test:pdl:scope"),
             MockEnv("AXSYS_SCOPE", "test:axsys:scope"),
             MockEnv("AXSYS_URL", "AXSYS_URL"),

@@ -10,6 +10,8 @@ interface PdlOppslagService {
 
     suspend fun hentFnrMedSystemToken(aktorId: String): String?
 
+    suspend fun hentFnrMedSystemTokenBolk(aktorIds: List<String>): List<Pair<String, String>>
+
     suspend fun hentAktorId(
         userToken: String,
         fnr: String,

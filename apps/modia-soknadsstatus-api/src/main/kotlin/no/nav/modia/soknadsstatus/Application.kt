@@ -98,7 +98,7 @@ fun Application.soknadsstatusModule(
                         env.kafkaApp,
                         consumerGroup = "${env.kafkaApp.appName}-behandling-consumer",
                         autoCommit = true,
-                        pollRecords = 10,
+                        pollRecords = 100,
                     ),
                 pollDurationMs = env.behandlingConsumerEnv.pollDurationMs,
                 exceptionRestartDelayMs = env.hendelseConsumerEnv.exceptionRestartDelayMs,

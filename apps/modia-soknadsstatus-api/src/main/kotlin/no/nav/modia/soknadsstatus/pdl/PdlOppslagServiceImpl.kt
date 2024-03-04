@@ -33,29 +33,26 @@ class PdlOppslagServiceImpl(
             )
         }
 
-    override suspend fun hentFnrMedSystemToken(aktorId: String): String? {
-        if (nonExistingSet.contains(aktorId)) {
-            return null
+    override suspend fun hentFnrMedSystemToken(aktorId: String): String? =
+        fnrCache.get(aktorId) {
+            pdlClient.hentAktivIdentMedSystemToken(
+                aktorId,
+                IdentGruppe.FOLKEREGISTERIDENT,
+            )
         }
-        return fnrCache.get(aktorId) {
-            try {
-                val result =
-                    pdlClient.hentAktivIdentMedSystemToken(
-                        aktorId,
-                        IdentGruppe.FOLKEREGISTERIDENT,
-                    )
-                if (result == null) {
-                    nonExistingSet.add(aktorId)
-                }
-                result
-            } catch (e: IllegalArgumentException) {
-                TjenestekallLogg.warn(
-                    "Ignorerer at PDL ikke returnerte ident for aktoer: $aktorId",
-                    fields = mapOf("aktoer" to aktorId),
-                )
-                nonExistingSet.add(aktorId)
-                null
-            }
+
+    override suspend fun hentFnrMedSystemTokenBolk(aktorIds: List<String>): List<Pair<String, String>> {
+        try {
+            return pdlClient.hentAktivIdentMedSystemTokenBolk(
+                aktorIds,
+                listOf(IdentGruppe.FOLKEREGISTERIDENT, IdentGruppe.AKTORID),
+            )
+        } catch (e: IllegalArgumentException) {
+            TjenestekallLogg.warn(
+                "HentFnrBolk feilet",
+                fields = mapOf("aktoer" to aktorIds),
+            )
+            return emptyList()
         }
     }
 

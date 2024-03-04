@@ -9,6 +9,10 @@ interface BehandlingEierService {
         connection: Connection,
         behandlingEier: BehandlingEierDAO,
     ): BehandlingEierDAO?
+
+    suspend fun getAktorIdsToConvert(limit: Int): List<String>
+
+    suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>)
 }
 
 class BehandlingEierServiceImpl(
@@ -18,4 +22,15 @@ class BehandlingEierServiceImpl(
         connection: Connection,
         behandlingEier: BehandlingEierDAO,
     ): BehandlingEierDAO? = behandlingEiereRepository.upsert(connection, behandlingEier)
+
+    override suspend fun getAktorIdsToConvert(limit: Int): List<String> =
+        behandlingEiereRepository.useTransactionConnection {
+            behandlingEiereRepository.getAktorIdsToConvert(it, limit)
+        }
+
+    override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) {
+        behandlingEiereRepository.useTransactionConnection {
+            behandlingEiereRepository.updateAktorToFnr(it, aktorFnrMapping)
+        }
+    }
 }

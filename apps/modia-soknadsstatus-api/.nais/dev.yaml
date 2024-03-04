@@ -38,6 +38,7 @@ spec:
     enabled: true
   kafka:
     pool: nav-dev
+  leaderElection: true
   gcp:
     sqlInstances:
       - type: POSTGRES_14

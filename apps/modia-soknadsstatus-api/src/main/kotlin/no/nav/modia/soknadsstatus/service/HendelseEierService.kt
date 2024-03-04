@@ -9,6 +9,8 @@ interface HendelseEierService {
         connection: Connection,
         hendelseEier: HendelseEierDAO,
     ): HendelseEierDAO?
+
+    suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>)
 }
 
 class HendelseEierServiceImpl(
@@ -18,4 +20,10 @@ class HendelseEierServiceImpl(
         connection: Connection,
         hendelseEier: HendelseEierDAO,
     ): HendelseEierDAO? = hendelseEierRepository.upsert(connection, hendelseEier)
+
+    override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) {
+        hendelseEierRepository.useTransactionConnection {
+            hendelseEierRepository.updateAktorToFnr(it, aktorFnrMapping)
+        }
+    }
 }
