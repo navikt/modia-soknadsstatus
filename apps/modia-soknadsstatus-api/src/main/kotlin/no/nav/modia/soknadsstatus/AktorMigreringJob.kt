@@ -10,10 +10,13 @@ class AktorMigreringJob(
     suspend fun start() {
         val logger = LoggerFactory.getLogger(AktorMigreringJob::class.java)
 
-        if (services.leaderElectionService.isLeader()) {
-            logger.info("Starter migrering av aktor til FNR som leader (host: ${services.leaderElectionService.hostName()})")
+        // Initial delay is 1 second
+        var delayTime: Long = 1000
 
-            while (true) {
+        logger.info("Starter migrering av aktor til FNR")
+
+        while (true) {
+            if (services.leaderElectionService.isLeader()) {
                 logger.info("Henter nye aktor IDer for migrering til Fnr")
                 val aktorIder = services.behandlingEierService.getAktorIdsToConvert(1000)
                 if (aktorIder.isEmpty()) continue
@@ -28,10 +31,13 @@ class AktorMigreringJob(
                 services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
 
                 logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
+            } else {
+                logger.info("Instans er ikke leder. Venter 30 sekunder før ny leader sjekk")
+                delayTime = 30000
+            }
 
-                runBlocking {
-                    delay(1000)
-                }
+            runBlocking {
+                delay(delayTime)
             }
         }
     }
