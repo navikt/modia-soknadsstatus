@@ -126,7 +126,7 @@ class PdlClientImpl(
                 val fnr =
                     it
                         .identer
-                        ?.first { it.gruppe === IdentGruppe.FOLKEREGISTERIDENT }
+                        ?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }
                         ?.ident
                 if (!aktor.isNullOrBlank() && !fnr.isNullOrBlank()) {
                     aktor to fnr
