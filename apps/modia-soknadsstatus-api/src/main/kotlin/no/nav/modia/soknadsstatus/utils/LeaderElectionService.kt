@@ -41,6 +41,8 @@ class LeaderElectionServiceImpl(
                             .toString()
                     }
 
+                logger.debug("Leader election gave leader $leader. Hostname is ${hostName()}")
+
                 return leader == hostName()
             }
         } catch (e: IllegalArgumentException) {
