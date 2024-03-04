@@ -7,6 +7,7 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
 import java.net.InetAddress
 
@@ -38,10 +39,11 @@ class LeaderElectionServiceImpl(
                             ).bodyAsText()
                             .let { Json.parseToJsonElement(it) }
                             .jsonObject["name"]
-                            .toString()
+                            ?.jsonPrimitive
+                            ?.content
                     }
 
-                logger.debug("Leader election gave leader $leader. Hostname is ${hostName()}")
+                logger.info("Leader election gave leader $leader. Hostname is ${hostName()}. Election result = ${leader == hostName()}")
 
                 return leader == hostName()
             }
