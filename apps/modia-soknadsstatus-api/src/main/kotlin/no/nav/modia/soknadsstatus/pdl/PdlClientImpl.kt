@@ -130,8 +130,9 @@ class PdlClientImpl(
                         ?.ident
                 if (!aktor.isNullOrBlank() && !fnr.isNullOrBlank()) {
                     aktor to fnr
+                } else {
+                    null
                 }
-                null
             } ?: emptyList()
 
     override suspend fun hentAktiveIdenter(
