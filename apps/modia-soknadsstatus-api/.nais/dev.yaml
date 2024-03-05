@@ -31,6 +31,10 @@ spec:
     path: /internal/isReady
     initialDelay: 20
     timeout: 1
+  startup:
+    path: /internal/isReady
+    failureThreshold: 30
+    periodSeconds: 10
   prometheus:
     enabled: true
     path: /internal/metrics
