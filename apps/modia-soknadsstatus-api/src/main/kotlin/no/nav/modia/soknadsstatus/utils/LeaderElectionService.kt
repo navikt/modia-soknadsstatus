@@ -43,7 +43,7 @@ class LeaderElectionServiceImpl(
                             ?.content
                     }
 
-                logger.info("Leader election gave leader $leader. Hostname is ${hostName()}. Election result = ${leader == hostName()}")
+                logger.debug("Leader election gave leader $leader. Hostname is ${hostName()}. Election result = ${leader == hostName()}")
 
                 return leader == hostName()
             }

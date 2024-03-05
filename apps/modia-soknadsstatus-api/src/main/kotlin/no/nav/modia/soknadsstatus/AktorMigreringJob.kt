@@ -27,7 +27,9 @@ class AktorMigreringJob(
                     continue
                 }
 
+                logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size} elementer)")
                 services.behandlingEierService.convertAktorToIdent(aktorFnrMapping)
+                logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
                 services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
 
                 logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
