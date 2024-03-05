@@ -120,20 +120,12 @@ class PdlClientImpl(
             systemTokenAuthorizationHeaders,
         ).data
             ?.hentIdenterBolk
-            ?.mapNotNull {
-                val aktor =
-                    it.identer?.first { it.gruppe == IdentGruppe.AKTORID }?.ident
-                val fnr =
-                    it
-                        .identer
-                        ?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }
-                        ?.ident
-                if (!aktor.isNullOrBlank() && !fnr.isNullOrBlank()) {
-                    aktor to fnr
-                } else {
-                    null
-                }
-            } ?: emptyList()
+            ?.mapNotNull { p ->
+                val aktorId = p.identer?.first { it.gruppe == IdentGruppe.AKTORID }?.ident
+                val fnr = p.identer?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
+                if (aktorId == null || fnr == null) null else aktorId to fnr
+            }
+            ?: emptyList()
 
     override suspend fun hentAktiveIdenter(
         userToken: String,
