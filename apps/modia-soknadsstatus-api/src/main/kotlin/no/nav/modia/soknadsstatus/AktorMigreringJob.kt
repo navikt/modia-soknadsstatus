@@ -18,7 +18,7 @@ class AktorMigreringJob(
         while (true) {
             if (services.leaderElectionService.isLeader()) {
                 logger.info("Henter nye aktor IDer for migrering til Fnr")
-                val aktorIder = services.behandlingEierService.getAktorIdsToConvert(10)
+                val aktorIder = services.behandlingEierService.getAktorIdsToConvert(1000)
                 if (aktorIder.isEmpty()) continue
 
                 val aktorFnrMapping = services.pdlQ1.hentFnrMedSystemTokenBolk(aktorIder)

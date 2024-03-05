@@ -89,10 +89,10 @@ class BehandlingEierRepositoryImpl(
             """
             UPDATE $Tabell
                 SET ${Tabell.ident} = Q.ident
-                    FROM (select (value->>0) AS aktor_id, (value->>1) AS ident FROM json_array_elements(?)) Q
+                    FROM (select (value->>0) AS aktor_id, (value->>1) AS ident FROM json_array_elements(?::json)) Q
                 WHERE $Tabell.${Tabell.aktorId} = Q.aktor_id AND $Tabell.${Tabell.ident} IS NULL;
             """.trimIndent(),
-            Json.encodeToString(mappings),
+            Json.encodeToString(mappings.map { it.toList() }),
         )
     }
 }
