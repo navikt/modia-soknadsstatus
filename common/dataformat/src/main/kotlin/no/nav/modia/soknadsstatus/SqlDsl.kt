@@ -102,7 +102,7 @@ object SqlDsl {
             is Time -> setTime(index, value)
             is Timestamp -> setTimestamp(index, value)
             is String -> setString(index, value)
-            null -> setNull(index, Types.VARCHAR)
+            null -> setNull(index, Types.NULL)
         }
     }
 }
