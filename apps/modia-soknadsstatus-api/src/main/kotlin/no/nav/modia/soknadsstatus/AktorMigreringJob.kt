@@ -37,7 +37,6 @@ class AktorMigreringJob(
                     logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
                     val hendelseEierRes = services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
                     logger.info("Slettet ${hendelseEierRes.deleteCount} rader. Oppdaterte ${hendelseEierRes.updateCount} rader")
-                    logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
 
                     logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
                 } catch (e: Exception) {
