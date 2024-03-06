@@ -20,7 +20,7 @@ class AktorMigreringJob(
                 delayTime = 1000
 
                 logger.info("Henter nye aktor IDer for migrering til Fnr")
-                val aktorIder = services.behandlingEierService.getAktorIdsToConvert(100)
+                val aktorIder = services.behandlingEierService.getAktorIdsToConvert(1000)
                 if (aktorIder.isEmpty()) continue
 
                 val aktorFnrMapping = services.pdlQ1.hentFnrMedSystemTokenBolk(aktorIder)
@@ -30,13 +30,18 @@ class AktorMigreringJob(
                 }
 
                 try {
-                    logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size} elementer)")
+                    logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size}/${aktorIder.size} elementer)")
                     val behandlingEierRes = services.behandlingEierService.convertAktorToIdent(aktorFnrMapping)
-                    logger.info("Slettet ${behandlingEierRes.deleteCount} rader. Oppdaterte ${behandlingEierRes.updateCount} rader")
+                    logger.info(
+                        "[behandling_eiere] Slettet ${behandlingEierRes.deleteCount} rader. " +
+                            "Oppdaterte ${behandlingEierRes.updateCount} rader",
+                    )
 
                     logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
                     val hendelseEierRes = services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
-                    logger.info("Slettet ${hendelseEierRes.deleteCount} rader. Oppdaterte ${hendelseEierRes.updateCount} rader")
+                    logger.info(
+                        "[hendelse_eiere] Slettet ${hendelseEierRes.deleteCount} rader. Oppdaterte ${hendelseEierRes.updateCount} rader",
+                    )
 
                     logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
                 } catch (e: Exception) {

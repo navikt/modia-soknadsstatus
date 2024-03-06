@@ -71,15 +71,16 @@ class HendelseEierRepositoryImpl(
     override suspend fun updateAktorToFnr(
         connection: Connection,
         mappings: List<Pair<String, String>>,
-    ) = connection.executeUpdate(
-        """
-        UPDATE $Tabell
-            SET ${Tabell.ident} = Q.ident
-                FROM (select (value->>0) AS aktor_id, (value->>1) AS ident FROM json_array_elements(?::json)) Q
-            WHERE $Tabell.${Tabell.aktorId} = Q.aktor_id AND $Tabell.${Tabell.ident} IS NULL;
-        """.trimIndent(),
-        Json.encodeToString(mappings),
-    )
+    ): Int =
+        connection.executeUpdate(
+            """
+            UPDATE $Tabell
+                SET ${Tabell.ident} = Q.ident
+                    FROM (select (value->>0) AS aktor_id, (value->>1) AS ident FROM json_array_elements(?::json)) Q
+                WHERE $Tabell.${Tabell.aktorId} = Q.aktor_id AND $Tabell.${Tabell.ident} IS NULL;
+            """.trimIndent(),
+            Json.encodeToString(mappings.map { it.toList() }),
+        )
 
     override suspend fun deleteDuplicateRowsByIdentAktorMapping(
         connection: Connection,
