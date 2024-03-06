@@ -92,7 +92,7 @@ class HendelseEierRepositoryImpl(
                 EXISTS (
                     SELECT * from $Tabell b
                     INNER JOIN (
-                        SELECT (value->>0) AS aktor_id, (value->>1) AS ident from json_array_element(?::json)
+                        SELECT (value->>0) AS aktor_id, (value->>1) AS ident from json_array_elements(?::json)
                     ) AS Q
                     ON Q.ident = b.${Tabell.ident}
                     WHERE
