@@ -137,7 +137,15 @@ class BehandlingRepositoryImpl(
             applikasjonSak = resultSet.getString(Tabell.applikasjonSak),
             applikasjonBehandling = resultSet.getString(Tabell.applikasjonBehandling),
         )
-    private fun toTimestamp(localDateTime: LocalDateTime?) =  if (localDateTime != null) Timestamp.valueOf(localDateTime.toJavaLocalDateTime()) else null
-    private fun toLocalDateTime(timestamp: Timestamp?) = timestamp?.toLocalDateTime()?.toKotlinLocalDateTime()
 
+    private fun toTimestamp(localDateTime: LocalDateTime?) =
+        if (localDateTime != null) {
+            Timestamp.valueOf(
+                localDateTime.toJavaLocalDateTime(),
+            )
+        } else {
+            null
+        }
+
+    private fun toLocalDateTime(timestamp: Timestamp?) = timestamp?.toLocalDateTime()?.toKotlinLocalDateTime()
 }
