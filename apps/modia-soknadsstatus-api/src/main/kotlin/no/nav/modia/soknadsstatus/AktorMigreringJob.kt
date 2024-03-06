@@ -17,8 +17,10 @@ class AktorMigreringJob(
 
         while (true) {
             if (services.leaderElectionService.isLeader()) {
+                delayTime = 1000
+
                 logger.info("Henter nye aktor IDer for migrering til Fnr")
-                val aktorIder = services.behandlingEierService.getAktorIdsToConvert(1000)
+                val aktorIder = services.behandlingEierService.getAktorIdsToConvert(100)
                 if (aktorIder.isEmpty()) continue
 
                 val aktorFnrMapping = services.pdlQ1.hentFnrMedSystemTokenBolk(aktorIder)
@@ -27,12 +29,17 @@ class AktorMigreringJob(
                     continue
                 }
 
-                logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size} elementer)")
-                services.behandlingEierService.convertAktorToIdent(aktorFnrMapping)
-                logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
-                services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
+                try {
+                    logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size} elementer)")
+                    services.behandlingEierService.convertAktorToIdent(aktorFnrMapping)
+                    logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
+                    services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
 
-                logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
+                    logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
+                } catch (e: Exception) {
+                    logger.error("Feilet under oppdatering av aktor_id til ident", e)
+                    delayTime = 60000
+                }
             } else {
                 logger.info("Instans er ikke leder. Venter 30 sekunder før ny leader sjekk")
                 delayTime = 30000
