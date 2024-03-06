@@ -113,7 +113,7 @@ class BehandlingEierRepositoryImpl(
                     INNER JOIN (
                         SELECT (value->>0) AS aktor_id, (value->>1) AS ident from json_array_elements(?::json)
                     ) AS Q
-                    ON Q.ident = b.${Tabell.ident}
+                    ON Q.ident = b.${Tabell.ident} OR Q.aktor_id = b.${Tabell.aktorId}
                     WHERE
                         b.${Tabell.behandlingId} = a.${Tabell.behandlingId}
                         AND Q.aktor_id = a.${Tabell.aktorId}
