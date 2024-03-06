@@ -3,7 +3,7 @@ package no.nav.modia.soknadsstatus.repository
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import no.nav.modia.soknadsstatus.SqlDsl.execute
+import no.nav.modia.soknadsstatus.SqlDsl.executeUpdate
 import no.nav.modia.soknadsstatus.SqlDsl.executeWithResult
 import java.sql.Connection
 import javax.sql.DataSource
@@ -22,7 +22,12 @@ interface BehandlingEiereRepository : TransactionRepository {
     suspend fun updateAktorToFnr(
         connection: Connection,
         mappings: List<Pair<String, String>>,
-    )
+    ): Int
+
+    suspend fun deleteDuplicateRowsByIdentAktorMapping(
+        connection: Connection,
+        aktorFnrMapping: List<Pair<String, String>>,
+    ): Int
 }
 
 @Serializable
@@ -84,8 +89,8 @@ class BehandlingEierRepositoryImpl(
     override suspend fun updateAktorToFnr(
         connection: Connection,
         mappings: List<Pair<String, String>>,
-    ) {
-        connection.execute(
+    ): Int =
+        connection.executeUpdate(
             """
             UPDATE $Tabell
                 SET ${Tabell.ident} = Q.ident
@@ -94,5 +99,26 @@ class BehandlingEierRepositoryImpl(
             """.trimIndent(),
             Json.encodeToString(mappings.map { it.toList() }),
         )
-    }
+
+    override suspend fun deleteDuplicateRowsByIdentAktorMapping(
+        connection: Connection,
+        aktorFnrMapping: List<Pair<String, String>>,
+    ): Int =
+        connection.executeUpdate(
+            """
+            DELETE FROM $Tabell a
+            WHERE
+                EXISTS (
+                    SELECT * from $Tabell b
+                    INNER JOIN (
+                        SELECT (value->>0) AS aktor_id, (value->>1) AS ident from json_array_element(?::json)
+                    ) AS Q
+                    ON Q.ident = b.${Tabell.ident}
+                    WHERE
+                        b.${Tabell.behandlingId} = a.${Tabell.behandlingId}
+                        AND Q.aktor_id = a.${Tabell.aktorId}
+                        AND NOT a.${Tabell.id} = b.${Tabell.id}
+                )
+            """.trimIndent(),
+        )
 }

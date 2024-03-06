@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.service
 
+import no.nav.modia.soknadsstatus.DeleteUpdateResult
 import no.nav.modia.soknadsstatus.repository.BehandlingEierDAO
 import no.nav.modia.soknadsstatus.repository.BehandlingEiereRepository
 import java.sql.Connection
@@ -12,7 +13,7 @@ interface BehandlingEierService {
 
     suspend fun getAktorIdsToConvert(limit: Int): List<String>
 
-    suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>)
+    suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>): DeleteUpdateResult
 }
 
 class BehandlingEierServiceImpl(
@@ -28,9 +29,14 @@ class BehandlingEierServiceImpl(
             behandlingEiereRepository.getAktorIdsToConvert(it, limit)
         }
 
-    override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) {
+    override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) =
         behandlingEiereRepository.useTransactionConnection {
-            behandlingEiereRepository.updateAktorToFnr(it, aktorFnrMapping)
+            val deleteCount = behandlingEiereRepository.deleteDuplicateRowsByIdentAktorMapping(it, aktorFnrMapping)
+            val updateCount = behandlingEiereRepository.updateAktorToFnr(it, aktorFnrMapping)
+
+            DeleteUpdateResult(
+                deleteCount,
+                updateCount,
+            )
         }
-    }
 }
