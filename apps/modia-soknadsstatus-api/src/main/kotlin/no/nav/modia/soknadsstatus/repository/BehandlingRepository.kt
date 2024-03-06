@@ -68,7 +68,7 @@ class BehandlingRepositoryImpl(
                 behandling.produsentSystem,
                 behandling.startTidspunkt?.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
                 behandling.sluttTidspunkt?.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
-                behandling.sistOppdatert?.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
+                behandling.sistOppdatert.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
                 behandling.sakstema,
                 behandling.behandlingsTema,
                 behandling.behandlingsType,
@@ -81,8 +81,8 @@ class BehandlingRepositoryImpl(
                 behandling.sobFlag,
                 behandling.status.name,
                 behandling.sluttTidspunkt?.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
-                behandling.sistOppdatert?.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
-                behandling.sistOppdatert?.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
+                behandling.sistOppdatert.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
+                behandling.sistOppdatert.let { Timestamp.valueOf(it.toJavaLocalDateTime()) },
             ) {
                 convertResultSetToBehandlingDao(it)
             }.firstOrNull()
@@ -125,7 +125,7 @@ class BehandlingRepositoryImpl(
             produsentSystem = resultSet.getString(Tabell.produsentSystem),
             startTidspunkt = resultSet.getTimestamp(Tabell.startTidspunkt)?.let { it.toLocalDateTime().toKotlinLocalDateTime() },
             sluttTidspunkt = resultSet.getTimestamp(Tabell.sluttTidspunkt)?.let { it.toLocalDateTime().toKotlinLocalDateTime() },
-            sistOppdatert = resultSet.getTimestamp(Tabell.sistOppdatert)?.let { it.toLocalDateTime().toKotlinLocalDateTime() },
+            sistOppdatert = resultSet.getTimestamp(Tabell.sistOppdatert).let { it.toLocalDateTime().toKotlinLocalDateTime() },
             sakstema = resultSet.getString(Tabell.sakstema),
             behandlingsTema = resultSet.getString(Tabell.behandlingsTema),
             behandlingsType = resultSet.getString(Tabell.behandlingsType),

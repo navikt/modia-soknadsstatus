@@ -37,7 +37,7 @@ object SoknadsstatusDomain {
         val produsentSystem: String? = null,
         val startTidspunkt: LocalDateTime? = null,
         val sluttTidspunkt: LocalDateTime? = null,
-        val sistOppdatert: LocalDateTime? = null,
+        val sistOppdatert: LocalDateTime,
         val sakstema: String? = null,
         val behandlingsTema: String? = null,
         val behandlingsType: String? = null,
