@@ -101,5 +101,6 @@ class HendelseEierRepositoryImpl(
                         AND NOT a.${Tabell.id} = b.${Tabell.id}
                 )
             """.trimIndent(),
+            Json.encodeToString(aktorFnrMapping.map { it.toList() }),
         )
 }
