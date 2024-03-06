@@ -31,9 +31,13 @@ class AktorMigreringJob(
 
                 try {
                     logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size} elementer)")
-                    services.behandlingEierService.convertAktorToIdent(aktorFnrMapping)
+                    val behandlingEierRes = services.behandlingEierService.convertAktorToIdent(aktorFnrMapping)
+                    logger.info("Slettet ${behandlingEierRes.deleteCount} rader. Oppdaterte ${behandlingEierRes.updateCount} rader")
+
                     logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
-                    services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
+                    val hendelseEierRes = services.hendelseEierService.convertAktorToIdent(aktorFnrMapping)
+                    logger.info("Slettet ${hendelseEierRes.deleteCount} rader. Oppdaterte ${hendelseEierRes.updateCount} rader")
+                    logger.info("Konverterer aktor_id til ident for hendelse_eiere (${aktorFnrMapping.size} elementer)")
 
                     logger.info("Migrerte aktor ID til FNR for ${aktorFnrMapping.size} elemeter")
                 } catch (e: Exception) {
