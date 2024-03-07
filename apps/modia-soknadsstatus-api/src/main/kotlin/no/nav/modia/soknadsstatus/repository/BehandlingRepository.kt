@@ -7,6 +7,7 @@ import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.SqlDsl.execute
 import no.nav.modia.soknadsstatus.SqlDsl.executeQuery
 import no.nav.modia.soknadsstatus.SqlDsl.executeWithResult
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Timestamp
@@ -56,37 +57,46 @@ class BehandlingRepositoryImpl(
     override suspend fun upsert(
         connection: Connection,
         behandling: SoknadsstatusDomain.Behandling,
-    ): SoknadsstatusDomain.Behandling? =
-        connection
-            .executeWithResult(
-                """
-                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling}, ${Tabell.sobFlag})
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
-                RETURNING *;
-                """.trimIndent(),
-                behandling.behandlingId,
-                behandling.produsentSystem,
-                toTimestamp(behandling.startTidspunkt),
-                toTimestamp(behandling.sluttTidspunkt),
-                toTimestamp(behandling.sistOppdatert),
-                behandling.sakstema,
-                behandling.behandlingsTema,
-                behandling.behandlingsType,
-                behandling.status.name,
-                behandling.ansvarligEnhet,
-                behandling.primaerBehandlingId,
-                behandling.primaerBehandlingType,
-                behandling.applikasjonSak,
-                behandling.applikasjonBehandling,
-                behandling.sobFlag,
-                behandling.status.name,
-                toTimestamp(behandling.sluttTidspunkt),
-                toTimestamp(behandling.sistOppdatert),
-                toTimestamp(behandling.sistOppdatert),
-            ) {
-                convertResultSetToBehandlingDao(it)
-            }.firstOrNull()
+    ): SoknadsstatusDomain.Behandling? {
+        val result =
+            connection
+                .executeWithResult(
+                    """
+                    INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling}, ${Tabell.sobFlag})
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
+                    RETURNING *;
+                    """.trimIndent(),
+                    behandling.behandlingId,
+                    behandling.produsentSystem,
+                    toTimestamp(behandling.startTidspunkt),
+                    toTimestamp(behandling.sluttTidspunkt),
+                    toTimestamp(behandling.sistOppdatert),
+                    behandling.sakstema,
+                    behandling.behandlingsTema,
+                    behandling.behandlingsType,
+                    behandling.status.name,
+                    behandling.ansvarligEnhet,
+                    behandling.primaerBehandlingId,
+                    behandling.primaerBehandlingType,
+                    behandling.applikasjonSak,
+                    behandling.applikasjonBehandling,
+                    behandling.sobFlag,
+                    behandling.status.name,
+                    toTimestamp(behandling.sluttTidspunkt),
+                    toTimestamp(behandling.sistOppdatert),
+                    toTimestamp(behandling.sistOppdatert),
+                ) {
+                    convertResultSetToBehandlingDao(it)
+                }.firstOrNull()
+
+        TjenestekallLogg.info(
+            "Behandling upsert",
+            fields = mapOf("result" to result),
+        )
+
+        return result
+    }
 
     override suspend fun getForId(id: String): SoknadsstatusDomain.Behandling? =
         dataSource
@@ -138,14 +148,19 @@ class BehandlingRepositoryImpl(
             applikasjonBehandling = resultSet.getString(Tabell.applikasjonBehandling),
         )
 
-    private fun toTimestamp(localDateTime: LocalDateTime?) =
-        if (localDateTime != null) {
+    private fun toTimestamp(localDateTime: LocalDateTime?): Timestamp? {
+        TjenestekallLogg.info(
+            "converting to timestamp",
+            fields = mapOf("localDateTime" to null),
+        )
+        return if (localDateTime != null) {
             Timestamp.valueOf(
                 localDateTime.toJavaLocalDateTime(),
             )
         } else {
             null
         }
+    }
 
     private fun toLocalDateTime(timestamp: Timestamp?) = timestamp?.toLocalDateTime()?.toKotlinLocalDateTime()
 }
