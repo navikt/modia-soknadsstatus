@@ -63,15 +63,14 @@ class HendelseServiceImpl(
                     )
                 }
             } else {
-                TjenestekallLogg.error(
-                    header = "Klarte ikke å lagre behandling i databasen",
+                TjenestekallLogg.warn(
+                    header = "ingnorerer eldre behandling. Nyere behandling finnes i databasen",
                     fields =
                         mapOf(
                             "behandlingsId" to innkommendeHendelse.behandlingsId,
                             "hendelsesId" to innkommendeHendelse.hendelsesId,
                         ),
                 )
-                throw RuntimeException("Klarte ikke å lagre behandling i databasen.")
             }
         }
     }
@@ -94,17 +93,14 @@ class HendelseServiceImpl(
                     it,
                     HendelseEierDAO(aktorId = innkommendeBehandling.aktoerId, hendelseId = requireNotNull(hendelse?.id)),
                 )
-
-                TjenestekallLogg.info(
-                    "Lagret ny behandling i databasen",
-                    fields = mapOf("behandlingId" to behandling.behandlingId),
-                )
             } else {
-                TjenestekallLogg.error(
-                    header = "Klarte ikke å lagre behandling",
-                    fields = mapOf("behandlingsId" to innkommendeBehandling.behandlingId),
+                TjenestekallLogg.warn(
+                    header = "ingnorerer eldre behandling. Nyere behandling finnes i databasen",
+                    fields =
+                        mapOf(
+                            "behandlingsId" to innkommendeBehandling.behandlingId,
+                        ),
                 )
-                throw RuntimeException("Klarte ikke å lagre behandling i databasen.")
             }
         }
     }
