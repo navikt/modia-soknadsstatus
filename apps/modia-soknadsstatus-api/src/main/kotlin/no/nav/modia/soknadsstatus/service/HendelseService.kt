@@ -42,7 +42,7 @@ class HendelseServiceImpl(
             val behandling = behandlingService.upsert(it, hendelseToBehandlingDAO(innkommendeHendelse))
             if (behandling != null) {
                 val hendelse =
-                    hendelseRepository.create(
+                    hendelseRepository.upsert(
                         it,
                         hendelseToHendelseDAO(requireNotNull(behandling.id), innkommendeHendelse),
                     )
