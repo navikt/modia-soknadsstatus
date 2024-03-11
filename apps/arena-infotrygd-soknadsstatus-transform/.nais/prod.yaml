@@ -41,6 +41,8 @@ spec:
       - type: POSTGRES_14
         databases:
           - name: arena-infotrygd-soknadsstatus-db
+  envFrom:
+    - secret: modia-soknadstatus-slackhook
   env:
     - name: APP_NAME
       value: "arena-infotrygd-soknadsstatus-transform"

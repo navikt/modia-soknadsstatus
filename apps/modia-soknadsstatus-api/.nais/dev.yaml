@@ -80,6 +80,8 @@ spec:
         - host: skjermede-personer-pip.intern.dev.nav.no
         - host: unleash.nais.io
         - host: norg2.dev-fss-pub.nais.io
+  envFrom:
+    - secret: modia-soknadstatus-slackhook
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"

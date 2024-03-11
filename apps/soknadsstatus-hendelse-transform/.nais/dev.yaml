@@ -6,8 +6,6 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  envFrom:
-    - secret: modia-soknadstatus-slackhook
   image: {{image}}
   port: 8080
   replicas:
@@ -44,6 +42,8 @@ spec:
       - type: POSTGRES_14
         databases:
           - name: soknadsstatus-hendelse-transform-db
+  envFrom:
+    - secret: modia-soknadstatus-slackhook
   env:
     - name: APP_NAME
       value: "soknadsstatus-hendelse-transform"
