@@ -19,7 +19,7 @@ import no.nav.modia.soknadsstatus.utils.bindTo
 interface Services {
     val policies: Policies
     val pdl: PdlOppslagService
-    val pdlQ1: PdlOppslagService
+    val pdlMigrering: PdlOppslagService
     val accessControl: AccessControlConfig
     val dlqProducer: DeadLetterQueueProducer
     val dlSkipService: DeadLetterMessageSkipService
@@ -41,7 +41,7 @@ interface Services {
                     configuration.oboTokenClient,
                     configuration.machineToMachineTokenClient,
                 )
-            val pdlQ1 =
+            val pdlMigrering =
                 PdlConfig.factory(
                     env.kafkaApp.appMode,
                     env.pdlEnvQ1,
@@ -95,7 +95,6 @@ interface Services {
             val hendelseService =
                 HendelseServiceImpl(
                     pdlOppslagService = pdl,
-                    pdlOppslagServiceQ1 = pdlQ1,
                     hendelseRepository = configuration.hendelseRepository,
                     behandlingEierService = behandlingEierService,
                     hendelseEierService = hendelseEierService,
@@ -111,7 +110,7 @@ interface Services {
             return object : Services {
                 override val policies: Policies = Policies(env.sensitiveTilgangsRoller, env.geografiskeTilgangsRoller)
                 override val pdl = pdl
-                override val pdlQ1 = pdlQ1
+                override val pdlMigrering = pdlMigrering
                 override val accessControl = accessControl
                 override val dlSkipService = dlSkipService
                 override val dlqProducer = dlqProducer
