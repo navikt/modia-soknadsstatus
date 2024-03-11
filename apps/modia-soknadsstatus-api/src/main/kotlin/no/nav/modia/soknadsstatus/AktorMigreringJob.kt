@@ -23,7 +23,7 @@ class AktorMigreringJob(
                 val aktorIder = services.behandlingEierService.getAktorIdsToConvert(1000)
                 if (aktorIder.isEmpty()) continue
 
-                val aktorFnrMapping = services.pdlQ1.hentFnrMedSystemTokenBolk(aktorIder)
+                val aktorFnrMapping = services.pdlMigrering.hentFnrMedSystemTokenBolk(aktorIder)
                 if (aktorFnrMapping.isEmpty()) {
                     logger.warn("Fikk ingen mappinger tilbake fra PDL")
                     continue
