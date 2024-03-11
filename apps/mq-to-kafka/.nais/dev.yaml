@@ -48,6 +48,7 @@ spec:
   envFrom:
     - secret: mq-to-kafka
     - secret: mq-tls-keystore-password
+    - secret: modia-soknadstatus-slackhook
   env:
     - name: APP_NAME
       value: "mq-to-kafka"

@@ -39,6 +39,11 @@ interface PdlClient {
         gruppe: IdentGruppe,
     ): String?
 
+    suspend fun hentAktivIdentMedSystemTokenBolk(
+        aktoerIds: List<String>,
+        grupper: List<IdentGruppe>,
+    ): List<Pair<String, String>>
+
     suspend fun hentAktiveIdenter(
         userToken: String,
         ident: String,
@@ -105,6 +110,22 @@ class PdlClientImpl(
             ?.identer
             ?.firstOrNull()
             ?.ident
+
+    override suspend fun hentAktivIdentMedSystemTokenBolk(
+        aktoerIds: List<String>,
+        grupper: List<IdentGruppe>,
+    ): List<Pair<String, String>> =
+        execute(
+            HentIdenterBolk(HentIdenterBolk.Variables(aktoerIds, grupper)),
+            systemTokenAuthorizationHeaders,
+        ).data
+            ?.hentIdenterBolk
+            ?.mapNotNull { p ->
+                val aktorId = p.identer?.first { it.gruppe == IdentGruppe.AKTORID }?.ident
+                val fnr = p.identer?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
+                if (aktorId == null || fnr == null) null else aktorId to fnr
+            }
+            ?: emptyList()
 
     override suspend fun hentAktiveIdenter(
         userToken: String,

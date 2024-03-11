@@ -1,4 +1,4 @@
-name: soknadsstatus-hendelse-transform-dlq
+name: modia-soknadsstatus-behandling-oppdatering-dlq
 
 on:
   workflow_dispatch:
@@ -15,4 +15,4 @@ jobs:
       contents: read
       id-token: write
     with:
-      topic-file-name: modia-soknadsstatus-hendelse-dlq.yml
+      topic-file-name: modia-soknadsstatus-behandling-oppdatering-dlq.yml

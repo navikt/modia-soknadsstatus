@@ -11,6 +11,11 @@ class PdlOppslagServiceMock : PdlOppslagService {
 
     override suspend fun hentFnrMedSystemToken(aktorId: String): String = MockData.Bruker.fnr
 
+    override suspend fun hentFnrMedSystemTokenBolk(aktorIds: List<String>): List<Pair<String, String>> =
+        listOf(
+            MockData.Bruker.aktorId to MockData.Bruker.fnr,
+        )
+
     override suspend fun hentAktorId(
         userToken: String,
         fnr: String,

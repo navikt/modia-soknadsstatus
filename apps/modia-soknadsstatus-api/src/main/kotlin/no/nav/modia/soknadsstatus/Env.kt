@@ -26,27 +26,37 @@ interface Env {
     val appVersion: String
     val kafkaApp: AppEnv
     val hendelseConsumerEnv: HendelseConsumerEnv
+    val behandlingConsumerEnv: BehandlingConsumerEnv
     val azureAdConfiguration: AzureAdConfiguration
     val datasourceConfiguration: DatasourceConfiguration
     val axsysEnv: AxsysEnv
     val norgEnv: NorgEnv
     val skjermedePersonerEnv: SkjermedePersonerEnv
     val pdlEnv: PdlEnv
+    val pdlEnvQ1: PdlEnv
     val sensitiveTilgangsRoller: SensitiveTilgangsRoller
     val geografiskeTilgangsRoller: GeografiskeTilgangsRoller
     val msGraphEnv: MsGraphEnv
+
+    val electorPath: String?
 }
 
 data class EnvImpl(
     override val kafkaApp: AppEnv = AppEnv(),
     override val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
     override val hendelseConsumerEnv: HendelseConsumerEnv = HendelseConsumerEnv(),
+    override val behandlingConsumerEnv: BehandlingConsumerEnv = BehandlingConsumerEnv(),
     override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(DatasourceEnv(kafkaApp.appName)),
     override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(appMode = kafkaApp.appMode),
     override val pdlEnv: PdlEnv =
         PdlEnv(
             url = EnvUtils.getRequiredConfig("PDL_API_URL"),
             scope = EnvUtils.getRequiredConfig("PDL_SCOPE"),
+        ),
+    override val pdlEnvQ1: PdlEnv =
+        PdlEnv(
+            url = EnvUtils.getRequiredConfig("PDL_API_URL_Q1"),
+            scope = EnvUtils.getRequiredConfig("PDL_SCOPE_Q1"),
         ),
     override val axsysEnv: AxsysEnv =
         AxsysEnv(
@@ -66,9 +76,15 @@ data class EnvImpl(
             url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
             scope = EnvUtils.getRequiredConfig("MS_GRAPH_SCOPE"),
         ),
+    override val electorPath: String? = EnvUtils.getConfig("ELECTOR_PATH"),
 ) : Env
 
 data class HendelseConsumerEnv(
     val pollDurationMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_POLL_DURATION_MS").toDouble(),
     val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_RESTART_DELAY_MS").toDouble(),
+)
+
+data class BehandlingConsumerEnv(
+    val pollDurationMs: Double = EnvUtils.getRequiredConfig("BEHANDLING_CONSUMER_POLL_DURATION_MS").toDouble(),
+    val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("BEHANDLING_CONSUMER_RESTART_DELAY_MS").toDouble(),
 )

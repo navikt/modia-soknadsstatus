@@ -69,6 +69,11 @@ object SqlDsl {
         return Collections.unmodifiableList(rows)
     }
 
+    fun Connection.executeUpdate(
+        sql: String,
+        vararg variables: Any?,
+    ): Int = preparedStatement(this, sql, variables).executeUpdate()
+
     private fun preparedStatement(
         connection: Connection,
         sql: String,
@@ -97,7 +102,12 @@ object SqlDsl {
             is Time -> setTime(index, value)
             is Timestamp -> setTimestamp(index, value)
             is String -> setString(index, value)
-            null -> setNull(index, Types.VARCHAR)
+            null -> setNull(index, Types.NULL)
         }
     }
 }
+
+data class DeleteUpdateResult(
+    val deleteCount: Int,
+    val updateCount: Int,
+)

@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.service
 
+import no.nav.modia.soknadsstatus.DeleteUpdateResult
 import no.nav.modia.soknadsstatus.repository.HendelseEierDAO
 import no.nav.modia.soknadsstatus.repository.HendelseEierRepository
 import java.sql.Connection
@@ -9,6 +10,8 @@ interface HendelseEierService {
         connection: Connection,
         hendelseEier: HendelseEierDAO,
     ): HendelseEierDAO?
+
+    suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>): DeleteUpdateResult
 }
 
 class HendelseEierServiceImpl(
@@ -18,4 +21,15 @@ class HendelseEierServiceImpl(
         connection: Connection,
         hendelseEier: HendelseEierDAO,
     ): HendelseEierDAO? = hendelseEierRepository.upsert(connection, hendelseEier)
+
+    override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) =
+        hendelseEierRepository.useTransactionConnection {
+            val deleteCount = hendelseEierRepository.deleteDuplicateRowsByIdentAktorMapping(it, aktorFnrMapping)
+            val updateCount = hendelseEierRepository.updateAktorToFnr(it, aktorFnrMapping)
+
+            DeleteUpdateResult(
+                deleteCount,
+                updateCount,
+            )
+        }
 }

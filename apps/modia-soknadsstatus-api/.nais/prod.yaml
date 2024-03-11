@@ -6,15 +6,21 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 8080
   ingresses:
     - https://modia-soknadsstatus-api.intern.nav.no
     - https://intern.nav.no/modia-soknadsstatus-api
   replicas:
     min: 2
-    max: 4
-    cpuThresholdPercentage: 90
+    max: 10
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: 90
+      kafka:
+        consumerGroup: modia-soknadsstatus-api-behandling-consumer
+        topic: org.sobhist-v4
+        threshold: 1000
   resources:
     requests:
       cpu: 1000m
@@ -44,9 +50,10 @@ spec:
       - type: POSTGRES_14
         diskAutoresize: true
         highAvailability: true
-        tier: db-custom-4-15360
+        tier: db-custom-8-20480
         databases:
           - name: modia-soknadsstatus-api-db
+  leaderElection: true
   azure:
     application:
       enabled: true
@@ -71,6 +78,8 @@ spec:
         - host: skjermede-personer-pip.intern.nav.no
         - host: unleash.nais.io
         - host: norg2.prod-fss-pub.nais.io
+  envFrom:
+    - secret: modia-soknadstatus-slackhook
   env:
     - name: APP_NAME
       value: "modia-soknadsstatus-api"
@@ -82,8 +91,12 @@ spec:
       value: "modia-soknadsstatus-api-db"
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
+    - name: KAFKA_SOURCE_BEHANDLING_TOPIC
+      value: "org.sobhist-v4"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
+    - name: KAFKA_DEAD_LETTER_QUEUE_BEHANDLING_TOPIC
+      value: "personoversikt.modia-soknadsstatus-behandling-oppdatering-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
       value: "60000"
     - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
@@ -100,6 +113,10 @@ spec:
       value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE
       value: "prod-fss:pdl:pdl-api"
+    - name: PDL_API_URL_Q1
+      value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
+    - name: PDL_SCOPE_Q1
+      value: "prod-fss:pdl:pdl-api"
     - name: AXSYS_URL
       value: "https://axsys.prod-fss-pub.nais.io"
     - name: AXSYS_SCOPE
@@ -112,4 +129,7 @@ spec:
       value: "https://graph.microsoft.com/"
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
-
+    - name: BEHANDLING_CONSUMER_POLL_DURATION_MS
+      value: "2000"
+    - name: BEHANDLING_CONSUMER_RESTART_DELAY_MS
+      value: "4000"

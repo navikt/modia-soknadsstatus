@@ -49,7 +49,7 @@ open class LoggingGraphQLKtorClient(
                     "$name-response-error: $callId ($requestId)",
                     logMessage,
                 )
-                val exception = Exception(response.errors!!.joinToString(", ") { it.message })
+                val exception = IllegalArgumentException(response.errors!!.joinToString(", ") { it.message })
                 selftestReporter.reportError(exception)
                 throw exception
             }

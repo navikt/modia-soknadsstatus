@@ -18,7 +18,6 @@ import kotlin.io.path.absolutePathString
 open class TestUtilsWithDataSource {
     val pdlOppslagService = mockk<PdlOppslagService>()
     lateinit var hendelseRepository: HendelseRepository
-    lateinit var behandlingsRepository: BehandlingRepository
     lateinit var hendelseService: HendelseService
     lateinit var behandlingService: BehandlingService
 

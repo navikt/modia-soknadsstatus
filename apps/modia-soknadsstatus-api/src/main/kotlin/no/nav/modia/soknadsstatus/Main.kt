@@ -1,6 +1,8 @@
 package no.nav.modia.soknadsstatus
 
 import io.ktor.server.cio.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import no.nav.personoversikt.common.ktor.utils.KtorServer
 
 fun main() {
@@ -13,11 +15,17 @@ fun runApp(port: Int = 8080) {
     val services = Services.factory(env, configuration)
     env.datasourceConfiguration.runFlyway()
 
-    KtorServer
-        .create(
-            factory = CIO,
-            port = port,
-        ) {
-            soknadsstatusModule(env, configuration, services)
-        }.start(wait = true)
+    runBlocking {
+        launch {
+            AktorMigreringJob(services).start()
+        }
+
+        KtorServer
+            .create(
+                factory = CIO,
+                port = port,
+            ) {
+                soknadsstatusModule(env, configuration, services)
+            }.start(wait = true)
+    }
 }

@@ -33,3 +33,4 @@ create-topic:
 	-docker exec -it ${REDPANDA} rpk topic create personoversikt.modia-soknadsstatus-hendelse-dlq --brokers=localhost:9092
 	-docker exec -it ${REDPANDA} rpk topic create personoversikt.modia-soknadsstatus-oppdatering --brokers=localhost:9092
 	-docker exec -it ${REDPANDA} rpk topic create personoversikt.modia-soknadsstatus-oppdatering-dlq --brokers=localhost:9092
+	-docker exec -it ${REDPANDA} rpk topic create personoversikt.modia-soknadsstatus-behandling-oppdatering-dlq --brokers=localhost:9092

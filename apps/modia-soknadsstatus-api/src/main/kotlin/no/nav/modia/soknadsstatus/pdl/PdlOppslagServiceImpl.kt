@@ -4,6 +4,7 @@ import no.nav.api.generated.pdl.enums.IdentGruppe
 import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.SuspendCache
 import no.nav.modia.soknadsstatus.SuspendCacheImpl
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import kotlin.time.Duration.Companion.minutes
 
 class PdlOppslagServiceImpl(
@@ -14,6 +15,8 @@ class PdlOppslagServiceImpl(
     private val adresseBeskyttelseCache: SuspendCache<String, List<Adressebeskyttelse>> = getCache(),
     private val identerCache: SuspendCache<String, List<String>> = getCache(),
 ) : PdlOppslagService {
+    private val nonExistingSet = mutableSetOf<String>()
+
     companion object {
         fun <VALUE_TYPE> getCache(): SuspendCache<String, VALUE_TYPE> = SuspendCacheImpl(expiresAfterWrite = 1.minutes)
     }
@@ -37,6 +40,21 @@ class PdlOppslagServiceImpl(
                 IdentGruppe.FOLKEREGISTERIDENT,
             )
         }
+
+    override suspend fun hentFnrMedSystemTokenBolk(aktorIds: List<String>): List<Pair<String, String>> {
+        try {
+            return pdlClient.hentAktivIdentMedSystemTokenBolk(
+                aktorIds,
+                listOf(IdentGruppe.FOLKEREGISTERIDENT, IdentGruppe.AKTORID),
+            )
+        } catch (e: IllegalArgumentException) {
+            TjenestekallLogg.warn(
+                "HentFnrBolk feilet",
+                fields = mapOf("aktoer" to aktorIds),
+            )
+            return emptyList()
+        }
+    }
 
     override suspend fun hentAktorId(
         userToken: String,

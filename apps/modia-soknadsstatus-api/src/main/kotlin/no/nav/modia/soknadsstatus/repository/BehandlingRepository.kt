@@ -1,5 +1,6 @@
 package no.nav.modia.soknadsstatus.repository
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
@@ -49,6 +50,7 @@ class BehandlingRepositoryImpl(
         const val primaerBehandlingType = "primaer_behandling_type"
         const val applikasjonSak = "applikasjon_sak"
         const val applikasjonBehandling = "applikasjon_behandling"
+        const val sobFlag = "sob_flag"
     }
 
     override suspend fun upsert(
@@ -58,16 +60,16 @@ class BehandlingRepositoryImpl(
         connection
             .executeWithResult(
                 """
-                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling})
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?)
+                INSERT INTO $Tabell(${Tabell.behandlingId}, ${Tabell.produsentSystem}, ${Tabell.startTidspunkt}, ${Tabell.sluttTidspunkt}, ${Tabell.sistOppdatert}, ${Tabell.sakstema}, ${Tabell.behandlingsTema}, ${Tabell.behandlingsType}, ${Tabell.status}, ${Tabell.ansvarligEnhet}, ${Tabell.primaerBehandlingId}, ${Tabell.primaerBehandlingType}, ${Tabell.applikasjonSak}, ${Tabell.applikasjonBehandling}, ${Tabell.sobFlag})
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::statusEnum, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT (${Tabell.behandlingId}) DO UPDATE SET ${Tabell.status} = ?::statusEnum, ${Tabell.sluttTidspunkt} = ?, ${Tabell.sistOppdatert} = ? WHERE $Tabell.${Tabell.sistOppdatert} <= ?
                 RETURNING *;
                 """.trimIndent(),
                 behandling.behandlingId,
                 behandling.produsentSystem,
-                Timestamp.valueOf(behandling.startTidspunkt?.toJavaLocalDateTime()),
-                Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
-                Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
+                toTimestamp(behandling.startTidspunkt),
+                toTimestamp(behandling.sluttTidspunkt),
+                toTimestamp(behandling.sistOppdatert),
                 behandling.sakstema,
                 behandling.behandlingsTema,
                 behandling.behandlingsType,
@@ -77,10 +79,11 @@ class BehandlingRepositoryImpl(
                 behandling.primaerBehandlingType,
                 behandling.applikasjonSak,
                 behandling.applikasjonBehandling,
+                behandling.sobFlag,
                 behandling.status.name,
-                Timestamp.valueOf(behandling.sluttTidspunkt?.toJavaLocalDateTime()),
-                Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
-                Timestamp.valueOf(behandling.sistOppdatert.toJavaLocalDateTime()),
+                toTimestamp(behandling.sluttTidspunkt),
+                toTimestamp(behandling.sistOppdatert),
+                toTimestamp(behandling.sistOppdatert),
             ) {
                 convertResultSetToBehandlingDao(it)
             }.firstOrNull()
@@ -121,9 +124,9 @@ class BehandlingRepositoryImpl(
             id = resultSet.getString(Tabell.id),
             behandlingId = resultSet.getString(Tabell.behandlingId),
             produsentSystem = resultSet.getString(Tabell.produsentSystem),
-            startTidspunkt = resultSet.getTimestamp(Tabell.startTidspunkt).toLocalDateTime().toKotlinLocalDateTime(),
-            sluttTidspunkt = resultSet.getTimestamp(Tabell.sluttTidspunkt).toLocalDateTime().toKotlinLocalDateTime(),
-            sistOppdatert = resultSet.getTimestamp(Tabell.sistOppdatert).toLocalDateTime().toKotlinLocalDateTime(),
+            startTidspunkt = toLocalDateTime(resultSet.getTimestamp(Tabell.startTidspunkt)),
+            sluttTidspunkt = toLocalDateTime(resultSet.getTimestamp(Tabell.sluttTidspunkt)),
+            sistOppdatert = toLocalDateTime(resultSet.getTimestamp(Tabell.sistOppdatert))!!,
             sakstema = resultSet.getString(Tabell.sakstema),
             behandlingsTema = resultSet.getString(Tabell.behandlingsTema),
             behandlingsType = resultSet.getString(Tabell.behandlingsType),
@@ -134,4 +137,15 @@ class BehandlingRepositoryImpl(
             applikasjonSak = resultSet.getString(Tabell.applikasjonSak),
             applikasjonBehandling = resultSet.getString(Tabell.applikasjonBehandling),
         )
+
+    private fun toTimestamp(localDateTime: LocalDateTime?): Timestamp? =
+        if (localDateTime != null) {
+            Timestamp.valueOf(
+                localDateTime.toJavaLocalDateTime(),
+            )
+        } else {
+            null
+        }
+
+    private fun toLocalDateTime(timestamp: Timestamp?) = timestamp?.toLocalDateTime()?.toKotlinLocalDateTime()
 }
