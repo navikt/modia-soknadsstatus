@@ -6,15 +6,21 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 8080
   ingresses:
     - https://modia-soknadsstatus-api.intern.nav.no
     - https://intern.nav.no/modia-soknadsstatus-api
   replicas:
     min: 2
-    max: 4
-    cpuThresholdPercentage: 90
+    max: 10
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: 90
+      kafka:
+        consumerGroup: modia-soknadsstatus-api-behandling-consumer
+        topic: org.sobhist-v4
+        threshold: 1000
   resources:
     requests:
       cpu: 1000m
@@ -120,4 +126,3 @@ spec:
       value: "2000"
     - name: BEHANDLING_CONSUMER_RESTART_DELAY_MS
       value: "4000"
-

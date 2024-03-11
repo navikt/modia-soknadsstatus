@@ -6,14 +6,16 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 8080
   ingresses:
     - https://modia-soknadsstatus-api.intern.dev.nav.no
   replicas:
-    min: 4
+    min: 2
     max: 4
-    cpuThresholdPercentage: 90
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: 90
   resources:
     limits:
       cpu: 500m
