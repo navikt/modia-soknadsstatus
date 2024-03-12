@@ -78,6 +78,7 @@ spec:
         - host: skjermede-personer-pip.intern.nav.no
         - host: unleash.nais.io
         - host: norg2.prod-fss-pub.nais.io
+        - host: hooks.slack.com
   envFrom:
     - secret: modia-soknadstatus-slackhook
   env:
