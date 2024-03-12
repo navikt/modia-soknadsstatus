@@ -6,7 +6,7 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 8080
   replicas:
     min: 1
@@ -19,6 +19,10 @@ spec:
     requests:
       cpu: 100m
       memory: 128Mi
+  accessPolicy:
+    outbound:
+      external:
+        - host: hooks.slack.com
   liveness:
     path: /internal/isAlive
     initialDelay: 20
