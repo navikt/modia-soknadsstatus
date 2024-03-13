@@ -19,7 +19,7 @@ spec:
         thresholdPercentage: 90
       kafka:
         consumerGroup: modia-soknadsstatus-api-behandling-consumer
-        topic: org.sobhist-v4
+        topic: org.sobhist-v5
         threshold: 1000
   resources:
     requests:
@@ -93,7 +93,7 @@ spec:
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
     - name: KAFKA_SOURCE_BEHANDLING_TOPIC
-      value: "org.sobhist-v4"
+      value: "org.sobhist-v5"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_BEHANDLING_TOPIC
