@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus.service
 
-import no.nav.modia.soknadsstatus.InnkommendeBehandling
 import no.nav.modia.soknadsstatus.InnkommendeHendelse
 import no.nav.modia.soknadsstatus.SoknadsstatusDomain
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
@@ -13,8 +12,6 @@ interface HendelseService {
     fun init(behandlingService: BehandlingService)
 
     suspend fun onNewHendelse(innkommendeHendelse: InnkommendeHendelse)
-
-    suspend fun onNewBehandling(innkommendeBehandling: InnkommendeBehandling)
 
     suspend fun getAllForIdents(idents: List<String>): List<SoknadsstatusDomain.Hendelse>
 
@@ -68,36 +65,6 @@ class HendelseServiceImpl(
                         mapOf(
                             "behandlingsId" to innkommendeHendelse.behandlingsId,
                             "hendelsesId" to innkommendeHendelse.hendelsesId,
-                        ),
-                )
-            }
-        }
-    }
-
-    override suspend fun onNewBehandling(innkommendeBehandling: InnkommendeBehandling) {
-        hendelseRepository.useTransactionConnection {
-            val behandling = behandlingService.upsert(it, toBehandlingDAO(innkommendeBehandling))
-            if (behandling != null) {
-                val hendelse =
-                    hendelseRepository.upsert(
-                        it,
-                        behandlingToHendelseDAO(requireNotNull(behandling.id), innkommendeBehandling),
-                    )
-
-                behandlingEierService.upsert(
-                    it,
-                    BehandlingEierDAO(aktorId = innkommendeBehandling.aktoerId, behandlingId = requireNotNull(behandling.id)),
-                )
-                hendelseEierService.upsert(
-                    it,
-                    HendelseEierDAO(aktorId = innkommendeBehandling.aktoerId, hendelseId = requireNotNull(hendelse?.id)),
-                )
-            } else {
-                TjenestekallLogg.warn(
-                    header = "ingnorerer eldre behandling. Nyere behandling finnes i databasen",
-                    fields =
-                        mapOf(
-                            "behandlingsId" to innkommendeBehandling.behandlingId,
                         ),
                 )
             }
@@ -170,23 +137,6 @@ class HendelseServiceImpl(
             ansvarligEnhet = hendelse.ansvarligEnhet,
         )
 
-    private fun behandlingToHendelseDAO(
-        modiaBehandlingId: String,
-        behandling: InnkommendeBehandling,
-    ): SoknadsstatusDomain.Hendelse =
-        SoknadsstatusDomain.Hendelse(
-            modiaBehandlingId = modiaBehandlingId,
-            hendelseId = behandling.behandlingId,
-            behandlingId = behandling.behandlingId,
-            behandlingsTema = behandling.behandlingsTema,
-            behandlingsType = behandling.behandlingsType,
-            hendelseProdusent = behandling.produsentSystem,
-            hendelseType = mapToHendelseType(behandling.status),
-            hendelseTidspunkt = behandling.startTidspunkt,
-            status = mapStatus(behandling.status),
-            ansvarligEnhet = behandling.ansvarligEnhet,
-        )
-
     private fun hendelseToBehandlingDAO(hendelse: InnkommendeHendelse): SoknadsstatusDomain.Behandling {
         val sluttTidspunkt =
             if (hendelse.hendelsesType != SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET) {
@@ -221,38 +171,4 @@ class HendelseServiceImpl(
             behandlingsType = hendelse.behandlingsType,
         )
     }
-
-    private fun toBehandlingDAO(behandling: InnkommendeBehandling): SoknadsstatusDomain.Behandling =
-        SoknadsstatusDomain.Behandling(
-            behandlingId = behandling.behandlingId,
-            produsentSystem = behandling.produsentSystem,
-            startTidspunkt = behandling.startTidspunkt,
-            sluttTidspunkt = behandling.sluttTidspunkt,
-            sistOppdatert = behandling.sistOppdatert,
-            primaerBehandlingId = behandling.primaerBehandlingId,
-            primaerBehandlingType = behandling.primaerBehandlingType,
-            applikasjonSak = behandling.applikasjonSak,
-            applikasjonBehandling = behandling.applikasjonBehandling,
-            status = mapStatus(behandling.status),
-            behandlingsTema = behandling.behandlingsTema,
-            ansvarligEnhet = behandling.ansvarligEnhet,
-            sakstema = behandling.sakstema,
-            behandlingsType = behandling.behandlingsType,
-            sobFlag = true,
-        )
-
-    private fun mapStatus(status: String?): SoknadsstatusDomain.Status =
-        when (status) {
-            "opprettet" -> SoknadsstatusDomain.Status.UNDER_BEHANDLING
-            "avsluttet" -> SoknadsstatusDomain.Status.FERDIG_BEHANDLET
-            "avbrutt" -> SoknadsstatusDomain.Status.AVBRUTT
-            else -> throw IllegalArgumentException("Mottok ukjent status i mapping av statuser")
-        }
-
-    private fun mapToHendelseType(status: String?): SoknadsstatusDomain.HendelseType =
-        when (status) {
-            "opprettet" -> SoknadsstatusDomain.HendelseType.BEHANDLING_OPPRETTET
-            "avsluttet", "avbrutt" -> SoknadsstatusDomain.HendelseType.BEHANDLING_AVSLUTTET
-            else -> throw IllegalArgumentException("Mottok ukjent status i mapping av statuser")
-        }
 }

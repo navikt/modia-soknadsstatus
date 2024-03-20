@@ -26,7 +26,6 @@ interface Env {
     val appVersion: String
     val kafkaApp: AppEnv
     val hendelseConsumerEnv: HendelseConsumerEnv
-    val behandlingConsumerEnv: BehandlingConsumerEnv
     val azureAdConfiguration: AzureAdConfiguration
     val datasourceConfiguration: DatasourceConfiguration
     val axsysEnv: AxsysEnv
@@ -45,7 +44,6 @@ data class EnvImpl(
     override val kafkaApp: AppEnv = AppEnv(),
     override val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
     override val hendelseConsumerEnv: HendelseConsumerEnv = HendelseConsumerEnv(),
-    override val behandlingConsumerEnv: BehandlingConsumerEnv = BehandlingConsumerEnv(),
     override val datasourceConfiguration: DatasourceConfiguration = DatasourceConfiguration(DatasourceEnv(kafkaApp.appName)),
     override val azureAdConfiguration: AzureAdConfiguration = AzureAdConfiguration.load(appMode = kafkaApp.appMode),
     override val pdlEnv: PdlEnv =
@@ -82,9 +80,4 @@ data class EnvImpl(
 data class HendelseConsumerEnv(
     val pollDurationMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_POLL_DURATION_MS").toDouble(),
     val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("HENDELSE_CONSUMER_RESTART_DELAY_MS").toDouble(),
-)
-
-data class BehandlingConsumerEnv(
-    val pollDurationMs: Double = EnvUtils.getRequiredConfig("BEHANDLING_CONSUMER_POLL_DURATION_MS").toDouble(),
-    val exceptionRestartDelayMs: Double = EnvUtils.getRequiredConfig("BEHANDLING_CONSUMER_RESTART_DELAY_MS").toDouble(),
 )
