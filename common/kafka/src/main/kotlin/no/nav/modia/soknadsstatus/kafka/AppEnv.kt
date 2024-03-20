@@ -18,10 +18,8 @@ data class AppEnv(
     val appVersion: String = EnvUtils.getRequiredConfig("APP_VERSION"),
     val brokerUrls: String = EnvUtils.getRequiredConfig("KAFKA_BROKERS"),
     val sourceTopic: String? = EnvUtils.getConfig("KAFKA_SOURCE_TOPIC"),
-    val sourceBehandlingTopic: String? = EnvUtils.getConfig("KAFKA_SOURCE_BEHANDLING_TOPIC"),
     val targetTopic: String? = EnvUtils.getConfig("KAFKA_TARGET_TOPIC"),
     val deadLetterQueueTopic: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_TOPIC"),
-    val deadLetterQueueBehandlingTopic: String? = EnvUtils.getConfig("KAFKA_DEAD_LETTER_QUEUE_BEHANDLING_TOPIC"),
     val deadLetterQueueConsumerPollIntervalMs: Double =
         EnvUtils
             .getConfig("KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS")

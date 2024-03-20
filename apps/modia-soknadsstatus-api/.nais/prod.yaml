@@ -92,12 +92,8 @@ spec:
       value: "modia-soknadsstatus-api-db"
     - name: KAFKA_SOURCE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering"
-    - name: KAFKA_SOURCE_BEHANDLING_TOPIC
-      value: "org.sobhist-v5"
     - name: KAFKA_DEAD_LETTER_QUEUE_TOPIC
       value: "personoversikt.modia-soknadsstatus-oppdatering-dlq"
-    - name: KAFKA_DEAD_LETTER_QUEUE_BEHANDLING_TOPIC
-      value: "personoversikt.modia-soknadsstatus-behandling-oppdatering-dlq"
     - name: KAFKA_DEAD_LETTER_QUEUE_CONSUMER_POLL_INTERVAL_MS
       value: "60000"
     - name: KAFKA_DEAD_LETTER_QUEUE_SKIP_TABLE_NAME
@@ -130,7 +126,3 @@ spec:
       value: "https://graph.microsoft.com/"
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
-    - name: BEHANDLING_CONSUMER_POLL_DURATION_MS
-      value: "2000"
-    - name: BEHANDLING_CONSUMER_RESTART_DELAY_MS
-      value: "4000"
