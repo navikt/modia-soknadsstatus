@@ -22,7 +22,10 @@ class AktorMigreringJob(
                 try {
                     logger.info("Henter nye aktor IDer for migrering til Fnr")
                     val aktorIder = services.behandlingEierService.getAktorIdsToConvert(1000)
-                    if (aktorIder.isEmpty()) continue
+                    if (aktorIder.isEmpty()) {
+                        logger.info("Ingen aktor IDer funnet. Avlustter jobb...")
+                        return
+                    }
 
                     val aktorFnrMapping = services.pdlMigrering.hentFnrMedSystemTokenBolk(aktorIder)
                     if (aktorFnrMapping.isEmpty()) {
