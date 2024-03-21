@@ -12,6 +12,7 @@ import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.modia.soknadsstatus.utils.BoundedMachineToMachineTokenClient
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import no.nav.modia.soknadsstatus.utils.LoggingGraphQLKtorClient
+import no.nav.personoversikt.common.logging.TjenestekallLogg
 import no.nav.utils.getCallId
 import java.net.URL
 
@@ -122,7 +123,17 @@ class PdlClientImpl(
             ?.hentIdenterBolk
             ?.mapNotNull { p ->
                 val aktorId = p.identer?.first { it.gruppe == IdentGruppe.AKTORID }?.ident
-                val fnr = p.identer?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
+                var fnr: String? = null
+                try {
+                    fnr = p.identer?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
+                } catch (e: NoSuchElementException) {
+                    TjenestekallLogg.warn("Fant ikke ident med gruppe FOLKEREGISTERIDENT, prøver NPID", mapOf("AktorID" to aktorId))
+                    try {
+                        fnr = p.identer?.first { it.gruppe == IdentGruppe.NPID }?.ident
+                    } catch (e: NoSuchElementException) {
+                        TjenestekallLogg.error("Fant ikke ident med gruppe NPID. AktorIDen ignoreres", mapOf("AktorID" to aktorId))
+                    }
+                }
                 if (aktorId == null || fnr == null) null else aktorId to fnr
             }
             ?: emptyList()

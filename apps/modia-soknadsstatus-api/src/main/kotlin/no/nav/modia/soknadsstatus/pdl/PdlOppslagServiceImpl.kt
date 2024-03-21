@@ -45,7 +45,7 @@ class PdlOppslagServiceImpl(
         try {
             return pdlClient.hentAktivIdentMedSystemTokenBolk(
                 aktorIds,
-                listOf(IdentGruppe.FOLKEREGISTERIDENT, IdentGruppe.AKTORID),
+                listOf(IdentGruppe.FOLKEREGISTERIDENT, IdentGruppe.AKTORID, IdentGruppe.NPID),
             )
         } catch (e: IllegalArgumentException) {
             TjenestekallLogg.warn(
