@@ -4,7 +4,7 @@ plugins {
     application
     id("setup.repository")
     kotlin("jvm") version "1.7.21"
-    id("org.openapi.generator") version "6.0.0"
+    id("org.openapi.generator") version "7.0.1"
 }
 
 dependencies {
