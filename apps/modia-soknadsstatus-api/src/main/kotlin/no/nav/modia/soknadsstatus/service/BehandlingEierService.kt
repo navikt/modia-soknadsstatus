@@ -31,11 +31,10 @@ class BehandlingEierServiceImpl(
 
     override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) =
         behandlingEiereRepository.useTransactionConnection {
-            val deleteCount = behandlingEiereRepository.deleteDuplicateRowsByIdentAktorMapping(it, aktorFnrMapping)
             val updateCount = behandlingEiereRepository.updateAktorToFnr(it, aktorFnrMapping)
 
             DeleteUpdateResult(
-                deleteCount,
+                deleteCount = 0,
                 updateCount,
             )
         }
