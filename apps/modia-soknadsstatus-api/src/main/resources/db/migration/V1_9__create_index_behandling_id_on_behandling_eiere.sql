@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS behandling_eiere_behandling_id_idx ON behandling_eiere(behandling_id);
