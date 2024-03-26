@@ -107,8 +107,9 @@ class BehandlingRepositoryImpl(
             SELECT DISTINCT ON ($Tabell.${Tabell.id}) *
             FROM $Tabell
             LEFT JOIN $BehandlingEierTabell ON $BehandlingEierTabell.${BehandlingEierTabell.behandlingId} = $Tabell.${Tabell.id}
-            WHERE ${BehandlingEierTabell.ident} IN ($preparedVariables)
+            WHERE ${BehandlingEierTabell.ident} IN ($preparedVariables) OR ${BehandlingEierTabell.aktorId} IN ($preparedVariables)
             """.trimIndent(),
+            *idents,
             *idents,
         ) {
             convertResultSetToBehandlingDao(it)

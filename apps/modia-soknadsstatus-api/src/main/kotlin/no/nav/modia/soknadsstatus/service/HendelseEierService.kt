@@ -24,11 +24,10 @@ class HendelseEierServiceImpl(
 
     override suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>) =
         hendelseEierRepository.useTransactionConnection {
-            val deleteCount = hendelseEierRepository.deleteDuplicateRowsByIdentAktorMapping(it, aktorFnrMapping)
             val updateCount = hendelseEierRepository.updateAktorToFnr(it, aktorFnrMapping)
 
             DeleteUpdateResult(
-                deleteCount,
+                deleteCount = 0,
                 updateCount,
             )
         }

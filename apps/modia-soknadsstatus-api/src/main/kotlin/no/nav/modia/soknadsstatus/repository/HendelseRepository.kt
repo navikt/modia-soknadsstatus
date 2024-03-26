@@ -116,8 +116,9 @@ class HendelseRepositoryImpl(
             SELECT DISTINCT ON ($Tabell.${Tabell.id}) *
             FROM $Tabell
             LEFT JOIN $HendelseEierTabell ON $HendelseEierTabell.${HendelseEierTabell.hendelseId} = $Tabell.${Tabell.id}
-            WHERE $HendelseEierTabell.${HendelseEierTabell.ident} IN ($preparedVariables)
+            WHERE $HendelseEierTabell.${HendelseEierTabell.ident} IN ($preparedVariables) OR ${HendelseEierTabell.aktorId} IN ($preparedVariables)
             """.trimIndent(),
+            *idents,
             *idents,
         ) {
             convertResultSetToHendelseDAO(it)
