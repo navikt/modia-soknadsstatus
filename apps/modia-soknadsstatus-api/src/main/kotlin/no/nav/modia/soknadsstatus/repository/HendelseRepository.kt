@@ -119,6 +119,7 @@ class HendelseRepositoryImpl(
             WHERE $HendelseEierTabell.${HendelseEierTabell.ident} IN ($preparedVariables) OR ${HendelseEierTabell.aktorId} IN ($preparedVariables)
             """.trimIndent(),
             *idents,
+            *idents,
         ) {
             convertResultSetToHendelseDAO(it)
         }

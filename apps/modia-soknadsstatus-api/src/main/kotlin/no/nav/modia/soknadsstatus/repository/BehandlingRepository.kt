@@ -110,6 +110,7 @@ class BehandlingRepositoryImpl(
             WHERE ${BehandlingEierTabell.ident} IN ($preparedVariables) OR ${BehandlingEierTabell.aktorId} IN ($preparedVariables)
             """.trimIndent(),
             *idents,
+            *idents,
         ) {
             convertResultSetToBehandlingDao(it)
         }
