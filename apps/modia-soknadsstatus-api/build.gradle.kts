@@ -45,7 +45,7 @@ dependencies {
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:kabac:$modia_common_version")
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("org.flywaydb:flyway-core:9.8.3")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")

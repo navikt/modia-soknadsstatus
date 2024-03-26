@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.apache.kafka:kafka-streams:$kafka_version")
     implementation("org.flywaydb:flyway-core:9.8.3")
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
