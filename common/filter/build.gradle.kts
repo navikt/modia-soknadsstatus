@@ -11,7 +11,7 @@ plugins {
     application
     id("setup.repository")
     kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("plugin.serialization") version "1.9.10"
 }
 dependencies {
     implementation(kotlin("stdlib"))
