@@ -50,7 +50,7 @@ spec:
       - type: POSTGRES_14
         diskAutoresize: true
         highAvailability: true
-        tier: db-custom-32-40960
+        tier: db-custom-8-40960
         databases:
           - name: modia-soknadsstatus-api-db
   leaderElection: true
