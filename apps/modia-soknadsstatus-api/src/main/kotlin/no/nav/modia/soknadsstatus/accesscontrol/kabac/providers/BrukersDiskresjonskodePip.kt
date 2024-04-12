@@ -22,9 +22,7 @@ class BrukersDiskresjonskodePip(
 
     override fun provide(ctx: EvaluationContext): Kode? {
         val fnr = ctx.getValue(CommonAttributes.FNR)
-        val prinicipal = ctx.getValue(AuthContextPip)
-
-        return runBlocking { pdl.hentAdresseBeskyttelse(prinicipal.token, fnr.get()).finnStrengesteKode() }
+        return runBlocking { pdl.hentAdresseBeskyttelse(fnr.get()).finnStrengesteKode() }
     }
 
     private fun List<Adressebeskyttelse>.finnStrengesteKode(): Kode? =

@@ -7,6 +7,7 @@ import no.nav.modia.soknadsstatus.azure.MsGraphEnv
 import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.norg.NorgEnv
 import no.nav.modia.soknadsstatus.pdl.PdlEnv
+import no.nav.modia.soknadsstatus.pdlpip.PdlPipApiEnv
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerEnv
 import no.nav.modia.soknadsstatus.utils.DownstreamApi
 import no.nav.modia.soknadsstatus.utils.parse
@@ -31,6 +32,7 @@ interface Env {
     val axsysEnv: AxsysEnv
     val norgEnv: NorgEnv
     val skjermedePersonerEnv: SkjermedePersonerEnv
+    val pdlPipEnv: PdlPipApiEnv
     val pdlEnv: PdlEnv
     val pdlEnvQ1: PdlEnv
     val sensitiveTilgangsRoller: SensitiveTilgangsRoller
@@ -66,6 +68,11 @@ data class EnvImpl(
         SkjermedePersonerEnv(
             url = EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_PIP_URL"),
             scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("SKJERMEDE_PERSONER_SCOPE")),
+        ),
+    override val pdlPipEnv: PdlPipApiEnv =
+        PdlPipApiEnv(
+            url = EnvUtils.getRequiredConfig("PDL_PIP_API_URL"),
+            scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("PDL_PIP_SCOPE")),
         ),
     override val sensitiveTilgangsRoller: SensitiveTilgangsRoller = SensitiveTilgangsRoller(kafkaApp.appCluster),
     override val geografiskeTilgangsRoller: GeografiskeTilgangsRoller = GeografiskeTilgangsRoller(kafkaApp.appCluster),

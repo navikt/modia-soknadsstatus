@@ -172,7 +172,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerIkkeHarAdressebeskyttelse() {
-        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns
+        coEvery { pdl.hentAdresseBeskyttelse(fnr.get()) } returns
             listOf(
                 Adressebeskyttelse(
                     gradering = AdressebeskyttelseGradering.UGRADERT,
@@ -189,7 +189,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerHarKode6() {
-        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns
+        coEvery { pdl.hentAdresseBeskyttelse(fnr.get()) } returns
             listOf(
                 Adressebeskyttelse(
                     AdressebeskyttelseGradering.STRENGT_FORTROLIG,
@@ -198,7 +198,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtBrukerHarKode7() {
-        coEvery { pdl.hentAdresseBeskyttelse(any(), fnr.get()) } returns
+        coEvery { pdl.hentAdresseBeskyttelse(fnr.get()) } returns
             listOf(
                 Adressebeskyttelse(
                     AdressebeskyttelseGradering.FORTROLIG,
@@ -208,7 +208,7 @@ internal class TilgangTilBrukerPolicyTest {
 
     private fun gittAtBrukerHarEnhet(enhetId: EnhetId?) {
         val geografiskTilknyttning = UUID.randomUUID().toString()
-        coEvery { pdl.hentGeografiskTilknytning(any(), fnr.get()) } returns geografiskTilknyttning
+        coEvery { pdl.hentGeografiskTilknytning(fnr.get()) } returns geografiskTilknyttning
 
         if (enhetId == null) {
             every { norg.finnNavKontor(geografiskTilknyttning, null) } returns null
