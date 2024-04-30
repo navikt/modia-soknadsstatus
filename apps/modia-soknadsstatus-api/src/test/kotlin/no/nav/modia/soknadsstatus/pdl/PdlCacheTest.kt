@@ -13,6 +13,7 @@ import no.nav.common.types.identer.Fnr
 import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.SuspendCache
 import no.nav.modia.soknadsstatus.SuspendCacheImpl
+import no.nav.modia.soknadsstatus.pdlpip.PdlPipApi
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,10 +21,11 @@ import java.util.concurrent.TimeUnit
 
 internal class PdlCacheTest {
     private val pdlClient = mockk<PdlClientImpl>()
+    private val pdlPipClient = mockk<PdlPipApi>()
     private var fnrCache: SuspendCache<String, String?> = getCache()
 
     private var pdlService =
-        PdlOppslagServiceImpl(pdlClient, fnrCache)
+        PdlOppslagServiceImpl(pdlClient, pdlPipClient, fnrCache)
 
     private val ident = NavIdent("Z999999")
     private val fnr = Fnr("10108000398")
@@ -39,7 +41,7 @@ internal class PdlCacheTest {
     @BeforeEach
     fun setUp() {
         fnrCache = getCache()
-        pdlService = PdlOppslagServiceImpl(pdlClient, fnrCache)
+        pdlService = PdlOppslagServiceImpl(pdlClient, pdlPipClient, fnrCache)
     }
 
     @Test
