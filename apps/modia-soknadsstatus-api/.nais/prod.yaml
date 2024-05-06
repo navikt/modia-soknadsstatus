@@ -71,6 +71,10 @@ spec:
           cluster: prod-fss
           namespace: personoversikt
     outbound:
+      rules:
+        - application: pdl-pip-api
+          namespace: pdl
+          cluster: prod-fss
       external:
         - host: graph.microsoft.com
         - host: pdl-api.prod-fss-pub.nais.io
