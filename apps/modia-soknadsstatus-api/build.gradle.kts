@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":tjenestespesifikasjoner:norg-api"))
     implementation(project(":tjenestespesifikasjoner:kodeverk-api"))
     implementation(project(":tjenestespesifikasjoner:skjermede-personer-pip-api"))
+    implementation(project(":tjenestespesifikasjoner:pdl-pip-api"))
     implementation(project(":tjenestespesifikasjoner:pdl-api"))
     implementation("io.ktor:ktor-server-cio:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")

@@ -21,15 +21,9 @@ class PdlOppslagServiceMock : PdlOppslagService {
         fnr: String,
     ): String = MockData.Bruker.aktorId
 
-    override suspend fun hentGeografiskTilknytning(
-        userToken: String,
-        fnr: String,
-    ): String = MockData.Bruker.geografiskTilknyttning
+    override suspend fun hentGeografiskTilknytning(fnr: String): String = MockData.Bruker.geografiskTilknyttning
 
-    override suspend fun hentAdresseBeskyttelse(
-        userToken: String,
-        fnr: String,
-    ): List<Adressebeskyttelse> = mutableListOf()
+    override suspend fun hentAdresseBeskyttelse(fnr: String): List<Adressebeskyttelse> = mutableListOf()
 
     override suspend fun hentAktiveIdenter(
         userToken: String,

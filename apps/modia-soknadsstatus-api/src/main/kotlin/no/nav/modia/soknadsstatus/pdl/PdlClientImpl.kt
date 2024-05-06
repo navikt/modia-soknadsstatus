@@ -6,7 +6,6 @@ import io.ktor.client.request.*
 import io.ktor.utils.io.core.*
 import no.nav.api.generated.pdl.*
 import no.nav.api.generated.pdl.enums.IdentGruppe
-import no.nav.api.generated.pdl.hentadressebeskyttelse.Adressebeskyttelse
 import no.nav.modia.soknadsstatus.accesscontrol.RestConstants
 import no.nav.modia.soknadsstatus.removeBearerFromToken
 import no.nav.modia.soknadsstatus.utils.BoundedMachineToMachineTokenClient
@@ -19,16 +18,6 @@ import java.net.URL
 typealias HeadersBuilder = HttpRequestBuilder.() -> Unit
 
 interface PdlClient {
-    suspend fun hentGeografiskTilknytning(
-        userToken: String,
-        fnr: String,
-    ): String?
-
-    suspend fun hentAdresseBeskyttelse(
-        userToken: String,
-        fnr: String,
-    ): List<Adressebeskyttelse>
-
     suspend fun hentAktivIdent(
         userToken: String,
         aktoerId: String,
@@ -64,31 +53,6 @@ class PdlClientImpl(
     ),
     PdlClient,
     Closeable {
-    override suspend fun hentGeografiskTilknytning(
-        userToken: String,
-        fnr: String,
-    ): String? =
-        execute(
-            HentGeografiskTilknyttning(HentGeografiskTilknyttning.Variables(fnr)),
-            userTokenAuthorizationHeaders(userToken),
-        ).data
-            ?.hentGeografiskTilknytning
-            ?.run {
-                gtBydel ?: gtKommune ?: gtLand
-            }
-
-    override suspend fun hentAdresseBeskyttelse(
-        userToken: String,
-        fnr: String,
-    ): List<Adressebeskyttelse> =
-        execute(
-            HentAdressebeskyttelse(HentAdressebeskyttelse.Variables(fnr)),
-            userTokenAuthorizationHeaders(userToken),
-        ).data
-            ?.hentPerson
-            ?.adressebeskyttelse
-            ?: emptyList()
-
     override suspend fun hentAktivIdent(
         userToken: String,
         aktoerId: String,

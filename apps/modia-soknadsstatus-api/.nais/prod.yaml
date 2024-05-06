@@ -118,6 +118,10 @@ spec:
       value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE_Q1
       value: "prod-fss:pdl:pdl-api"
+    - name: PDL_PIP_API_URL
+      value: "https://pdl-pip-api.intern.nav.no"
+    - name: PDL_PIP_SCOPE
+      value: prod-fss:pdl:pdl-pip-api
     - name: AXSYS_URL
       value: "https://axsys.prod-fss-pub.nais.io"
     - name: AXSYS_SCOPE

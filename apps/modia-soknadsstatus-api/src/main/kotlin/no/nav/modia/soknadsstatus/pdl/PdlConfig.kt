@@ -3,6 +3,7 @@ package no.nav.modia.soknadsstatus.pdl
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.modia.soknadsstatus.AppMode
+import no.nav.modia.soknadsstatus.pdlpip.PdlPipApi
 import no.nav.modia.soknadsstatus.utils.*
 import no.nav.personoversikt.common.logging.Logging
 import java.net.URL
@@ -13,6 +14,7 @@ object PdlConfig {
         pdlEnv: PdlEnv,
         oboTokenProvider: OnBehalfOfTokenClient,
         machineTokenClient: MachineToMachineTokenClient,
+        pdlPipApi: PdlPipApi,
     ): PdlOppslagService {
         if (appMode == AppMode.NAIS) {
             Logging.secureLog.info(
@@ -31,6 +33,7 @@ object PdlConfig {
 
             return PdlOppslagServiceImpl(
                 pdlClient,
+                pdlPipApi,
             )
         }
 

@@ -10,6 +10,7 @@ import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modia.soknadsstatus.norg.NorgConfig
 import no.nav.modia.soknadsstatus.pdl.PdlConfig
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
+import no.nav.modia.soknadsstatus.pdlpip.PdlPipConfig
 import no.nav.modia.soknadsstatus.service.*
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerConfig
 import no.nav.modia.soknadsstatus.utils.LeaderElectionService
@@ -34,12 +35,21 @@ interface Services {
             env: Env,
             configuration: Configuration,
         ): Services {
+            val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv, env.kafkaApp.appName)
+            val skjermedePersonerApi =
+                SkjermedePersonerConfig.factory(
+                    env.kafkaApp.appMode,
+                    env.skjermedePersonerEnv,
+                    configuration.machineToMachineTokenClient,
+                )
+            val pdlPipApi = PdlPipConfig.factory(env.kafkaApp.appMode, env.pdlPipEnv, configuration.machineToMachineTokenClient)
             val pdl =
                 PdlConfig.factory(
                     env.kafkaApp.appMode,
                     env.pdlEnv,
                     configuration.oboTokenClient,
                     configuration.machineToMachineTokenClient,
+                    pdlPipApi,
                 )
             val pdlMigrering =
                 PdlConfig.factory(
@@ -47,13 +57,7 @@ interface Services {
                     env.pdlEnvQ1,
                     configuration.oboTokenClient,
                     configuration.machineToMachineTokenClient,
-                )
-            val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv, env.kafkaApp.appName)
-            val skjermedePersonerApi =
-                SkjermedePersonerConfig.factory(
-                    env.kafkaApp.appMode,
-                    env.skjermedePersonerEnv,
-                    configuration.machineToMachineTokenClient,
+                    pdlPipApi,
                 )
             val axsysApi =
                 AxsysConfig.factory(env.kafkaApp.appMode, env.axsysEnv, configuration.machineToMachineTokenClient)
