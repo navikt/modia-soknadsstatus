@@ -72,13 +72,10 @@ spec:
           cluster: dev-fss
           namespace: personoversikt
     outbound:
-      rules:
-        - application: pdl-pip-api
-          namespace: pdl
-          cluster: dev-fss
       external:
         - host: graph.microsoft.com
         - host: pdl-api.dev-fss-pub.nais.io
+        - host: pdl-pip-api.dev-fss-pub.nais.io
         - host: pdl-api-q1.dev-fss-pub.nais.io
         - host: axsys.dev-fss-pub.nais.io
         - host: skjermede-personer-pip.intern.dev.nav.no
@@ -121,7 +118,7 @@ spec:
     - name: PDL_SCOPE_Q1
       value: "dev-fss:pdl:pdl-api-q1"
     - name: PDL_PIP_API_URL
-      value: "https://pdl-pip-api.dev.intern.nav.no"
+      value: "https://pdl-pip-api.dev-fss-pub.nais.io"
     - name: PDL_PIP_SCOPE
       value: dev-fss:pdl:pdl-pip-api
     - name: AXSYS_URL
