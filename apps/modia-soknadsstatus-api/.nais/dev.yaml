@@ -71,6 +71,9 @@ spec:
         - application: modiapersonoversikt-api-q0
           cluster: dev-fss
           namespace: personoversikt
+        - application: modiapersonoversikt-api
+          cluster: dev-gcp
+          namespace: personoversikt
     outbound:
       external:
         - host: graph.microsoft.com
