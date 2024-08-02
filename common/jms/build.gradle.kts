@@ -12,8 +12,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.ibm.mq:com.ibm.mq.allclient:9.3.1.0")
     implementation("org.apache.activemq:activemq-jms-pool:5.18.2")
-    implementation("org.apache.activemq:activemq-client:5.17.3")
-    implementation("org.apache.activemq:activemq-broker:5.17.3")
+    implementation("org.apache.activemq:activemq-client:5.18.2")
+    implementation("org.apache.activemq:activemq-broker:5.18.2")
     implementation(project(":common:ktor"))
 }
 
