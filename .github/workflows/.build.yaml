@@ -49,6 +49,7 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
+    environment: dev-gcp
     permissions:
       contents: read
       id-token: write
@@ -66,6 +67,7 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    environment: prod-gcp
     permissions:
       contents: read
       id-token: write
