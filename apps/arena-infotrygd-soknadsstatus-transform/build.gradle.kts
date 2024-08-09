@@ -34,7 +34,7 @@ dependencies {
     implementation(project(":tjenestespesifikasjoner:pdl-api"))
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.ktor:ktor-server-cio-jvm:2.3.4")
+    implementation("io.ktor:ktor-server-cio-jvm:2.3.12")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jaxb_version")
     implementation("org.glassfish.jaxb:jaxb-runtime:$jaxb_version")
