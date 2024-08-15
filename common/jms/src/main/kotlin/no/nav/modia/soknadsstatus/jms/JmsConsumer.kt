@@ -1,11 +1,11 @@
 package no.nav.modia.soknadsstatus.jms
 
-import no.nav.modia.soknadsstatus.AppMode
-import org.slf4j.LoggerFactory
 import jakarta.jms.Message
 import jakarta.jms.MessageListener
 import jakarta.jms.QueueConnectionFactory
 import jakarta.jms.Session
+import no.nav.modia.soknadsstatus.AppMode
+import org.slf4j.LoggerFactory
 
 class JmsConsumer(
     private val config: Jms.Config,

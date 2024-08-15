@@ -4,12 +4,12 @@ import com.ibm.mq.constants.CMQC.MQENC_NATIVE
 import com.ibm.mq.jakarta.jms.MQQueueConnectionFactory
 import com.ibm.msg.client.jakarta.jms.JmsConstants
 import com.ibm.msg.client.jakarta.wmq.common.CommonConstants
+import jakarta.jms.QueueConnectionFactory
 import no.nav.modia.soknadsstatus.AppMode
 import org.apache.activemq.ActiveMQConnectionFactory
 import org.apache.activemq.jms.pool.PooledConnectionFactory
 import java.io.File
 import java.io.FileNotFoundException
-import jakarta.jms.QueueConnectionFactory
 import javax.net.ssl.SSLSocketFactory
 
 object Jms {
