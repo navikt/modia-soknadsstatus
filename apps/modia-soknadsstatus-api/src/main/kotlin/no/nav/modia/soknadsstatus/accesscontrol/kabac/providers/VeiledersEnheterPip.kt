@@ -10,6 +10,7 @@ class VeiledersEnheterPip(
     private val ansattService: AnsattService,
 ) : Kabac.PolicyInformationPoint<List<EnhetId>> {
     override val key = Companion.key
+
     companion object : Kabac.AttributeKey<List<EnhetId>> {
         override val key = Key<List<EnhetId>>(VeiledersEnheterPip::class.java.simpleName)
     }

@@ -1,12 +1,12 @@
 package no.nav.modia.soknadsstatus.jms
 
+import jakarta.jms.DeliveryMode
+import jakarta.jms.QueueConnection
+import jakarta.jms.QueueConnectionFactory
+import jakarta.jms.QueueSender
+import jakarta.jms.QueueSession
+import jakarta.jms.Session
 import no.nav.modia.soknadsstatus.AppMode
-import javax.jms.DeliveryMode
-import javax.jms.QueueConnection
-import javax.jms.QueueConnectionFactory
-import javax.jms.QueueSender
-import javax.jms.QueueSession
-import javax.jms.Session
 
 class JmsProducer(
     private val config: Jms.Config,

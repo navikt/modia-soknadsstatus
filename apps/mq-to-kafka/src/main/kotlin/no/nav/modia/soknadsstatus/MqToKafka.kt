@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import jakarta.jms.TextMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -15,7 +16,6 @@ import no.nav.personoversikt.common.ktor.utils.Selftest
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.util.*
-import javax.jms.TextMessage
 
 fun Application.mqToKafkaModule() {
     val config = AppEnv()

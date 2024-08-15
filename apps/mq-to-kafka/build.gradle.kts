@@ -9,6 +9,7 @@ val jms_api_version: String by project
 val junit_version: String by project
 val logstash_version: String by project
 val slack_client_version: String by project
+val jaxb_version: String by project
 
 plugins {
     application
@@ -23,7 +24,7 @@ dependencies {
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
-    implementation("javax.jms:javax.jms-api:$jms_api_version")
+    implementation("jakarta.jms:jakarta.jms-api:3.1.0")
     implementation(project(":common:kafka"))
     implementation(project(":common:jms"))
     implementation(project(":common:ktor"))

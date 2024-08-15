@@ -16,6 +16,7 @@ class LoggingInterceptor(
         val ignoreRequestBody: Boolean = false,
         val ignoreResponseBody: Boolean = false,
     )
+
     companion object {
         @JvmField
         val DEFAULT_CONFIG = Config()

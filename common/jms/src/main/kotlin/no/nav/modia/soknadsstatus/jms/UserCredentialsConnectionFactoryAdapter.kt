@@ -1,6 +1,6 @@
 package no.nav.modia.soknadsstatus.jms
 
-import javax.jms.*
+import jakarta.jms.*
 
 class UserCredentialsConnectionFactoryAdapter(
     val connectionFactory: ConnectionFactory,
