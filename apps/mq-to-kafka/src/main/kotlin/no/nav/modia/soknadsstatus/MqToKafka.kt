@@ -15,7 +15,7 @@ import no.nav.personoversikt.common.ktor.utils.Selftest
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.util.*
-import javax.jms.TextMessage
+import jakarta.jms.TextMessage
 
 fun Application.mqToKafkaModule() {
     val config = AppEnv()
