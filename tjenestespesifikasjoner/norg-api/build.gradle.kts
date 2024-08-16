@@ -11,7 +11,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("no.nav.common:rest:$nav_common_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0")
 }
 
