@@ -10,10 +10,10 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.ibm.mq:com.ibm.mq.allclient:9.3.1.0")
-    implementation("org.apache.activemq:activemq-jms-pool:5.18.2")
-    implementation("org.apache.activemq:activemq-client:5.18.2")
-    implementation("org.apache.activemq:activemq-broker:5.18.2")
+    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.0.0")
+    implementation("org.apache.activemq:activemq-jms-pool:6.1.3")
+    implementation("org.apache.activemq:activemq-client:6.1.3")
+    implementation("org.apache.activemq:activemq-broker:6.1.3")
     implementation(project(":common:ktor"))
 }
 

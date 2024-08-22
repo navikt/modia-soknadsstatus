@@ -9,6 +9,7 @@ class AuthContextPip(
     private val authContext: AuthenticationContext,
 ) : Kabac.PolicyInformationPoint<Security.SubjectPrincipal> {
     override val key = Companion.key
+
     companion object : Kabac.AttributeKey<Security.SubjectPrincipal> {
         override val key = Key<Security.SubjectPrincipal>(AuthContextPip::class.java.simpleName)
     }
