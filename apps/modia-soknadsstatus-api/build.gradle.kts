@@ -51,7 +51,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     implementation("com.expediagroup:graphql-kotlin-client:$graphql_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_version")
     implementation("no.nav.common:sts:2.2023.01.10_13.49-81ddc732df3a")
