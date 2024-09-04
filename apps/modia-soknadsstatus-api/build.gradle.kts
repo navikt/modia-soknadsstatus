@@ -42,7 +42,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-    implementation("org.apache.kafka:kafka-streams:3.3.1")
+    implementation("org.apache.kafka:kafka-streams:3.8.0")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:kabac:$modia_common_version")
