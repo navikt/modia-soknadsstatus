@@ -12,7 +12,7 @@ plugins {
     application
     id("setup.repository")
     kotlin("jvm") version "1.9.23"
-    id("com.expediagroup.graphql") version "6.4.0"
+    id("com.expediagroup.graphql") version "8.0.0"
     kotlin("plugin.serialization") version "1.9.10"
 }
 
