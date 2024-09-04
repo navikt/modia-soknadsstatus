@@ -19,7 +19,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-    implementation("org.apache.kafka:kafka-streams:3.3.1")
+    implementation("org.apache.kafka:kafka-streams:3.8.0")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation(project(":common:kafka"))
     implementation(project(":common:dataformat"))

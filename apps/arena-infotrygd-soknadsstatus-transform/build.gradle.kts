@@ -23,7 +23,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-    implementation("org.apache.kafka:kafka-streams:3.3.1")
+    implementation("org.apache.kafka:kafka-streams:3.8.0")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation(project(":common:ktor"))
