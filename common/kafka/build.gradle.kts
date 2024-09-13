@@ -29,7 +29,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("org.postgresql:postgresql:$postgres_version")
     testImplementation("com.zaxxer:HikariCP:5.0.1")
-    testImplementation("org.flywaydb:flyway-core:9.8.3")
+    testImplementation("org.flywaydb:flyway-core:10.18.0")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.mockk:mockk:$mockk_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
