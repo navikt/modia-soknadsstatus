@@ -11,18 +11,17 @@ spec:
   ingresses:
     - https://modia-soknadsstatus-api.intern.dev.nav.no
   replicas:
-    min: 2
-    max: 4
+    min: 1
+    max: 2
     scalingStrategy:
       cpu:
-        thresholdPercentage: 90
+        thresholdPercentage: 100
   resources:
     limits:
-      cpu: 500m
-      memory: 1Gi
+      memory: 2Gi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 10m
+      memory: 320Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
