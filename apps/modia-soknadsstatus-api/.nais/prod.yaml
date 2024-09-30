@@ -16,18 +16,17 @@ spec:
     max: 10
     scalingStrategy:
       cpu:
-        thresholdPercentage: 90
+        thresholdPercentage: 100
       kafka:
         consumerGroup: modia-soknadsstatus-api-behandling-consumer
         topic: org.sobhist-v5
         threshold: 1000
   resources:
     requests:
-      cpu: 1000m
-      memory: 4096Mi
+      cpu: 30m
+      memory: 512Mi
     limits:
-      cpu: 2000m
-      memory: 8192Mi
+      memory: 4096Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
