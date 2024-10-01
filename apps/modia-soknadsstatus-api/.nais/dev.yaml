@@ -15,13 +15,13 @@ spec:
     max: 2
     scalingStrategy:
       cpu:
-        thresholdPercentage: 100
+        thresholdPercentage: 90
   resources:
     limits:
       memory: 2Gi
     requests:
-      cpu: 10m
-      memory: 320Mi
+      cpu: 15m
+      memory: 600Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20

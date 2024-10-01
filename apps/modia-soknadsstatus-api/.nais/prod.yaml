@@ -16,7 +16,7 @@ spec:
     max: 10
     scalingStrategy:
       cpu:
-        thresholdPercentage: 100
+        thresholdPercentage: 90
       kafka:
         consumerGroup: modia-soknadsstatus-api-behandling-consumer
         topic: org.sobhist-v5
