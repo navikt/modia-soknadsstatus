@@ -14,11 +14,10 @@ spec:
     cpuThresholdPercentage: 90
   resources:
     limits:
-      cpu: 500m
       memory: 1Gi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 15m
+      memory: 250Mi
   accessPolicy:
     outbound:
       external:
