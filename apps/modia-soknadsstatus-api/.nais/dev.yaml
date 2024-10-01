@@ -11,18 +11,17 @@ spec:
   ingresses:
     - https://modia-soknadsstatus-api.intern.dev.nav.no
   replicas:
-    min: 2
-    max: 4
+    min: 1
+    max: 2
     scalingStrategy:
       cpu:
         thresholdPercentage: 90
   resources:
     limits:
-      cpu: 500m
-      memory: 1Gi
+      memory: 2Gi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 15m
+      memory: 600Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
@@ -83,8 +82,10 @@ spec:
         - host: axsys.dev-fss-pub.nais.io
         - host: skjermede-personer-pip.intern.dev.nav.no
         - host: unleash.nais.io
-        - host: norg2.dev-fss-pub.nais.io
         - host: hooks.slack.com
+      rules:
+        - application: norg2
+          namespace: org
   envFrom:
     - secret: modia-soknadstatus-slackhook
   env:
@@ -111,7 +112,7 @@ spec:
     - name: HENDELSE_CONSUMER_RESTART_DELAY_MS
       value: "2000"
     - name: NORG2_URL
-      value: "https://norg2.dev-fss-pub.nais.io/norg2"
+      value: "http://norg2.org/norg2"
     - name: PDL_API_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE

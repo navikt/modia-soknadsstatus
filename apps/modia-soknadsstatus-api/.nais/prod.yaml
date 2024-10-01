@@ -23,11 +23,10 @@ spec:
         threshold: 1000
   resources:
     requests:
-      cpu: 1000m
-      memory: 4096Mi
+      cpu: 30m
+      memory: 512Mi
     limits:
-      cpu: 2000m
-      memory: 8192Mi
+      memory: 4096Mi
   liveness:
     path: /internal/isAlive
     initialDelay: 20
@@ -85,8 +84,10 @@ spec:
         - host: axsys.prod-fss-pub.nais.io
         - host: skjermede-personer-pip.intern.nav.no
         - host: unleash.nais.io
-        - host: norg2.prod-fss-pub.nais.io
         - host: hooks.slack.com
+      rules:
+        - application: norg2
+          namespace: org
   envFrom:
     - secret: modia-soknadstatus-slackhook
   env:
@@ -113,7 +114,7 @@ spec:
     - name: HENDELSE_CONSUMER_RESTART_DELAY_MS
       value: "4000"
     - name: NORG2_URL
-      value: "https://norg2.prod-fss-pub.nais.io/norg2"
+      value: "http://norg2.org/norg2"
     - name: PDL_API_URL
       value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE

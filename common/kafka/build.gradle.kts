@@ -12,8 +12,8 @@ val slack_client_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 dependencies {
@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":common:utils"))
     implementation(project(":common:ktor"))
     implementation(project(":common:dataformat"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("org.apache.kafka:kafka-clients:$kafka_version")

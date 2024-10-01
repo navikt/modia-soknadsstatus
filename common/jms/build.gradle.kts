@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.0.5")
     implementation("org.apache.activemq:activemq-jms-pool:6.1.3")
     implementation("org.apache.activemq:activemq-client:6.1.3")
     implementation("org.apache.activemq:activemq-broker:6.1.3")

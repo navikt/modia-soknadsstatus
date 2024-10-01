@@ -18,9 +18,9 @@ val test_containers_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.10"
-    id("com.expediagroup.graphql") version "6.4.0"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
+    id("com.expediagroup.graphql") version "8.0.0"
 }
 
 dependencies {
@@ -42,7 +42,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-    implementation("org.apache.kafka:kafka-streams:3.3.1")
+    implementation("org.apache.kafka:kafka-streams:3.8.0")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:kabac:$modia_common_version")
@@ -51,7 +51,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstash_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     implementation("com.expediagroup:graphql-kotlin-client:$graphql_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_version")
     implementation("no.nav.common:sts:2.2023.01.10_13.49-81ddc732df3a")

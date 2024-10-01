@@ -6,7 +6,7 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  image: {{image}}
+  image: "{{image}}"
   port: 8080
   replicas:
     min: 1
@@ -40,6 +40,7 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_14
+        tier: db-custom-1-3840
         databases:
           - name: soknadsstatus-hendelse-transform-db
   envFrom:

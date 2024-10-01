@@ -11,9 +11,9 @@ val kotlinx_serialization_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.9.23"
-    id("com.expediagroup.graphql") version "6.4.0"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "2.0.20"
+    id("com.expediagroup.graphql") version "8.0.0"
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 dependencies {

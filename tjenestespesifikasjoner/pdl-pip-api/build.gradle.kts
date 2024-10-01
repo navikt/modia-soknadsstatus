@@ -3,16 +3,16 @@ val nav_common_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.9.23"
-    id("org.openapi.generator") version "7.4.0"
+    kotlin("jvm") version "2.0.20"
+    id("org.openapi.generator") version "7.8.0"
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("no.nav.common:rest:$nav_common_version")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.20")
 }
 
 group = "no.nav.modia.soknadsstatus"

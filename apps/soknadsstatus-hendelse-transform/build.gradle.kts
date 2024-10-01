@@ -11,14 +11,14 @@ val logstash_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("io.ktor:ktor-server-cio:$ktor_version")
-    implementation("org.apache.kafka:kafka-streams:3.3.1")
+    implementation("org.apache.kafka:kafka-streams:3.8.0")
     implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation(project(":common:ktor"))
