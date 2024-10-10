@@ -9,7 +9,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.0.5")
     implementation("org.apache.activemq:activemq-jms-pool:6.1.3")
     implementation("org.apache.activemq:activemq-client:6.1.3")
