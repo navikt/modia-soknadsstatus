@@ -12,7 +12,7 @@ dependencies {
     implementation("no.nav.common:rest:$nav_common_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21")
 }
 
 group = "no.nav.modia.soknadsstatus"
