@@ -11,7 +11,7 @@ val modia_common_version: String by project
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.0.21"
     kotlin("plugin.serialization") version "2.0.21"
 }
 
