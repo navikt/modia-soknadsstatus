@@ -1,4 +1,3 @@
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -14,6 +13,7 @@ plugins {
     id("setup.repository")
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.serialization") version "2.0.21"
+    id("com.gradleup.shadow") version "8.3.3"
 }
 
 dependencies {
@@ -42,6 +42,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+application {
+    mainClass.set("no.nav.modia.soknadsstatus.MainKt")
+}
+
 tasks.withType<KotlinCompile> {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
@@ -55,21 +59,25 @@ tasks.test {
     }
 }
 
-val fatJar =
-    task("fatJar", type = Jar::class) {
-        archiveBaseName.set("app")
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        manifest {
-            attributes["Implementation-Title"] = "Foreldrepenger Pleiepenger Søknadstatus Transformer"
-            attributes["Implementation-Version"] = archiveVersion
-            attributes["Main-Class"] = "no.nav.modia.soknadsstatus.MainKt"
-        }
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-        with(tasks.jar.get() as CopySpec)
-    }
-
 tasks {
+    shadowJar {
+        mergeServiceFiles {
+            setPath("META-INF/services/org.flywaydb.core.extensibility.Plugin")
+        }
+        archiveBaseName.set("app")
+        archiveClassifier.set("")
+        isZip64 = true
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "Foreldrepenger Pleiepenger Søknadstatus Transformer",
+                    "Implementation-Version" to archiveVersion,
+                    "Main-Class" to "no.nav.modia.soknadsstatus.MainKt",
+                ),
+            )
+        }
+    }
     "build" {
-        dependsOn(fatJar)
+        dependsOn("shadowJar")
     }
 }

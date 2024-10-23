@@ -8,6 +8,7 @@ val junit_version: String by project
 val mockk_version: String by project
 val test_containers_version: String by project
 val postgres_version: String by project
+val flyway_version: String by project
 val slack_client_version: String by project
 
 plugins {
@@ -30,7 +31,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("org.postgresql:postgresql:$postgres_version")
     testImplementation("com.zaxxer:HikariCP:6.0.0")
-    testImplementation("org.flywaydb:flyway-core:10.20.0")
+    testImplementation("org.flywaydb:flyway-core:$flyway_version")
+    testImplementation("org.flywaydb:flyway-database-postgresql:$flyway_version")
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
     testImplementation("io.mockk:mockk:$mockk_version")
     testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
