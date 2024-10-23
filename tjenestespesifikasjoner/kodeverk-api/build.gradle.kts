@@ -19,8 +19,8 @@ group = "no.nav.modia.soknadsstatus"
 // description = "norg-api"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 val openapiJson = "src/main/resources/kodeverk/openapi.json"
@@ -29,7 +29,7 @@ val generatedSourcesDir = "$buildDir/generated-sources/openapi"
 openApiGenerate {
     inputSpec.set("$projectDir/src/main/resources/kodeverk/openapi.json")
     generatorName.set("kotlin")
-    library.set("jvm-okhttp3")
+    library.set("jvm-okhttp4")
     packageName.set("no.nav.modiasoknadsstatus.consumer.kodeverk.generated")
     modelNameSuffix.set("DTO")
     templateDir.set("$projectDir/../openapi-templates")

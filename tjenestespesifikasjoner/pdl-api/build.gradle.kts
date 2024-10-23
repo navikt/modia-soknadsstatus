@@ -2,6 +2,7 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLScalar
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val nav_common_version: String by project
 val graphql_version: String by project
@@ -25,14 +26,14 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 sourceSets {
     main {
         kotlin {
-            srcDir("$buildDir/generated/source/graphql/main/")
+            srcDir("${layout.buildDirectory}/generated/source/graphql/main/")
         }
     }
 }
@@ -72,7 +73,9 @@ val generatePDLClient by tasks.creating(GraphQLGenerateClientTask::class) {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+    }
     dependsOn("generatePDLClient")
 }
 
