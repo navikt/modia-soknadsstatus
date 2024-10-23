@@ -1,2 +1,6 @@
-FROM ghcr.io/navikt/baseimages/temurin:17
-COPY build/libs/*.jar ./
+FROM gcr.io/distroless/java21-debian12
+
+USER nonroot
+
+COPY build/libs/app.jar ./
+CMD ["app.jar"]
