@@ -10,7 +10,7 @@ val active_mq_version: String by project
 val kafka_version: String by project
 val junit_version: String by project
 val kotlinx_datetime_version: String by project
-val prometheus_version: String by project
+val micrometer_version: String by project
 
 plugins {
     application
@@ -30,7 +30,7 @@ dependencies {
     implementation(project(":common:kafka"))
     implementation(project(":common:utils"))
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.micrometer:micrometer-registry-prometheus:$prometheus_version")
+    implementation("io.micrometer:micrometer-registry-prometheus:$micrometer_version")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
 }
