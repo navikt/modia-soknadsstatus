@@ -17,11 +17,13 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":common:dataformat"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-    testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
-    testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
+
+    testImplementation(libs.testContainers)
+    testImplementation(libs.junit.jupiter)
 }
 
 group = "no.nav.modia.soknadsstatus"

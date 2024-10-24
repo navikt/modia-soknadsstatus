@@ -1,0 +1,118 @@
+[versions]
+kotlin = "2.0.21"
+ktor = "2.3.12"
+kotlinx_serialization = "1.7.3"
+kotlinx_datetime = "0.6.1"
+kotlinx_coroutines="1.9.0"
+logback="1.5.11"
+logstash="8.0"
+micrometer="1.13.6"
+modia_common="1.2024.10.09-09.45-9d597a88d694"
+ibm_mq="9.3.1.0"
+active_mq="5.17.3"
+kafka="3.3.1"
+jms_api="3.1.0"
+postgres="42.7.4"
+junit="5.9.2"
+test_containers="1.17.6"
+graphql="8.2.0"
+nav_common="2.2023.01.10_13.49-81ddc732df3a"
+mockk="1.13.13"
+mock_webserver="4.11.0"
+caffeine="3.1.6"
+guava_testlib="32.0.0-jre"
+jaxb="4.0.0"
+slack="1.7.1"
+kafka_streams = "3.8.0"
+kafka_clients = "3.8.0"
+hikari = "6.0.0"
+flyway = "10.20.0"
+jackson = "2.18.0"
+
+# Plugins
+shadow = "8.3.0"
+openapi_generator = "7.9.0"
+
+[libraries]
+ktor-server-core = {module = "io.ktor:ktor-server-cors", version.ref = "ktor"}
+ktor-server-cio = { module = "io.ktor:ktor-server-cio" , version.ref = "ktor"}
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor"}
+ktor-server-content-negotiation = {module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor"}
+ktor-serialization-kotlinx = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-call-logging = {module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor"}
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx_datetime" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx_serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx_serialization" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx_coroutines" }
+
+kafka-streams = { module = "org.apache.kafka:kafka-streams", version.ref = "kafka_streams" }
+kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka_clients" }
+
+modia-ktorUtils = { module = "com.github.navikt.modia-common-utils:ktor-utils" ,version.ref = "modia_common" }
+modia-logging = { module = "com.github.navikt.modia-common-utils:logging", version.ref = "modia_common" }
+modia-kabac = { module = "com.github.navikt.modia-common-utils:kabac", version.ref = "modia_common" }
+modia-kotlinUtils = { module = "com.github.navikt.modia-common-utils:kotlin-utils", version.ref = "modia_common" }
+
+caffeine = { module ="com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+hikariCP = { module ="com.zaxxer:HikariCP", version.ref = "hikari" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+logback = { module  ="ch.qos.logback:logback-classic", version.ref = "logback" }
+logstash = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash" }
+
+graphql-kotlin = {module = "com.expediagroup:graphql-kotlin-client",  version.ref="graphql" }
+graphql-ktorClient = { module = "com.expediagroup:graphql-kotlin-ktor-client", version.ref="graphql" }
+common-sts = { module = "no.nav.common:sts", version.ref = "nav_common" }
+common-tokenClient = { module = "no.nav.common:token-client", version.ref = "nav_common" }
+common-client = { module = "no.nav.common:client", version.ref = "nav_common" }
+common-rest = { module = "no.nav.common:rest", version.ref = "nav_common" }
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+testContainers = { module = "org.testcontainers:junit-jupiter", version.ref = "test_containers" }
+testContainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "test_containers" }
+mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mock_webserver" }
+guava-testlib = { module = "com.google.guava:guava-testlib", version.ref = "guava_testlib" }
+
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref="jackson"}
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson"}
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+jakarta-jmsApi = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jms_api" }
+jakarta-bindApi = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jaxb" }
+jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb" }
+jaxb-xjc = { module = "org.glassfish.jaxb:jaxb-xjc", version.ref = "jaxb" }
+
+slack-api-client = {module = "com.slack.api:slack-api-client", version.ref="slack" }
+slack-api-model = { module = "com.slack.api:slack-api-model-kotlin-extension", version.ref ="slack" }
+slack-api-client-kotlin = { module = "com.slack.api:slack-api-client-kotlin-extension", version.ref = "slack" }
+
+micrometer-registry = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+
+[bundles]
+ktorServer = [
+    "ktor-server-core",
+    "ktor-server-cio",
+    "ktor-server-call-logging",
+    "ktor-serialization-kotlinx",
+    "ktor-server-content-negotiation",
+    "ktor-server-status-pages",
+    "kotlinx-serialization-json",
+    "modia-ktorUtils",
+    "kotlinx-datetime"
+]
+graphql = ["graphql-kotlin", "graphql-ktorClient"]
+postgres = ["postgres", "flyway-core", "flyway-postgres", "hikariCP"]
+logging = ["logback", "logstash", "modia-logging"]
+slack = ["slack-api-client", "slack-api-client-kotlin", "slack-api-model"]
+jackson = ["jackson-datatype-jsr310" , "jackson-module-kotlin"]
+
+[plugins]
+shadow = {id = "com.gradleup.shadow", version.ref = "shadow"}
+graphql = { id = "com.expediagroup.graphql", version.ref = "graphql" }
+openapi = { id = "org.openapi.generator", version.ref = "openapi_generator" }

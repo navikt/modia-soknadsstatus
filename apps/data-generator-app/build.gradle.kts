@@ -2,12 +2,6 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktor_version: String by project
-val kotlinx_datetime_version: String by project
-val modia_common_version: String by project
-val logback_version: String by project
-val junit_version: String by project
-
 plugins {
     application
     id("setup.repository")
@@ -16,21 +10,19 @@ plugins {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-cio:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-server-websockets:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-    implementation("org.apache.kafka:kafka-streams:3.8.0")
-    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
     implementation(project(":common:kafka"))
     implementation(project(":common:dataformat"))
     implementation(project(":common:jms"))
     implementation(project(":common:kafka-stream-transformer"))
     implementation(project(":common:ktor"))
 
-    implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation(libs.bundles.ktorServer)
+    implementation(libs.ktor.server.websockets)
+    implementation(libs.kafka.streams)
 
-    testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+    implementation(libs.logback)
+
+    testImplementation(libs.junit.jupiter)
 }
 
 group = "no.nav.modia.soknadsstatus"

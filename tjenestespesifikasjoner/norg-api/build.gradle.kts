@@ -1,20 +1,18 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val nav_common_version: String by project
-
 plugins {
     application
     id("setup.repository")
     kotlin("jvm") version "2.0.21"
-    id("org.openapi.generator") version "7.9.0"
+    alias(libs.plugins.openapi)
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("no.nav.common:rest:$nav_common_version")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21")
+    implementation(libs.common.rest)
+    implementation(libs.jackson.datatype.jsr310)
+    implementation(libs.jackson.module.kotlin)
+    implementation(libs.kotlin.stdlib.jdk8)
 }
 
 group = "no.nav.modia.soknadsstatus"
