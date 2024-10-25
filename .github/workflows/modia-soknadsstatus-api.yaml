@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/.build.yaml
       - .github/workflows/modia-soknadsstatus-api.yaml
+      - gradle/**
       - common/**
       - apps/modia-soknadsstatus-api/**
 

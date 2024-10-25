@@ -7,6 +7,7 @@ on:
       - .github/workflows/.build.yaml
       - .github/workflows/arena-infotrygd-soknadsstatus-transform.yaml
       - common/**
+      - gradle/**
       - apps/arena-infotrygd-soknadsstatus-transform/**
 
 jobs:
