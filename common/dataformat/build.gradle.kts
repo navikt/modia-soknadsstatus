@@ -22,18 +22,18 @@ dependencies {
     implementation(project(":common:utils"))
     implementation(project(":common:ktor"))
     implementation(project(":tjenestespesifikasjoner:pdl-api"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-    implementation("org.apache.kafka:kafka-streams:$kafka_version")
-    implementation("org.flywaydb:flyway-core:$flyway_version")
-    implementation("org.flywaydb:flyway-database-postgresql:$flyway_version")
-    implementation("com.zaxxer:HikariCP:6.0.0")
-    implementation("org.postgresql:postgresql:$postgres_version")
-    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
-    testImplementation("org.testcontainers:junit-jupiter:$test_containers_version")
-    testImplementation("org.testcontainers:postgresql:$test_containers_version")
-    testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.kafka.streams)
+
+    implementation(libs.bundles.postgres)
+
+    implementation(libs.modia.ktorUtils)
+
+    testImplementation(libs.testContainers)
+    testImplementation(libs.testContainers.postgres)
+    testImplementation(libs.junit.jupiter)
 }
 
 group = "no.nav.modia.soknadsstatus"

@@ -1,9 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktor_version: String by project
-val modia_common_version: String by project
-
 plugins {
     application
     id("setup.repository")
@@ -13,11 +10,8 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.ktor:ktor-server-cio:$ktor_version")
-    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
-    implementation("com.github.navikt.modia-common-utils:ktor-utils:$modia_common_version")
-    implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
-    implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
+    implementation(libs.bundles.ktorServer)
+    implementation(libs.modia.logging)
 }
 
 group = "no.nav.modia.soknadsstatus"

@@ -5,14 +5,15 @@ updates:
     schedule:
       interval: daily
       time: "05:00"
-      timezone: UTC
+      timezone: Europe/Oslo
     labels:
       - "Dependencies"
+
   - package-ecosystem:  github-actions
     directory: /
     schedule:
       interval: daily
       time: "05:00"
-      timezone: UTC
+      timezone: Europe/Oslo
     labels:
       - "Dependencies"
