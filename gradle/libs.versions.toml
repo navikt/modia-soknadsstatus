@@ -30,7 +30,7 @@ flyway = "10.20.1"
 jackson = "2.18.0"
 
 # Plugins
-shadow = "8.3.0"
+shadow = "8.3.3"
 openapi_generator = "7.9.0"
 
 [libraries]
