@@ -20,13 +20,13 @@ class KafkaStreamConfig {
     }
 }
 
-class KafkaStreamPlugin : Plugin<Pipeline<*, ApplicationCall>, KafkaStreamConfig, KafkaStreamPlugin> {
+class KafkaStreamPlugin : Plugin<Pipeline<*, PipelineCall>, KafkaStreamConfig, KafkaStreamPlugin> {
     private var stream: KafkaStreams? = null
 
     override val key: AttributeKey<KafkaStreamPlugin> = AttributeKey("kafka-stream")
 
     override fun install(
-        pipeline: Pipeline<*, ApplicationCall>,
+        pipeline: Pipeline<*, PipelineCall>,
         configure: KafkaStreamConfig.() -> Unit,
     ): KafkaStreamPlugin {
         val configuration = KafkaStreamConfig()
