@@ -1,7 +1,6 @@
 package no.nav.modia.soknadsstatus
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 
 class AktorMigreringJob(
@@ -56,9 +55,7 @@ class AktorMigreringJob(
                 delayTime = 30000
             }
 
-            runBlocking {
-                delay(delayTime)
-            }
+            delay(delayTime)
         }
     }
 }
