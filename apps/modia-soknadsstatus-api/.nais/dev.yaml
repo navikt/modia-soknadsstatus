@@ -34,6 +34,7 @@ spec:
     timeout: 1
   startup:
     path: /internal/isReady
+    initialDelay: 20
     failureThreshold: 30
     periodSeconds: 10
   prometheus:
