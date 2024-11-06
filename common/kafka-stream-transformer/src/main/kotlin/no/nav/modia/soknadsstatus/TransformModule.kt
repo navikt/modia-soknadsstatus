@@ -25,12 +25,12 @@ class KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE> {
 }
 
 class KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> :
-    Plugin<Pipeline<*, ApplicationCall>, KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>, KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE>> {
+    Plugin<Pipeline<*, PipelineCall>, KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>, KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE>> {
     override val key: AttributeKey<KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE>> =
         AttributeKey("kafka-stream-transform")
 
     override fun install(
-        pipeline: Pipeline<*, ApplicationCall>,
+        pipeline: Pipeline<*, PipelineCall>,
         configure: KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>.() -> Unit,
     ): KafkaStreamTransformPlugin<IN_TYPE, OUT_TYPE> {
         val configuration = KafkaStreamTransformConfig<IN_TYPE, OUT_TYPE>()

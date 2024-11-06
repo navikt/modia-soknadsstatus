@@ -8,13 +8,13 @@ class Config {
     var hendelseConsumer: HendelseConsumer? = null
 }
 
-class HendelseConsumerPlugin : Plugin<Pipeline<*, ApplicationCall>, Config, HendelseConsumerPlugin> {
+class HendelseConsumerPlugin : Plugin<Pipeline<*, PipelineCall>, Config, HendelseConsumerPlugin> {
     private var consumer: HendelseConsumer? = null
 
     override val key: AttributeKey<HendelseConsumerPlugin> = AttributeKey("hendelse-consumer")
 
     override fun install(
-        pipeline: Pipeline<*, ApplicationCall>,
+        pipeline: Pipeline<*, PipelineCall>,
         configure: Config.() -> Unit,
     ): HendelseConsumerPlugin {
         val configuration = Config()

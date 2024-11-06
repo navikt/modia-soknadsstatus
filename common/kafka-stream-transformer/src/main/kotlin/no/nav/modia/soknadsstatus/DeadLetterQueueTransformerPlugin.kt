@@ -17,10 +17,10 @@ class DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE> {
 
 class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
     Plugin<
-        Pipeline<*, ApplicationCall>,
+        Pipeline<*, PipelineCall>,
         DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>,
         DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE>,
-        > {
+    > {
     private lateinit var producer: KafkaSoknadsstatusProducer
     private var filter: ((key: String, message: INTERNAL_TYPE) -> Boolean)? = null
     private lateinit var transformer: ((key: String, message: INTERNAL_TYPE) -> OUT_TYPE)
@@ -52,7 +52,7 @@ class DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> :
         AttributeKey("dead-letter-consumer")
 
     override fun install(
-        pipeline: Pipeline<*, ApplicationCall>,
+        pipeline: Pipeline<*, PipelineCall>,
         configure: DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>.() -> Unit,
     ): DeadLetterQueueTransformerPlugin<INTERNAL_TYPE, OUT_TYPE> {
         val configuration = DeadLetterTransformerConfig<INTERNAL_TYPE, OUT_TYPE>()
