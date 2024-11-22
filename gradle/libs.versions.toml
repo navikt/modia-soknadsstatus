@@ -25,7 +25,7 @@ jaxb="4.0.2"
 slack="1.44.2"
 kafka_streams = "3.9.0"
 kafka_clients = "3.9.0"
-hikari = "6.2.0"
+hikari = "6.2.1"
 flyway = "10.22.0"
 jackson = "2.18.1"
 
