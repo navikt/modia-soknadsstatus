@@ -13,7 +13,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines)
     implementation(project(":common:ktor"))
 
-    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.1.0")
+    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.1.1")
     implementation("org.apache.activemq:activemq-jms-pool:6.1.4")
     implementation("org.apache.activemq:activemq-client:6.1.4")
     implementation("org.apache.activemq:activemq-broker:6.1.4")
