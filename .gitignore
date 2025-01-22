@@ -10,3 +10,5 @@ build/
 # Generated sources
 .DS_Store
 FFDC/
+
+.kotlin

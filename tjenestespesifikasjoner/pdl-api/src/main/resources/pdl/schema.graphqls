@@ -145,7 +145,6 @@ type Person {
     folkeregisterpersonstatus(historikk: Boolean = false): [Folkeregisterpersonstatus!]!
     forelderBarnRelasjon: [ForelderBarnRelasjon!]!
     foreldreansvar(historikk: Boolean = false): [Foreldreansvar!]!
-    fullmakt(historikk: Boolean = false): [Fullmakt!]!
     identitetsgrunnlag(historikk: Boolean = false): [Identitetsgrunnlag!]!
     kjoenn(historikk: Boolean = false): [Kjoenn!]!
     kontaktadresse(historikk: Boolean = false): [Kontaktadresse!]!
@@ -533,20 +532,6 @@ type Tolk {
     spraak: String
 }
 
-enum FullmaktsRolle {
-    FULLMAKTSGIVER,
-    FULLMEKTIG
-}
-
-type Fullmakt {
-    motpartsPersonident: String!
-    motpartsRolle: FullmaktsRolle!
-    omraader: [String!]!
-    gyldigFraOgMed: Date!
-    gyldigTilOgMed: Date!
-    metadata: Metadata!
-}
-
 type Folkeregisteridentifikator {
     identifikasjonsnummer: String!
     status: String!
@@ -788,7 +773,7 @@ input SearchRule {
     toExcluding:String
 
     # [Flag] Kan brukes til å overstyre standard oppførsellen for søk i felter (standard er case insensitive)
-    caseSensitive:Boolean
+    caseSensitive:Boolean @deprecated(reason: "Denne funksjonen ble lite brukt og er deprecated, dette flagget vil ikke lenger ha noe effekt og vil bli fjernet i fremtiden")
     # [Flag] Brukes til å deaktivere fonetisk søk feltene som har dette som standard (Navn)
     disablePhonetic:Boolean
     # Boost brukes til å gi ett søkekriterie høyere eller lavere vektlegging en de andre søke kriteriene.
