@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.10"
     kotlin("plugin.serialization") version "2.1.10"
     alias(libs.plugins.graphql)
     alias(libs.plugins.shadow)
