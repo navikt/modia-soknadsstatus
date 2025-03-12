@@ -15,7 +15,7 @@ dependencies {
 
     implementation("com.ibm.mq:com.ibm.mq.jakarta.client:9.4.2.0")
     implementation("org.apache.activemq:activemq-jms-pool:6.1.6")
-    implementation("org.apache.activemq:activemq-client:6.1.5")
+    implementation("org.apache.activemq:activemq-client:6.1.6")
     implementation("org.apache.activemq:activemq-broker:6.1.6")
 }
 
