@@ -26,7 +26,7 @@ slack="1.45.3"
 kafka_streams = "3.9.0"
 kafka_clients = "3.9.0"
 hikari = "6.2.1"
-flyway = "11.4.0"
+flyway = "11.4.1"
 jackson = "2.18.3"
 
 # Plugins
