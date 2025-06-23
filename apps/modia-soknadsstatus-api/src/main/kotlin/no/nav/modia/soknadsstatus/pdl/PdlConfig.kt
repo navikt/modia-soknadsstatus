@@ -6,6 +6,7 @@ import no.nav.modia.soknadsstatus.AppMode
 import no.nav.modia.soknadsstatus.pdlpip.PdlPipApi
 import no.nav.modia.soknadsstatus.utils.*
 import no.nav.personoversikt.common.logging.Logging
+import java.net.URI
 import java.net.URL
 
 object PdlConfig {
@@ -28,7 +29,7 @@ object PdlConfig {
                 PdlClientImpl(
                     oboTokenProvider.bindTo(DownstreamApi.parse(scope)),
                     machineTokenClient.bindTo((DownstreamApi.parse(scope))),
-                    URL(url),
+                    URI(url).toURL(),
                 )
 
             return PdlOppslagServiceImpl(
