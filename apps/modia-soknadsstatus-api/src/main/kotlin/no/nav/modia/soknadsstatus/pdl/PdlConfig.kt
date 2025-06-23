@@ -7,7 +7,6 @@ import no.nav.modia.soknadsstatus.pdlpip.PdlPipApi
 import no.nav.modia.soknadsstatus.utils.*
 import no.nav.personoversikt.common.logging.Logging
 import java.net.URI
-import java.net.URL
 
 object PdlConfig {
     fun factory(
