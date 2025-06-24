@@ -1,7 +1,7 @@
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.2.0"
     alias(libs.plugins.openapi)
 }
 
