@@ -2,7 +2,7 @@
 kotlin = "2.1.21"
 ktor = "3.2.0"
 kotlinx_serialization = "1.8.1"
-kotlinx_datetime = "0.6.2"
+kotlinx_datetime = "0.7.0-0.6.x-compat"
 kotlinx_coroutines="1.10.2"
 logback="1.5.18"
 logstash="8.1"
