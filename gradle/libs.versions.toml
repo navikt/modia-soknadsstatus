@@ -31,7 +31,7 @@ jackson = "2.19.1"
 
 # Plugins
 shadow = "8.3.7"
-openapi_generator = "7.13.0"
+openapi_generator = "7.14.0"
 
 [libraries]
 ktor-server-core = {module = "io.ktor:ktor-server-cors", version.ref = "ktor"}
