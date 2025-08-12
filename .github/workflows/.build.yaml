@@ -18,7 +18,7 @@ jobs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Java v21.x
         uses: actions/setup-java@v4
@@ -63,7 +63,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nais/deploy/actions/deploy@v2
         env:
           PRINT_PAYLOAD: true
@@ -81,7 +81,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nais/deploy/actions/deploy@v2
         env:
           PRINT_PAYLOAD: true
