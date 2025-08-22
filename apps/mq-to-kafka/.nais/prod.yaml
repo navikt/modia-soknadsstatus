@@ -41,6 +41,9 @@ spec:
         - host: "mpls03.adeo.no"
           ports:
             - port: 1414
+      rules:
+        - application: logging
+          namespace: nais-system
   filesFrom:
     - secret: mq-tls-keystore
       mountPath: /var/run/keystore

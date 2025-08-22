@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="logback-stdout-json.xml"/>
-    <include resource="logback-securelogs.xml"/>
+    <include resource="logback-teamlogs.xml"/>
     <logger name="org.apache.kafka" level="error" additivity="false">
         <appender-ref ref="stdout_json"/>
     </logger>

@@ -5,7 +5,8 @@ import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.modia.soknadsstatus.AppMode
 import no.nav.modia.soknadsstatus.pdlpip.PdlPipApi
 import no.nav.modia.soknadsstatus.utils.*
-import no.nav.personoversikt.common.logging.Logging
+import no.nav.personoversikt.common.logging.Logging.TEAM_LOGS_MARKER
+import no.nav.personoversikt.common.logging.Logging.teamLog
 import java.net.URL
 
 object PdlConfig {
@@ -17,7 +18,8 @@ object PdlConfig {
         pdlPipApi: PdlPipApi,
     ): PdlOppslagService {
         if (appMode == AppMode.NAIS) {
-            Logging.secureLog.info(
+            teamLog.info(
+                TEAM_LOGS_MARKER,
                 "PDL scope: ${DownstreamApi.parse(
                     pdlEnv.scope,
                 ).application}, ${DownstreamApi.parse(pdlEnv.scope).cluster}, ${DownstreamApi.parse(pdlEnv.scope).namespace} ",
