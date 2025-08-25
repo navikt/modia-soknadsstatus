@@ -6,7 +6,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import kotlinx.serialization.Serializable
-import no.nav.personoversikt.common.logging.Logging.secureLog
+import no.nav.personoversikt.common.logging.Logging.TEAM_LOGS_MARKER
+import no.nav.personoversikt.common.logging.Logging.teamLog
 
 class WebStatusException(
     message: String,
@@ -16,7 +17,7 @@ class WebStatusException(
 fun Application.configureExceptionHandling() {
     install(StatusPages) {
         exception<WebStatusException> { call, cause ->
-            secureLog.warn("WebStatusException:${cause.status.value}", call)
+            teamLog.warn(TEAM_LOGS_MARKER, "WebStatusException:${cause.status.value}", call)
             call.respond(
                 cause.status,
                 HttpErrorResponse(
@@ -25,7 +26,7 @@ fun Application.configureExceptionHandling() {
             )
         }
         exception<Throwable> { call, cause ->
-            secureLog.error("Unhandled exception", cause)
+            teamLog.error(TEAM_LOGS_MARKER, "Unhandled exception", cause)
             call.respond(
                 HttpStatusCode.InternalServerError,
                 HttpErrorResponse(
@@ -35,7 +36,7 @@ fun Application.configureExceptionHandling() {
         }
         status(HttpStatusCode.Unauthorized) { statusCode ->
             val message = call.authentication.allFailures.joinToString("\n") { it.prettyPrint() }
-            secureLog.error(message)
+            teamLog.error(TEAM_LOGS_MARKER, message)
             call.respond(statusCode, message)
         }
     }

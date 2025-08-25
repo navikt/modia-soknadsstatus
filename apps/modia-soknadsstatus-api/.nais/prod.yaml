@@ -88,6 +88,8 @@ spec:
       rules:
         - application: norg2
           namespace: org
+        - application: logging
+          namespace: nais-system
   envFrom:
     - secret: modia-soknadstatus-slackhook
   env:

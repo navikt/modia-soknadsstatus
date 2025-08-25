@@ -33,6 +33,11 @@ spec:
     path: /internal/metrics
   secureLogs:
     enabled: true
+  accessPolicy:
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
   kafka:
     pool: nav-prod
     streams: true

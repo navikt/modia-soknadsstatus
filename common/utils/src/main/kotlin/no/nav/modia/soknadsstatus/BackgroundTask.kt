@@ -12,7 +12,7 @@ object BackgroundTask {
             try {
                 block()
             } catch (e: Exception) {
-                Logging.secureLog.error("Background task exited with: ", e)
+                Logging.teamLog.error(Logging.TEAM_LOGS_MARKER, "Background task exited with: ", e)
             }
         }
 }

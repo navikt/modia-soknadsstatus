@@ -22,6 +22,9 @@ spec:
     outbound:
       external:
         - host: hooks.slack.com
+    rules:
+      - application: logging
+        namespace: nais-system
   liveness:
     path: /internal/isAlive
     initialDelay: 20
