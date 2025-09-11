@@ -9,7 +9,7 @@ val xjcOutputDir = "$buildDir/generated/source/xjc/main"
 plugins {
     application
     id("setup.repository")
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.2.20"
     kotlin("plugin.serialization") version "2.2.0"
     alias(libs.plugins.shadow)
 }
