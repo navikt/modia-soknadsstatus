@@ -11,7 +11,6 @@ import no.nav.common.types.identer.*
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.*
 import no.nav.modia.soknadsstatus.ansatt.*
-import no.nav.modia.soknadsstatus.ansatt.domain.AnsattEnhet
 import no.nav.modia.soknadsstatus.kafka.AppCluster
 import no.nav.modia.soknadsstatus.norg.NorgApi
 import no.nav.modia.soknadsstatus.norg.NorgDomain
@@ -238,7 +237,7 @@ internal class TilgangTilBrukerPolicyTest {
     private fun gittAtVeilederHarTilgangTilSkjermetPerson() = gittAtVeilederHarRoller(RolleListe(sensitiveTilgangsRoller.skjermedePersoner))
 
     private fun gittAtVeilederHarTilgangTilEnhet(enhetId: EnhetId) {
-        every { ansattService.hentEnhetsliste(ident) } returns listOf(AnsattEnhet(enhetId.get(), "navn"))
+        every { ansattService.hentEnhetsliste(token, ident) } returns listOf(enhetId)
     }
 
     private fun gittAtVeilederIkkeHarNoenSpesielleRoller() = gittAtVeilederHarRoller(RolleListe(AnsattRolle("test", AzureObjectId("test"))))

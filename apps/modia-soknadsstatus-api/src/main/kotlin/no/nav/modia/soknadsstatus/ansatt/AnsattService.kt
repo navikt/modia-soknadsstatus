@@ -1,15 +1,17 @@
 package no.nav.modia.soknadsstatus.ansatt
 
-import no.nav.common.client.axsys.AxsysClient
+import no.nav.common.types.identer.EnhetId
 import no.nav.common.types.identer.NavIdent
-import no.nav.modia.soknadsstatus.ansatt.domain.AnsattEnhet
-import no.nav.modia.soknadsstatus.azure.MSGraphService
-import no.nav.personoversikt.common.logging.TjenestekallLogg
+import no.nav.modia.soknadsstatus.azure.AzureADService
 
 interface AnsattService {
-    fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet>
+    fun hentEnhetsliste(
+        userToken: String,
+        ident: NavIdent,
+    ): List<EnhetId>
 
     fun hentAnsattFagomrader(
+        userToken: String,
         ident: String,
         enhet: String,
     ): Set<String>
@@ -21,8 +23,7 @@ interface AnsattService {
 }
 
 class AnsattServiceImpl(
-    private val axsys: AxsysClient,
-    private val azureADService: MSGraphService,
+    private val azureADService: AzureADService,
     private val sensitiveTilgangsRoller: SensitiveTilgangsRoller,
     private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) : AnsattService {
@@ -38,33 +39,19 @@ class AnsattServiceImpl(
             }
         }
 
-    override fun hentEnhetsliste(ident: NavIdent): List<AnsattEnhet> =
-        (axsys.hentTilganger(ident) ?: emptyList())
-            .map { AnsattEnhet(it.enhetId.get(), it.navn) }
+    override fun hentEnhetsliste(
+        userToken: String,
+        ident: NavIdent,
+    ): List<EnhetId> = azureADService.hentEnheterForVeileder(ident.get(), userToken)
 
     override fun hentAnsattFagomrader(
+        userToken: String,
         ident: String,
         enhet: String,
-    ): Set<String> =
-        axsys
-            .runCatching {
-                hentTilganger(NavIdent(ident))
-                    .find {
-                        it.enhetId.get() == enhet
-                    }?.temaer
-                    ?.toSet()
-                    ?: emptySet()
-            }.getOrElse {
-                TjenestekallLogg.error(
-                    "Klarte ikke å hente ansatt fagområder for $ident $enhet",
-                    throwable = it,
-                    fields = mapOf(),
-                )
-                emptySet()
-            }
+    ): Set<String> = azureADService.hentTemaerForVeileder(ident, userToken).toSet()
 
     override suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
         userToken: String,
         ident: NavIdent,
-    ): RolleListe = azureADService.fetchMultipleGroupsIfUserIsMember(userToken, ident, sensitiveOgGeografiskeTilgangsRoller)
+    ): RolleListe = azureADService.hentIntersectRollerForVeileder(userToken, ident.get(), sensitiveOgGeografiskeTilgangsRoller)
 }

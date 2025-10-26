@@ -10,6 +10,7 @@ class BrukersRegionEnhetPip(
     private val norgApi: NorgApi,
 ) : Kabac.PolicyInformationPoint<EnhetId?> {
     override val key = Companion.key
+
     companion object : Kabac.AttributeKey<EnhetId?> {
         override val key = Key<EnhetId?>(BrukersRegionEnhetPip::class.java.simpleName)
     }
