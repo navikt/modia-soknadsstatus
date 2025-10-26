@@ -26,16 +26,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 interface NorgApi : Pingable {
-    companion object {
-        @JvmStatic
-        val IKKE_NEDLAGT: List<NorgDomain.EnhetStatus> =
-            NorgDomain
-                .EnhetStatus
-                .values()
-                .asList()
-                .minus(NorgDomain.EnhetStatus.NEDLAGT)
-    }
-
     fun finnNavKontor(
         geografiskTilknytning: String,
         diskresjonskode: NorgDomain.DiskresjonsKode?,
@@ -93,33 +83,43 @@ class NorgApiImpl(
         diskresjonskode: NorgDomain.DiskresjonsKode?,
     ): NorgDomain.Enhet? {
         val key = "finnNavKontor[$geografiskTilknytning,$diskresjonskode]"
-        return navkontorCache.get(key) {
-            if (geografiskTilknytning.isNumeric()) {
+        if (geografiskTilknytning.isNumeric()) {
+            return navkontorCache.get(key) {
                 enhetApi
                     .getEnhetByGeografiskOmraadeUsingGET(
                         geografiskOmraade = geografiskTilknytning,
                         disk = diskresjonskode?.name,
                     ).let(::toInternalDomain)
-            } else {
-                /**
-                 * Ikke numerisk GT tilsier at det er landkode pga utenlandsk GT og da har vi ingen enhet
-                 */
-                null
             }
+        } else {
+            /**
+             * Ikke numerisk GT tilsier at det er landkode pga utenlandsk GT og da har vi ingen enhet
+             */
+            return null
         }
     }
 
     override fun hentRegionalEnheter(enhet: List<EnhetId>): List<EnhetId> = enhet.mapNotNull(::hentRegionalEnhet)
 
-    override fun hentRegionalEnhet(enhet: EnhetId): EnhetId? =
-        regionalkontorCache.get(enhet) { enhetId ->
-            organiseringApi
-                .getAllOrganiseringerForEnhetUsingGET(enhetId.get())
-                .firstOrNull { it.orgType == "FYLKE" }
-                ?.organiserer
-                ?.nr
-                ?.let(::EnhetId)
+    override fun hentRegionalEnhet(enhet: EnhetId): EnhetId? {
+        val cachedEnhet = regionalkontorCache.getIfPresent(enhet)
+        if (cachedEnhet == null) {
+            val enhetId =
+                organiseringApi
+                    .getAllOrganiseringerForEnhetUsingGET(enhet.get())
+                    .firstOrNull { it.orgType == "FYLKE" }
+                    ?.organiserer
+                    ?.nr
+                    ?.let(::EnhetId)
+            if (enhetId != null) {
+                regionalkontorCache.put(enhet, enhetId)
+            }
+
+            return enhetId
+        } else {
+            return cachedEnhet
         }
+    }
 
     override fun ping() =
         SelfTestCheck(

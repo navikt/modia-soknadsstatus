@@ -12,7 +12,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
 
-interface SuspendCache<KEY_TYPE: Any, VALUE_TYPE> {
+interface SuspendCache<KEY_TYPE : Any, VALUE_TYPE> {
     suspend fun get(
         key: KEY_TYPE,
         create: suspend CoroutineScope.() -> VALUE_TYPE,
@@ -28,7 +28,7 @@ interface SuspendCache<KEY_TYPE: Any, VALUE_TYPE> {
     val size: Int
 }
 
-class SuspendCacheImpl<KEY_TYPE: Any, VALUE_TYPE>(
+class SuspendCacheImpl<KEY_TYPE : Any, VALUE_TYPE>(
     maximumSize: Long = 10_000,
     expiresAfterWrite: Duration = 1.hours,
     private val ticker: Ticker? = null,
