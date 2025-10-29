@@ -82,6 +82,7 @@ spec:
         - host: pdl-api.dev-fss-pub.nais.io
         - host: pdl-pip-api.dev-fss-pub.nais.io
         - host: pdl-api-q1.dev-fss-pub.nais.io
+        - host: axsys.dev-fss-pub.nais.io
         - host: skjermede-personer-pip.intern.dev.nav.no
         - host: unleash.nais.io
         - host: hooks.slack.com
@@ -129,6 +130,10 @@ spec:
       value: "https://pdl-pip-api.dev-fss-pub.nais.io"
     - name: PDL_PIP_SCOPE
       value: dev-fss:pdl:pdl-pip-api
+    - name: AXSYS_URL
+      value: "https://axsys.dev-fss-pub.nais.io"
+    - name: AXSYS_SCOPE
+      value: "dev-fss:org:axsys"
     - name: SKJERMEDE_PERSONER_PIP_URL
       value: "https://skjermede-personer-pip.intern.dev.nav.no"
     - name: SKJERMEDE_PERSONER_SCOPE

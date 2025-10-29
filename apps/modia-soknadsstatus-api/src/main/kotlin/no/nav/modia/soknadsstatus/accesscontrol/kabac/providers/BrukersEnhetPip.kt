@@ -12,7 +12,6 @@ class BrukersEnhetPip(
 ) : Kabac.PolicyInformationPoint<EnhetId?> {
     private val log = LoggerFactory.getLogger(BrukersEnhetPip::class.java)
     override val key = Companion.key
-
     companion object : Kabac.AttributeKey<EnhetId?> {
         override val key = Key<EnhetId?>(BrukersEnhetPip::class.java.simpleName)
     }

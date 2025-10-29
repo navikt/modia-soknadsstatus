@@ -1,10 +1,11 @@
 package no.nav.modia.soknadsstatus
 
+import io.ktor.http.*
 import no.nav.modia.soknadsstatus.accesscontrol.AccessControlConfig
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
 import no.nav.modia.soknadsstatus.ansatt.AnsattConfig
+import no.nav.modia.soknadsstatus.axsys.AxsysConfig
 import no.nav.modia.soknadsstatus.azure.AzureADServiceImpl
-import no.nav.modia.soknadsstatus.azure.MsGraphConfig
 import no.nav.modia.soknadsstatus.kafka.*
 import no.nav.modia.soknadsstatus.norg.NorgConfig
 import no.nav.modia.soknadsstatus.pdl.PdlConfig
@@ -58,11 +59,11 @@ interface Services {
                     configuration.machineToMachineTokenClient,
                     pdlPipApi,
                 )
-            val msGraphClient =
-                MsGraphConfig.factory(env.kafkaApp.appMode, env.msGraphEnv)
+            val axsysApi =
+                AxsysConfig.factory(env.kafkaApp.appMode, env.axsysEnv, configuration.machineToMachineTokenClient)
             val azureADService =
                 AzureADServiceImpl(
-                    msGraphClient = msGraphClient,
+                    graphUrl = Url(env.msGraphEnv.url),
                     tokenClient =
                         configuration.oboTokenClient.bindTo(
                             env.msGraphEnv.scope,
@@ -71,6 +72,7 @@ interface Services {
             val ansattService =
                 AnsattConfig.factory(
                     env.kafkaApp.appMode,
+                    axsysApi,
                     azureADService,
                     env.sensitiveTilgangsRoller,
                     env.geografiskeTilgangsRoller,

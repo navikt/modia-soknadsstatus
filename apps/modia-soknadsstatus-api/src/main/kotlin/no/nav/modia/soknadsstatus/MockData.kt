@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
+import no.nav.common.types.identer.EnhetId
 import no.nav.modia.soknadsstatus.ansatt.GeografiskeTilgangsRoller
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.ansatt.SensitiveTilgangsRoller
@@ -39,6 +40,7 @@ object MockData {
                 addAll(geografiskeTilgangsRoller.nasjonaleTilgangsRoller)
             }
 
+        val axsysEnhet = EnhetId(enhetId)
         val fagområder = "AAP"
     }
 
@@ -92,6 +94,8 @@ object MockData {
                 MockEnv("PDL_SCOPE", "test:pdl:scope"),
                 MockEnv("PDL_SCOPE_Q1", "test:pdl:scope"),
                 MockEnv("PDL_PIP_SCOPE", "test:pdl-pip:scope"),
+                MockEnv("AXSYS_SCOPE", "test:axsys:scope"),
+                MockEnv("AXSYS_URL", "AXSYS_URL"),
                 MockEnv("LDAP_URL", "http://ldap-api-url.no"),
                 MockEnv("LDAP_USERNAME", "ldap_username"),
                 MockEnv("LDAP_PASSWORD", "ldap_password"),
