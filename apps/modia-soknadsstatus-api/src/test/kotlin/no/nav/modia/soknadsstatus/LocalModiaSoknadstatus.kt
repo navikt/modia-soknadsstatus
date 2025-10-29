@@ -76,8 +76,6 @@ private fun setUpMocks() {
             MockEnv("PDL_PIP_API_URL", "https://pdl-pip-api-url.no"),
             MockEnv("PDL_SCOPE", "test:pdl:scope"),
             MockEnv("PDL_PIP_SCOPE", "test:pdl-pip:scope"),
-            MockEnv("AXSYS_SCOPE", "test:axsys:scope"),
-            MockEnv("AXSYS_URL", "AXSYS_URL"),
             MockEnv("LDAP_URL", "http://ldap-api-url.no"),
             MockEnv("LDAP_USERNAME", "ldap_username"),
             MockEnv("LDAP_PASSWORD", "ldap_password"),
@@ -87,7 +85,7 @@ private fun setUpMocks() {
             MockEnv("NORG2_URL", "https://norg2-api-url.no"),
             MockEnv("SKJERMEDE_PERSONER_PIP_URL", "https://skjermede-personer-api-url.no"),
             MockEnv("SKJERMEDE_PERSONER_SCOPE", "test:skjermede-personer:scope"),
-            MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/"),
+            MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/v1.0"),
             MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default"),
         )
 

@@ -10,7 +10,7 @@ object CacheUtils {
     fun <KEY, VALUE> createCache(
         expireAfterWrite: Duration = 1.hours,
         maximumSize: Long = 10_000,
-    ): Cache<KEY, VALUE> =
+    ): Cache<KEY & Any, VALUE> =
         Caffeine
             .newBuilder()
             .expireAfterWrite(expireAfterWrite.toJavaDuration())
