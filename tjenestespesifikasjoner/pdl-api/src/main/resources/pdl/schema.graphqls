@@ -137,6 +137,7 @@ type Person {
     doedfoedtBarn: [DoedfoedtBarn!]!
     doedsfall: [Doedsfall!]!
     falskIdentitet: FalskIdentitet
+    foedsel: [Foedsel!]! @deprecated(reason: "Erstattet av foedselsdato & foedested")
     foedselsdato: [Foedselsdato!]!
     foedested: [Foedested!]!
     navspersonidentifikator(historikk: Boolean = false): [Navspersonidentifikator!]!
@@ -371,6 +372,16 @@ enum AdressebeskyttelseGradering {
     UGRADERT
 }
 
+type Foedsel {
+    foedselsaar: Int
+    foedselsdato: Date
+    foedeland: String
+    foedested: String
+    foedekommune: String
+    folkeregistermetadata: Folkeregistermetadata
+    metadata: Metadata!
+}
+
 type Foedested {
     foedeland: String
     foedested: String
@@ -530,8 +541,6 @@ type Folkeregisteridentifikator {
 }
 type Navspersonidentifikator {
     identifikasjonsnummer: String!
-    gyldigFraOgMed: Date #TODO Sett som required etter oppdatering i databasen
-    gyldigTilOgMed: Date
     metadata: Metadata!
 }
 

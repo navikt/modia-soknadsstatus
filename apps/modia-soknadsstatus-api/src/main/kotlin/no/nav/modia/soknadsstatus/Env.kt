@@ -2,6 +2,7 @@ package no.nav.modia.soknadsstatus
 
 import no.nav.modia.soknadsstatus.ansatt.GeografiskeTilgangsRoller
 import no.nav.modia.soknadsstatus.ansatt.SensitiveTilgangsRoller
+import no.nav.modia.soknadsstatus.axsys.AxsysEnv
 import no.nav.modia.soknadsstatus.azure.MsGraphEnv
 import no.nav.modia.soknadsstatus.kafka.AppEnv
 import no.nav.modia.soknadsstatus.norg.NorgEnv
@@ -28,6 +29,7 @@ interface Env {
     val hendelseConsumerEnv: HendelseConsumerEnv
     val azureAdConfiguration: AzureAdConfiguration
     val datasourceConfiguration: DatasourceConfiguration
+    val axsysEnv: AxsysEnv
     val norgEnv: NorgEnv
     val skjermedePersonerEnv: SkjermedePersonerEnv
     val pdlPipEnv: PdlPipApiEnv
@@ -55,6 +57,11 @@ data class EnvImpl(
         PdlEnv(
             url = EnvUtils.getRequiredConfig("PDL_API_URL_Q1"),
             scope = EnvUtils.getRequiredConfig("PDL_SCOPE_Q1"),
+        ),
+    override val axsysEnv: AxsysEnv =
+        AxsysEnv(
+            scope = EnvUtils.getRequiredConfig("AXSYS_SCOPE"),
+            url = EnvUtils.getRequiredConfig("AXSYS_URL"),
         ),
     override val norgEnv: NorgEnv = NorgEnv(url = EnvUtils.getRequiredConfig("NORG2_URL")),
     override val skjermedePersonerEnv: SkjermedePersonerEnv =
