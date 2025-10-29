@@ -85,7 +85,7 @@ private fun setUpMocks() {
             MockEnv("NORG2_URL", "https://norg2-api-url.no"),
             MockEnv("SKJERMEDE_PERSONER_PIP_URL", "https://skjermede-personer-api-url.no"),
             MockEnv("SKJERMEDE_PERSONER_SCOPE", "test:skjermede-personer:scope"),
-            MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/v1.0"),
+            MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/"),
             MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default"),
         )
 
