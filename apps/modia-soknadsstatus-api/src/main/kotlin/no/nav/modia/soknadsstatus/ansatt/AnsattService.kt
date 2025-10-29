@@ -53,5 +53,5 @@ class AnsattServiceImpl(
     override suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
         userToken: String,
         ident: NavIdent,
-    ): RolleListe = azureADService.hentIntersectRollerForVeileder(userToken, ident.get(), sensitiveOgGeografiskeTilgangsRoller)
+    ): RolleListe = azureADService.hentIntersectRollerForVeileder(ident.get(), userToken, sensitiveOgGeografiskeTilgangsRoller)
 }
