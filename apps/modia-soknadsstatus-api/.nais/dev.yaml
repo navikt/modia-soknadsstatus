@@ -134,6 +134,6 @@ spec:
     - name: SKJERMEDE_PERSONER_SCOPE
       value: "dev-gcp:nom:skjermede-personer-pip"
     - name: MS_GRAPH_URL
-      value: "https://graph.microsoft.com/"
+      value: "https://graph.microsoft.com/v1.0"
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
