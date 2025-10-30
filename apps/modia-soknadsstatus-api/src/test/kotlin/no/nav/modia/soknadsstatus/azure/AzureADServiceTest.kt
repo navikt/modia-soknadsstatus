@@ -7,8 +7,6 @@ import no.nav.common.client.msgraph.AdGroupFilter
 import no.nav.common.client.msgraph.MsGraphClient
 import no.nav.common.types.identer.AzureObjectId
 import no.nav.common.types.identer.EnhetId
-import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
-import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -47,17 +45,6 @@ class AzureADServiceTest {
         val faktiskeEnheter = azureADService.hentEnheterForVeileder(ident, userToken)
 
         assertEquals(forventedeEnheter, faktiskeEnheter)
-    }
-
-    @Test
-    fun `skal returnere snittet av roller`() {
-        val groupId = AzureObjectId(UUID.randomUUID().toString())
-        val gitteRoller = RolleListe(setOf(AnsattRolle("0000-GA-KODE7", groupId)))
-        val roller = listOf(createGroupData("0000-GA-TEMA_OPP"), createGroupData("0000-GA-KODE7", groupId))
-        every { msGraphClient.hentAdGroupsForUser(userToken, ident) } returns roller
-        val faktiskeSnitt = azureADService.hentIntersectRollerForVeileder(ident, userToken, gitteRoller)
-
-        assertEquals(gitteRoller, faktiskeSnitt)
     }
 
     @Test

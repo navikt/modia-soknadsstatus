@@ -3,8 +3,6 @@ package no.nav.modia.soknadsstatus.azure
 import no.nav.common.client.msgraph.AdGroupFilter
 import no.nav.common.client.msgraph.MsGraphClient
 import no.nav.common.types.identer.EnhetId
-import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
-import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.utils.BoundedOnBehalfOfTokenClient
 import no.nav.personoversikt.common.logging.TjenestekallLogg
 
@@ -18,12 +16,6 @@ interface AzureADService {
         ident: String,
         userToken: String,
     ): List<EnhetId>
-
-    fun hentIntersectRollerForVeileder(
-        ident: String,
-        userToken: String,
-        groups: RolleListe,
-    ): RolleListe
 
     fun hentTemaerForVeileder(
         ident: String,
@@ -75,36 +67,6 @@ class AzureADServiceImpl(
         } catch (e: Exception) {
             TjenestekallLogg.warn("Kall til azureAD feile", throwable = e, fields = mapOf("Veileder ident" to ident))
             return listOf()
-        }
-    }
-
-    override fun hentIntersectRollerForVeileder(
-        ident: String,
-        userToken: String,
-        groups: RolleListe,
-    ): RolleListe {
-        val oboToken = tokenClient.exchangeOnBehalfOfToken(userToken)
-        return try {
-            val response = msGraphClient.hentAdGroupsForUser(oboToken, ident)
-            if (response.isEmpty()) {
-                TjenestekallLogg.warn("Kall til azureAD feilet", fields = mapOf("Veileder ident" to ident))
-                return RolleListe()
-            }
-
-            val veiledersRoller =
-                response.map {
-                    AnsattRolle(
-                        gruppeId = requireNotNull(it.id),
-                        gruppeNavn = requireNotNull(it.displayName),
-                    )
-                }
-
-            val commonElements = groups intersect veiledersRoller.toSet()
-
-            RolleListe(commonElements)
-        } catch (e: Exception) {
-            TjenestekallLogg.warn("Kall til azureAD feile", throwable = e, fields = mapOf("Veileder ident" to ident))
-            return RolleListe()
         }
     }
 

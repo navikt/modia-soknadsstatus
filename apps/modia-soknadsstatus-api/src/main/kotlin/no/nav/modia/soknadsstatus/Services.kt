@@ -72,8 +72,6 @@ interface Services {
                 AnsattConfig.factory(
                     env.kafkaApp.appMode,
                     azureADService,
-                    env.sensitiveTilgangsRoller,
-                    env.geografiskeTilgangsRoller,
                 )
             val accessControl =
                 AccessControlConfig(

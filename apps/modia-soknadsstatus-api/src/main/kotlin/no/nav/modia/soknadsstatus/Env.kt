@@ -67,8 +67,8 @@ data class EnvImpl(
             url = EnvUtils.getRequiredConfig("PDL_PIP_API_URL"),
             scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("PDL_PIP_SCOPE")),
         ),
-    override val sensitiveTilgangsRoller: SensitiveTilgangsRoller = SensitiveTilgangsRoller(kafkaApp.appCluster),
-    override val geografiskeTilgangsRoller: GeografiskeTilgangsRoller = GeografiskeTilgangsRoller(kafkaApp.appCluster),
+    override val sensitiveTilgangsRoller: SensitiveTilgangsRoller = SensitiveTilgangsRoller(),
+    override val geografiskeTilgangsRoller: GeografiskeTilgangsRoller = GeografiskeTilgangsRoller(),
     override val msGraphEnv: MsGraphEnv =
         MsGraphEnv(
             url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
