@@ -16,7 +16,7 @@ class AnsattServiceMock : AnsattService {
         enhet: String,
     ): Set<String> = setOf(MockData.Veileder.fagområder)
 
-    override suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
+    override fun hentVeiledersGeografiskeOgSensitiveRoller(
         userToken: String,
         ident: NavIdent,
     ) = MockData.Veileder.roller
