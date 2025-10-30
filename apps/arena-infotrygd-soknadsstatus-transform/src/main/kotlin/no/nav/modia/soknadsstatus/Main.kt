@@ -103,6 +103,8 @@ fun checkIfLegalInfotrygdHendelse(
     key: String?,
     hendelse: Hendelse,
 ) = !(
-    hendelse.hendelseType == "BEHANDLING_OPPRETTET_OG_AVSLUTTET" && hendelse.hendelsesprodusentREF.value == INFOTRYGD &&
-        hendelse.behandlingstype?.value == "" && hendelse.avslutningsstatus?.value == "blank"
+    hendelse.hendelseType == "BEHANDLING_OPPRETTET_OG_AVSLUTTET" &&
+        hendelse.hendelsesprodusentREF.value == INFOTRYGD &&
+        hendelse.behandlingstype?.value == "" &&
+        hendelse.avslutningsstatus?.value == "blank"
 )

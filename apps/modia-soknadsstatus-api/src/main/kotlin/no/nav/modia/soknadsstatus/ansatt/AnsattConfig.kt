@@ -1,19 +1,17 @@
 package no.nav.modia.soknadsstatus.ansatt
 
-import no.nav.common.client.axsys.AxsysClient
 import no.nav.modia.soknadsstatus.AppMode
-import no.nav.modia.soknadsstatus.azure.MSGraphService
+import no.nav.modia.soknadsstatus.azure.AzureADService
 
 object AnsattConfig {
     fun factory(
         appMode: AppMode,
-        axsys: AxsysClient,
-        azureADService: MSGraphService,
+        azureADService: AzureADService,
         sensitiveTilgangsRoller: SensitiveTilgangsRoller,
         geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
     ): AnsattService {
         if (appMode == AppMode.NAIS) {
-            return AnsattServiceImpl(axsys, azureADService, sensitiveTilgangsRoller, geografiskeTilgangsRoller)
+            return AnsattServiceImpl(azureADService, sensitiveTilgangsRoller, geografiskeTilgangsRoller)
         }
         return AnsattServiceMock()
     }
