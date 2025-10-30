@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
-import kotlinx.coroutines.runBlocking
 import no.nav.common.types.identer.EnhetId
 import no.nav.modia.soknadsstatus.ansatt.AnsattService
 import no.nav.modia.soknadsstatus.removeBearerFromToken
@@ -20,8 +19,6 @@ class VeiledersEnheterPip(
     override fun provide(ctx: EvaluationContext): List<EnhetId> {
         val subject = ctx.getValue(AuthContextPip)
         val ident = ctx.getValue(NavIdentPip)
-        return runBlocking {
-            ansattService.hentEnhetsliste(subject.token.removeBearerFromToken(), ident)
-        }
+        return ansattService.hentEnhetsliste(subject.token.removeBearerFromToken(), ident)
     }
 }

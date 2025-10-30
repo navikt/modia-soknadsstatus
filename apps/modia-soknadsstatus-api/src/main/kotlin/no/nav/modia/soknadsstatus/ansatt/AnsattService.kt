@@ -16,7 +16,7 @@ interface AnsattService {
         enhet: String,
     ): Set<String>
 
-    suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
+    fun hentVeiledersGeografiskeOgSensitiveRoller(
         userToken: String,
         ident: NavIdent,
     ): RolleListe
@@ -50,7 +50,7 @@ class AnsattServiceImpl(
         enhet: String,
     ): Set<String> = azureADService.hentTemaerForVeileder(ident, userToken).toSet()
 
-    override suspend fun hentVeiledersGeografiskeOgSensitiveRoller(
+    override fun hentVeiledersGeografiskeOgSensitiveRoller(
         userToken: String,
         ident: NavIdent,
     ): RolleListe = azureADService.hentIntersectRollerForVeileder(ident.get(), userToken, sensitiveOgGeografiskeTilgangsRoller)

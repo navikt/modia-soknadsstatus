@@ -1,6 +1,5 @@
 package no.nav.modia.soknadsstatus.accesscontrol.kabac.providers
 
-import kotlinx.coroutines.runBlocking
 import no.nav.modia.soknadsstatus.ansatt.AnsattService
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.removeBearerFromToken
@@ -20,8 +19,6 @@ class VeiledersRollerPip(
         val subject = ctx.getValue(AuthContextPip)
         val veilederNavIdent = ctx.getValue(NavIdentPip)
 
-        return runBlocking {
-            ansattService.hentVeiledersGeografiskeOgSensitiveRoller(subject.token.removeBearerFromToken(), veilederNavIdent)
-        }
+        return ansattService.hentVeiledersGeografiskeOgSensitiveRoller(subject.token.removeBearerFromToken(), veilederNavIdent)
     }
 }

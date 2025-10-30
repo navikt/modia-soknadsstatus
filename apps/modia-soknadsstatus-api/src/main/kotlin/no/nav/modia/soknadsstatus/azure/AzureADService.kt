@@ -91,7 +91,7 @@ class AzureADServiceImpl(
                 return RolleListe()
             }
 
-            val veiledersRoller = response.map { AnsattRolle(gruppeId = it.id, gruppeNavn = it.displayName) }
+            val veiledersRoller = response.map { AnsattRolle(gruppeId = requireNotNull(it.id), gruppeNavn = requireNotNull(it.displayName)) }
 
             val commonElements = groups intersect veiledersRoller.toSet()
 
