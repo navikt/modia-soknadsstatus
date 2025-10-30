@@ -11,7 +11,6 @@ import no.nav.common.types.identer.*
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.*
 import no.nav.modia.soknadsstatus.ansatt.*
-import no.nav.modia.soknadsstatus.kafka.AppCluster
 import no.nav.modia.soknadsstatus.norg.NorgApi
 import no.nav.modia.soknadsstatus.norg.NorgDomain
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
@@ -26,8 +25,8 @@ import java.util.*
 
 @TestInstance(Lifecycle.PER_CLASS)
 internal class TilgangTilBrukerPolicyTest {
-    private val sensitiveTilgangsRoller = SensitiveTilgangsRoller(appCluster = AppCluster.PROD)
-    private val geografiskeTilgangsRoller = GeografiskeTilgangsRoller(appCluster = AppCluster.PROD)
+    private val sensitiveTilgangsRoller = SensitiveTilgangsRoller()
+    private val geografiskeTilgangsRoller = GeografiskeTilgangsRoller()
     private val policy =
         KabacTestUtils.PolicyTester(
             TilgangTilBrukerPolicy(
@@ -223,7 +222,7 @@ internal class TilgangTilBrukerPolicyTest {
     }
 
     private fun gittAtVeilederHarRoller(roller: RolleListe) {
-        coEvery { ansattService.hentVeiledersGeografiskeOgSensitiveRoller(token, ident) } returns roller
+        coEvery { ansattService.hentVeilederRoller(token, ident.get()) } returns roller
     }
 
     private fun gittAtVeilederHarNasjonalTilgang() = gittAtVeilederHarRoller(RolleListe(geografiskeTilgangsRoller.nasjonaleTilgangsRoller))
@@ -240,7 +239,7 @@ internal class TilgangTilBrukerPolicyTest {
         every { ansattService.hentEnhetsliste(token, ident) } returns listOf(enhetId)
     }
 
-    private fun gittAtVeilederIkkeHarNoenSpesielleRoller() = gittAtVeilederHarRoller(RolleListe(AnsattRolle("test", AzureObjectId("test"))))
+    private fun gittAtVeilederIkkeHarNoenSpesielleRoller() = gittAtVeilederHarRoller(RolleListe(listOf("test")))
 
     private fun gittFnrAktorIdMapping(vararg fnraktoridMapping: Pair<Fnr, AktorId>) {
         val fnrmap = fnraktoridMapping.toMap()

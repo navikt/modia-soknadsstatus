@@ -13,32 +13,17 @@ interface AnsattService {
     fun hentAnsattFagomrader(
         userToken: String,
         ident: String,
-        enhet: String,
     ): Set<String>
 
-    fun hentVeiledersGeografiskeOgSensitiveRoller(
+    fun hentVeilederRoller(
         userToken: String,
-        ident: NavIdent,
+        ident: String,
     ): RolleListe
 }
 
 class AnsattServiceImpl(
     private val azureADService: AzureADService,
-    private val sensitiveTilgangsRoller: SensitiveTilgangsRoller,
-    private val geografiskeTilgangsRoller: GeografiskeTilgangsRoller,
 ) : AnsattService {
-    private val sensitiveOgGeografiskeTilgangsRoller: RolleListe
-        get() {
-            return RolleListe(
-                sensitiveTilgangsRoller.kode6,
-                sensitiveTilgangsRoller.kode7,
-                sensitiveTilgangsRoller.skjermedePersoner,
-            ).apply {
-                addAll(geografiskeTilgangsRoller.regionaleTilgangsRoller)
-                addAll(geografiskeTilgangsRoller.nasjonaleTilgangsRoller)
-            }
-        }
-
     override fun hentEnhetsliste(
         userToken: String,
         ident: NavIdent,
@@ -47,11 +32,10 @@ class AnsattServiceImpl(
     override fun hentAnsattFagomrader(
         userToken: String,
         ident: String,
-        enhet: String,
     ): Set<String> = azureADService.hentTemaerForVeileder(ident, userToken).toSet()
 
-    override fun hentVeiledersGeografiskeOgSensitiveRoller(
+    override fun hentVeilederRoller(
         userToken: String,
-        ident: NavIdent,
-    ): RolleListe = azureADService.hentIntersectRollerForVeileder(ident.get(), userToken, sensitiveOgGeografiskeTilgangsRoller)
+        ident: String,
+    ): RolleListe = RolleListe(azureADService.hentRollerForVeileder(ident, userToken))
 }

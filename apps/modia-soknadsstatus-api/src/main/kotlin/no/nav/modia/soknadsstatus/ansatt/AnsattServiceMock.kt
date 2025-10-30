@@ -13,11 +13,10 @@ class AnsattServiceMock : AnsattService {
     override fun hentAnsattFagomrader(
         userToken: String,
         ident: String,
-        enhet: String,
     ): Set<String> = setOf(MockData.Veileder.fagområder)
 
-    override fun hentVeiledersGeografiskeOgSensitiveRoller(
+    override fun hentVeilederRoller(
         userToken: String,
-        ident: NavIdent,
+        ident: String,
     ) = MockData.Veileder.roller
 }

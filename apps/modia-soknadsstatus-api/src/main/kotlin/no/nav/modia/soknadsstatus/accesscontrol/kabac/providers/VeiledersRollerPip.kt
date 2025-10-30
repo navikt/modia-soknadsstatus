@@ -19,6 +19,6 @@ class VeiledersRollerPip(
         val subject = ctx.getValue(AuthContextPip)
         val veilederNavIdent = ctx.getValue(NavIdentPip)
 
-        return ansattService.hentVeiledersGeografiskeOgSensitiveRoller(subject.token.removeBearerFromToken(), veilederNavIdent)
+        return ansattService.hentVeilederRoller(subject.token.removeBearerFromToken(), veilederNavIdent.get())
     }
 }

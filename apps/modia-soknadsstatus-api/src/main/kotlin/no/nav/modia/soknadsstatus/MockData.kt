@@ -8,13 +8,12 @@ import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
 import no.nav.modia.soknadsstatus.ansatt.GeografiskeTilgangsRoller
 import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.modia.soknadsstatus.ansatt.SensitiveTilgangsRoller
-import no.nav.modia.soknadsstatus.kafka.AppCluster
 import no.nav.modia.soknadsstatus.norg.NorgDomain
 import java.util.*
 
 object MockData {
-    private val sensitiveTilgangsRoller = SensitiveTilgangsRoller(appCluster = AppCluster.LOCALLY)
-    private val geografiskeTilgangsRoller = GeografiskeTilgangsRoller(appCluster = AppCluster.LOCALLY)
+    private val sensitiveTilgangsRoller = SensitiveTilgangsRoller()
+    private val geografiskeTilgangsRoller = GeografiskeTilgangsRoller()
 
     object Veileder {
         const val enhetId = "2990"
@@ -29,15 +28,10 @@ object MockData {
         val navIdent = "Z999999"
         val roller =
             RolleListe(
-                sensitiveTilgangsRoller.kode6,
-                sensitiveTilgangsRoller.kode7,
-                sensitiveTilgangsRoller.skjermedePersoner,
-            ).apply {
-                addAll(
-                    geografiskeTilgangsRoller.regionaleTilgangsRoller,
-                )
-                addAll(geografiskeTilgangsRoller.nasjonaleTilgangsRoller)
-            }
+                sensitiveTilgangsRoller.kode6 + sensitiveTilgangsRoller.kode7 +
+                    sensitiveTilgangsRoller.skjermedePersoner + geografiskeTilgangsRoller.regionaleTilgangsRoller +
+                    geografiskeTilgangsRoller.nasjonaleTilgangsRoller,
+            )
 
         val fagområder = "AAP"
     }
