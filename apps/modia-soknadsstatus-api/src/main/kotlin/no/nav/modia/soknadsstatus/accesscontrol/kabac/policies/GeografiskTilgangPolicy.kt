@@ -19,9 +19,8 @@ class GeografiskTilgangPolicy(
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {
-        val veiledersRoller = ctx.getValue(VeiledersRollerPip.key)
-
-        if (geografiskeTilgangsRoller.nasjonaleTilgangsRoller.hasIntersection(veiledersRoller)) {
+        val veilederRoller = ctx.getValue(VeiledersRollerPip.key)
+        if (geografiskeTilgangsRoller.nasjonaleTilgangsRoller.hasIntersection(veilederRoller)) {
             return Decision.Permit()
         }
 
@@ -32,7 +31,7 @@ class GeografiskTilgangPolicy(
             return Decision.Permit()
         }
 
-        if (geografiskeTilgangsRoller.regionaleTilgangsRoller.hasIntersection(veiledersRoller)) {
+        if (geografiskeTilgangsRoller.regionaleTilgangsRoller.hasIntersection(veilederRoller)) {
             val brukersRegion: EnhetId? = ctx.getValue(BrukersRegionEnhetPip)
             val veiledersRegioner: List<EnhetId> = ctx.getValue(VeiledersRegionEnheterPip)
 

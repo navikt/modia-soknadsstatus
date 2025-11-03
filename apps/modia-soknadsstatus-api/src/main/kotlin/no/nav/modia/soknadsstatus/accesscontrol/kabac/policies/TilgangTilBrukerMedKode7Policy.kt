@@ -3,14 +3,14 @@ package no.nav.modia.soknadsstatus.accesscontrol.kabac.policies
 import no.nav.modia.soknadsstatus.accesscontrol.DenyCauseCode
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.BrukersDiskresjonskodePip
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.VeiledersRollerPip
-import no.nav.modia.soknadsstatus.ansatt.AnsattRolle
+import no.nav.modia.soknadsstatus.ansatt.RolleListe
 import no.nav.personoversikt.common.kabac.Decision
 import no.nav.personoversikt.common.kabac.Kabac
 import no.nav.personoversikt.common.kabac.Kabac.EvaluationContext
 import no.nav.personoversikt.common.kabac.utils.Key
 
 class TilgangTilBrukerMedKode7Policy(
-    private val kode7Rolle: AnsattRolle,
+    private val kode7Rolle: RolleListe,
 ) : Kabac.Policy {
     override val key = Companion.key
 
@@ -19,11 +19,9 @@ class TilgangTilBrukerMedKode7Policy(
     }
 
     override fun evaluate(ctx: EvaluationContext): Decision {
-        val veiledersRoller = ctx.getValue(VeiledersRollerPip.key)
+        val veilederRoller = ctx.getValue(VeiledersRollerPip.key)
 
-        val veiledersTilgangTilKode7 = veiledersRoller.contains(kode7Rolle)
-
-        if (veiledersTilgangTilKode7) {
+        if (kode7Rolle.hasIntersection(veilederRoller)) {
             return Decision.Permit()
         }
         val diskresjonskode = ctx.getValue(BrukersDiskresjonskodePip)
