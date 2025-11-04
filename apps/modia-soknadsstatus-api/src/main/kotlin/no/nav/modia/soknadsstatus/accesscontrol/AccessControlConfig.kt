@@ -9,6 +9,7 @@ import no.nav.modia.soknadsstatus.ansatt.AnsattService
 import no.nav.modia.soknadsstatus.norg.NorgApi
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerApi
+import no.nav.modia.soknadsstatus.tilgangsmaskinen.Tilgangsmaskinen
 import no.nav.personoversikt.common.kabac.Decision
 import no.nav.personoversikt.common.kabac.impl.PolicyDecisionPointImpl
 import no.nav.personoversikt.common.kabac.impl.PolicyEnforcementPointImpl
@@ -19,6 +20,7 @@ class AccessControlConfig(
     private val skjermingApi: SkjermedePersonerApi,
     private val norg: NorgApi,
     private val ansattService: AnsattService,
+    private val tilgangsmaskinen: Tilgangsmaskinen,
 ) {
     fun buildKabac(authenticationContext: AuthenticationContext): AccessControlKabac {
         val decisionPoint =
@@ -35,6 +37,7 @@ class AccessControlConfig(
                 install(VeiledersEnheterPip(ansattService))
                 install(VeiledersRegionEnheterPip(norg))
                 install(VeiledersRollerPip(ansattService))
+                install(TilgangsMaskinenPip(tilgangsmaskinen))
             }
         val enforcementPoint =
             PolicyEnforcementPointImpl(

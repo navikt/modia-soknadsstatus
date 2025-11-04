@@ -5,6 +5,7 @@ import no.nav.common.types.identer.EksternBrukerId
 import no.nav.common.types.identer.Fnr
 import no.nav.modia.soknadsstatus.accesscontrol.PolicyWithAttributes
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.policies.TilgangTilBrukerPolicy
+import no.nav.modia.soknadsstatus.accesscontrol.kabac.policies.TilgangTilBrukerPolicyV2
 import no.nav.modia.soknadsstatus.ansatt.GeografiskeTilgangsRoller
 import no.nav.modia.soknadsstatus.ansatt.SensitiveTilgangsRoller
 import no.nav.personoversikt.common.kabac.AttributeValue
@@ -16,6 +17,11 @@ class Policies(
 ) {
     fun tilgangTilBruker(eksternBrukerId: EksternBrukerId) =
         TilgangTilBrukerPolicy(sensitiveTilgangsRoller, geografiskeTilgangsRoller).withAttributes(
+            eksternBrukerId.toAttributeValue(),
+        )
+
+    fun tilgangTilBrukerV2(eksternBrukerId: EksternBrukerId) =
+        TilgangTilBrukerPolicyV2().withAttributes(
             eksternBrukerId.toAttributeValue(),
         )
 

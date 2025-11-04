@@ -8,6 +8,7 @@ import no.nav.modia.soknadsstatus.norg.NorgEnv
 import no.nav.modia.soknadsstatus.pdl.PdlEnv
 import no.nav.modia.soknadsstatus.pdlpip.PdlPipApiEnv
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerEnv
+import no.nav.modia.soknadsstatus.tilgangsmaskinen.TilgangsmaskinenEnv
 import no.nav.modia.soknadsstatus.utils.DownstreamApi
 import no.nav.modia.soknadsstatus.utils.parse
 import no.nav.personoversikt.common.utils.EnvUtils
@@ -36,6 +37,7 @@ interface Env {
     val sensitiveTilgangsRoller: SensitiveTilgangsRoller
     val geografiskeTilgangsRoller: GeografiskeTilgangsRoller
     val msGraphEnv: MsGraphEnv
+    val tilgangsmaskinenEnv: TilgangsmaskinenEnv
 
     val electorPath: String?
 }
@@ -73,6 +75,11 @@ data class EnvImpl(
         MsGraphEnv(
             url = EnvUtils.getRequiredConfig("MS_GRAPH_URL"),
             scope = EnvUtils.getRequiredConfig("MS_GRAPH_SCOPE"),
+        ),
+    override val tilgangsmaskinenEnv: TilgangsmaskinenEnv =
+        TilgangsmaskinenEnv(
+            url = EnvUtils.getRequiredConfig("TILGANGSMASKINEN_URL"),
+            scope = DownstreamApi.parse(EnvUtils.getRequiredConfig("TILGANGSMASKINEN_SCOPE")),
         ),
     override val electorPath: String? = EnvUtils.getConfig("ELECTOR_PATH"),
 ) : Env

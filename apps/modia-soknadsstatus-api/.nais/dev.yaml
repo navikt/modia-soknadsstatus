@@ -90,6 +90,8 @@ spec:
           namespace: org
         - application: logging
           namespace: nais-system
+        - application: populasjonstilgangskontroll
+          namespace: tilgangsmaskin
   envFrom:
     - secret: modia-soknadstatus-slackhook
   env:
@@ -137,3 +139,7 @@ spec:
       value: "https://graph.microsoft.com/v1.0"
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
+    - name: TILGANGSMASKINEN_URL
+      value: "http://populasjonstilgangskontroll.tilgangsmaskin"
+    - name: TILGANGSMASKINEN_SCOPE
+      value: "dev-gcp:tilgangsmaskin:populasjonstilgangskontroll"

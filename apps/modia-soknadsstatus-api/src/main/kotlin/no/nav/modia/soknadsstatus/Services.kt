@@ -12,6 +12,7 @@ import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.pdlpip.PdlPipConfig
 import no.nav.modia.soknadsstatus.service.*
 import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerConfig
+import no.nav.modia.soknadsstatus.tilgangsmaskinen.TilgangsmaskinenConfig
 import no.nav.modia.soknadsstatus.utils.LeaderElectionService
 import no.nav.modia.soknadsstatus.utils.LeaderElectionServiceImpl
 import no.nav.modia.soknadsstatus.utils.bindTo
@@ -73,12 +74,20 @@ interface Services {
                     env.kafkaApp.appMode,
                     azureADService,
                 )
+            val tilgangsmaskinen =
+                TilgangsmaskinenConfig.factory(
+                    appMode = env.kafkaApp.appMode,
+                    env = env.tilgangsmaskinenEnv,
+                    tokenProvider =
+                        configuration.machineToMachineTokenClient,
+                )
             val accessControl =
                 AccessControlConfig(
                     pdl = pdl,
                     skjermingApi = skjermedePersonerApi,
                     norg = norgApi,
                     ansattService = ansattService,
+                    tilgangsmaskinen = tilgangsmaskinen,
                 )
             val dlqProducer =
                 DeadLetterQueueProducerImpl(env.kafkaApp)
