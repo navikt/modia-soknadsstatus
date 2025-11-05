@@ -7,7 +7,6 @@ import io.mockk.mockk
 import no.nav.common.types.identer.*
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.CommonAttributes
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.providers.*
-import no.nav.modia.soknadsstatus.ansatt.*
 import no.nav.modia.soknadsstatus.tilgangsmaskinen.TilgangsMaskinResponse
 import no.nav.modia.soknadsstatus.tilgangsmaskinen.Tilgangsmaskinen
 import no.nav.personoversikt.common.kabac.Kabac
@@ -16,7 +15,6 @@ import no.nav.personoversikt.common.ktor.utils.Security
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
-import java.util.*
 
 @TestInstance(Lifecycle.PER_CLASS)
 internal class TilgangTilBrukerPolicyV2Test {
