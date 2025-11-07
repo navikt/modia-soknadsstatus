@@ -82,7 +82,7 @@ private suspend fun ApplicationCall.respondWithBehandling(
 ) {
     val kabac = services.accessControl.buildKabac(this.authentication)
     return this.respondWithResult(
-        kabac.check(services.policies.tilgangTilBrukerV2(Fnr(ident))).get(
+        kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
             Audit.describe(
                 this.authentication,
                 Audit.Action.READ,
@@ -115,7 +115,7 @@ private suspend fun ApplicationCall.respondWithHendelser(
 ) {
     val kabac = services.accessControl.buildKabac(this.authentication)
     this.respondWithResult(
-        kabac.check(services.policies.tilgangTilBrukerV2(Fnr(ident))).get(
+        kabac.check(services.policies.tilgangTilBruker(Fnr(ident))).get(
             Audit.describe(
                 this.authentication,
                 Audit.Action.READ,

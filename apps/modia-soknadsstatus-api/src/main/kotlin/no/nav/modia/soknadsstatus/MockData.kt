@@ -2,40 +2,11 @@ package no.nav.modia.soknadsstatus
 
 import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
-import no.nav.modia.soknadsstatus.ansatt.GeografiskeTilgangsRoller
-import no.nav.modia.soknadsstatus.ansatt.RolleListe
-import no.nav.modia.soknadsstatus.ansatt.SensitiveTilgangsRoller
-import no.nav.modia.soknadsstatus.norg.NorgDomain
 import java.util.*
 
 object MockData {
-    private val sensitiveTilgangsRoller = SensitiveTilgangsRoller()
-    private val geografiskeTilgangsRoller = GeografiskeTilgangsRoller()
-
-    object Veileder {
-        const val enhetId = "2990"
-        const val enhetNavn = "IT Avdelingen"
-        val enhet =
-            NorgDomain.Enhet(
-                enhetId,
-                enhetNavn,
-                NorgDomain.EnhetStatus.AKTIV,
-                true,
-            )
-        val navIdent = "Z999999"
-        val roller =
-            RolleListe(
-                sensitiveTilgangsRoller.kode6 + sensitiveTilgangsRoller.kode7 +
-                    sensitiveTilgangsRoller.skjermedePersoner + geografiskeTilgangsRoller.regionaleTilgangsRoller +
-                    geografiskeTilgangsRoller.nasjonaleTilgangsRoller,
-            )
-
-        val fagområder = "AAP"
-    }
-
     object Bruker {
         val fnr = "1010800398"
         val aktorId = "1010800398"
@@ -90,13 +61,6 @@ object MockData {
                 MockEnv("LDAP_USERNAME", "ldap_username"),
                 MockEnv("LDAP_PASSWORD", "ldap_password"),
                 MockEnv("LDAP_BASEDN", "ldap_basedn"),
-                MockEnv("NOM_SCOPE", "test:nom:scope"),
-                MockEnv("NOM_URL", "https://nom-api-url.no"),
-                MockEnv("NORG2_URL", "https://norg2-api-url.no"),
-                MockEnv("SKJERMEDE_PERSONER_PIP_URL", "https://skjermede-personer-api-url.no"),
-                MockEnv("SKJERMEDE_PERSONER_SCOPE", "test:skjermede-personer:scope"),
-                MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/v1.0"),
-                MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default"),
             )
 
         mockEnvs.forEach {

@@ -2,7 +2,6 @@ package no.nav.modia.soknadsstatus
 
 import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nav.common.token_client.utils.env.AzureAdEnvironmentVariables
 import java.util.UUID
@@ -80,13 +79,6 @@ private fun setUpMocks() {
             MockEnv("LDAP_USERNAME", "ldap_username"),
             MockEnv("LDAP_PASSWORD", "ldap_password"),
             MockEnv("LDAP_BASEDN", "ldap_basedn"),
-            MockEnv("NOM_SCOPE", "test:nom:scope"),
-            MockEnv("NOM_URL", "https://nom-api-url.no"),
-            MockEnv("NORG2_URL", "https://norg2-api-url.no"),
-            MockEnv("SKJERMEDE_PERSONER_PIP_URL", "https://skjermede-personer-api-url.no"),
-            MockEnv("SKJERMEDE_PERSONER_SCOPE", "test:skjermede-personer:scope"),
-            MockEnv("MS_GRAPH_URL", "https://graph.microsoft.com/v1.0"),
-            MockEnv("MS_GRAPH_SCOPE", "https://graph.microsoft.com/.default"),
         )
 
     mockEnvs.forEach {

@@ -1,5 +1,6 @@
 import io.mockk.*
 import no.nav.common.types.identer.Fnr
+import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.consumer.tilgangsmaskinen.generated.apis.TilgangControllerApi
 import no.nav.modia.soknadsstatus.consumer.tilgangsmaskinen.generated.infrastructure.ClientException
 import no.nav.modia.soknadsstatus.consumer.tilgangsmaskinen.generated.infrastructure.ServerException
@@ -17,6 +18,7 @@ class TilgangsmaskinenImplTest {
 
     private val mockUrl = "http://test-url.no"
     private val fnr = Fnr("10108000398")
+    private val veilederIdent = NavIdent("Z99999")
 
     @BeforeEach
     fun setUp() {
@@ -25,36 +27,37 @@ class TilgangsmaskinenImplTest {
 
     @Test
     fun `skal returnere respons med harTilgang true når API-kall lykkes`() {
-        every { tilgangsMaskinenApi.kompletteRegler(fnr.get()) } answers { Unit }
-        val result = tilgangsmaskinen.sjekkTilgang(fnr)
+        every { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) } answers { Unit }
+        val result = tilgangsmaskinen.sjekkTilgang(veilederIdent, fnr)
         assertEquals(true, result?.harTilgang)
         assertEquals(null, result?.error)
-        verify { tilgangsMaskinenApi.kompletteRegler(fnr.get()) }
+        verify { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) }
     }
 
     @Test
     fun `skal returnere respons med harTilgang false når API kaster ClientException med 403`() {
-        every { tilgangsMaskinenApi.kompletteRegler(fnr.get()) } throws ClientException(message = "", response = mockk(), statusCode = 403)
-        val result = tilgangsmaskinen.sjekkTilgang(fnr)
+        every { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) } throws
+            ClientException(message = "", response = mockk(), statusCode = 403)
+        val result = tilgangsmaskinen.sjekkTilgang(veilederIdent, fnr)
         assertEquals(false, result?.harTilgang)
         assertEquals(null, result?.error)
-        verify { tilgangsMaskinenApi.kompletteRegler(fnr.get()) }
+        verify { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) }
     }
 
     @Test
     fun `skal returnere null når API kaster en uventet feil`() {
-        every { tilgangsMaskinenApi.kompletteRegler(fnr.get()) } throws RuntimeException("Unexpected error")
-        val result = tilgangsmaskinen.sjekkTilgang(fnr)
+        every { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) } throws RuntimeException("Unexpected error")
+        val result = tilgangsmaskinen.sjekkTilgang(veilederIdent, fnr)
         assertEquals(null, result)
-        verify { tilgangsMaskinenApi.kompletteRegler(fnr.get()) }
+        verify { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) }
     }
 
     @Test
     fun `skal returnere respons med harTilgang false når API kaster ServerException`() {
-        every { tilgangsMaskinenApi.kompletteRegler(fnr.get()) } throws ServerException(message = "Server error")
-        val result = tilgangsmaskinen.sjekkTilgang(fnr)
+        every { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) } throws ServerException(message = "Server error")
+        val result = tilgangsmaskinen.sjekkTilgang(veilederIdent, fnr)
         assertEquals(false, result?.harTilgang)
         assertEquals(null, result?.error)
-        verify { tilgangsMaskinenApi.kompletteRegler(fnr.get()) }
+        verify { tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get()) }
     }
 }

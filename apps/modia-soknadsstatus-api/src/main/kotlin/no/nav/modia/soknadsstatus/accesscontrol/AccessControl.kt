@@ -1,7 +1,5 @@
 package no.nav.modia.soknadsstatus.accesscontrol
 
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import no.nav.modia.soknadsstatus.infratructure.naudit.Audit
 import no.nav.personoversikt.common.kabac.AttributeValue
 import no.nav.personoversikt.common.kabac.CombiningAlgorithm
