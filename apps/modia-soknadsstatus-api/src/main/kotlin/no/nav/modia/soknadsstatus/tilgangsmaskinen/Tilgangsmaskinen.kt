@@ -37,7 +37,7 @@ open class TilgangsmaskinenImpl(
         veilederIdent: NavIdent,
         fnr: Fnr,
     ): TilgangsMaskinResponse? =
-        cache.get(fnr.get()) {
+        cache.get("${veilederIdent.get()}-${fnr.get()}") {
             try {
                 tilgangsMaskinenApi.kompletteReglerCCF(veilederIdent.get(), fnr.get())
                 TilgangsMaskinResponse(harTilgang = true)
