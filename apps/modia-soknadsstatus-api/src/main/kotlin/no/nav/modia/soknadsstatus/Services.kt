@@ -2,19 +2,14 @@ package no.nav.modia.soknadsstatus
 
 import no.nav.modia.soknadsstatus.accesscontrol.AccessControlConfig
 import no.nav.modia.soknadsstatus.accesscontrol.kabac.Policies
-import no.nav.modia.soknadsstatus.ansatt.AnsattConfig
-import no.nav.modia.soknadsstatus.azure.AzureADServiceImpl
-import no.nav.modia.soknadsstatus.azure.MsGraphConfig
 import no.nav.modia.soknadsstatus.kafka.*
-import no.nav.modia.soknadsstatus.norg.NorgConfig
 import no.nav.modia.soknadsstatus.pdl.PdlConfig
 import no.nav.modia.soknadsstatus.pdl.PdlOppslagService
 import no.nav.modia.soknadsstatus.pdlpip.PdlPipConfig
 import no.nav.modia.soknadsstatus.service.*
-import no.nav.modia.soknadsstatus.skjermedepersoner.SkjermedePersonerConfig
+import no.nav.modia.soknadsstatus.tilgangsmaskinen.TilgangsmaskinenConfig
 import no.nav.modia.soknadsstatus.utils.LeaderElectionService
 import no.nav.modia.soknadsstatus.utils.LeaderElectionServiceImpl
-import no.nav.modia.soknadsstatus.utils.bindTo
 
 interface Services {
     val policies: Policies
@@ -34,13 +29,6 @@ interface Services {
             env: Env,
             configuration: Configuration,
         ): Services {
-            val norgApi = NorgConfig.factory(env.kafkaApp.appMode, env.norgEnv, env.kafkaApp.appName)
-            val skjermedePersonerApi =
-                SkjermedePersonerConfig.factory(
-                    env.kafkaApp.appMode,
-                    env.skjermedePersonerEnv,
-                    configuration.machineToMachineTokenClient,
-                )
             val pdlPipApi = PdlPipConfig.factory(env.kafkaApp.appMode, env.pdlPipEnv, configuration.machineToMachineTokenClient)
             val pdl =
                 PdlConfig.factory(
@@ -58,27 +46,16 @@ interface Services {
                     configuration.machineToMachineTokenClient,
                     pdlPipApi,
                 )
-            val msGraphClient =
-                MsGraphConfig.factory(env.kafkaApp.appMode, env.msGraphEnv)
-            val azureADService =
-                AzureADServiceImpl(
-                    msGraphClient = msGraphClient,
-                    tokenClient =
-                        configuration.oboTokenClient.bindTo(
-                            env.msGraphEnv.scope,
-                        ),
-                )
-            val ansattService =
-                AnsattConfig.factory(
-                    env.kafkaApp.appMode,
-                    azureADService,
+            val tilgangsmaskinen =
+                TilgangsmaskinenConfig.factory(
+                    appMode = env.kafkaApp.appMode,
+                    env = env.tilgangsmaskinenEnv,
+                    tokenProvider =
+                        configuration.machineToMachineTokenClient,
                 )
             val accessControl =
                 AccessControlConfig(
-                    pdl = pdl,
-                    skjermingApi = skjermedePersonerApi,
-                    norg = norgApi,
-                    ansattService = ansattService,
+                    tilgangsmaskinen = tilgangsmaskinen,
                 )
             val dlqProducer =
                 DeadLetterQueueProducerImpl(env.kafkaApp)
@@ -108,7 +85,7 @@ interface Services {
             hendelseService.init(behandlingService)
 
             return object : Services {
-                override val policies: Policies = Policies(env.sensitiveTilgangsRoller, env.geografiskeTilgangsRoller)
+                override val policies: Policies = Policies()
                 override val pdl = pdl
                 override val pdlMigrering = pdlMigrering
                 override val accessControl = accessControl

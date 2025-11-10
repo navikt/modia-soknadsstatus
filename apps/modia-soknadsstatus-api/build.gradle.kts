@@ -16,11 +16,10 @@ dependencies {
     implementation(project(":common:ktor"))
     implementation(project(":common:kafka"))
     implementation(project(":common:utils"))
-    implementation(project(":tjenestespesifikasjoner:norg-api"))
     implementation(project(":tjenestespesifikasjoner:kodeverk-api"))
-    implementation(project(":tjenestespesifikasjoner:skjermede-personer-pip-api"))
     implementation(project(":tjenestespesifikasjoner:pdl-pip-api"))
     implementation(project(":tjenestespesifikasjoner:pdl-api"))
+    implementation(project(":tjenestespesifikasjoner:tilgangsmaskinen"))
 
     implementation(libs.bundles.ktorServer)
     implementation(libs.ktor.client.okhttp)

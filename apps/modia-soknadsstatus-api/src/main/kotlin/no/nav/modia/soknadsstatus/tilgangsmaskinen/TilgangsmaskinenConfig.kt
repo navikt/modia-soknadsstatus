@@ -1,5 +1,6 @@
-package no.nav.modia.soknadsstatus.skjermedepersoner
+package no.nav.modia.soknadsstatus.tilgangsmaskinen
 
+import TilgangsmaskinenMock
 import no.nav.common.rest.client.RestClient
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.modia.soknadsstatus.AppMode
@@ -10,12 +11,12 @@ import no.nav.utils.LoggingInterceptor
 import no.nav.utils.XCorrelationIdInterceptor
 import okhttp3.OkHttpClient
 
-object SkjermedePersonerConfig {
+object TilgangsmaskinenConfig {
     fun factory(
         appMode: AppMode,
-        env: SkjermedePersonerEnv,
+        env: TilgangsmaskinenEnv,
         tokenProvider: MachineToMachineTokenClient,
-    ): SkjermedePersonerApi {
+    ): Tilgangsmaskinen {
         if (appMode == AppMode.NAIS) {
             val scope = env.scope
             val url = env.url
@@ -26,7 +27,7 @@ object SkjermedePersonerConfig {
                     .newBuilder()
                     .addInterceptor(XCorrelationIdInterceptor())
                     .addInterceptor(
-                        LoggingInterceptor("SkjermedePersoner") { request ->
+                        LoggingInterceptor("TilgangsMaskinen") { request ->
                             requireNotNull(request.header("X-Correlation-ID")) {
                                 "Kall uten \"X-Correlation-ID\" er ikke lov"
                             }
@@ -36,14 +37,14 @@ object SkjermedePersonerConfig {
                             tokenProvider.createMachineToMachineToken(scope)
                         },
                     ).build()
-            return SkjermedePersonerApiImpl(url, httpClient)
+            return TilgangsmaskinenImpl(url, httpClient)
         }
 
-        return SkjermedePersonerApiMock()
+        return TilgangsmaskinenMock()
     }
 }
 
-data class SkjermedePersonerEnv(
+data class TilgangsmaskinenEnv(
     val url: String,
     val scope: DownstreamApi,
 )

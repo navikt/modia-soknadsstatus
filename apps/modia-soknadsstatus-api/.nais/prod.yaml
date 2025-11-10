@@ -79,14 +79,13 @@ spec:
         - host: graph.microsoft.com
         - host: pdl-api.prod-fss-pub.nais.io
         - host: pdl-pip-api.prod-fss-pub.nais.io
-        - host: skjermede-personer-pip.intern.nav.no
         - host: unleash.nais.io
         - host: hooks.slack.com
       rules:
-        - application: norg2
-          namespace: org
         - application: logging
           namespace: nais-system
+        - application: populasjonstilgangskontroll
+          namespace: tilgangsmaskin
   envFrom:
     - secret: modia-soknadstatus-slackhook
   env:
@@ -112,8 +111,6 @@ spec:
       value: "2000"
     - name: HENDELSE_CONSUMER_RESTART_DELAY_MS
       value: "4000"
-    - name: NORG2_URL
-      value: "http://norg2.org/norg2"
     - name: PDL_API_URL
       value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE
@@ -126,11 +123,7 @@ spec:
       value: "https://pdl-pip-api.prod-fss-pub.nais.io"
     - name: PDL_PIP_SCOPE
       value: prod-fss:pdl:pdl-pip-api
-    - name: SKJERMEDE_PERSONER_PIP_URL
-      value: "https://skjermede-personer-pip.intern.nav.no"
-    - name: SKJERMEDE_PERSONER_SCOPE
-      value: "prod-gcp:nom:skjermede-personer-pip"
-    - name: MS_GRAPH_URL
-      value: "https://graph.microsoft.com/v1.0"
-    - name: MS_GRAPH_SCOPE
-      value: "https://graph.microsoft.com/.default"
+    - name: TILGANGSMASKINEN_URL
+      value: "http://populasjonstilgangskontroll.tilgangsmaskin"
+    - name: TILGANGSMASKINEN_SCOPE
+      value: "prod-gcp:tilgangsmaskin:populasjonstilgangskontroll"

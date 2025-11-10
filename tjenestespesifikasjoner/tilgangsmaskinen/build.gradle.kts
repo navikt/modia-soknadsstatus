@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val nav_common_version: String by project
-
 plugins {
     application
     id("setup.repository")
@@ -17,7 +15,7 @@ dependencies {
 }
 
 group = "no.nav.modia.soknadsstatus"
-description = "skjermede-personer-pip-api"
+description = "tilgangsmaskinen"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -32,16 +30,21 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 openApiGenerate {
-    inputSpec.set("$projectDir/src/main/resources/skjermede-personer-pip/openapi.json")
+    inputSpec.set("$projectDir/src/main/resources/tilgangsmaskinen/openapi.json")
     generatorName.set("kotlin")
     library.set("jvm-okhttp4")
-    packageName.set("no.nav.modia.soknadsstatus.consumer.skjermedePersonerPip.generated")
+    packageName.set("no.nav.modia.soknadsstatus.consumer.tilgangsmaskinen.generated")
     templateDir.set("$projectDir/../openapi-templates")
     outputDir.set("$buildDir/generated-sources")
     configOptions.set(
         mapOf(
             "enumPropertyNaming" to "original",
             "serializationLibrary" to "jackson",
+        ),
+    )
+    additionalProperties.set(
+        mapOf(
+            "generateWithHttpInfo" to true,
         ),
     )
 }
