@@ -1,5 +1,3 @@
-import no.nav.common.health.HealthCheckResult
-import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.types.identer.Fnr
 import no.nav.common.types.identer.NavIdent
 import no.nav.modia.soknadsstatus.tilgangsmaskinen.TilgangsMaskinResponse
@@ -9,12 +7,5 @@ class TilgangsmaskinenMock : Tilgangsmaskinen {
     override fun sjekkTilgang(
         veilederIdent: NavIdent,
         fnr: Fnr,
-    ): TilgangsMaskinResponse? {
-        TODO("Not yet implemented")
-    }
-
-    override fun ping(): SelfTestCheck =
-        SelfTestCheck("Mock skjermedepersoner", false) {
-            HealthCheckResult.healthy()
-        }
+    ): TilgangsMaskinResponse = TilgangsMaskinResponse(harTilgang = true)
 }
