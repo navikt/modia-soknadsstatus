@@ -255,6 +255,8 @@ Dokumentasjonen inneholder også en liste med alle teamer det kommer meldinger p
 - **Format:** JSON
 - **Datatyper:** Søknadsstatuser fra nyere NAV-systemer
 - **Systemer:** Ikke eksplisitt navngitt i koden, men alle systemer som publiserer til hendelse-topicet
+- 
+[Dokumentasjon](https://confluence.adeo.no/spaces/INFOTRYGD/pages/126681246/MOD_01+-+Komponenter+og+programmer) fra Infotrygd.
 
 ---
 
