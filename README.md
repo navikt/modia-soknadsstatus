@@ -177,8 +177,8 @@ POST /api/soknadsstatus/hendelse    (body: {})
   "sakstema": {"value": "AAP"},
   "behandlingstema": {"value": "ab01"},
   "hendelseType": "behandlingOpprettet",
-  "identREF": [{"ident": "01010112345"}],
-  "aktoerREF": [{"aktoerId": "1000012345678"}],
+  "identREF": [{"ident": "00000000000"}],
+  "aktoerREF": [{"aktoerId": "0000000000000"}],
   ...
 }
 ```
@@ -232,14 +232,17 @@ enum class HendelseType {
 
 ## Hvem Sender Data til Dette Systemet?
 
-### 1. **ARENA (AO01)**
+### 1. **ARENA **
 - **System:** NAVs ytelser og velferdsystem
 - **Transport:** IBM MQ → JMS-kø
 - **Format:** XML (validert mot XSD-skjema)
 - **Datatyper:** Søknadsstatuser for dagpenger, arbeidsavklaringspenger, etc.
 - **Temaer:** Ulike sakstema/behandlingstema-kombinasjoner
 
-### 2. **INFOTRYGD (IT00)**
+Her er [Arena-dokumentasjon](https://confluence.adeo.no/spaces/ARENA/pages/122716400/Arena+-+Tjenestekonsument+MQ+-+Modia+Behandlingsstatus_v1) for tjenester som sender data på køen.
+Dokumentasjonen inneholder også en liste med alle teamer det kommer meldinger på.
+
+### 2. **INFOTRYGD **
 - **System:** NAVs legacy pensjon- og ytelsessystem
 - **Transport:** IBM MQ → JMS-kø
 - **Format:** XML (validert mot XSD-skjema)
