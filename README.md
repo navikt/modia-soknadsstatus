@@ -258,6 +258,24 @@ Dokumentasjonen inneholder også en liste med alle teamer det kommer meldinger p
 - 
 [Dokumentasjon](https://confluence.adeo.no/spaces/INFOTRYGD/pages/126681246/MOD_01+-+Komponenter+og+programmer) fra Infotrygd.
 
+Dette er hendelser som kommer fra Infotrygd:
+FO	Forsikringsrutinen       
+GH	Grunn- og hjelpestønad   
+AA	A/A rutinen              
+SU	supplerende stønad       
+SP	Sykepenger mv.           
+HT	Helsetjenester           
+ME	Medlemskap               
+KS	kontantstøtte            
+BA	Barnetrygd               
+BS	stønad kapittel 9        
+GJ	Gjenlevendestønad        
+FA	Fødsels- og adopsjonsp.ru
+GS	Gravferdsstønad          
+GE	Generell rutine          
+HJ	Hjelpemidler             
+YS	Yrkesskaderutinen
+
 ---
 
 
