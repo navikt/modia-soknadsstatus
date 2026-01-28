@@ -17,10 +17,6 @@ spec:
     scalingStrategy:
       cpu:
         thresholdPercentage: 90
-      kafka:
-        consumerGroup: modia-soknadsstatus-api-behandling-consumer
-        topic: org.sobhist-v5
-        threshold: 1000
   resources:
     requests:
       cpu: 30m
