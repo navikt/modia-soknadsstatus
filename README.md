@@ -259,6 +259,7 @@ Dokumentasjonen inneholder også en liste med alle teamer det kommer meldinger p
 [Dokumentasjon](https://confluence.adeo.no/spaces/INFOTRYGD/pages/126681246/MOD_01+-+Komponenter+og+programmer) fra Infotrygd.
 
 Dette er hendelser som kommer fra Infotrygd:
+
 FO	Forsikringsrutinen       
 GH	Grunn- og hjelpestønad   
 AA	A/A rutinen              
