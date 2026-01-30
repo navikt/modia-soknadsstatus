@@ -75,6 +75,11 @@ fun Application.mqToKafkaModule() {
                     }
             } catch (e: Exception) {
                 slackClient?.postMessage("MqToKafkaModule: Klarte ikke å koble til MQ: ${mqConfig.mqQueue}")
+                TjenestekallLogg.error(
+                    header = "MqToKafkaModule: Klarte ikke å koble til MQ:",
+                    fields = mapOf(),
+                    throwable = e,
+                )
                 log.error("error e", e)
             }
         }
