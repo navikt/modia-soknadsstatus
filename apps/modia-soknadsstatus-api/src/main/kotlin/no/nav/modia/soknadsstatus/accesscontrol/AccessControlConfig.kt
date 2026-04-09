@@ -17,6 +17,7 @@ class AccessControlConfig(
         val decisionPoint =
             PolicyDecisionPointImpl().apply {
                 install(AuthContextPip(authenticationContext))
+                install(NavIdentPip)
                 install(TilgangsMaskinenPip(tilgangsmaskinen))
             }
         val enforcementPoint =
