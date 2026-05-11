@@ -86,19 +86,26 @@ class PdlClientImpl(
         ).data
             ?.hentIdenterBolk
             ?.mapNotNull { p ->
-                val aktorId = p.identer?.first { it.gruppe == IdentGruppe.AKTORID }?.ident
+                val inputAktorId = p.ident
+                if (p.code != "ok") {
+                    TjenestekallLogg.warn(
+                        "PDL fant ikke ident for aktor ID (code=${p.code}). AktorIDen ignoreres",
+                        mapOf("AktorID" to inputAktorId, "code" to p.code),
+                    )
+                    return@mapNotNull null
+                }
                 var fnr: String? = null
                 try {
                     fnr = p.identer?.first { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
                 } catch (e: NoSuchElementException) {
-                    TjenestekallLogg.warn("Fant ikke ident med gruppe FOLKEREGISTERIDENT, prøver NPID", mapOf("AktorID" to aktorId))
+                    TjenestekallLogg.warn("Fant ikke ident med gruppe FOLKEREGISTERIDENT, prøver NPID", mapOf("AktorID" to inputAktorId))
                     try {
                         fnr = p.identer?.first { it.gruppe == IdentGruppe.NPID }?.ident
                     } catch (e: NoSuchElementException) {
-                        TjenestekallLogg.error("Fant ikke ident med gruppe NPID. AktorIDen ignoreres", mapOf("AktorID" to aktorId))
+                        TjenestekallLogg.error("Fant ikke ident med gruppe NPID. AktorIDen ignoreres", mapOf("AktorID" to inputAktorId))
                     }
                 }
-                if (aktorId == null || fnr == null) null else aktorId to fnr
+                if (fnr == null) null else inputAktorId to fnr
             }
             ?: emptyList()
 
