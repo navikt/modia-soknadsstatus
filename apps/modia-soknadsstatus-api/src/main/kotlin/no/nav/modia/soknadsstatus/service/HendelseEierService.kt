@@ -12,6 +12,8 @@ interface HendelseEierService {
     ): HendelseEierDAO?
 
     suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>): DeleteUpdateResult
+
+    suspend fun markUnresolvableAktorIds(aktorIds: List<String>)
 }
 
 class HendelseEierServiceImpl(
@@ -31,4 +33,10 @@ class HendelseEierServiceImpl(
                 updateCount,
             )
         }
+
+    override suspend fun markUnresolvableAktorIds(aktorIds: List<String>) {
+        hendelseEierRepository.useTransactionConnection {
+            hendelseEierRepository.updateAktorToFnr(it, aktorIds.map { id -> id to "0" })
+        }
+    }
 }

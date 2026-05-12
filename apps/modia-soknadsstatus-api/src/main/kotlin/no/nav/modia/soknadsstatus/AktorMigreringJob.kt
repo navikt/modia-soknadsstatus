@@ -27,9 +27,18 @@ class AktorMigreringJob(
                     }
 
                     val aktorFnrMapping = services.pdlMigrering.hentFnrMedSystemTokenBolk(aktorIder)
+                    logger.info("Fikk følgende mappinger tilbake fra PDL: ${aktorFnrMapping.joinToString(", ")}")
                     if (aktorFnrMapping.isEmpty()) {
                         logger.warn("Fikk ingen mappinger tilbake fra PDL")
                         continue
+                    }
+
+                    val resolvedAktorIds = aktorFnrMapping.map { it.first }.toSet()
+                    val unresolvableAktorIds = aktorIder.filter { it !in resolvedAktorIds }
+                    if (unresolvableAktorIds.isNotEmpty()) {
+                        logger.warn("Setter ident til '0' for ${unresolvableAktorIds.size} aktor IDer som ikke kunne løses av PDL")
+                        services.behandlingEierService.markUnresolvableAktorIds(unresolvableAktorIds)
+                        services.hendelseEierService.markUnresolvableAktorIds(unresolvableAktorIds)
                     }
 
                     logger.info("Konverterer aktor_id til ident for behandling_eiere (${aktorFnrMapping.size}/${aktorIder.size} elementer)")

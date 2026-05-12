@@ -14,6 +14,8 @@ interface BehandlingEierService {
     suspend fun getAktorIdsToConvert(limit: Int): List<String>
 
     suspend fun convertAktorToIdent(aktorFnrMapping: List<Pair<String, String>>): DeleteUpdateResult
+
+    suspend fun markUnresolvableAktorIds(aktorIds: List<String>)
 }
 
 class BehandlingEierServiceImpl(
@@ -39,4 +41,10 @@ class BehandlingEierServiceImpl(
                 updateCount,
             )
         }
+
+    override suspend fun markUnresolvableAktorIds(aktorIds: List<String>) {
+        behandlingEiereRepository.useTransactionConnection {
+            behandlingEiereRepository.updateAktorToFnr(it, aktorIds.map { id -> id to "0" })
+        }
+    }
 }
